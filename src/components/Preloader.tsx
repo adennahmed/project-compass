@@ -16,29 +16,21 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
 
     document.body.style.overflow = "hidden";
 
-    // Animate percentage from 0 to 100
     gsap.to(percentRef.current, {
       value: 100,
       duration: 2.8,
       ease: "power2.inOut",
       onUpdate: () => {
-        const v = Math.round(percentRef.current.value);
-        setPercent(v);
+        setPercent(Math.round(percentRef.current.value));
       },
     });
 
-    // Logo clip-path fill: starts fully clipped (invisible white), reveals top-to-bottom
     gsap.fromTo(
       "#preloader-logo-white",
       { clipPath: "inset(100% 0 0 0)" },
-      {
-        clipPath: "inset(0% 0 0 0)",
-        duration: 2.8,
-        ease: "power2.inOut",
-      }
+      { clipPath: "inset(0% 0 0 0)", duration: 2.8, ease: "power2.inOut" }
     );
 
-    // After fill completes, hold, then split panels
     const tl = gsap.timeline({
       delay: 3.2,
       onComplete: () => {
@@ -54,52 +46,18 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
       duration: 0.35,
       ease: "power2.in",
     })
-      .to(
-        "#preloader-panel-top",
-        { yPercent: -100, duration: 0.75, ease: "power4.inOut" },
-        "reveal"
-      )
-      .to(
-        "#preloader-panel-bottom",
-        { yPercent: 100, duration: 0.75, ease: "power4.inOut" },
-        "reveal"
-      );
+      .to("#preloader-panel-top", { yPercent: -100, duration: 0.75, ease: "power4.inOut" }, "reveal")
+      .to("#preloader-panel-bottom", { yPercent: 100, duration: 0.75, ease: "power4.inOut" }, "reveal");
   }, [onComplete]);
 
   return (
     <div
       ref={preloaderRef}
       id="preloader"
-      style={{
-        position: "fixed",
-        inset: 0,
-        zIndex: 999999,
-        pointerEvents: "all",
-        overflow: "hidden",
-      }}
+      style={{ position: "fixed", inset: 0, zIndex: 999999, pointerEvents: "all", overflow: "hidden" }}
     >
-      <div
-        id="preloader-panel-top"
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          height: "50%",
-          background: "#080808",
-        }}
-      />
-      <div
-        id="preloader-panel-bottom"
-        style={{
-          position: "absolute",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          height: "50%",
-          background: "#080808",
-        }}
-      />
+      <div id="preloader-panel-top" style={{ position: "absolute", top: 0, left: 0, right: 0, height: "50%", background: "#080808" }} />
+      <div id="preloader-panel-bottom" style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "50%", background: "#080808" }} />
       <div
         id="preloader-content"
         style={{
@@ -110,42 +68,24 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
           alignItems: "center",
           justifyContent: "center",
           zIndex: 2,
-          gap: "32px",
         }}
       >
-        {/* Logo container with layered dark/white versions */}
+        {/* Logo */}
         <div style={{ position: "relative", width: "180px", height: "48px" }}>
-          {/* Dark version (always visible underneath) */}
           <img
             src="/kozai-logo-white.svg"
             alt=""
-            style={{
-              width: "180px",
-              height: "auto",
-              position: "absolute",
-              top: 0,
-              left: 0,
-              opacity: 0.15,
-              filter: "brightness(0.3)",
-            }}
+            style={{ width: "180px", height: "auto", position: "absolute", top: 0, left: 0, opacity: 0.15, filter: "brightness(0.3)" }}
           />
-          {/* White version clipped to reveal progressively */}
           <img
             id="preloader-logo-white"
             src="/kozai-logo-white.svg"
             alt="Kozai"
-            style={{
-              width: "180px",
-              height: "auto",
-              position: "absolute",
-              top: 0,
-              left: 0,
-              clipPath: "inset(100% 0 0 0)",
-            }}
+            style={{ width: "180px", height: "auto", position: "absolute", top: 0, left: 0, clipPath: "inset(100% 0 0 0)" }}
           />
         </div>
 
-        {/* Percentage */}
+        {/* Percentage - positioned below the logo with margin */}
         <div
           style={{
             fontFamily: "'Inter', sans-serif",
@@ -153,6 +93,7 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
             fontWeight: 300,
             letterSpacing: "0.2em",
             color: "rgba(255,255,255,0.35)",
+            marginTop: "72px",
           }}
         >
           {String(percent).padStart(3, "0")}

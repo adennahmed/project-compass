@@ -46,23 +46,17 @@ const SolutionsSection = () => {
 
   useEffect(() => {
     gsap.from(".solutions-eyebrow", {
-      y: 25,
-      opacity: 0,
-      duration: 0.7,
-      ease: "power2.out",
+      y: 25, opacity: 0, duration: 0.7, ease: "power2.out",
       scrollTrigger: { trigger: ".solutions-eyebrow", start: "top 84%" },
     });
     gsap.from(".solutions-headline", {
-      y: 45,
-      opacity: 0,
-      duration: 0.85,
-      ease: "power3.out",
+      y: 45, opacity: 0, duration: 0.85, ease: "power3.out",
       scrollTrigger: { trigger: ".solutions-headline", start: "top 82%" },
     });
   }, []);
 
   return (
-    <section id="solutions" className="py-32 md:py-40">
+    <section id="solutions" className="py-32 md:py-40" style={{ background: "#EEEAE4" }}>
       {/* Header area */}
       <div className="px-6 md:px-12 max-w-[1200px] mx-auto mb-16">
         <div className="grid md:grid-cols-2 gap-12">
@@ -73,25 +67,28 @@ const SolutionsSection = () => {
             >
               OUR ETHOS
             </div>
-            <h2 className="solutions-headline text-[36px] md:text-[48px] font-light leading-[1.1] max-w-[500px]">
+            <h2
+              className="solutions-headline text-[36px] md:text-[48px] font-light leading-[1.1] max-w-[500px]"
+              style={{ color: "#1a1a1a" }}
+            >
               Vision Matters. Velocity Wins.
             </h2>
           </div>
           <div className="flex flex-col justify-end">
             <p
               className="text-[15px] leading-[1.75] mb-6 max-w-[480px]"
-              style={{ color: "#888888" }}
+              style={{ color: "#666666" }}
             >
               Our comprehensive technology platform shifts the odds. With infrastructure
               that works. With experts who've been there. With the right pressure — pushing
               you forward, not under.
             </p>
             <a href="#contact" className="relative inline-block px-5 py-3 hover-target group self-start">
-              <span className="absolute top-0 left-0 w-2.5 h-2.5 border-t border-l transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(255,255,255,0.25)" }} />
-              <span className="absolute top-0 right-0 w-2.5 h-2.5 border-t border-r transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(255,255,255,0.25)" }} />
-              <span className="absolute bottom-0 left-0 w-2.5 h-2.5 border-b border-l transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(255,255,255,0.25)" }} />
-              <span className="absolute bottom-0 right-0 w-2.5 h-2.5 border-b border-r transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(255,255,255,0.25)" }} />
-              <span className="text-[12px] uppercase tracking-[0.12em]" style={{ color: "rgba(255,255,255,0.75)" }}>
+              <span className="absolute top-0 left-0 w-2.5 h-2.5 border-t border-l transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(30,30,30,0.25)" }} />
+              <span className="absolute top-0 right-0 w-2.5 h-2.5 border-t border-r transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(30,30,30,0.25)" }} />
+              <span className="absolute bottom-0 left-0 w-2.5 h-2.5 border-b border-l transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(30,30,30,0.25)" }} />
+              <span className="absolute bottom-0 right-0 w-2.5 h-2.5 border-b border-r transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(30,30,30,0.25)" }} />
+              <span className="text-[12px] uppercase tracking-[0.12em]" style={{ color: "rgba(30,30,30,0.75)" }}>
                 <LinkText>Join Us</LinkText>
               </span>
             </a>
@@ -112,10 +109,11 @@ const SolutionsSection = () => {
             style={{
               width: expandedIndex === i ? "50vw" : expandedIndex !== null ? "16.67vw" : "25vw",
               minWidth: expandedIndex === i ? "500px" : expandedIndex !== null ? "140px" : "200px",
-              height: "520px",
+              height: "640px",
               background: s.color,
               transition: "width 0.6s cubic-bezier(0.76, 0, 0.24, 1), min-width 0.6s cubic-bezier(0.76, 0, 0.24, 1)",
               padding: "40px",
+              borderRadius: "4px",
             }}
             onMouseEnter={() => setExpandedIndex(i)}
             onMouseLeave={() => setExpandedIndex(null)}
@@ -144,62 +142,47 @@ const SolutionsSection = () => {
                 {i === 0 && (
                   <>
                     {Array.from({ length: 12 }).map((_, j) => (
-                      <line
-                        key={j}
-                        x1="100"
-                        y1="20"
-                        x2={100 + Math.cos((j * 30 * Math.PI) / 180) * 80}
-                        y2={100 + Math.sin((j * 30 * Math.PI) / 180) * 80}
-                        stroke={s.textColor}
-                        strokeWidth="0.5"
-                        strokeDasharray="2 3"
-                      />
+                      <line key={j} x1="100" y1="20" x2={100 + Math.cos((j * 30 * Math.PI) / 180) * 80} y2={100 + Math.sin((j * 30 * Math.PI) / 180) * 80} stroke={s.textColor} strokeWidth="0.5" strokeDasharray="2 3" />
                     ))}
                   </>
                 )}
                 {i === 1 && (
                   <>
                     {Array.from({ length: 20 }).map((_, j) => (
-                      <path
-                        key={j}
-                        d={`M ${60 + j * 4} 180 Q ${60 + j * 4} ${100 - Math.sin((j / 19) * Math.PI) * 80} ${60 + j * 4} 20`}
-                        stroke={s.textColor}
-                        strokeWidth="0.5"
-                        fill="none"
-                      />
+                      <path key={j} d={`M ${60 + j * 4} 180 Q ${60 + j * 4} ${100 - Math.sin((j / 19) * Math.PI) * 80} ${60 + j * 4} 20`} stroke={s.textColor} strokeWidth="0.5" fill="none" />
                     ))}
                   </>
                 )}
                 {i === 2 && (
                   <>
-                    {Array.from({ length: 16 }).map((_, j) => (
-                      <line
-                        key={j}
-                        x1="100"
-                        y1="100"
-                        x2={100 + Math.cos((j * 22.5 * Math.PI) / 180) * (40 + j * 5)}
-                        y2={100 + Math.sin((j * 22.5 * Math.PI) / 180) * (40 + j * 5)}
-                        stroke={s.textColor}
-                        strokeWidth="0.5"
-                        strokeDasharray="1 2"
-                      />
-                    ))}
+                    {/* Interconnected nodes/network for Digital Transformation */}
+                    {Array.from({ length: 8 }).map((_, j) => {
+                      const angle = (j / 8) * Math.PI * 2;
+                      const cx = 100 + Math.cos(angle) * 60;
+                      const cy = 100 + Math.sin(angle) * 60;
+                      return (
+                        <g key={j}>
+                          <circle cx={cx} cy={cy} r="4" stroke={s.textColor} strokeWidth="0.5" fill="none" />
+                          <line x1="100" y1="100" x2={cx} y2={cy} stroke={s.textColor} strokeWidth="0.3" strokeDasharray="2 2" />
+                          {j < 7 && (
+                            <line
+                              x1={cx} y1={cy}
+                              x2={100 + Math.cos(((j + 1) / 8) * Math.PI * 2) * 60}
+                              y2={100 + Math.sin(((j + 1) / 8) * Math.PI * 2) * 60}
+                              stroke={s.textColor} strokeWidth="0.3"
+                            />
+                          )}
+                        </g>
+                      );
+                    })}
+                    <circle cx="100" cy="100" r="6" stroke={s.textColor} strokeWidth="0.5" fill="none" />
+                    <circle cx="100" cy="100" r="60" stroke={s.textColor} strokeWidth="0.3" fill="none" strokeDasharray="3 4" />
                   </>
                 )}
                 {i === 3 && (
                   <>
                     {Array.from({ length: 8 }).map((_, j) => (
-                      <ellipse
-                        key={j}
-                        cx="100"
-                        cy="100"
-                        rx={20 + j * 10}
-                        ry={60 + j * 5}
-                        stroke={s.textColor}
-                        strokeWidth="0.5"
-                        fill="none"
-                        transform={`rotate(${j * 22.5} 100 100)`}
-                      />
+                      <ellipse key={j} cx="100" cy="100" rx={20 + j * 10} ry={60 + j * 5} stroke={s.textColor} strokeWidth="0.5" fill="none" transform={`rotate(${j * 22.5} 100 100)`} />
                     ))}
                   </>
                 )}
@@ -208,10 +191,7 @@ const SolutionsSection = () => {
 
             {/* Bottom content */}
             <div>
-              <div
-                className="text-[12px] uppercase tracking-[0.12em] mb-4"
-                style={{ color: s.accentColor, opacity: 0.6 }}
-              >
+              <div className="text-[12px] uppercase tracking-[0.12em] mb-4" style={{ color: s.accentColor, opacity: 0.6 }}>
                 {s.num}
               </div>
               <p

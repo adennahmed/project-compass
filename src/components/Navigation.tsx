@@ -25,7 +25,6 @@ const Navigation = () => {
     const nav = navRef.current;
     if (!nav) return;
 
-    // Show/hide on scroll direction
     ScrollTrigger.create({
       start: "top top",
       end: "max",
@@ -35,7 +34,6 @@ const Navigation = () => {
         lastScrollY.current = scrollY;
 
         if (scrollY < 100) {
-          // At top, always show
           if (!navVisible.current) {
             gsap.to(nav, { y: 0, duration: 0.4, ease: "power3.out" });
             navVisible.current = true;
@@ -63,11 +61,7 @@ const Navigation = () => {
     setTimeout(() => {
       if (mobileLinksRef.current) {
         gsap.from(mobileLinksRef.current.querySelectorAll("li"), {
-          y: 30,
-          opacity: 0,
-          stagger: 0.07,
-          duration: 0.55,
-          ease: "power3.out",
+          y: 30, opacity: 0, stagger: 0.07, duration: 0.55, ease: "power3.out",
         });
       }
     }, 50);
@@ -76,15 +70,8 @@ const Navigation = () => {
   const closeMobile = () => {
     if (mobileLinksRef.current) {
       gsap.to(mobileLinksRef.current.querySelectorAll("li"), {
-        y: -20,
-        opacity: 0,
-        stagger: 0.04,
-        duration: 0.3,
-        ease: "power2.in",
-        onComplete: () => {
-          setMobileOpen(false);
-          document.body.style.overflow = "";
-        },
+        y: -20, opacity: 0, stagger: 0.04, duration: 0.3, ease: "power2.in",
+        onComplete: () => { setMobileOpen(false); document.body.style.overflow = ""; },
       });
     }
   };
@@ -92,8 +79,7 @@ const Navigation = () => {
   const scrollTo = (href: string) => {
     closeMobile();
     setTimeout(() => {
-      const el = document.querySelector(href);
-      el?.scrollIntoView({ behavior: "smooth" });
+      document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
     }, 400);
   };
 
@@ -107,7 +93,7 @@ const Navigation = () => {
           backdropFilter: "blur(18px) saturate(180%)",
           WebkitBackdropFilter: "blur(18px) saturate(180%)",
           border: "1px solid rgba(255,255,255,0.08)",
-          borderRadius: "4px",
+          borderRadius: "100px",
         }}
       >
         <style>{`
@@ -118,14 +104,9 @@ const Navigation = () => {
         `}</style>
 
         <a href="#" className="flex items-center mr-4">
-          <img
-            src="/kozai-logo-white.svg"
-            alt="Kozai"
-            className="h-5 w-auto"
-          />
+          <img src="/kozai-logo-white.svg" alt="Kozai" className="h-5 w-auto" />
         </a>
 
-        {/* Desktop Links */}
         <div className="hidden md:flex items-center gap-6">
           {navLinks.map((link) => (
             <a
@@ -133,52 +114,27 @@ const Navigation = () => {
               href={link.href}
               className="text-[12px] uppercase tracking-[0.08em] hover-target"
               style={{ color: "rgba(255,255,255,0.65)" }}
-              onClick={(e) => {
-                e.preventDefault();
-                scrollTo(link.href);
-              }}
+              onClick={(e) => { e.preventDefault(); scrollTo(link.href); }}
             >
               <LinkText>{link.label}</LinkText>
             </a>
           ))}
         </div>
 
-        {/* Hamburger */}
-        <button
-          className="md:hidden flex flex-col gap-[4px] p-2"
-          onClick={openMobile}
-          aria-label="Open menu"
-        >
+        <button className="md:hidden flex flex-col gap-[4px] p-2" onClick={openMobile} aria-label="Open menu">
           <span className="block w-4 h-[1.5px] bg-white" />
           <span className="block w-4 h-[1.5px] bg-white" />
           <span className="block w-4 h-[1.5px] bg-white" />
         </button>
       </nav>
 
-      {/* Mobile Menu */}
       {mobileOpen && (
-        <div
-          className="fixed inset-0 z-[999] flex flex-col items-center justify-center"
-          style={{ background: "#080808" }}
-        >
-          <button
-            className="absolute top-6 right-6 text-white text-3xl transition-transform duration-300 hover:rotate-90"
-            onClick={closeMobile}
-            aria-label="Close menu"
-          >
-            ✕
-          </button>
+        <div className="fixed inset-0 z-[999] flex flex-col items-center justify-center" style={{ background: "#080808" }}>
+          <button className="absolute top-6 right-6 text-white text-3xl transition-transform duration-300 hover:rotate-90" onClick={closeMobile} aria-label="Close menu">✕</button>
           <ul ref={mobileLinksRef} className="flex flex-col gap-6 text-center">
             {navLinks.map((link) => (
               <li key={link.label}>
-                <a
-                  href={link.href}
-                  className="text-[48px] font-light text-white hover-target"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    scrollTo(link.href);
-                  }}
-                >
+                <a href={link.href} className="text-[48px] font-light text-white hover-target" onClick={(e) => { e.preventDefault(); scrollTo(link.href); }}>
                   <LinkText>{link.label}</LinkText>
                 </a>
               </li>
