@@ -11,18 +11,49 @@ const navLinks = [
   { label: "Clients", href: "#clients" },
   { label: "Team", href: "#team" },
   { label: "Insights", href: "#insights" },
+  { label: "Contact", href: "#contact" },
 ];
 
 const Navigation = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
   const mobileLinksRef = useRef<HTMLUListElement>(null);
+  const lastScrollY = useRef(0);
+  const navVisible = useRef(true);
 
   useEffect(() => {
+    const nav = navRef.current;
+    if (!nav) return;
+
+    // Show/hide on scroll direction
     ScrollTrigger.create({
-      start: "top -72",
-      onEnter: () => navRef.current?.classList.add("scrolled"),
-      onLeaveBack: () => navRef.current?.classList.remove("scrolled"),
+      start: "top top",
+      end: "max",
+      onUpdate: (self) => {
+        const scrollY = self.scroll();
+        const direction = scrollY > lastScrollY.current ? "down" : "up";
+        lastScrollY.current = scrollY;
+
+        if (scrollY < 100) {
+          // At top, always show
+          if (!navVisible.current) {
+            gsap.to(nav, { y: 0, duration: 0.4, ease: "power3.out" });
+            navVisible.current = true;
+          }
+          nav.classList.remove("nav-scrolled");
+          return;
+        }
+
+        nav.classList.add("nav-scrolled");
+
+        if (direction === "down" && navVisible.current) {
+          gsap.to(nav, { y: -100, duration: 0.4, ease: "power3.out" });
+          navVisible.current = false;
+        } else if (direction === "up" && !navVisible.current) {
+          gsap.to(nav, { y: 0, duration: 0.4, ease: "power3.out" });
+          navVisible.current = true;
+        }
+      },
     });
   }, []);
 
@@ -70,36 +101,37 @@ const Navigation = () => {
     <>
       <nav
         ref={navRef}
-        className="fixed top-0 left-0 right-0 z-[1000] flex items-center justify-between px-6 md:px-12 h-[72px] transition-all duration-300"
+        className="fixed top-4 left-1/2 -translate-x-1/2 z-[1000] flex items-center gap-8 px-8 h-[52px] transition-colors duration-300"
         style={{
-          background: "transparent",
-          borderBottom: "1px solid transparent",
+          background: "rgba(8, 8, 8, 0.85)",
+          backdropFilter: "blur(18px) saturate(180%)",
+          WebkitBackdropFilter: "blur(18px) saturate(180%)",
+          border: "1px solid rgba(255,255,255,0.08)",
+          borderRadius: "4px",
         }}
       >
         <style>{`
-          nav.scrolled {
-            background: rgba(8, 8, 8, 0.88) !important;
-            backdrop-filter: blur(18px) saturate(180%);
-            -webkit-backdrop-filter: blur(18px) saturate(180%);
-            border-bottom-color: rgba(255,255,255,0.06) !important;
+          nav.nav-scrolled {
+            background: rgba(8, 8, 8, 0.92) !important;
+            border-color: rgba(255,255,255,0.1) !important;
           }
         `}</style>
 
-        <a href="#" className="flex items-center">
+        <a href="#" className="flex items-center mr-4">
           <img
             src="/kozai-logo-white.svg"
             alt="Kozai"
-            className="h-6 md:h-7 w-auto"
+            className="h-5 w-auto"
           />
         </a>
 
         {/* Desktop Links */}
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden md:flex items-center gap-6">
           {navLinks.map((link) => (
             <a
               key={link.label}
               href={link.href}
-              className="text-[13px] tracking-[0.02em] hover-target"
+              className="text-[12px] uppercase tracking-[0.08em] hover-target"
               style={{ color: "rgba(255,255,255,0.65)" }}
               onClick={(e) => {
                 e.preventDefault();
@@ -109,39 +141,17 @@ const Navigation = () => {
               <LinkText>{link.label}</LinkText>
             </a>
           ))}
-          <a
-            href="#contact"
-            className="text-[13px] tracking-[0.02em] px-5 py-2 hover-target"
-            style={{
-              border: "1px solid rgba(255,255,255,0.2)",
-              color: "rgba(255,255,255,0.85)",
-              borderRadius: "2px",
-              transition: "border-color 0.2s",
-            }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.borderColor = "#C8A96E")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)")
-            }
-            onClick={(e) => {
-              e.preventDefault();
-              scrollTo("#contact");
-            }}
-          >
-            <LinkText>Contact →</LinkText>
-          </a>
         </div>
 
         {/* Hamburger */}
         <button
-          className="md:hidden flex flex-col gap-[5px] p-2"
+          className="md:hidden flex flex-col gap-[4px] p-2"
           onClick={openMobile}
           aria-label="Open menu"
         >
-          <span className="block w-5 h-[1.5px] bg-white" />
-          <span className="block w-5 h-[1.5px] bg-white" />
-          <span className="block w-5 h-[1.5px] bg-white" />
+          <span className="block w-4 h-[1.5px] bg-white" />
+          <span className="block w-4 h-[1.5px] bg-white" />
+          <span className="block w-4 h-[1.5px] bg-white" />
         </button>
       </nav>
 
@@ -159,22 +169,20 @@ const Navigation = () => {
             ✕
           </button>
           <ul ref={mobileLinksRef} className="flex flex-col gap-6 text-center">
-            {[...navLinks, { label: "Contact", href: "#contact" }].map(
-              (link) => (
-                <li key={link.label}>
-                  <a
-                    href={link.href}
-                    className="text-[48px] font-light text-white hover-target"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      scrollTo(link.href);
-                    }}
-                  >
-                    <LinkText>{link.label}</LinkText>
-                  </a>
-                </li>
-              )
-            )}
+            {navLinks.map((link) => (
+              <li key={link.label}>
+                <a
+                  href={link.href}
+                  className="text-[48px] font-light text-white hover-target"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    scrollTo(link.href);
+                  }}
+                >
+                  <LinkText>{link.label}</LinkText>
+                </a>
+              </li>
+            ))}
           </ul>
         </div>
       )}
