@@ -30,7 +30,7 @@ const DotBackground = () => {
           const alpha = Math.max(0, 0.18 - (dist / maxDist) * 0.15);
 
           ctx.beginPath();
-          ctx.arc(x, y, 1.2, 0, Math.PI * 2);
+          ctx.arc(x, y, 1.8, 0, Math.PI * 2);
           ctx.fillStyle = `rgba(60, 56, 50, ${alpha})`;
           ctx.fill();
         }

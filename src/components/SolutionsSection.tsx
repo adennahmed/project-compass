@@ -8,32 +8,32 @@ gsap.registerPlugin(ScrollTrigger);
 const solutions = [
   {
     num: "01 / 04",
-    title: "Revenue\nTechnology",
-    body: "CRM architecture, sales automation, pipeline visibility platforms, and customer journey infrastructure. Built so your team closes more, retains more, and operates with commercial precision from day one.",
+    title: "REVENUE\nTECHNOLOGY",
+    body: "CRM ARCHITECTURE, SALES AUTOMATION, AND PIPELINE INFRASTRUCTURE ENGINEERED TO CLOSE MORE AND SCALE FASTER.",
     color: "#1a1a1a",
     textColor: "#ffffff",
     accentColor: "#C8A96E",
   },
   {
     num: "02 / 04",
-    title: "Operational\nInfrastructure",
-    body: "Workflow automation, system integration, reporting platforms, and process modernization. We eliminate the operational friction that bleeds margin, slows decision-making, and stalls your growth trajectory.",
+    title: "OPERATIONAL\nINFRASTRUCTURE",
+    body: "WORKFLOW AUTOMATION, SYSTEM INTEGRATION, AND PROCESS MODERNIZATION. WE ELIMINATE THE FRICTION THAT STALLS GROWTH.",
     color: "#7BA3A8",
     textColor: "#1a1a1a",
     accentColor: "#1a1a1a",
   },
   {
     num: "03 / 04",
-    title: "Digital\nTransformation",
-    body: "Legacy system migration, full-stack modernization, platform consolidation, and technology roadmapping. We rebuild the operating foundation your next stage of growth demands.",
-    color: "#C8A96E",
+    title: "DIGITAL\nTRANSFORMATION",
+    body: "LEGACY MIGRATION, FULL-STACK MODERNIZATION, AND PLATFORM CONSOLIDATION FOR YOUR NEXT STAGE.",
+    color: "#D4764E",
     textColor: "#1a1a1a",
     accentColor: "#1a1a1a",
   },
   {
     num: "04 / 04",
-    title: "Data &\nIntelligence",
-    body: "Business intelligence dashboards, reporting architecture, KPI frameworks, and decision-support systems. We turn data into a leadership tool that drives clarity and faster execution.",
+    title: "DATA &\nINTELLIGENCE",
+    body: "BI DASHBOARDS, KPI FRAMEWORKS, AND DECISION-SUPPORT SYSTEMS THAT DRIVE CLARITY AND FASTER EXECUTION.",
     color: "#EEEAE4",
     textColor: "#1a1a1a",
     accentColor: "#444444",
@@ -133,102 +133,106 @@ const SolutionsSection = () => {
 
         {/* Cards deck */}
         <div
-          className="flex overflow-x-auto gap-0 px-0 snap-x snap-mandatory scrollbar-hide"
+          className="flex gap-3 px-6 md:px-12"
           style={{ scrollbarWidth: "none" }}
         >
           {solutions.map((s, i) => (
             <div
               key={i}
-              className="flex-shrink-0 snap-start relative flex flex-col justify-between cursor-pointer overflow-hidden"
+              className="relative flex flex-col justify-between cursor-pointer overflow-hidden"
               style={{
-                width: expandedIndex === i ? "50vw" : expandedIndex !== null ? "16.67vw" : "25vw",
-                minWidth: expandedIndex === i ? "500px" : expandedIndex !== null ? "140px" : "200px",
+                width: expandedIndex === i ? "50%" : expandedIndex !== null ? "16.67%" : "25%",
+                minWidth: expandedIndex === i ? "420px" : expandedIndex !== null ? "120px" : "180px",
                 height: "640px",
                 background: s.color,
                 transition: "width 0.6s cubic-bezier(0.76, 0, 0.24, 1), min-width 0.6s cubic-bezier(0.76, 0, 0.24, 1)",
-                padding: "40px",
-                borderRadius: "4px",
+                padding: "40px 32px",
+                borderRadius: "12px",
+                flexShrink: 0,
               }}
               onMouseEnter={() => setExpandedIndex(i)}
               onMouseLeave={() => setExpandedIndex(null)}
             >
               <h3
-                className="text-[24px] md:text-[32px] font-bold uppercase leading-[1.1] whitespace-pre-line transition-opacity duration-300"
+                className="text-[22px] md:text-[28px] font-bold uppercase leading-[1.15] whitespace-pre-line text-center transition-opacity duration-300"
                 style={{ color: s.textColor }}
               >
                 {s.title}
               </h3>
 
               <div
-                className="flex-1 flex items-center justify-center transition-opacity duration-500"
-                style={{ opacity: expandedIndex === i ? 1 : 0.6 }}
+                className="flex-1 flex items-center justify-center transition-all duration-500"
+                style={{ opacity: expandedIndex === i ? 1 : 0.5 }}
               >
                 <svg
-                  width="180"
-                  height="180"
+                  width="240"
+                  height="240"
                   viewBox="0 0 200 200"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
-                  style={{ opacity: 0.3 }}
+                  style={{ opacity: 0.5 }}
                 >
                   {i === 0 && (
                     <>
-                      {Array.from({ length: 12 }).map((_, j) => (
-                        <line key={j} x1="100" y1="20" x2={100 + Math.cos((j * 30 * Math.PI) / 180) * 80} y2={100 + Math.sin((j * 30 * Math.PI) / 180) * 80} stroke={s.textColor} strokeWidth="0.5" strokeDasharray="2 3" />
-                      ))}
+                      {Array.from({ length: 16 }).map((_, j) => {
+                        const angle = (j * 22.5 * Math.PI) / 180;
+                        return (
+                          <g key={j}>
+                            {Array.from({ length: 8 }).map((_, k) => {
+                              const r = 15 + k * 10;
+                              return (
+                                <circle key={k} cx={100 + Math.cos(angle) * r} cy={100 + Math.sin(angle) * r} r="1.5" fill={s.textColor} opacity={0.6 - k * 0.05} />
+                              );
+                            })}
+                          </g>
+                        );
+                      })}
                     </>
                   )}
                   {i === 1 && (
                     <>
-                      {Array.from({ length: 20 }).map((_, j) => (
-                        <path key={j} d={`M ${60 + j * 4} 180 Q ${60 + j * 4} ${100 - Math.sin((j / 19) * Math.PI) * 80} ${60 + j * 4} 20`} stroke={s.textColor} strokeWidth="0.5" fill="none" />
-                      ))}
+                      {Array.from({ length: 30 }).map((_, j) => {
+                        const t = j / 29;
+                        const spread = Math.sin(t * Math.PI) * 70;
+                        return (
+                          <path key={j} d={`M ${100 - spread} ${30 + j * 5} Q 100 ${30 + j * 5 - spread * 0.3} ${100 + spread} ${30 + j * 5}`} stroke={s.textColor} strokeWidth="0.8" fill="none" opacity={0.5} />
+                        );
+                      })}
                     </>
                   )}
                   {i === 2 && (
                     <>
-                      {Array.from({ length: 8 }).map((_, j) => {
-                        const angle = (j / 8) * Math.PI * 2;
-                        const cx = 100 + Math.cos(angle) * 60;
-                        const cy = 100 + Math.sin(angle) * 60;
+                      {Array.from({ length: 24 }).map((_, j) => {
+                        const angle = (j / 24) * Math.PI * 2;
+                        const r = 75;
                         return (
-                          <g key={j}>
-                            <circle cx={cx} cy={cy} r="4" stroke={s.textColor} strokeWidth="0.5" fill="none" />
-                            <line x1="100" y1="100" x2={cx} y2={cy} stroke={s.textColor} strokeWidth="0.3" strokeDasharray="2 2" />
-                            {j < 7 && (
-                              <line
-                                x1={cx} y1={cy}
-                                x2={100 + Math.cos(((j + 1) / 8) * Math.PI * 2) * 60}
-                                y2={100 + Math.sin(((j + 1) / 8) * Math.PI * 2) * 60}
-                                stroke={s.textColor} strokeWidth="0.3"
-                              />
-                            )}
-                          </g>
+                          <line key={j} x1="100" y1="100" x2={100 + Math.cos(angle) * r} y2={100 + Math.sin(angle) * r} stroke={s.textColor} strokeWidth="0.6" opacity={0.5} />
                         );
                       })}
-                      <circle cx="100" cy="100" r="6" stroke={s.textColor} strokeWidth="0.5" fill="none" />
-                      <circle cx="100" cy="100" r="60" stroke={s.textColor} strokeWidth="0.3" fill="none" strokeDasharray="3 4" />
+                      {[20, 40, 60, 80].map((r) => (
+                        <circle key={r} cx="100" cy="100" r={r} stroke={s.textColor} strokeWidth="0.4" fill="none" opacity={0.3} strokeDasharray="2 3" />
+                      ))}
                     </>
                   )}
                   {i === 3 && (
                     <>
-                      {Array.from({ length: 8 }).map((_, j) => (
-                        <ellipse key={j} cx="100" cy="100" rx={20 + j * 10} ry={60 + j * 5} stroke={s.textColor} strokeWidth="0.5" fill="none" transform={`rotate(${j * 22.5} 100 100)`} />
+                      {Array.from({ length: 12 }).map((_, j) => (
+                        <ellipse key={j} cx="100" cy="100" rx={15 + j * 7} ry={50 + j * 4} stroke={s.textColor} strokeWidth="0.6" fill="none" transform={`rotate(${j * 15} 100 100)`} opacity={0.45} />
                       ))}
                     </>
                   )}
                 </svg>
               </div>
 
-              <div>
-                <div className="text-[12px] uppercase tracking-[0.12em] mb-4" style={{ color: s.accentColor, opacity: 0.6 }}>
+              <div className="text-center">
+                <div className="text-[11px] uppercase tracking-[0.15em] mb-3" style={{ color: s.accentColor, opacity: 0.7 }}>
                   {s.num}
                 </div>
                 <p
-                  className="text-[12px] uppercase tracking-[0.06em] leading-[1.6] transition-all duration-500"
+                  className="text-[10px] md:text-[11px] uppercase tracking-[0.08em] leading-[1.7] transition-all duration-500 whitespace-normal"
                   style={{
                     color: s.textColor,
-                    opacity: expandedIndex === i ? 0.7 : 0,
+                    opacity: expandedIndex === i ? 0.75 : 0,
                     maxHeight: expandedIndex === i ? "200px" : "0px",
                     overflow: "hidden",
                   }}
