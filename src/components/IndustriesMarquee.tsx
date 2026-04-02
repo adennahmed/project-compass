@@ -15,58 +15,6 @@ const industries = [
   { name: "FINANCIAL TECHNOLOGY", desc: "Payment systems, investment platforms, and financial data infrastructure built for precision." },
 ];
 
-// Dot background canvas
-const DotBackground = () => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const resize = () => {
-      const dpr = window.devicePixelRatio || 1;
-      const w = canvas.parentElement?.offsetWidth || window.innerWidth;
-      const h = canvas.parentElement?.offsetHeight || window.innerHeight;
-      canvas.width = w * dpr;
-      canvas.height = h * dpr;
-      canvas.style.width = `${w}px`;
-      canvas.style.height = `${h}px`;
-      ctx.scale(dpr, dpr);
-
-      ctx.clearRect(0, 0, w, h);
-      const spacing = 28;
-      for (let x = spacing; x < w; x += spacing) {
-        for (let y = spacing; y < h; y += spacing) {
-          // Radial fade from center
-          const dx = x - w / 2;
-          const dy = y - h / 2;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          const maxDist = Math.sqrt((w / 2) ** 2 + (h / 2) ** 2);
-          const alpha = Math.max(0, 0.18 - (dist / maxDist) * 0.15);
-          
-          ctx.beginPath();
-          ctx.arc(x, y, 1.2, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(60, 56, 50, ${alpha})`;
-          ctx.fill();
-        }
-      }
-    };
-
-    resize();
-    window.addEventListener("resize", resize);
-    return () => window.removeEventListener("resize", resize);
-  }, []);
-
-  return (
-    <canvas
-      ref={canvasRef}
-      style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 0 }}
-    />
-  );
-};
-
 const IndustriesMarquee = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const itemsContainerRef = useRef<HTMLDivElement>(null);
@@ -85,7 +33,7 @@ const IndustriesMarquee = () => {
     });
   }, []);
 
-  // Animate bracket to hovered item
+  // Animate bracket to hovered item — wrap name + description
   useEffect(() => {
     const bracket = bracketRef.current;
     if (!bracket) return;
@@ -102,10 +50,12 @@ const IndustriesMarquee = () => {
     const containerRect = container.getBoundingClientRect();
     const itemRect = item.getBoundingClientRect();
 
-    const top = itemRect.top - containerRect.top - 12;
-    const left = itemRect.left - containerRect.left - 16;
-    const width = itemRect.width + 32;
-    const height = itemRect.height + 24;
+    const padX = 24;
+    const padY = 16;
+    const top = itemRect.top - containerRect.top - padY;
+    const left = itemRect.left - containerRect.left - padX;
+    const width = itemRect.width + padX * 2;
+    const height = itemRect.height + padY * 2;
 
     gsap.to(bracket, {
       top, left, width, height,
@@ -119,10 +69,8 @@ const IndustriesMarquee = () => {
     <section
       ref={sectionRef}
       className="relative py-24 md:py-36 overflow-hidden"
-      style={{ background: "#EEEAE4" }}
+      style={{ background: "transparent" }}
     >
-      <DotBackground />
-
       <div className="relative z-10">
         <div
           className="industries-title text-[11px] uppercase tracking-[0.18em] text-center mb-16"
@@ -138,17 +86,17 @@ const IndustriesMarquee = () => {
             className="absolute pointer-events-none"
             style={{ opacity: 0, zIndex: 5 }}
           >
-            <span className="absolute top-0 left-0 w-4 h-4 border-t border-l" style={{ borderColor: "rgba(30,30,30,0.35)" }} />
-            <span className="absolute top-0 right-0 w-4 h-4 border-t border-r" style={{ borderColor: "rgba(30,30,30,0.35)" }} />
-            <span className="absolute bottom-0 left-0 w-4 h-4 border-b border-l" style={{ borderColor: "rgba(30,30,30,0.35)" }} />
-            <span className="absolute bottom-0 right-0 w-4 h-4 border-b border-r" style={{ borderColor: "rgba(30,30,30,0.35)" }} />
+            <span className="absolute top-0 left-0 w-5 h-5 border-t-2 border-l-2" style={{ borderColor: "rgba(30,30,30,0.3)" }} />
+            <span className="absolute top-0 right-0 w-5 h-5 border-t-2 border-r-2" style={{ borderColor: "rgba(30,30,30,0.3)" }} />
+            <span className="absolute bottom-0 left-0 w-5 h-5 border-b-2 border-l-2" style={{ borderColor: "rgba(30,30,30,0.3)" }} />
+            <span className="absolute bottom-0 right-0 w-5 h-5 border-b-2 border-r-2" style={{ borderColor: "rgba(30,30,30,0.3)" }} />
           </div>
 
           {industries.map((industry, i) => (
             <div
               key={i}
               ref={(el) => setItemRef(el, i)}
-              className="relative text-center cursor-pointer py-1"
+              className="relative text-center cursor-pointer py-2"
               onMouseEnter={() => setHoveredIndex(i)}
               onMouseLeave={() => setHoveredIndex(null)}
             >
