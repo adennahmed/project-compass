@@ -132,10 +132,10 @@ const HeroSection = ({ animate }: HeroSectionProps) => {
 
     const tl = gsap.timeline();
 
-    // Initial states - text starts centered (combined)
-    gsap.set(".hero-left-text", { opacity: 0 });
-    gsap.set(".hero-right-text", { opacity: 0 });
-    gsap.set(".hero-combined-text", { opacity: 0, scale: 0.97 });
+    // Initial states - both halves start at center (x: 0), opacity hidden
+    gsap.set(".hero-split-container", { opacity: 0 });
+    gsap.set(".hero-half-left", { x: 0 });
+    gsap.set(".hero-half-right", { x: 0 });
     gsap.set(".hero-sphere", { opacity: 0, scale: 0.9 });
     gsap.set(".scroll-indicator", { opacity: 0 });
     gsap.set(".hero-bottom-left", { opacity: 0 });
@@ -144,15 +144,13 @@ const HeroSection = ({ animate }: HeroSectionProps) => {
 
     // 1. Fade in sphere
     tl.to(".hero-sphere", { opacity: 1, scale: 1, duration: 1.2, ease: "power2.out" })
-      // 2. Show combined centered text
-      .to(".hero-combined-text", { opacity: 1, scale: 1, duration: 0.6, ease: "power2.out" }, "-=0.5")
-      // 3. Hold for a beat, then split
-      .to(".hero-combined-text", { opacity: 0, duration: 0.3, ease: "power2.in" }, "+=0.4")
-      // 4. Show split text
-      .to(".hero-left-text", { opacity: 1, duration: 0.5, ease: "power2.out" }, "-=0.1")
-      .to(".hero-right-text", { opacity: 1, duration: 0.5, ease: "power2.out" }, "-=0.4")
-      // 5. Bottom elements
-      .to(".hero-bottom-left", { opacity: 1, duration: 0.5 }, "-=0.2")
+      // 2. Show text combined in center
+      .to(".hero-split-container", { opacity: 1, duration: 0.5, ease: "power2.out" }, "-=0.5")
+      // 3. Hold briefly, then split apart in one smooth motion
+      .to(".hero-half-left", { x: "-32vw", duration: 1, ease: "power3.inOut" }, "+=0.5")
+      .to(".hero-half-right", { x: "32vw", duration: 1, ease: "power3.inOut" }, "<")
+      // 4. Bottom elements
+      .to(".hero-bottom-left", { opacity: 1, duration: 0.5 }, "-=0.3")
       .to(".hero-bottom-right", { opacity: 1, duration: 0.5 }, "-=0.4")
       .to(".hero-logo-watermark", { opacity: 1, duration: 0.5 }, "-=0.4")
       .to(".scroll-indicator", { opacity: 1, duration: 0.5 }, "-=0.3");
@@ -168,42 +166,26 @@ const HeroSection = ({ animate }: HeroSectionProps) => {
         <ParticleSphere />
       </div>
 
-      {/* Combined centered text (visible first, then fades out) */}
-      <div className="hero-combined-text absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-        <h1
-          className="text-[28px] md:text-[44px] lg:text-[56px] font-bold uppercase leading-[1.15] tracking-[0.06em] text-center"
-          style={{ fontFamily: "'Inter', sans-serif", color: "rgba(255,255,255,0.85)", letterSpacing: "0.08em" }}
-        >
-          BUILDING THE SYSTEMS
-          <br />
-          THAT DRIVE GROWTH
-        </h1>
-      </div>
-
-      {/* Split headline */}
-      <div className="relative z-10 w-full max-w-[1400px] mx-auto flex items-center justify-between min-h-[60vh]">
-        <div className="hero-left-text max-w-[400px]">
+      {/* Split headline - starts together, slides apart */}
+      <div className="hero-split-container relative z-10 flex items-center justify-center gap-0 min-h-[60vh]">
+        <div className="hero-half-left">
           <h1
-            className="text-[36px] md:text-[56px] lg:text-[72px] font-bold uppercase leading-[0.95] tracking-[-0.02em]"
+            className="text-[28px] md:text-[44px] lg:text-[56px] font-bold uppercase leading-[0.95] tracking-[0.02em] text-right whitespace-nowrap"
             style={{ fontFamily: "'Inter', sans-serif" }}
           >
-            BUILDING
-            <br />
-            THE
+            BUILDING THE
             <br />
             SYSTEMS
-            <br />
-            THAT
           </h1>
         </div>
-        <div className="hero-right-text max-w-[500px] text-right">
+        <div className="hero-half-right">
           <h1
-            className="text-[36px] md:text-[56px] lg:text-[72px] font-bold uppercase leading-[0.95] tracking-[-0.02em]"
+            className="text-[28px] md:text-[44px] lg:text-[56px] font-bold uppercase leading-[0.95] tracking-[0.02em] text-left whitespace-nowrap"
             style={{ fontFamily: "'Inter', sans-serif" }}
           >
-            DRIVE
+            THAT
             <br />
-            GROWTH.
+            DRIVE GROWTH.
           </h1>
         </div>
       </div>
