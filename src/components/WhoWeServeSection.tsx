@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -42,6 +42,7 @@ const segments = [
 
 const WhoWeServeSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -50,16 +51,16 @@ const WhoWeServeSection = () => {
         opacity: 0,
         duration: 1,
         ease: "power3.out",
-        scrollTrigger: { trigger: ".serve-headline", start: "top 82%" },
+        scrollTrigger: { trigger: ".serve-headline", start: "top 85%" },
       });
 
-      gsap.from(".segment-panel", {
+      gsap.from(".serve-card", {
         y: 50,
         opacity: 0,
-        stagger: 0.12,
+        stagger: 0.15,
         duration: 0.9,
         ease: "power3.out",
-        scrollTrigger: { trigger: ".segment-panel", start: "top 80%" },
+        scrollTrigger: { trigger: ".serve-cards", start: "top 82%" },
       });
     }, sectionRef);
 
@@ -70,70 +71,66 @@ const WhoWeServeSection = () => {
     <section ref={sectionRef} className="py-32 md:py-40 px-6 md:px-12 max-w-[1200px] mx-auto">
       <div
         className="text-[11px] uppercase tracking-[0.18em] mb-6"
-        style={{ color: "#444444" }}
+        style={{ color: "#C8A96E" }}
       >
         WHO WE SERVE
       </div>
-      <h2 className="serve-headline text-[36px] md:text-[48px] font-light leading-[1.1] mb-16 max-w-[700px]">
+      <h2 className="serve-headline text-[36px] md:text-[48px] font-light leading-[1.1] mb-20 max-w-[700px]">
         One Operating Standard. Three Stages of Growth.
       </h2>
 
-      <div className="grid md:grid-cols-3 gap-6">
-        {segments.map((seg) => (
-          <div
-            key={seg.num}
-            className="segment-panel p-8 transition-all duration-300"
-            style={{
-              border: "1px solid rgba(255,255,255,0.07)",
-              borderRadius: "3px",
-            }}
-            onMouseEnter={(e) => {
-              gsap.to(e.currentTarget, {
-                backgroundColor: "#111111",
-                borderColor: "rgba(255,255,255,0.16)",
-                y: -4,
-                duration: 0.3,
-              });
-            }}
-            onMouseLeave={(e) => {
-              gsap.to(e.currentTarget, {
-                backgroundColor: "transparent",
-                borderColor: "rgba(255,255,255,0.07)",
-                y: 0,
-                duration: 0.3,
-              });
-            }}
-          >
-            <span
-              className="text-[13px] block mb-4"
-              style={{ color: "#444444" }}
+      <div className="serve-cards grid md:grid-cols-3 gap-6">
+        {segments.map((seg, i) => {
+          const isHovered = hoveredIndex === i;
+          const hasHover = hoveredIndex !== null;
+
+          return (
+            <div
+              key={seg.num}
+              className="serve-card relative p-8 md:p-10 flex flex-col cursor-default"
+              style={{
+                border: `1px solid ${isHovered ? "rgba(255,255,255,0.18)" : "rgba(255,255,255,0.07)"}`,
+                borderRadius: "2px",
+                background: isHovered ? "#111111" : "transparent",
+                transform: isHovered ? "translateY(-6px)" : "translateY(0)",
+                opacity: hasHover && !isHovered ? 0.5 : 1,
+                transition: "all 0.4s cubic-bezier(0.76, 0, 0.24, 1)",
+                minHeight: "380px",
+              }}
+              onMouseEnter={() => setHoveredIndex(i)}
+              onMouseLeave={() => setHoveredIndex(null)}
             >
-              {seg.num}
-            </span>
-            <h3 className="text-[24px] font-medium mb-1">{seg.title}</h3>
-            <p className="text-[14px] mb-6" style={{ color: "#C8A96E" }}>
-              {seg.subtitle}
-            </p>
-            <p
-              className="text-[15px] leading-[1.75] mb-6"
-              style={{ color: "#888888" }}
-            >
-              {seg.body}
-            </p>
-            <ul className="space-y-2">
-              {seg.items.map((item, i) => (
-                <li
-                  key={i}
-                  className="text-[14px] flex items-start gap-2"
-                  style={{ color: "rgba(255,255,255,0.65)" }}
-                >
-                  <span style={{ color: "#C8A96E" }}>—</span>
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
+              <span
+                className="text-[13px] block mb-5"
+                style={{ color: "#444444" }}
+              >
+                {seg.num}
+              </span>
+              <h3 className="text-[24px] font-medium mb-1">{seg.title}</h3>
+              <p className="text-[14px] mb-6" style={{ color: "#C8A96E" }}>
+                {seg.subtitle}
+              </p>
+              <p
+                className="text-[15px] leading-[1.75] mb-6"
+                style={{ color: "#888888" }}
+              >
+                {seg.body}
+              </p>
+              <ul className="space-y-2 mt-auto">
+                {seg.items.map((item, j) => (
+                  <li
+                    key={j}
+                    className="text-[14px] flex items-start gap-2"
+                    style={{ color: "rgba(255,255,255,0.65)" }}
+                  >
+                    <span style={{ color: "#C8A96E" }}>—</span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          );
+        })}
       </div>
     </section>
   );

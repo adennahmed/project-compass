@@ -10,7 +10,6 @@ import WhoWeServeSection from "@/components/WhoWeServeSection";
 import ClientsSection from "@/components/ClientsSection";
 import WhyKozaiSection from "@/components/WhyKozaiSection";
 import TeamSection from "@/components/TeamSection";
-import AudienceCTASection from "@/components/AudienceCTASection";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 
@@ -35,7 +34,6 @@ const Index = () => {
         <ClientsSection />
         <WhyKozaiSection />
         <TeamSection />
-        <AudienceCTASection />
         <ContactSection />
       </main>
       <Footer />

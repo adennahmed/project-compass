@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 
 interface PreloaderProps {
@@ -7,6 +7,8 @@ interface PreloaderProps {
 
 const Preloader = ({ onComplete }: PreloaderProps) => {
   const preloaderRef = useRef<HTMLDivElement>(null);
+  const [percent, setPercent] = useState(0);
+  const percentRef = useRef({ value: 0 });
 
   useEffect(() => {
     const el = preloaderRef.current;
@@ -14,9 +16,31 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
 
     document.body.style.overflow = "hidden";
 
-    gsap.set("#preloader-logo", { scale: 0.92, opacity: 0 });
+    // Animate percentage from 0 to 100
+    gsap.to(percentRef.current, {
+      value: 100,
+      duration: 2.8,
+      ease: "power2.inOut",
+      onUpdate: () => {
+        const v = Math.round(percentRef.current.value);
+        setPercent(v);
+      },
+    });
 
+    // Logo clip-path fill: starts fully clipped (invisible white), reveals top-to-bottom
+    gsap.fromTo(
+      "#preloader-logo-white",
+      { clipPath: "inset(100% 0 0 0)" },
+      {
+        clipPath: "inset(0% 0 0 0)",
+        duration: 2.8,
+        ease: "power2.inOut",
+      }
+    );
+
+    // After fill completes, hold, then split panels
     const tl = gsap.timeline({
+      delay: 3.2,
       onComplete: () => {
         el.remove();
         document.body.style.overflow = "";
@@ -24,13 +48,12 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
       },
     });
 
-    tl.to("#preloader-logo", {
-      opacity: 1,
-      scale: 1,
-      duration: 0.85,
-      ease: "power3.out",
+    tl.to("#preloader-content", {
+      opacity: 0,
+      scale: 0.95,
+      duration: 0.35,
+      ease: "power2.in",
     })
-      .to({}, { duration: 0.55 })
       .to(
         "#preloader-panel-top",
         { yPercent: -100, duration: 0.75, ease: "power4.inOut" },
@@ -39,11 +62,6 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
       .to(
         "#preloader-panel-bottom",
         { yPercent: 100, duration: 0.75, ease: "power4.inOut" },
-        "reveal"
-      )
-      .to(
-        "#preloader-logo",
-        { opacity: 0, duration: 0.3, ease: "power2.in" },
         "reveal"
       );
   }, [onComplete]);
@@ -83,21 +101,62 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
         }}
       />
       <div
+        id="preloader-content"
         style={{
           position: "absolute",
           inset: 0,
           display: "flex",
+          flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
           zIndex: 2,
+          gap: "32px",
         }}
       >
-        <img
-          id="preloader-logo"
-          src="/kozai-logo-white.svg"
-          alt="Kozai"
-          style={{ width: "180px", height: "auto" }}
-        />
+        {/* Logo container with layered dark/white versions */}
+        <div style={{ position: "relative", width: "180px", height: "48px" }}>
+          {/* Dark version (always visible underneath) */}
+          <img
+            src="/kozai-logo-white.svg"
+            alt=""
+            style={{
+              width: "180px",
+              height: "auto",
+              position: "absolute",
+              top: 0,
+              left: 0,
+              opacity: 0.15,
+              filter: "brightness(0.3)",
+            }}
+          />
+          {/* White version clipped to reveal progressively */}
+          <img
+            id="preloader-logo-white"
+            src="/kozai-logo-white.svg"
+            alt="Kozai"
+            style={{
+              width: "180px",
+              height: "auto",
+              position: "absolute",
+              top: 0,
+              left: 0,
+              clipPath: "inset(100% 0 0 0)",
+            }}
+          />
+        </div>
+
+        {/* Percentage */}
+        <div
+          style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: "13px",
+            fontWeight: 300,
+            letterSpacing: "0.2em",
+            color: "rgba(255,255,255,0.35)",
+          }}
+        >
+          {String(percent).padStart(3, "0")}
+        </div>
       </div>
     </div>
   );
