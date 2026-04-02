@@ -96,13 +96,14 @@ const IndustriesMarquee = () => {
     }
 
     const item = itemRefs.current[hoveredIndex];
-    if (!item || !sectionRef.current) return;
+    const container = itemsContainerRef.current;
+    if (!item || !container) return;
 
-    const sectionRect = sectionRef.current.getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
     const itemRect = item.getBoundingClientRect();
 
-    const top = itemRect.top - sectionRect.top - 12;
-    const left = itemRect.left - sectionRect.left - 16;
+    const top = itemRect.top - containerRect.top - 12;
+    const left = itemRect.left - containerRect.left - 16;
     const width = itemRect.width + 32;
     const height = itemRect.height + 24;
 
