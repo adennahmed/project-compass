@@ -29,7 +29,7 @@ const OurFocusSection = () => {
     <section
       ref={sectionRef}
       className="relative py-32 md:py-48 overflow-hidden"
-      style={{ background: "#EEEAE4" }}
+      style={{ background: "transparent" }}
     >
       {/* No dot background here — shared from IndustriesMarquee wrapper */}
       <div className="relative z-10 flex flex-col items-center text-center px-6">
