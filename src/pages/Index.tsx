@@ -4,8 +4,8 @@ import CustomCursor from "@/components/CustomCursor";
 import Navigation from "@/components/Navigation";
 import HeroSection from "@/components/HeroSection";
 import PositioningSection from "@/components/PositioningSection";
-import IndustriesMarquee from "@/components/IndustriesMarquee";
 import SolutionsSection from "@/components/SolutionsSection";
+import IndustriesMarquee from "@/components/IndustriesMarquee";
 import WhoWeServeSection from "@/components/WhoWeServeSection";
 import ClientsSection from "@/components/ClientsSection";
 import WhyKozaiSection from "@/components/WhyKozaiSection";
@@ -28,8 +28,8 @@ const Index = () => {
       <main>
         <HeroSection animate={heroAnimate} />
         <PositioningSection />
-        <IndustriesMarquee />
         <SolutionsSection />
+        <IndustriesMarquee />
         <WhoWeServeSection />
         <ClientsSection />
         <WhyKozaiSection />

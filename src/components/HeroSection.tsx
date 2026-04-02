@@ -6,7 +6,6 @@ interface HeroSectionProps {
   animate: boolean;
 }
 
-// Interactive particle sphere
 const ParticleSphere = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const mouseRef = useRef({ x: 0.5, y: 0.5 });
@@ -31,7 +30,6 @@ const ParticleSphere = () => {
     const radius = size * 0.38;
     const numPoints = 1200;
 
-    // Generate sphere points using fibonacci distribution
     const points: { theta: number; phi: number }[] = [];
     const goldenRatio = (1 + Math.sqrt(5)) / 2;
     for (let i = 0; i < numPoints; i++) {
@@ -46,7 +44,6 @@ const ParticleSphere = () => {
     const render = () => {
       ctx.clearRect(0, 0, size, size);
 
-      // Slowly auto-rotate + respond to mouse
       const targetRotX = (mouseRef.current.y - 0.5) * 0.8;
       const targetRotY = (mouseRef.current.x - 0.5) * 0.8;
       rotationX += (targetRotX - rotationX) * 0.03;
@@ -56,13 +53,10 @@ const ParticleSphere = () => {
 
       for (let i = 0; i < numPoints; i++) {
         const { theta, phi } = points[i];
-
-        // Spherical to cartesian
         let x = Math.sin(theta) * Math.cos(phi + time);
         let y = Math.cos(theta);
         let z = Math.sin(theta) * Math.sin(phi + time);
 
-        // Apply mouse rotation
         const cosRX = Math.cos(rotationX);
         const sinRX = Math.sin(rotationX);
         const cosRY = Math.cos(rotationY);
@@ -73,13 +67,11 @@ const ParticleSphere = () => {
         const x1 = x * cosRY + z1 * sinRY;
         const z2 = -x * sinRY + z1 * cosRY;
 
-        // Project
         const scale = 1 / (1 + z2 * 0.3);
         const px = cx + x1 * radius * scale;
         const py = cy + y1 * radius * scale;
 
-        // Depth-based size and opacity
-        const depth = (z2 + 1) / 2; // 0 to 1
+        const depth = (z2 + 1) / 2;
         const dotSize = 0.5 + depth * 2;
         const alpha = 0.05 + depth * 0.5;
 
@@ -93,25 +85,21 @@ const ParticleSphere = () => {
     };
 
     render();
-
     return () => cancelAnimationFrame(animFrameRef.current);
   }, []);
 
   useEffect(() => {
     const cleanup = initSphere();
-
     const handleMouseMove = (e: MouseEvent) => {
       mouseRef.current.x = e.clientX / window.innerWidth;
       mouseRef.current.y = e.clientY / window.innerHeight;
     };
-
     window.addEventListener("mousemove", handleMouseMove);
     const handleResize = () => {
       cancelAnimationFrame(animFrameRef.current);
       initSphere();
     };
     window.addEventListener("resize", handleResize);
-
     return () => {
       cleanup?.();
       window.removeEventListener("mousemove", handleMouseMove);
@@ -144,57 +132,30 @@ const HeroSection = ({ animate }: HeroSectionProps) => {
 
     const tl = gsap.timeline();
 
-    // Set initial states
-    gsap.set(".hero-left-text", { x: 0, opacity: 0 });
-    gsap.set(".hero-right-text", { x: 0, opacity: 0 });
-    gsap.set(".hero-subheadline", { opacity: 0, y: 20 });
-    gsap.set(".hero-ctas", { opacity: 0, y: 20 });
+    // Initial states - text starts centered (combined)
+    gsap.set(".hero-left-text", { opacity: 0 });
+    gsap.set(".hero-right-text", { opacity: 0 });
+    gsap.set(".hero-combined-text", { opacity: 0, scale: 0.97 });
     gsap.set(".hero-sphere", { opacity: 0, scale: 0.9 });
     gsap.set(".scroll-indicator", { opacity: 0 });
     gsap.set(".hero-bottom-left", { opacity: 0 });
     gsap.set(".hero-bottom-right", { opacity: 0 });
+    gsap.set(".hero-logo-watermark", { opacity: 0 });
 
-    tl.to(".hero-sphere", {
-      opacity: 1,
-      scale: 1,
-      duration: 1.2,
-      ease: "power2.out",
-    })
-      .to(
-        ".hero-left-text",
-        { opacity: 1, x: 0, duration: 0.8, ease: "power3.out" },
-        "-=0.6"
-      )
-      .to(
-        ".hero-right-text",
-        { opacity: 1, x: 0, duration: 0.8, ease: "power3.out" },
-        "-=0.6"
-      )
-      .to(
-        ".hero-subheadline",
-        { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" },
-        "-=0.3"
-      )
-      .to(
-        ".hero-ctas",
-        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
-        "-=0.3"
-      )
-      .to(
-        ".hero-bottom-left",
-        { opacity: 1, duration: 0.5 },
-        "-=0.3"
-      )
-      .to(
-        ".hero-bottom-right",
-        { opacity: 1, duration: 0.5 },
-        "-=0.4"
-      )
-      .to(
-        ".scroll-indicator",
-        { opacity: 1, duration: 0.5 },
-        "-=0.3"
-      );
+    // 1. Fade in sphere
+    tl.to(".hero-sphere", { opacity: 1, scale: 1, duration: 1.2, ease: "power2.out" })
+      // 2. Show combined centered text
+      .to(".hero-combined-text", { opacity: 1, scale: 1, duration: 0.6, ease: "power2.out" }, "-=0.5")
+      // 3. Hold for a beat, then split
+      .to(".hero-combined-text", { opacity: 0, duration: 0.3, ease: "power2.in" }, "+=0.4")
+      // 4. Show split text
+      .to(".hero-left-text", { opacity: 1, duration: 0.5, ease: "power2.out" }, "-=0.1")
+      .to(".hero-right-text", { opacity: 1, duration: 0.5, ease: "power2.out" }, "-=0.4")
+      // 5. Bottom elements
+      .to(".hero-bottom-left", { opacity: 1, duration: 0.5 }, "-=0.2")
+      .to(".hero-bottom-right", { opacity: 1, duration: 0.5 }, "-=0.4")
+      .to(".hero-logo-watermark", { opacity: 1, duration: 0.5 }, "-=0.4")
+      .to(".scroll-indicator", { opacity: 1, duration: 0.5 }, "-=0.3");
   }, [animate]);
 
   return (
@@ -207,21 +168,34 @@ const HeroSection = ({ animate }: HeroSectionProps) => {
         <ParticleSphere />
       </div>
 
-      {/* Split headline - WQF style */}
+      {/* Combined centered text (visible first, then fades out) */}
+      <div className="hero-combined-text absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+        <h1
+          className="text-[28px] md:text-[44px] lg:text-[56px] font-bold uppercase leading-[1.15] tracking-[0.06em] text-center"
+          style={{ fontFamily: "'Inter', sans-serif", color: "rgba(255,255,255,0.85)", letterSpacing: "0.08em" }}
+        >
+          BUILDING THE SYSTEMS
+          <br />
+          THAT DRIVE GROWTH
+        </h1>
+      </div>
+
+      {/* Split headline */}
       <div className="relative z-10 w-full max-w-[1400px] mx-auto flex items-center justify-between min-h-[60vh]">
-        {/* Left text */}
         <div className="hero-left-text max-w-[400px]">
           <h1
             className="text-[36px] md:text-[56px] lg:text-[72px] font-bold uppercase leading-[0.95] tracking-[-0.02em]"
             style={{ fontFamily: "'Inter', sans-serif" }}
           >
-            BUILDING THE
+            BUILDING
             <br />
-            SYSTEMS THAT
+            THE
+            <br />
+            SYSTEMS
+            <br />
+            THAT
           </h1>
         </div>
-
-        {/* Right text */}
         <div className="hero-right-text max-w-[500px] text-right">
           <h1
             className="text-[36px] md:text-[56px] lg:text-[72px] font-bold uppercase leading-[0.95] tracking-[-0.02em]"
@@ -236,7 +210,6 @@ const HeroSection = ({ animate }: HeroSectionProps) => {
 
       {/* Bottom bar */}
       <div className="absolute bottom-8 left-6 md:left-12 right-6 md:right-12 flex items-end justify-between z-10">
-        {/* Bottom left - contact CTA with corner brackets */}
         <div className="hero-bottom-left">
           <a href="#contact" className="relative inline-block px-5 py-3 hover-target group">
             <span className="absolute top-0 left-0 w-2.5 h-2.5 border-t border-l transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(255,255,255,0.25)" }} />
@@ -248,11 +221,9 @@ const HeroSection = ({ animate }: HeroSectionProps) => {
             </span>
           </a>
         </div>
-
-        {/* Bottom right - description */}
         <div className="hero-bottom-right max-w-[480px] hidden md:block">
           <p
-            className="hero-subheadline text-[12px] leading-[1.7] uppercase tracking-[0.04em]"
+            className="text-[12px] leading-[1.7] uppercase tracking-[0.04em]"
             style={{ color: "rgba(255,255,255,0.4)", fontFamily: "'Inter', sans-serif" }}
           >
             Kozai turns software and technology into measurable revenue performance
@@ -265,20 +236,14 @@ const HeroSection = ({ animate }: HeroSectionProps) => {
       {/* Scroll indicator */}
       <div className="scroll-indicator absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
         <div className="flex flex-col items-center gap-2">
-          <div
-            className="w-[1px] h-[50px] relative overflow-hidden"
-            style={{ background: "rgba(255,255,255,0.08)" }}
-          >
-            <div
-              className="absolute top-0 left-0 w-full h-[15px] animate-scroll-line"
-              style={{ background: "rgba(255,255,255,0.4)" }}
-            />
+          <div className="w-[1px] h-[50px] relative overflow-hidden" style={{ background: "rgba(255,255,255,0.08)" }}>
+            <div className="absolute top-0 left-0 w-full h-[15px] animate-scroll-line" style={{ background: "rgba(255,255,255,0.4)" }} />
           </div>
         </div>
       </div>
 
-      {/* Kozai logo watermark bottom right */}
-      <div className="absolute bottom-8 right-6 md:right-12 z-10 hero-ctas">
+      {/* Kozai logo watermark */}
+      <div className="absolute bottom-8 right-6 md:right-12 z-10 hero-logo-watermark">
         <img src="/kozai-logo-white.svg" alt="" className="h-8 opacity-20" />
       </div>
 
