@@ -15,15 +15,20 @@ import Footer from "@/components/Footer";
 
 const Index = () => {
   const [heroAnimate, setHeroAnimate] = useState(false);
+  const [showPreloader, setShowPreloader] = useState(true);
+
+  const handlePreloaderTransition = useCallback(() => {
+    setHeroAnimate(true);
+  }, []);
 
   const handlePreloaderComplete = useCallback(() => {
-    setHeroAnimate(true);
+    setShowPreloader(false);
   }, []);
 
   return (
     <>
       <CustomCursor />
-      <Preloader onComplete={handlePreloaderComplete} />
+      {showPreloader && <Preloader onComplete={handlePreloaderComplete} onTransitionStart={handlePreloaderTransition} />}
       <Navigation />
       <main>
         <HeroSection animate={heroAnimate} />
