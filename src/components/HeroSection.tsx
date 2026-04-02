@@ -17,7 +17,6 @@ const HeroSection = ({ animate }: HeroSectionProps) => {
     const headline = sectionRef.current?.querySelector(".hero-headline");
     if (!headline) return;
 
-    // Manual word splitting since SplitText may not be available
     const text = headline.textContent || "";
     const words = text.split(" ").map((word) => {
       const span = document.createElement("span");
@@ -31,26 +30,27 @@ const HeroSection = ({ animate }: HeroSectionProps) => {
 
     const tl = gsap.timeline();
     tl.from(words, {
-      y: 65,
+      y: 80,
       opacity: 0,
-      stagger: 0.055,
-      duration: 0.95,
+      rotateX: 15,
+      stagger: 0.06,
+      duration: 1.1,
       ease: "power3.out",
     })
       .from(
         ".hero-subheadline",
-        { y: 22, opacity: 0, duration: 0.7, ease: "power2.out" },
-        "-=0.45"
+        { y: 25, opacity: 0, duration: 0.8, ease: "power2.out" },
+        "-=0.5"
       )
       .from(
         ".hero-ctas",
-        { y: 18, opacity: 0, duration: 0.6, ease: "power2.out" },
-        "-=0.4"
+        { y: 20, opacity: 0, duration: 0.7, ease: "power2.out" },
+        "-=0.45"
       )
       .from(
         ".scroll-indicator",
-        { opacity: 0, duration: 0.5 },
-        "-=0.2"
+        { opacity: 0, y: 10, duration: 0.6 },
+        "-=0.3"
       );
   }, [animate]);
 
@@ -59,7 +59,6 @@ const HeroSection = ({ animate }: HeroSectionProps) => {
       ref={sectionRef}
       className="relative min-h-screen flex flex-col items-center justify-center px-6 md:px-12"
     >
-      {/* Eyebrow */}
       <div
         className="absolute top-24 left-6 md:left-12 text-[11px] uppercase tracking-[0.18em]"
         style={{ color: "#444444" }}
@@ -67,7 +66,6 @@ const HeroSection = ({ animate }: HeroSectionProps) => {
         KOZAI — EST. 2024
       </div>
 
-      {/* Main Content */}
       <div className="text-center max-w-[1000px] mx-auto">
         <h1
           className="hero-headline text-[40px] md:text-[72px] lg:text-[96px] font-light leading-[1.05] mb-8"
@@ -86,12 +84,12 @@ const HeroSection = ({ animate }: HeroSectionProps) => {
         <div className="hero-ctas flex items-center justify-center gap-6 flex-wrap">
           <a
             href="#contact"
-            className="text-[14px] tracking-[0.02em] px-7 py-3 hover-target"
+            className="relative text-[13px] uppercase tracking-[0.08em] px-7 py-3 hover-target group"
             style={{
               border: "1px solid rgba(255,255,255,0.25)",
               color: "#ffffff",
               borderRadius: "2px",
-              transition: "border-color 0.2s",
+              transition: "border-color 0.3s",
             }}
             onMouseEnter={(e) =>
               (e.currentTarget.style.borderColor = "#C8A96E")
@@ -104,24 +102,23 @@ const HeroSection = ({ animate }: HeroSectionProps) => {
           </a>
           <a
             href="#solutions"
-            className="text-[14px] hover-target"
-            style={{ color: "rgba(255,255,255,0.65)" }}
+            className="text-[13px] uppercase tracking-[0.08em] hover-target"
+            style={{ color: "rgba(255,255,255,0.55)" }}
           >
             <LinkText>Explore Our Solutions</LinkText>
           </a>
         </div>
       </div>
 
-      {/* Scroll Indicator */}
       <div className="scroll-indicator absolute bottom-8 left-6 md:left-12 flex items-end gap-3">
         <div className="flex flex-col items-center">
           <div
-            className="w-[2px] h-[80px] relative overflow-hidden"
-            style={{ background: "rgba(255,255,255,0.1)" }}
+            className="w-[1.5px] h-[80px] relative overflow-hidden"
+            style={{ background: "rgba(255,255,255,0.08)" }}
           >
             <div
               className="absolute top-0 left-0 w-full h-[20px] animate-scroll-line"
-              style={{ background: "rgba(255,255,255,0.5)" }}
+              style={{ background: "rgba(255,255,255,0.4)" }}
             />
           </div>
         </div>

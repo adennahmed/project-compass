@@ -1,16 +1,51 @@
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import LinkText from "./LinkText";
 
+gsap.registerPlugin(ScrollTrigger);
+
 const AudienceCTASection = () => {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from(".cta-panel", {
+        y: 50,
+        opacity: 0,
+        stagger: 0.15,
+        duration: 0.9,
+        ease: "power3.out",
+        scrollTrigger: { trigger: ".cta-panel", start: "top 80%" },
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section className="py-32 md:py-40 px-6 md:px-12">
+    <section ref={sectionRef} className="py-32 md:py-40 px-6 md:px-12">
       <div className="max-w-[1200px] mx-auto grid md:grid-cols-2 gap-0">
-        {/* Panel 01 */}
         <div
-          className="p-10 md:p-16 flex flex-col justify-between min-h-[400px]"
+          className="cta-panel p-10 md:p-16 flex flex-col justify-between min-h-[400px] transition-all duration-300"
           style={{
             background: "#111111",
             border: "1px solid rgba(255,255,255,0.07)",
             borderRadius: "3px 0 0 3px",
+          }}
+          onMouseEnter={(e) => {
+            gsap.to(e.currentTarget, {
+              backgroundColor: "#161616",
+              borderColor: "rgba(255,255,255,0.14)",
+              duration: 0.3,
+            });
+          }}
+          onMouseLeave={(e) => {
+            gsap.to(e.currentTarget, {
+              backgroundColor: "#111111",
+              borderColor: "rgba(255,255,255,0.07)",
+              duration: 0.3,
+            });
           }}
         >
           <div>
@@ -28,8 +63,7 @@ const AudienceCTASection = () => {
               style={{ color: "#888888" }}
             >
               Stop losing revenue to fragmented tools and technology that can't
-              support your pace. Let's build the infrastructure your ambition
-              requires.
+              support your pace. Let's build the infrastructure your ambition requires.
             </p>
           </div>
           <a
@@ -41,14 +75,27 @@ const AudienceCTASection = () => {
           </a>
         </div>
 
-        {/* Panel 02 */}
         <div
-          className="p-10 md:p-16 flex flex-col justify-between min-h-[400px]"
+          className="cta-panel p-10 md:p-16 flex flex-col justify-between min-h-[400px] transition-all duration-300"
           style={{
             background: "#0E0E0E",
             border: "1px solid rgba(255,255,255,0.07)",
             borderLeft: "none",
             borderRadius: "0 3px 3px 0",
+          }}
+          onMouseEnter={(e) => {
+            gsap.to(e.currentTarget, {
+              backgroundColor: "#141414",
+              borderColor: "rgba(255,255,255,0.14)",
+              duration: 0.3,
+            });
+          }}
+          onMouseLeave={(e) => {
+            gsap.to(e.currentTarget, {
+              backgroundColor: "#0E0E0E",
+              borderColor: "rgba(255,255,255,0.07)",
+              duration: 0.3,
+            });
           }}
         >
           <div>
