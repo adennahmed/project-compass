@@ -3,52 +3,63 @@ import gsap from "gsap";
 
 interface PreloaderProps {
   onComplete: () => void;
+  onTransitionStart: () => void;
 }
 
-const Preloader = ({ onComplete }: PreloaderProps) => {
+const Preloader = ({ onComplete, onTransitionStart }: PreloaderProps) => {
   const preloaderRef = useRef<HTMLDivElement>(null);
   const [percent, setPercent] = useState(0);
   const percentRef = useRef({ value: 0 });
 
   useEffect(() => {
-    const el = preloaderRef.current;
-    if (!el) return;
+    if (!preloaderRef.current) return;
 
     document.body.style.overflow = "hidden";
 
-    gsap.to(percentRef.current, {
-      value: 100,
-      duration: 2.8,
-      ease: "power2.inOut",
-      onUpdate: () => {
-        setPercent(Math.round(percentRef.current.value));
-      },
-    });
+    const ctx = gsap.context(() => {
+      gsap.to(percentRef.current, {
+        value: 100,
+        duration: 3,
+        ease: "power2.inOut",
+        onUpdate: () => {
+          setPercent(Math.round(percentRef.current.value));
+        },
+      });
 
-    gsap.fromTo(
-      "#preloader-logo-white",
-      { clipPath: "inset(100% 0 0 0)" },
-      { clipPath: "inset(0% 0 0 0)", duration: 2.8, ease: "power2.inOut" }
-    );
+      gsap.fromTo(
+        "#preloader-logo-white",
+        { clipPath: "inset(100% 0 0 0)" },
+        { clipPath: "inset(0% 0 0 0)", duration: 3, ease: "power2.inOut" }
+      );
 
-    const tl = gsap.timeline({
-      delay: 3.2,
-      onComplete: () => {
-        el.remove();
-        document.body.style.overflow = "";
-        onComplete();
-      },
-    });
+      gsap
+        .timeline({
+          delay: 3.25,
+          onStart: onTransitionStart,
+          onComplete: () => {
+            document.body.style.overflow = "";
+            onComplete();
+          },
+        })
+        .to(
+          "#preloader-content",
+          {
+            opacity: 0,
+            scale: 0.98,
+            duration: 0.3,
+            ease: "power2.in",
+          },
+          0
+        )
+        .to("#preloader-panel-top", { yPercent: -100, duration: 0.82, ease: "power4.inOut" }, 0.08)
+        .to("#preloader-panel-bottom", { yPercent: 100, duration: 0.82, ease: "power4.inOut" }, 0.08);
+    }, preloaderRef);
 
-    tl.to("#preloader-content", {
-      opacity: 0,
-      scale: 0.95,
-      duration: 0.35,
-      ease: "power2.in",
-    })
-      .to("#preloader-panel-top", { yPercent: -100, duration: 0.75, ease: "power4.inOut" }, "reveal")
-      .to("#preloader-panel-bottom", { yPercent: 100, duration: 0.75, ease: "power4.inOut" }, "reveal");
-  }, [onComplete]);
+    return () => {
+      document.body.style.overflow = "";
+      ctx.revert();
+    };
+  }, [onComplete, onTransitionStart]);
 
   return (
     <div
@@ -56,8 +67,8 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
       id="preloader"
       style={{ position: "fixed", inset: 0, zIndex: 999999, pointerEvents: "all", overflow: "hidden" }}
     >
-      <div id="preloader-panel-top" style={{ position: "absolute", top: 0, left: 0, right: 0, height: "50%", background: "#080808" }} />
-      <div id="preloader-panel-bottom" style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "50%", background: "#080808" }} />
+      <div id="preloader-panel-top" style={{ position: "absolute", top: 0, left: 0, right: 0, height: "50%", background: "hsl(var(--background))" }} />
+      <div id="preloader-panel-bottom" style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "50%", background: "hsl(var(--background))" }} />
       <div
         id="preloader-content"
         style={{
@@ -92,8 +103,8 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
             fontSize: "13px",
             fontWeight: 300,
             letterSpacing: "0.2em",
-            color: "rgba(255,255,255,0.35)",
-            marginTop: "72px",
+            color: "hsl(var(--foreground) / 0.35)",
+            marginTop: "92px",
           }}
         >
           {String(percent).padStart(3, "0")}
