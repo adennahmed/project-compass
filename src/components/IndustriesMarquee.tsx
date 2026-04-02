@@ -69,6 +69,7 @@ const DotBackground = () => {
 
 const IndustriesMarquee = () => {
   const sectionRef = useRef<HTMLElement>(null);
+  const itemsContainerRef = useRef<HTMLDivElement>(null);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const bracketRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
