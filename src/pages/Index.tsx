@@ -1,16 +1,46 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState, useCallback } from "react";
+import Preloader from "@/components/Preloader";
+import CustomCursor from "@/components/CustomCursor";
+import Navigation from "@/components/Navigation";
+import HeroSection from "@/components/HeroSection";
+import PositioningSection from "@/components/PositioningSection";
+import IndustriesMarquee from "@/components/IndustriesMarquee";
+import SolutionsSection from "@/components/SolutionsSection";
+import WhoWeServeSection from "@/components/WhoWeServeSection";
+import ClientsSection from "@/components/ClientsSection";
+import WhyKozaiSection from "@/components/WhyKozaiSection";
+import TeamSection from "@/components/TeamSection";
+import AudienceCTASection from "@/components/AudienceCTASection";
+import ContactSection from "@/components/ContactSection";
+import Footer from "@/components/Footer";
 
-// IMPORTANT: Fully REPLACE this with your own code
-const PlaceholderIndex = () => {
-  // PLACEHOLDER: Replace this entire return statement with the user's app.
-  // The inline background color is intentionally not part of the design system.
+const Index = () => {
+  const [heroAnimate, setHeroAnimate] = useState(false);
+
+  const handlePreloaderComplete = useCallback(() => {
+    setHeroAnimate(true);
+  }, []);
+
   return (
-    <div className="flex min-h-screen items-center justify-center" style={{ backgroundColor: '#fcfbf8' }}>
-      <img data-lovable-blank-page-placeholder="REMOVE_THIS" src="/placeholder.svg" alt="Your app will live here!" />
-    </div>
+    <>
+      <CustomCursor />
+      <Preloader onComplete={handlePreloaderComplete} />
+      <Navigation />
+      <main>
+        <HeroSection animate={heroAnimate} />
+        <PositioningSection />
+        <IndustriesMarquee />
+        <SolutionsSection />
+        <WhoWeServeSection />
+        <ClientsSection />
+        <WhyKozaiSection />
+        <TeamSection />
+        <AudienceCTASection />
+        <ContactSection />
+      </main>
+      <Footer />
+    </>
   );
 };
-
-const Index = PlaceholderIndex;
 
 export default Index;
