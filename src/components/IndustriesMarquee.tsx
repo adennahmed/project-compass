@@ -131,7 +131,7 @@ const IndustriesMarquee = () => {
           INDUSTRIES WE SERVE
         </div>
 
-        <div className="relative flex flex-col items-center gap-2 md:gap-3 px-6">
+        <div ref={itemsContainerRef} className="relative flex flex-col items-center gap-2 md:gap-3 px-6">
           {/* Animated bracket indicator */}
           <div
             ref={bracketRef}
