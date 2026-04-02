@@ -35,6 +35,15 @@ const Index = () => {
         <PositioningSection />
         <SolutionsSection />
         <IndustriesMarquee />
+        {/* Gradient transition from light to dark */}
+        <div className="relative">
+          <div
+            className="h-32 w-full"
+            style={{
+              background: "linear-gradient(to bottom, #EEEAE4, #080808)",
+            }}
+          />
+        </div>
         <WhoWeServeSection />
         <ClientsSection />
         <WhyKozaiSection />
