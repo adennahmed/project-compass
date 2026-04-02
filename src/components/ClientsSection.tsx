@@ -1,46 +1,39 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import LinkText from "./LinkText";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const clients = [
   {
     name: "Meridian Partners",
-    industry: "FINANCIAL SERVICES",
-    desc: "CRM architecture and revenue pipeline modernization.",
-    stat: "↑ 34% increase in pipeline velocity within 90 days.",
+    tagline: "STRATEGIC GROWTH ADVISORY, REDEFINED.",
+    logo: "MP",
   },
   {
     name: "Northbridge Group",
-    industry: "PROFESSIONAL SERVICES",
-    desc: "Full operational audit and workflow automation implementation.",
-    stat: "↓ 40% reduction in manual reporting overhead.",
+    tagline: "OPERATIONAL EXCELLENCE, DELIVERED.",
+    logo: "NG",
   },
   {
     name: "Vantage Retail Co.",
-    industry: "RETAIL & E-COMMERCE",
-    desc: "E-commerce platform integration and customer data infrastructure.",
-    stat: "↑ 22% improvement in repeat customer retention rate.",
+    tagline: "COMMERCE INFRASTRUCTURE, REIMAGINED.",
+    logo: "VR",
   },
   {
     name: "Harlow Industries",
-    industry: "MANUFACTURING & OPERATIONS",
-    desc: "ERP integration and operational dashboard deployment.",
-    stat: "Unified data across 4 business units for the first time.",
+    tagline: "INDUSTRIAL SYSTEMS, MODERNIZED.",
+    logo: "HI",
   },
   {
     name: "Clearview Health",
-    industry: "HEALTHCARE TECHNOLOGY",
-    desc: "Patient engagement platform and back-office automation build.",
-    stat: "↓ 60% reduction in administrative processing time.",
+    tagline: "PATIENT ENGAGEMENT, TRANSFORMED.",
+    logo: "CH",
   },
   {
     name: "Stratum Capital",
-    industry: "INVESTMENT & FINANCE",
-    desc: "Portfolio reporting platform and investor communication systems.",
-    stat: "Real-time reporting delivered to 12 investment partners.",
+    tagline: "PRIVATE ASSET ANALYSIS, REIMAGINED.",
+    logo: "SC",
   },
 ];
 
@@ -53,18 +46,19 @@ const ClientsSection = () => {
     if (isAnimating.current || index === activeIndex || index < 0 || index >= clients.length) return;
     isAnimating.current = true;
 
-    const card = document.querySelector('.client-active-card');
+    const card = document.querySelector(".client-main-card");
     if (card) {
       gsap.to(card, {
         opacity: 0,
-        y: -20,
-        duration: 0.3,
+        y: -30,
+        duration: 0.35,
         ease: "power2.in",
         onComplete: () => {
           setActiveIndex(index);
-          gsap.fromTo(card, 
-            { opacity: 0, y: 20 },
-            { opacity: 1, y: 0, duration: 0.4, ease: "power3.out", onComplete: () => { isAnimating.current = false; } }
+          gsap.fromTo(
+            card,
+            { opacity: 0, y: 30 },
+            { opacity: 1, y: 0, duration: 0.45, ease: "power3.out", onComplete: () => { isAnimating.current = false; } }
           );
         },
       });
@@ -76,15 +70,28 @@ const ClientsSection = () => {
 
   useEffect(() => {
     gsap.from(".clients-headline", {
-      y: 45,
-      opacity: 0,
-      duration: 0.85,
-      ease: "power3.out",
+      y: 45, opacity: 0, duration: 0.85, ease: "power3.out",
       scrollTrigger: { trigger: ".clients-headline", start: "top 82%" },
     });
   }, []);
 
   const client = clients[activeIndex];
+
+  // Get visible side clients
+  const getSideClients = (direction: "left" | "right") => {
+    const result: { client: typeof clients[0]; index: number; offset: number }[] = [];
+    const count = 2;
+    for (let o = 1; o <= count; o++) {
+      const idx = direction === "right" ? activeIndex + o : activeIndex - o;
+      if (idx >= 0 && idx < clients.length) {
+        result.push({ client: clients[idx], index: idx, offset: o });
+      }
+    }
+    return result;
+  };
+
+  const leftSide = getSideClients("left");
+  const rightSide = getSideClients("right");
 
   return (
     <section
@@ -93,7 +100,7 @@ const ClientsSection = () => {
       className="py-32 md:py-40"
       style={{ background: "#EEEAE4" }}
     >
-      <div className="max-w-[1200px] mx-auto px-6 md:px-12">
+      <div className="max-w-[1400px] mx-auto px-6 md:px-12">
         {/* Header */}
         <div className="text-center mb-4">
           <div
@@ -103,14 +110,14 @@ const ClientsSection = () => {
             OUR PORTFOLIO
           </div>
           <h2
-            className="clients-headline text-[32px] md:text-[44px] font-light leading-[1.1] mb-6 max-w-[700px] mx-auto"
+            className="clients-headline text-[28px] md:text-[38px] font-bold uppercase tracking-[0.02em] leading-[1.15] mb-6 max-w-[700px] mx-auto"
             style={{ color: "#1a1a1a" }}
           >
-            Companies We've Strengthened.
+            Our Companies Don't Just Enter Markets. They Define Them.
           </h2>
         </div>
 
-        {/* CTA bracket button */}
+        {/* CTA bracket */}
         <div className="flex justify-center mb-16">
           <a href="#contact" className="relative inline-block px-6 py-3 hover-target group">
             <span className="absolute top-0 left-0 w-2.5 h-2.5 border-t border-l transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(30,30,30,0.3)" }} />
@@ -118,96 +125,122 @@ const ClientsSection = () => {
             <span className="absolute bottom-0 left-0 w-2.5 h-2.5 border-b border-l transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(30,30,30,0.3)" }} />
             <span className="absolute bottom-0 right-0 w-2.5 h-2.5 border-b border-r transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(30,30,30,0.3)" }} />
             <span className="text-[12px] uppercase tracking-[0.12em]" style={{ color: "#1a1a1a" }}>
-              Explore All Work
+              Explore Our Portfolio
             </span>
           </a>
         </div>
 
-        {/* Featured Client Card - centered */}
-        <div className="flex justify-center items-start gap-8">
-          {/* Side indicators - prev */}
-          <div className="hidden md:flex flex-col items-end justify-center gap-4 min-w-[160px] pt-20">
-            {activeIndex > 0 && (
+        {/* Cards carousel */}
+        <div className="relative flex items-center justify-center gap-6 md:gap-8 min-h-[520px]">
+          {/* Left side ghosts */}
+          <div className="hidden md:flex items-center gap-6 absolute left-0">
+            {leftSide.reverse().map(({ client: c, index, offset }) => (
               <button
-                onClick={() => navigateTo(activeIndex - 1)}
-                className="text-right hover-target opacity-40 hover:opacity-70 transition-opacity"
+                key={index}
+                onClick={() => navigateTo(index)}
+                className="flex flex-col items-center justify-center cursor-pointer hover-target transition-all duration-300 hover:opacity-60"
+                style={{
+                  width: "180px",
+                  height: "240px",
+                  opacity: 0.25 - offset * 0.08,
+                }}
               >
-                <div className="text-[11px] uppercase tracking-[0.12em] mb-1" style={{ color: "#1a1a1a" }}>
-                  {clients[activeIndex - 1].name}
+                <div
+                  className="text-[48px] font-light mb-3"
+                  style={{ color: "rgba(30,30,30,0.3)" }}
+                >
+                  {c.logo}
+                </div>
+                <div
+                  className="text-[12px] uppercase tracking-[0.1em] font-semibold"
+                  style={{ color: "rgba(30,30,30,0.25)" }}
+                >
+                  {c.name}
                 </div>
               </button>
-            )}
+            ))}
           </div>
 
           {/* Main card */}
           <div
-            className="client-active-card relative flex flex-col items-center text-center p-10 md:p-14 w-full max-w-[480px]"
+            className="client-main-card relative flex flex-col items-center text-center px-10 md:px-16 py-12 md:py-16 w-full max-w-[420px]"
             style={{
               background: "#f5f2ed",
-              borderRadius: "4px",
-              minHeight: "520px",
+              borderRadius: "16px",
+              minHeight: "500px",
             }}
           >
             {/* Corner brackets */}
-            <span className="absolute top-4 left-4 w-4 h-4 border-t border-l" style={{ borderColor: "rgba(30,30,30,0.15)" }} />
-            <span className="absolute top-4 right-4 w-4 h-4 border-t border-r" style={{ borderColor: "rgba(30,30,30,0.15)" }} />
-            <span className="absolute bottom-4 left-4 w-4 h-4 border-b border-l" style={{ borderColor: "rgba(30,30,30,0.15)" }} />
-            <span className="absolute bottom-4 right-4 w-4 h-4 border-b border-r" style={{ borderColor: "rgba(30,30,30,0.15)" }} />
+            <span className="absolute top-5 left-5 w-4 h-4 border-t border-l" style={{ borderColor: "rgba(30,30,30,0.15)" }} />
+            <span className="absolute top-5 right-5 w-4 h-4 border-t border-r" style={{ borderColor: "rgba(30,30,30,0.15)" }} />
+            <span className="absolute bottom-5 left-5 w-4 h-4 border-b border-l" style={{ borderColor: "rgba(30,30,30,0.15)" }} />
+            <span className="absolute bottom-5 right-5 w-4 h-4 border-b border-r" style={{ borderColor: "rgba(30,30,30,0.15)" }} />
 
             <h3
-              className="text-[22px] md:text-[26px] font-semibold uppercase tracking-[0.04em] mb-8 mt-6"
+              className="text-[20px] md:text-[24px] font-bold uppercase tracking-[0.06em] mb-10 mt-4"
               style={{ color: "#1a1a1a" }}
             >
               {client.name}
             </h3>
 
-            <div
-              className="text-[11px] uppercase tracking-[0.18em] mb-4"
-              style={{ color: "rgba(30,30,30,0.4)" }}
-            >
-              {client.industry}
+            {/* Placeholder logo */}
+            <div className="flex items-center justify-center mb-8" style={{ minHeight: "100px" }}>
+              <div
+                className="text-[72px] font-extralight leading-none"
+                style={{ color: "rgba(30,30,30,0.2)" }}
+              >
+                {client.logo}
+              </div>
             </div>
 
             <p
-              className="text-[13px] leading-[1.6] mb-6 max-w-[320px]"
-              style={{ color: "rgba(30,30,30,0.55)" }}
+              className="text-[11px] uppercase tracking-[0.14em] leading-[1.6] max-w-[260px] mb-auto"
+              style={{ color: "rgba(30,30,30,0.45)" }}
             >
-              {client.desc}
-            </p>
-
-            <p
-              className="text-[13px] font-medium mb-auto"
-              style={{ color: "#C8A96E" }}
-            >
-              {client.stat}
+              {client.tagline}
             </p>
 
             {/* Bottom link */}
-            <div className="mt-8">
+            <div className="mt-12">
               <a href="#" className="relative inline-block px-5 py-2.5 hover-target group">
                 <span className="absolute top-0 left-0 w-2 h-2 border-t border-l transition-all duration-300 group-hover:w-3 group-hover:h-3" style={{ borderColor: "rgba(30,30,30,0.2)" }} />
                 <span className="absolute top-0 right-0 w-2 h-2 border-t border-r transition-all duration-300 group-hover:w-3 group-hover:h-3" style={{ borderColor: "rgba(30,30,30,0.2)" }} />
                 <span className="absolute bottom-0 left-0 w-2 h-2 border-b border-l transition-all duration-300 group-hover:w-3 group-hover:h-3" style={{ borderColor: "rgba(30,30,30,0.2)" }} />
                 <span className="absolute bottom-0 right-0 w-2 h-2 border-b border-r transition-all duration-300 group-hover:w-3 group-hover:h-3" style={{ borderColor: "rgba(30,30,30,0.2)" }} />
                 <span className="text-[11px] uppercase tracking-[0.12em]" style={{ color: "rgba(30,30,30,0.6)" }}>
-                  View Case
+                  Website
                 </span>
               </a>
             </div>
           </div>
 
-          {/* Side indicators - next */}
-          <div className="hidden md:flex flex-col items-start justify-center gap-4 min-w-[160px] pt-20">
-            {activeIndex < clients.length - 1 && (
+          {/* Right side ghosts */}
+          <div className="hidden md:flex items-center gap-6 absolute right-0">
+            {rightSide.map(({ client: c, index, offset }) => (
               <button
-                onClick={() => navigateTo(activeIndex + 1)}
-                className="text-left hover-target opacity-40 hover:opacity-70 transition-opacity"
+                key={index}
+                onClick={() => navigateTo(index)}
+                className="flex flex-col items-center justify-center cursor-pointer hover-target transition-all duration-300 hover:opacity-60"
+                style={{
+                  width: "180px",
+                  height: "240px",
+                  opacity: 0.25 - offset * 0.08,
+                }}
               >
-                <div className="text-[11px] uppercase tracking-[0.12em] mb-1" style={{ color: "#1a1a1a" }}>
-                  {clients[activeIndex + 1].name}
+                <div
+                  className="text-[48px] font-light mb-3"
+                  style={{ color: "rgba(30,30,30,0.3)" }}
+                >
+                  {c.logo}
+                </div>
+                <div
+                  className="text-[12px] uppercase tracking-[0.1em] font-semibold"
+                  style={{ color: "rgba(30,30,30,0.25)" }}
+                >
+                  {c.name}
                 </div>
               </button>
-            )}
+            ))}
           </div>
         </div>
 
@@ -224,13 +257,6 @@ const ClientsSection = () => {
               }}
             />
           ))}
-        </div>
-
-        {/* Counter */}
-        <div className="text-center mt-4">
-          <span className="text-[13px]" style={{ color: "rgba(30,30,30,0.35)" }}>
-            0{activeIndex + 1} / 0{clients.length}
-          </span>
         </div>
       </div>
     </section>
