@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import LinkText from "./LinkText";
+import adenPhoto from "@/assets/aden-ahmed.png";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -68,75 +69,69 @@ const TeamSection = () => {
       <div className="team-strip max-w-[1200px] mx-auto mt-16">
         <div
           ref={imageRef}
-          className="relative w-full cursor-pointer overflow-hidden mx-auto"
+          className="relative cursor-pointer overflow-hidden mx-auto"
           style={{
-            maxWidth: expanded ? "700px" : "100%",
-            height: expanded ? "600px" : "140px",
-            background: "#111111",
+            maxWidth: expanded ? "520px" : "100%",
+            height: expanded ? "580px" : "100px",
             borderRadius: "4px",
             transition: "all 0.7s cubic-bezier(0.76, 0, 0.24, 1)",
           }}
           onClick={() => setExpanded(!expanded)}
         >
-          {/* Placeholder silhouette - eye strip when collapsed, portrait when expanded */}
-          <div
-            className="absolute inset-0 flex items-center justify-center"
+          {/* Real photo - positioned to show eyes when collapsed, full face when expanded */}
+          <img
+            src={adenPhoto}
+            alt="Aden Ahmed"
+            className="absolute w-full object-cover"
             style={{
-              background: expanded
-                ? "linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 40%, #111 100%)"
-                : "linear-gradient(180deg, #0e0e0e 0%, #151515 50%, #0e0e0e 100%)",
+              height: expanded ? "100%" : "auto",
+              width: "100%",
+              objectFit: "cover",
+              /* When collapsed: position the image so only the eye region is visible.
+                 The eyes are roughly 38% from the top of the photo. 
+                 With 100px container height, we shift the image up to center eyes. */
+              objectPosition: expanded ? "center 20%" : "center 36%",
+              filter: expanded ? "none" : "contrast(1.1) brightness(0.85)",
+              transition: "all 0.7s cubic-bezier(0.76, 0, 0.24, 1)",
             }}
-          >
-            {!expanded && (
-              <div className="flex items-center gap-16 w-full justify-center">
-                {/* Left eye */}
-                <div
-                  className="w-[120px] h-[60px] rounded-[2px] overflow-hidden"
-                  style={{ background: "linear-gradient(135deg, #1a1a1a, #252525)" }}
-                >
-                  <div className="w-full h-full flex items-center justify-center">
-                    <div className="w-8 h-8 rounded-full" style={{ background: "radial-gradient(circle, #333 30%, #1a1a1a 70%)" }} />
-                  </div>
-                </div>
-                {/* Right eye */}
-                <div
-                  className="w-[120px] h-[60px] rounded-[2px] overflow-hidden"
-                  style={{ background: "linear-gradient(135deg, #1a1a1a, #252525)" }}
-                >
-                  <div className="w-full h-full flex items-center justify-center">
-                    <div className="w-8 h-8 rounded-full" style={{ background: "radial-gradient(circle, #333 30%, #1a1a1a 70%)" }} />
-                  </div>
-                </div>
-              </div>
-            )}
+          />
 
-            {expanded && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center">
-                {/* Large face silhouette */}
-                <div
-                  className="w-[200px] h-[240px] rounded-t-[100px] rounded-b-[40px]"
-                  style={{
-                    background: "linear-gradient(180deg, #2a2a2a 0%, #1e1e1e 60%, #151515 100%)",
-                    boxShadow: "0 20px 60px rgba(0,0,0,0.5)",
-                  }}
-                >
-                  <div className="flex items-center justify-center gap-10 pt-16">
-                    <div className="w-6 h-6 rounded-full" style={{ background: "radial-gradient(circle, #444 30%, #222 70%)" }} />
-                    <div className="w-6 h-6 rounded-full" style={{ background: "radial-gradient(circle, #444 30%, #222 70%)" }} />
-                  </div>
-                </div>
-                {/* Role label */}
-                <div
-                  className="absolute bottom-[100px] right-[60px] flex items-center gap-2"
-                >
-                  <div className="w-2 h-2 rounded-full" style={{ background: "rgba(255,255,255,0.3)" }} />
-                  <span className="text-[10px] uppercase tracking-[0.15em]" style={{ color: "rgba(255,255,255,0.4)" }}>
-                    FOUNDER
-                  </span>
-                </div>
-              </div>
-            )}
-          </div>
+          {/* Gradient overlays for eye strip when collapsed */}
+          {!expanded && (
+            <>
+              <div
+                className="absolute inset-x-0 top-0 h-[30%] pointer-events-none"
+                style={{ background: "linear-gradient(to bottom, #080808 0%, transparent 100%)" }}
+              />
+              <div
+                className="absolute inset-x-0 bottom-0 h-[30%] pointer-events-none"
+                style={{ background: "linear-gradient(to top, #080808 0%, transparent 100%)" }}
+              />
+              <div
+                className="absolute inset-y-0 left-0 w-[15%] pointer-events-none"
+                style={{ background: "linear-gradient(to right, #080808 0%, transparent 100%)" }}
+              />
+              <div
+                className="absolute inset-y-0 right-0 w-[15%] pointer-events-none"
+                style={{ background: "linear-gradient(to left, #080808 0%, transparent 100%)" }}
+              />
+            </>
+          )}
+
+          {/* Role label when expanded */}
+          {expanded && (
+            <div
+              className="absolute bottom-[80px] right-[40px] flex items-center gap-2"
+              style={{
+                animation: "fadeIn 0.5s ease 0.3s both",
+              }}
+            >
+              <div className="w-2 h-2 rounded-full" style={{ background: "rgba(255,255,255,0.4)" }} />
+              <span className="text-[10px] uppercase tracking-[0.15em]" style={{ color: "rgba(255,255,255,0.5)" }}>
+                FOUNDER & PRINCIPAL ENGINEER
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Info bar below */}
