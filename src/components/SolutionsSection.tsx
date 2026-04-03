@@ -215,7 +215,7 @@ const SolutionsSection = () => {
                             const angle = (j / 24) * Math.PI * 2;
                             const r = 75;
                             return (
-                              <line key={j} x1="100" y1="100" x2={100 + Math.cos(angle) * r} y2={100 + Math.sin(angle) * r} stroke={s.textColor} strokeWidth="0.6" opacity="0.88" />
+                              <line key={j} x1="100" y1="100" x2={100 + Math.cos(angle) * r} y2={100 + Math.sin(angle) * r} stroke="#000000" strokeWidth="1.2" />
                             );
                           })}
                           {[20, 40, 60, 80].map((r) => (
