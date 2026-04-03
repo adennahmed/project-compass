@@ -33,7 +33,7 @@ const IndustriesMarquee = () => {
     });
   }, []);
 
-  // Animate bracket to hovered item — wrap name + description
+  // Animate bracket — use RAF to wait for DOM to settle after hover expansion
   useEffect(() => {
     const bracket = bracketRef.current;
     if (!bracket) return;
@@ -43,26 +43,57 @@ const IndustriesMarquee = () => {
       return;
     }
 
-    const item = itemRefs.current[hoveredIndex];
-    const container = itemsContainerRef.current;
-    if (!item || !container) return;
+    // Wait a frame for the CSS transition to start so dimensions are updating
+    const raf = requestAnimationFrame(() => {
+      const item = itemRefs.current[hoveredIndex];
+      const container = itemsContainerRef.current;
+      if (!item || !container) return;
 
-    const containerRect = container.getBoundingClientRect();
-    const itemRect = item.getBoundingClientRect();
+      const containerRect = container.getBoundingClientRect();
+      const itemRect = item.getBoundingClientRect();
 
-    const padX = 24;
-    const padY = 16;
-    const top = itemRect.top - containerRect.top - padY;
-    const left = itemRect.left - containerRect.left - padX;
-    const width = itemRect.width + padX * 2;
-    const height = itemRect.height + padY * 2;
+      const padX = 32;
+      const padY = 12;
+      const top = itemRect.top - containerRect.top - padY;
+      const left = itemRect.left - containerRect.left - padX;
+      const width = itemRect.width + padX * 2;
+      const height = itemRect.height + padY * 2;
 
-    gsap.to(bracket, {
-      top, left, width, height,
-      opacity: 1,
-      duration: 0.35,
-      ease: "power3.out",
+      gsap.to(bracket, {
+        top, left, width, height,
+        opacity: 1,
+        duration: 0.4,
+        ease: "power3.out",
+      });
     });
+
+    // Also update after the CSS transition completes
+    const timeout = setTimeout(() => {
+      const item = itemRefs.current[hoveredIndex];
+      const container = itemsContainerRef.current;
+      if (!item || !container || !bracket) return;
+
+      const containerRect = container.getBoundingClientRect();
+      const itemRect = item.getBoundingClientRect();
+
+      const padX = 32;
+      const padY = 12;
+      const top = itemRect.top - containerRect.top - padY;
+      const left = itemRect.left - containerRect.left - padX;
+      const width = itemRect.width + padX * 2;
+      const height = itemRect.height + padY * 2;
+
+      gsap.to(bracket, {
+        top, left, width, height,
+        duration: 0.3,
+        ease: "power3.out",
+      });
+    }, 500);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      clearTimeout(timeout);
+    };
   }, [hoveredIndex]);
 
   return (

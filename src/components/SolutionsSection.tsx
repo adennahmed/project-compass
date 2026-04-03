@@ -26,7 +26,7 @@ const solutions = [
     num: "03 / 04",
     title: "DIGITAL\nTRANSFORMATION",
     body: "LEGACY MIGRATION, FULL-STACK MODERNIZATION, AND PLATFORM CONSOLIDATION FOR YOUR NEXT STAGE.",
-    color: "#D4764E",
+    color: "#B8704A",
     textColor: "#1a1a1a",
     accentColor: "#1a1a1a",
   },
@@ -34,9 +34,9 @@ const solutions = [
     num: "04 / 04",
     title: "DATA &\nINTELLIGENCE",
     body: "BI DASHBOARDS, KPI FRAMEWORKS, AND DECISION-SUPPORT SYSTEMS THAT DRIVE CLARITY AND FASTER EXECUTION.",
-    color: "#EEEAE4",
+    color: "#C4B9A8",
     textColor: "#1a1a1a",
-    accentColor: "#444444",
+    accentColor: "#555555",
   },
 ];
 
@@ -56,7 +56,6 @@ const SolutionsSection = () => {
         scrollTrigger: { trigger: ".solutions-headline", start: "top 82%" },
       });
 
-      // Horizontal slide reveal from dark to light
       if (revealRef.current) {
         gsap.set(revealRef.current, { xPercent: 100 });
         ScrollTrigger.create({
@@ -84,7 +83,6 @@ const SolutionsSection = () => {
       className="relative overflow-hidden"
       style={{ background: "#080808" }}
     >
-      {/* Light background that slides in */}
       <div
         ref={revealRef}
         className="absolute inset-0"
@@ -143,10 +141,10 @@ const SolutionsSection = () => {
               style={{
                 width: expandedIndex === i ? "50%" : expandedIndex !== null ? "16.67%" : "25%",
                 minWidth: expandedIndex === i ? "420px" : expandedIndex !== null ? "120px" : "180px",
-                height: "640px",
+                height: "560px",
                 background: s.color,
                 transition: "width 0.6s cubic-bezier(0.76, 0, 0.24, 1), min-width 0.6s cubic-bezier(0.76, 0, 0.24, 1)",
-                padding: "40px 32px",
+                padding: "36px 28px",
                 borderRadius: "12px",
                 flexShrink: 0,
               }}
@@ -154,7 +152,7 @@ const SolutionsSection = () => {
               onMouseLeave={() => setExpandedIndex(null)}
             >
               <h3
-                className="text-[22px] md:text-[28px] font-bold uppercase leading-[1.15] whitespace-pre-line text-center transition-opacity duration-300"
+                className="text-[20px] md:text-[24px] font-bold uppercase leading-[1.15] whitespace-pre-line text-center transition-opacity duration-300"
                 style={{ color: s.textColor }}
               >
                 {s.title}
@@ -165,8 +163,8 @@ const SolutionsSection = () => {
                 style={{ opacity: expandedIndex === i ? 1 : 0.5 }}
               >
                 <svg
-                  width="240"
-                  height="240"
+                  width="200"
+                  height="200"
                   viewBox="0 0 200 200"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -229,12 +227,11 @@ const SolutionsSection = () => {
                   {s.num}
                 </div>
                 <p
-                  className="text-[10px] md:text-[11px] uppercase tracking-[0.08em] leading-[1.7] transition-all duration-500 whitespace-normal"
+                  className="text-[10px] md:text-[11px] uppercase tracking-[0.08em] leading-[1.7] whitespace-normal"
                   style={{
                     color: s.textColor,
-                    opacity: expandedIndex === i ? 0.75 : 0,
-                    maxHeight: expandedIndex === i ? "200px" : "0px",
-                    overflow: "hidden",
+                    opacity: expandedIndex === i ? 0.85 : 0.55,
+                    transition: "opacity 0.5s cubic-bezier(0.76, 0, 0.24, 1)",
                   }}
                 >
                   {s.body}
