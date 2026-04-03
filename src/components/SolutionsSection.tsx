@@ -12,7 +12,7 @@ const solutions = [
     body: "CRM ARCHITECTURE, SALES AUTOMATION, AND PIPELINE INFRASTRUCTURE ENGINEERED TO CLOSE MORE AND SCALE FASTER.",
     color: "#1a1a1a",
     textColor: "#ffffff",
-    accentColor: "#C8A96E",
+    accentColor: "#ffffff",
   },
   {
     num: "02 / 04",
@@ -36,7 +36,7 @@ const solutions = [
     body: "BI DASHBOARDS, KPI FRAMEWORKS, AND DECISION-SUPPORT SYSTEMS THAT DRIVE CLARITY AND FASTER EXECUTION.",
     color: "#ffffff",
     textColor: "#000000",
-    accentColor: "#555555",
+    accentColor: "#000000",
   },
 ];
 
@@ -137,7 +137,7 @@ const SolutionsSection = () => {
           {solutions.map((s, i) => {
             const isExpanded = expandedIndex === i;
             const hasExpanded = expandedIndex !== null;
-            const flexValue = isExpanded ? 1.8 : hasExpanded ? 0.8 : 1;
+            const flexValue = isExpanded ? 1.4 : hasExpanded ? 0.9 : 1;
 
             return (
               <div
@@ -226,16 +226,15 @@ const SolutionsSection = () => {
                   </svg>
                 </div>
 
-                <div className="text-center">
+                <div className="absolute bottom-0 left-0 right-0 text-center overflow-hidden" style={{ padding: "0 36px 40px" }}>
                   <div className="text-[11px] uppercase tracking-[0.15em] mb-4" style={{ color: s.accentColor, opacity: 0.7 }}>
                     {s.num}
                   </div>
                   <p
-                    className="text-[10px] md:text-[11px] uppercase tracking-[0.08em] leading-[1.7]"
+                    className="text-[10px] md:text-[11px] uppercase tracking-[0.08em] leading-[1.7] whitespace-nowrap overflow-hidden text-ellipsis"
                     style={{
                       color: s.textColor,
-                      opacity: isExpanded ? 0.85 : 0.55,
-                      transition: "opacity 0.5s cubic-bezier(0.76, 0, 0.24, 1)",
+                      opacity: 0.7,
                     }}
                   >
                     {s.body}
