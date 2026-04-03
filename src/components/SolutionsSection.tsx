@@ -137,7 +137,7 @@ const SolutionsSection = () => {
           {solutions.map((s, i) => {
             const isExpanded = expandedIndex === i;
             const hasExpanded = expandedIndex !== null;
-            const flexValue = isExpanded ? 1.8 : hasExpanded ? 0.8 : 1;
+            const flexValue = isExpanded ? 1.4 : hasExpanded ? 0.9 : 1;
 
             return (
               <div
