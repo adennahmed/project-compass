@@ -14,7 +14,7 @@ const solutions = [
     textColor: "hsl(0 0% 100%)",
     accentColor: "hsl(0 0% 100%)",
     bodyWidth: 290,
-    symbolOpacity: 0.16,
+    symbolOpacity: 0.5,
   },
   {
     num: "02 / 04",
