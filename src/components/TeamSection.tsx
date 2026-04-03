@@ -10,7 +10,7 @@ const COLLAPSED_H = 140;
 const EXPANDED_H = 600;
 const EXPANDED_W = 520;
 /* Eyes sit at ~35% from the top of the 1030px-tall source image */
-const EYE_CENTER_PCT = 38;
+const EYE_CENTER_PCT = 36.5;
 
 const TeamSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
