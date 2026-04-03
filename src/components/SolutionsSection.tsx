@@ -219,7 +219,7 @@ const SolutionsSection = () => {
                             );
                           })}
                           {[20, 40, 60, 80].map((r) => (
-                            <circle key={r} cx="100" cy="100" r={r} stroke={s.textColor} strokeWidth="0.4" fill="none" opacity="0.48" strokeDasharray="2 3" />
+                            <circle key={r} cx="100" cy="100" r={r} stroke="#000000" strokeWidth="0.8" fill="none" opacity="0.6" strokeDasharray="2 3" />
                           ))}
                         </>
                       )}
