@@ -10,7 +10,7 @@ const COLLAPSED_H = 140;
 const EXPANDED_H = 600;
 const EXPANDED_W = 520;
 /* Eyes sit at ~35% from the top of the 1030px-tall source image */
-const EYE_CENTER_PCT = 36.5;
+const EYE_CENTER_PCT = 47;
 
 const TeamSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
@@ -20,11 +20,17 @@ const TeamSection = () => {
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.from(".team-headline", {
-        y: 60, opacity: 0, duration: 1, ease: "power3.out",
+        y: 60,
+        opacity: 0,
+        duration: 1,
+        ease: "power3.out",
         scrollTrigger: { trigger: ".team-headline", start: "top 82%" },
       });
       gsap.from(".team-strip", {
-        y: 40, opacity: 0, duration: 0.9, ease: "power3.out",
+        y: 40,
+        opacity: 0,
+        duration: 0.9,
+        ease: "power3.out",
         scrollTrigger: { trigger: ".team-strip", start: "top 85%" },
       });
     }, sectionRef);
@@ -56,15 +62,26 @@ const TeamSection = () => {
           className="team-headline text-[13px] uppercase tracking-[0.1em] leading-[1.8] max-w-[500px] mx-auto mb-8"
           style={{ color: "rgba(255,255,255,0.5)" }}
         >
-          A focused team with deep experience in technology delivery,
-          commercial strategy, and systems architecture. The people who built
-          what's now, helping you build what's next.
+          A focused team with deep experience in technology delivery, commercial strategy, and systems architecture. The
+          people who built what's now, helping you build what's next.
         </p>
         <a href="#contact" className="relative inline-block px-5 py-3 hover-target group">
-          <span className="absolute top-0 left-0 w-2.5 h-2.5 border-t border-l transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(255,255,255,0.25)" }} />
-          <span className="absolute top-0 right-0 w-2.5 h-2.5 border-t border-r transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(255,255,255,0.25)" }} />
-          <span className="absolute bottom-0 left-0 w-2.5 h-2.5 border-b border-l transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(255,255,255,0.25)" }} />
-          <span className="absolute bottom-0 right-0 w-2.5 h-2.5 border-b border-r transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(255,255,255,0.25)" }} />
+          <span
+            className="absolute top-0 left-0 w-2.5 h-2.5 border-t border-l transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5"
+            style={{ borderColor: "rgba(255,255,255,0.25)" }}
+          />
+          <span
+            className="absolute top-0 right-0 w-2.5 h-2.5 border-t border-r transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5"
+            style={{ borderColor: "rgba(255,255,255,0.25)" }}
+          />
+          <span
+            className="absolute bottom-0 left-0 w-2.5 h-2.5 border-b border-l transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5"
+            style={{ borderColor: "rgba(255,255,255,0.25)" }}
+          />
+          <span
+            className="absolute bottom-0 right-0 w-2.5 h-2.5 border-b border-r transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5"
+            style={{ borderColor: "rgba(255,255,255,0.25)" }}
+          />
           <span className="text-[12px] uppercase tracking-[0.12em]" style={{ color: "rgba(255,255,255,0.6)" }}>
             <LinkText>Meet the Team</LinkText>
           </span>
@@ -181,26 +198,57 @@ const TeamSection = () => {
           <div className="flex items-start justify-between mt-4 px-2">
             <div className="flex items-center gap-4">
               <a href="#" className="flex items-center gap-2 hover-target">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="2">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="rgba(255,255,255,0.5)"
+                  strokeWidth="2"
+                >
                   <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
                   <rect x="2" y="9" width="4" height="12" />
                   <circle cx="4" cy="4" r="2" />
                 </svg>
               </a>
               <a href="#" className="relative inline-block px-4 py-2 hover-target group">
-                <span className="absolute top-0 left-0 w-2 h-2 border-t border-l" style={{ borderColor: "rgba(255,255,255,0.2)" }} />
-                <span className="absolute top-0 right-0 w-2 h-2 border-t border-r" style={{ borderColor: "rgba(255,255,255,0.2)" }} />
-                <span className="absolute bottom-0 left-0 w-2 h-2 border-b border-l" style={{ borderColor: "rgba(255,255,255,0.2)" }} />
-                <span className="absolute bottom-0 right-0 w-2 h-2 border-b border-r" style={{ borderColor: "rgba(255,255,255,0.2)" }} />
+                <span
+                  className="absolute top-0 left-0 w-2 h-2 border-t border-l"
+                  style={{ borderColor: "rgba(255,255,255,0.2)" }}
+                />
+                <span
+                  className="absolute top-0 right-0 w-2 h-2 border-t border-r"
+                  style={{ borderColor: "rgba(255,255,255,0.2)" }}
+                />
+                <span
+                  className="absolute bottom-0 left-0 w-2 h-2 border-b border-l"
+                  style={{ borderColor: "rgba(255,255,255,0.2)" }}
+                />
+                <span
+                  className="absolute bottom-0 right-0 w-2 h-2 border-b border-r"
+                  style={{ borderColor: "rgba(255,255,255,0.2)" }}
+                />
                 <span className="text-[10px] uppercase tracking-[0.12em]" style={{ color: "rgba(255,255,255,0.5)" }}>
                   Connect with Aden
                 </span>
               </a>
               <a href="#" className="relative inline-block px-4 py-2 hover-target group">
-                <span className="absolute top-0 left-0 w-2 h-2 border-t border-l" style={{ borderColor: "rgba(255,255,255,0.2)" }} />
-                <span className="absolute top-0 right-0 w-2 h-2 border-t border-r" style={{ borderColor: "rgba(255,255,255,0.2)" }} />
-                <span className="absolute bottom-0 left-0 w-2 h-2 border-b border-l" style={{ borderColor: "rgba(255,255,255,0.2)" }} />
-                <span className="absolute bottom-0 right-0 w-2 h-2 border-b border-r" style={{ borderColor: "rgba(255,255,255,0.2)" }} />
+                <span
+                  className="absolute top-0 left-0 w-2 h-2 border-t border-l"
+                  style={{ borderColor: "rgba(255,255,255,0.2)" }}
+                />
+                <span
+                  className="absolute top-0 right-0 w-2 h-2 border-t border-r"
+                  style={{ borderColor: "rgba(255,255,255,0.2)" }}
+                />
+                <span
+                  className="absolute bottom-0 left-0 w-2 h-2 border-b border-l"
+                  style={{ borderColor: "rgba(255,255,255,0.2)" }}
+                />
+                <span
+                  className="absolute bottom-0 right-0 w-2 h-2 border-b border-r"
+                  style={{ borderColor: "rgba(255,255,255,0.2)" }}
+                />
                 <span className="text-[10px] uppercase tracking-[0.12em]" style={{ color: "rgba(255,255,255,0.5)" }}>
                   Full Bio
                 </span>
@@ -210,9 +258,8 @@ const TeamSection = () => {
               className="text-[11px] uppercase tracking-[0.06em] leading-[1.7] max-w-[500px] text-right"
               style={{ color: "rgba(255,255,255,0.45)" }}
             >
-              Full-stack engineer and founder with deep expertise in systems architecture,
-              AI integration, and revenue technology. Building infrastructure that
-              scales companies from ambition to market dominance.
+              Full-stack engineer and founder with deep expertise in systems architecture, AI integration, and revenue
+              technology. Building infrastructure that scales companies from ambition to market dominance.
             </p>
           </div>
         </div>
