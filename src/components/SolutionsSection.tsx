@@ -26,7 +26,7 @@ const solutions = [
     num: "03 / 04",
     title: "DIGITAL\nTRANSFORMATION",
     body: "LEGACY MIGRATION, FULL-STACK MODERNIZATION, AND PLATFORM CONSOLIDATION FOR YOUR NEXT STAGE.",
-    color: "#B8704A",
+    color: "#E8704A",
     textColor: "#1a1a1a",
     accentColor: "#1a1a1a",
   },
@@ -131,114 +131,120 @@ const SolutionsSection = () => {
 
         {/* Cards deck */}
         <div
-          className="flex gap-3 px-6 md:px-12"
+          className="flex gap-2 px-6 md:px-8"
           style={{ scrollbarWidth: "none" }}
         >
-          {solutions.map((s, i) => (
-            <div
-              key={i}
-              className="relative flex flex-col justify-between cursor-pointer overflow-hidden"
-              style={{
-                width: expandedIndex === i ? "50%" : expandedIndex !== null ? "16.67%" : "25%",
-                minWidth: expandedIndex === i ? "420px" : expandedIndex !== null ? "120px" : "180px",
-                height: "560px",
-                background: s.color,
-                transition: "width 0.6s cubic-bezier(0.76, 0, 0.24, 1), min-width 0.6s cubic-bezier(0.76, 0, 0.24, 1)",
-                padding: "36px 28px",
-                borderRadius: "12px",
-                flexShrink: 0,
-              }}
-              onMouseEnter={() => setExpandedIndex(i)}
-              onMouseLeave={() => setExpandedIndex(null)}
-            >
-              <h3
-                className="text-[20px] md:text-[24px] font-bold uppercase leading-[1.15] whitespace-pre-line text-center transition-opacity duration-300"
-                style={{ color: s.textColor }}
-              >
-                {s.title}
-              </h3>
+          {solutions.map((s, i) => {
+            const isExpanded = expandedIndex === i;
+            const hasExpanded = expandedIndex !== null;
+            // Use flex-based sizing for smooth proportional distribution
+            const flexValue = isExpanded ? 4 : hasExpanded ? 1 : 1;
 
+            return (
               <div
-                className="flex-1 flex items-center justify-center transition-all duration-500"
-                style={{ opacity: expandedIndex === i ? 1 : 0.5 }}
+                key={i}
+                className="relative flex flex-col justify-between cursor-pointer overflow-hidden"
+                style={{
+                  flex: flexValue,
+                  minWidth: 0,
+                  height: "560px",
+                  background: s.color,
+                  transition: "flex 0.6s cubic-bezier(0.76, 0, 0.24, 1)",
+                  padding: "40px 36px",
+                  borderRadius: "12px",
+                }}
+                onMouseEnter={() => setExpandedIndex(i)}
+                onMouseLeave={() => setExpandedIndex(null)}
               >
-                <svg
-                  width="200"
-                  height="200"
-                  viewBox="0 0 200 200"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  style={{ opacity: 0.5 }}
+                <h3
+                  className="text-[20px] md:text-[24px] font-bold uppercase leading-[1.15] whitespace-pre-line text-center transition-opacity duration-300"
+                  style={{ color: s.textColor }}
                 >
-                  {i === 0 && (
-                    <>
-                      {Array.from({ length: 16 }).map((_, j) => {
-                        const angle = (j * 22.5 * Math.PI) / 180;
-                        return (
-                          <g key={j}>
-                            {Array.from({ length: 8 }).map((_, k) => {
-                              const r = 15 + k * 10;
-                              return (
-                                <circle key={k} cx={100 + Math.cos(angle) * r} cy={100 + Math.sin(angle) * r} r="1.5" fill={s.textColor} opacity={0.6 - k * 0.05} />
-                              );
-                            })}
-                          </g>
-                        );
-                      })}
-                    </>
-                  )}
-                  {i === 1 && (
-                    <>
-                      {Array.from({ length: 30 }).map((_, j) => {
-                        const t = j / 29;
-                        const spread = Math.sin(t * Math.PI) * 70;
-                        return (
-                          <path key={j} d={`M ${100 - spread} ${30 + j * 5} Q 100 ${30 + j * 5 - spread * 0.3} ${100 + spread} ${30 + j * 5}`} stroke={s.textColor} strokeWidth="0.8" fill="none" opacity={0.5} />
-                        );
-                      })}
-                    </>
-                  )}
-                  {i === 2 && (
-                    <>
-                      {Array.from({ length: 24 }).map((_, j) => {
-                        const angle = (j / 24) * Math.PI * 2;
-                        const r = 75;
-                        return (
-                          <line key={j} x1="100" y1="100" x2={100 + Math.cos(angle) * r} y2={100 + Math.sin(angle) * r} stroke={s.textColor} strokeWidth="0.6" opacity={0.5} />
-                        );
-                      })}
-                      {[20, 40, 60, 80].map((r) => (
-                        <circle key={r} cx="100" cy="100" r={r} stroke={s.textColor} strokeWidth="0.4" fill="none" opacity={0.3} strokeDasharray="2 3" />
-                      ))}
-                    </>
-                  )}
-                  {i === 3 && (
-                    <>
-                      {Array.from({ length: 12 }).map((_, j) => (
-                        <ellipse key={j} cx="100" cy="100" rx={15 + j * 7} ry={50 + j * 4} stroke={s.textColor} strokeWidth="0.6" fill="none" transform={`rotate(${j * 15} 100 100)`} opacity={0.45} />
-                      ))}
-                    </>
-                  )}
-                </svg>
-              </div>
+                  {s.title}
+                </h3>
 
-              <div className="text-center">
-                <div className="text-[11px] uppercase tracking-[0.15em] mb-3" style={{ color: s.accentColor, opacity: 0.7 }}>
-                  {s.num}
-                </div>
-                <p
-                  className="text-[10px] md:text-[11px] uppercase tracking-[0.08em] leading-[1.7] whitespace-normal"
-                  style={{
-                    color: s.textColor,
-                    opacity: expandedIndex === i ? 0.85 : 0.55,
-                    transition: "opacity 0.5s cubic-bezier(0.76, 0, 0.24, 1)",
-                  }}
+                <div
+                  className="flex-1 flex items-center justify-center transition-opacity duration-500"
+                  style={{ opacity: isExpanded ? 1 : 0.5 }}
                 >
-                  {s.body}
-                </p>
+                  <svg
+                    width="240"
+                    height="240"
+                    viewBox="0 0 200 200"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    style={{ opacity: 0.6, maxWidth: "100%", height: "auto" }}
+                  >
+                    {i === 0 && (
+                      <>
+                        {Array.from({ length: 16 }).map((_, j) => {
+                          const angle = (j * 22.5 * Math.PI) / 180;
+                          return (
+                            <g key={j}>
+                              {Array.from({ length: 8 }).map((_, k) => {
+                                const r = 15 + k * 10;
+                                return (
+                                  <circle key={k} cx={100 + Math.cos(angle) * r} cy={100 + Math.sin(angle) * r} r="1.5" fill={s.textColor} opacity={0.6 - k * 0.05} />
+                                );
+                              })}
+                            </g>
+                          );
+                        })}
+                      </>
+                    )}
+                    {i === 1 && (
+                      <>
+                        {Array.from({ length: 30 }).map((_, j) => {
+                          const t = j / 29;
+                          const spread = Math.sin(t * Math.PI) * 70;
+                          return (
+                            <path key={j} d={`M ${100 - spread} ${30 + j * 5} Q 100 ${30 + j * 5 - spread * 0.3} ${100 + spread} ${30 + j * 5}`} stroke={s.textColor} strokeWidth="0.8" fill="none" opacity={0.5} />
+                          );
+                        })}
+                      </>
+                    )}
+                    {i === 2 && (
+                      <>
+                        {Array.from({ length: 24 }).map((_, j) => {
+                          const angle = (j / 24) * Math.PI * 2;
+                          const r = 75;
+                          return (
+                            <line key={j} x1="100" y1="100" x2={100 + Math.cos(angle) * r} y2={100 + Math.sin(angle) * r} stroke={s.textColor} strokeWidth="0.6" opacity={0.5} />
+                          );
+                        })}
+                        {[20, 40, 60, 80].map((r) => (
+                          <circle key={r} cx="100" cy="100" r={r} stroke={s.textColor} strokeWidth="0.4" fill="none" opacity={0.3} strokeDasharray="2 3" />
+                        ))}
+                      </>
+                    )}
+                    {i === 3 && (
+                      <>
+                        {Array.from({ length: 12 }).map((_, j) => (
+                          <ellipse key={j} cx="100" cy="100" rx={15 + j * 7} ry={50 + j * 4} stroke={s.textColor} strokeWidth="0.6" fill="none" transform={`rotate(${j * 15} 100 100)`} opacity={0.45} />
+                        ))}
+                      </>
+                    )}
+                  </svg>
+                </div>
+
+                <div className="text-center">
+                  <div className="text-[11px] uppercase tracking-[0.15em] mb-4" style={{ color: s.accentColor, opacity: 0.7 }}>
+                    {s.num}
+                  </div>
+                  <p
+                    className="text-[10px] md:text-[11px] uppercase tracking-[0.08em] leading-[1.7]"
+                    style={{
+                      color: s.textColor,
+                      opacity: isExpanded ? 0.85 : 0.55,
+                      transition: "opacity 0.5s cubic-bezier(0.76, 0, 0.24, 1)",
+                    }}
+                  >
+                    {s.body}
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
