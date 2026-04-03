@@ -14,7 +14,7 @@ const solutions = [
     textColor: "hsl(0 0% 100%)",
     accentColor: "hsl(0 0% 100%)",
     bodyWidth: 290,
-    symbolOpacity: 0.16,
+    symbolOpacity: 0.5,
   },
   {
     num: "02 / 04",
@@ -24,7 +24,7 @@ const solutions = [
     textColor: "hsl(0 0% 0%)",
     accentColor: "hsl(0 0% 0%)",
     bodyWidth: 290,
-    symbolOpacity: 0.16,
+    symbolOpacity: 0.45,
   },
   {
     num: "03 / 04",
@@ -34,7 +34,7 @@ const solutions = [
     textColor: "hsl(0 0% 0%)",
     accentColor: "hsl(0 0% 0%)",
     bodyWidth: 290,
-    symbolOpacity: 0.16,
+    symbolOpacity: 0.45,
   },
   {
     num: "04 / 04",
@@ -44,7 +44,7 @@ const solutions = [
     textColor: "hsl(0 0% 0%)",
     accentColor: "hsl(0 0% 0%)",
     bodyWidth: 290,
-    symbolOpacity: 0.14,
+    symbolOpacity: 0.4,
   },
 ];
 
