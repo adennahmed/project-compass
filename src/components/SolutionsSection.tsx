@@ -226,16 +226,15 @@ const SolutionsSection = () => {
                   </svg>
                 </div>
 
-                <div className="text-center">
+                <div className="absolute bottom-0 left-0 right-0 text-center overflow-hidden" style={{ padding: "0 36px 40px" }}>
                   <div className="text-[11px] uppercase tracking-[0.15em] mb-4" style={{ color: s.accentColor, opacity: 0.7 }}>
                     {s.num}
                   </div>
                   <p
-                    className="text-[10px] md:text-[11px] uppercase tracking-[0.08em] leading-[1.7]"
+                    className="text-[10px] md:text-[11px] uppercase tracking-[0.08em] leading-[1.7] whitespace-nowrap overflow-hidden text-ellipsis"
                     style={{
                       color: s.textColor,
-                      opacity: isExpanded ? 0.85 : 0.55,
-                      transition: "opacity 0.5s cubic-bezier(0.76, 0, 0.24, 1)",
+                      opacity: 0.7,
                     }}
                   >
                     {s.body}
