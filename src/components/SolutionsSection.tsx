@@ -14,7 +14,7 @@ const solutions = [
     textColor: "hsl(0 0% 100%)",
     accentColor: "hsl(0 0% 100%)",
     bodyWidth: 290,
-    symbolOpacity: 0.5,
+    symbolOpacity: 1,
   },
   {
     num: "02 / 04",
@@ -24,7 +24,7 @@ const solutions = [
     textColor: "hsl(0 0% 0%)",
     accentColor: "hsl(0 0% 0%)",
     bodyWidth: 290,
-    symbolOpacity: 0.45,
+    symbolOpacity: 1,
   },
   {
     num: "03 / 04",
@@ -34,7 +34,7 @@ const solutions = [
     textColor: "hsl(0 0% 0%)",
     accentColor: "hsl(0 0% 0%)",
     bodyWidth: 290,
-    symbolOpacity: 0.45,
+    symbolOpacity: 1,
   },
   {
     num: "04 / 04",
@@ -44,7 +44,7 @@ const solutions = [
     textColor: "hsl(0 0% 0%)",
     accentColor: "hsl(0 0% 0%)",
     bodyWidth: 290,
-    symbolOpacity: 0.4,
+    symbolOpacity: 1,
   },
 ];
 
@@ -179,7 +179,7 @@ const SolutionsSection = () => {
                       viewBox="0 0 200 200"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
-                      style={{ opacity: s.symbolOpacity, maxWidth: "72%", height: "auto" }}
+                      style={{ maxWidth: "72%", height: "auto" }}
                     >
                       {i === 0 && (
                         <>
@@ -190,7 +190,7 @@ const SolutionsSection = () => {
                                 {Array.from({ length: 8 }).map((_, k) => {
                                   const r = 15 + k * 10;
                                   return (
-                                    <circle key={k} cx={100 + Math.cos(angle) * r} cy={100 + Math.sin(angle) * r} r="1.5" fill={s.textColor} opacity={0.82 - k * 0.07} />
+                                    <circle key={k} cx={100 + Math.cos(angle) * r} cy={100 + Math.sin(angle) * r} r="2.2" fill="#ffffff" />
                                   );
                                 })}
                               </g>
@@ -204,7 +204,7 @@ const SolutionsSection = () => {
                             const t = j / 29;
                             const spread = Math.sin(t * Math.PI) * 70;
                             return (
-                              <path key={j} d={`M ${100 - spread} ${30 + j * 5} Q 100 ${30 + j * 5 - spread * 0.3} ${100 + spread} ${30 + j * 5}`} stroke={s.textColor} strokeWidth="0.8" fill="none" opacity="0.88" />
+                              <path key={j} d={`M ${100 - spread} ${30 + j * 5} Q 100 ${30 + j * 5 - spread * 0.3} ${100 + spread} ${30 + j * 5}`} stroke="#000000" strokeWidth="1.4" fill="none" />
                             );
                           })}
                         </>
@@ -215,18 +215,18 @@ const SolutionsSection = () => {
                             const angle = (j / 24) * Math.PI * 2;
                             const r = 75;
                             return (
-                              <line key={j} x1="100" y1="100" x2={100 + Math.cos(angle) * r} y2={100 + Math.sin(angle) * r} stroke={s.textColor} strokeWidth="0.6" opacity="0.88" />
+                              <line key={j} x1="100" y1="100" x2={100 + Math.cos(angle) * r} y2={100 + Math.sin(angle) * r} stroke="#000000" strokeWidth="1.2" />
                             );
                           })}
                           {[20, 40, 60, 80].map((r) => (
-                            <circle key={r} cx="100" cy="100" r={r} stroke={s.textColor} strokeWidth="0.4" fill="none" opacity="0.48" strokeDasharray="2 3" />
+                            <circle key={r} cx="100" cy="100" r={r} stroke="#000000" strokeWidth="0.8" fill="none" opacity="0.6" strokeDasharray="2 3" />
                           ))}
                         </>
                       )}
                       {i === 3 && (
                         <>
                           {Array.from({ length: 12 }).map((_, j) => (
-                            <ellipse key={j} cx="100" cy="100" rx={15 + j * 7} ry={50 + j * 4} stroke={s.textColor} strokeWidth="0.6" fill="none" transform={`rotate(${j * 15} 100 100)`} opacity="0.88" />
+                            <ellipse key={j} cx="100" cy="100" rx={15 + j * 7} ry={50 + j * 4} stroke="#000000" strokeWidth="1" fill="none" transform={`rotate(${j * 15} 100 100)`} />
                           ))}
                         </>
                       )}
@@ -241,7 +241,7 @@ const SolutionsSection = () => {
                       {s.num}
                     </div>
                     <p
-                      className="text-[9.5px] md:text-[10px] uppercase tracking-[0.08em] leading-[1.38] [text-wrap:balance]"
+                      className="text-[9.5px] md:text-[10px] uppercase tracking-[0.08em] leading-[1.38] [text-wrap:balance] font-medium"
                       style={{ color: s.textColor }}
                     >
                       {s.body}
