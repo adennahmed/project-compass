@@ -204,7 +204,7 @@ const SolutionsSection = () => {
                             const t = j / 29;
                             const spread = Math.sin(t * Math.PI) * 70;
                             return (
-                              <path key={j} d={`M ${100 - spread} ${30 + j * 5} Q 100 ${30 + j * 5 - spread * 0.3} ${100 + spread} ${30 + j * 5}`} stroke={s.textColor} strokeWidth="0.8" fill="none" opacity="0.88" />
+                              <path key={j} d={`M ${100 - spread} ${30 + j * 5} Q 100 ${30 + j * 5 - spread * 0.3} ${100 + spread} ${30 + j * 5}`} stroke="#000000" strokeWidth="1.4" fill="none" />
                             );
                           })}
                         </>
