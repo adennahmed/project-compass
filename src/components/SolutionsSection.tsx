@@ -179,7 +179,7 @@ const SolutionsSection = () => {
                       viewBox="0 0 200 200"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
-                      style={{ opacity: s.symbolOpacity, maxWidth: "72%", height: "auto" }}
+                      style={{ maxWidth: "72%", height: "auto" }}
                     >
                       {i === 0 && (
                         <>
