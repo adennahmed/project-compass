@@ -134,17 +134,21 @@ const TeamSection = () => {
             }}
           />
 
-          {/* Role label – fades in when expanded */}
+          {/* Role label – fades in when expanded, bottom-left with backdrop */}
           <div
-            className="absolute bottom-[60px] right-[40px] flex items-center gap-2 pointer-events-none"
+            className="absolute bottom-[24px] left-[24px] flex items-center gap-2 pointer-events-none"
             style={{
               opacity: expanded ? 1 : 0,
               transform: expanded ? "translateY(0)" : "translateY(8px)",
               transition: "opacity 0.4s ease 0.35s, transform 0.4s ease 0.35s",
+              background: "rgba(0,0,0,0.55)",
+              padding: "6px 12px",
+              borderRadius: "3px",
+              backdropFilter: "blur(4px)",
             }}
           >
-            <div className="w-2 h-2 rounded-full" style={{ background: "rgba(255,255,255,0.4)" }} />
-            <span className="text-[10px] uppercase tracking-[0.15em]" style={{ color: "rgba(255,255,255,0.5)" }}>
+            <div className="w-1.5 h-1.5 rounded-full" style={{ background: "rgba(255,255,255,0.5)" }} />
+            <span className="text-[9px] uppercase tracking-[0.15em]" style={{ color: "rgba(255,255,255,0.75)" }}>
               FOUNDER & PRINCIPAL ENGINEER
             </span>
           </div>
