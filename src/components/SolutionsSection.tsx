@@ -190,7 +190,7 @@ const SolutionsSection = () => {
                                 {Array.from({ length: 8 }).map((_, k) => {
                                   const r = 15 + k * 10;
                                   return (
-                                    <circle key={k} cx={100 + Math.cos(angle) * r} cy={100 + Math.sin(angle) * r} r="1.5" fill={s.textColor} opacity={0.82 - k * 0.07} />
+                                    <circle key={k} cx={100 + Math.cos(angle) * r} cy={100 + Math.sin(angle) * r} r="2.2" fill="#ffffff" />
                                   );
                                 })}
                               </g>
