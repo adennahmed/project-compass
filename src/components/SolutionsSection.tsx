@@ -12,7 +12,7 @@ const solutions = [
     body: "CRM ARCHITECTURE, SALES AUTOMATION, AND PIPELINE INFRASTRUCTURE ENGINEERED TO CLOSE MORE AND SCALE FASTER.",
     color: "#1a1a1a",
     textColor: "#ffffff",
-    accentColor: "#C8A96E",
+    accentColor: "#ffffff",
   },
   {
     num: "02 / 04",
@@ -36,7 +36,7 @@ const solutions = [
     body: "BI DASHBOARDS, KPI FRAMEWORKS, AND DECISION-SUPPORT SYSTEMS THAT DRIVE CLARITY AND FASTER EXECUTION.",
     color: "#ffffff",
     textColor: "#000000",
-    accentColor: "#555555",
+    accentColor: "#000000",
   },
 ];
 
