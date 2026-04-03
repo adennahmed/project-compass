@@ -19,23 +19,23 @@ const solutions = [
     title: "OPERATIONAL\nINFRASTRUCTURE",
     body: "WORKFLOW AUTOMATION, SYSTEM INTEGRATION, AND PROCESS MODERNIZATION. WE ELIMINATE THE FRICTION THAT STALLS GROWTH.",
     color: "#7BA3A8",
-    textColor: "#1a1a1a",
-    accentColor: "#1a1a1a",
+    textColor: "#000000",
+    accentColor: "#000000",
   },
   {
     num: "03 / 04",
     title: "DIGITAL\nTRANSFORMATION",
     body: "LEGACY MIGRATION, FULL-STACK MODERNIZATION, AND PLATFORM CONSOLIDATION FOR YOUR NEXT STAGE.",
     color: "#E8704A",
-    textColor: "#1a1a1a",
-    accentColor: "#1a1a1a",
+    textColor: "#000000",
+    accentColor: "#000000",
   },
   {
     num: "04 / 04",
     title: "DATA &\nINTELLIGENCE",
     body: "BI DASHBOARDS, KPI FRAMEWORKS, AND DECISION-SUPPORT SYSTEMS THAT DRIVE CLARITY AND FASTER EXECUTION.",
-    color: "#C4B9A8",
-    textColor: "#1a1a1a",
+    color: "#ffffff",
+    textColor: "#000000",
     accentColor: "#555555",
   },
 ];
@@ -129,7 +129,7 @@ const SolutionsSection = () => {
           </div>
         </div>
 
-        {/* Cards deck */}
+        {/* Cards deck — flex:1 default, flex:1.8 on hover (subtle expand) */}
         <div
           className="flex gap-2 px-6 md:px-8"
           style={{ scrollbarWidth: "none" }}
@@ -137,8 +137,7 @@ const SolutionsSection = () => {
           {solutions.map((s, i) => {
             const isExpanded = expandedIndex === i;
             const hasExpanded = expandedIndex !== null;
-            // Use flex-based sizing for smooth proportional distribution
-            const flexValue = isExpanded ? 4 : hasExpanded ? 1 : 1;
+            const flexValue = isExpanded ? 1.8 : hasExpanded ? 0.8 : 1;
 
             return (
               <div

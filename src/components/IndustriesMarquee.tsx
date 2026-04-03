@@ -15,13 +15,16 @@ const industries = [
   { name: "FINANCIAL TECHNOLOGY", desc: "Payment systems, investment platforms, and financial data infrastructure built for precision." },
 ];
 
+const BRACKET_PAD_X = 28;
+const BRACKET_PAD_Y = 14;
+
 const IndustriesMarquee = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const itemsContainerRef = useRef<HTMLDivElement>(null);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const bracketRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const rafLoopRef = useRef<number | null>(null);
+  const rafIdRef = useRef<number | null>(null);
 
   const setItemRef = useCallback((el: HTMLDivElement | null, i: number) => {
     itemRefs.current[i] = el;
@@ -34,64 +37,55 @@ const IndustriesMarquee = () => {
     });
   }, []);
 
-  // Continuously track bracket position using RAF loop for perfectly synced animation
+  const updateBracket = useCallback(() => {
+    const bracket = bracketRef.current;
+    const container = itemsContainerRef.current;
+    if (!bracket || !container || hoveredIndex === null) return;
+
+    const item = itemRefs.current[hoveredIndex];
+    if (!item) return;
+
+    const containerRect = container.getBoundingClientRect();
+    const itemRect = item.getBoundingClientRect();
+
+    bracket.style.top = `${itemRect.top - containerRect.top - BRACKET_PAD_Y}px`;
+    bracket.style.left = `${itemRect.left - containerRect.left - BRACKET_PAD_X}px`;
+    bracket.style.width = `${itemRect.width + BRACKET_PAD_X * 2}px`;
+    bracket.style.height = `${itemRect.height + BRACKET_PAD_Y * 2}px`;
+  }, [hoveredIndex]);
+
+  // RAF loop that continuously repositions the bracket every frame
   useEffect(() => {
     const bracket = bracketRef.current;
     if (!bracket) return;
 
-    // Cancel any existing loop
-    if (rafLoopRef.current) {
-      cancelAnimationFrame(rafLoopRef.current);
-      rafLoopRef.current = null;
-    }
-
     if (hoveredIndex === null) {
-      gsap.to(bracket, { opacity: 0, duration: 0.2, ease: "power2.out" });
+      bracket.style.opacity = "0";
+      if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current);
+      rafIdRef.current = null;
       return;
     }
 
-    // Show bracket immediately
-    gsap.set(bracket, { opacity: 1 });
-
+    bracket.style.opacity = "1";
     const startTime = performance.now();
-    const trackDuration = 600; // track for duration of CSS transition
 
-    const updatePosition = () => {
-      const item = itemRefs.current[hoveredIndex];
-      const container = itemsContainerRef.current;
-      if (!item || !container) return;
-
-      const containerRect = container.getBoundingClientRect();
-      const itemRect = item.getBoundingClientRect();
-
-      const padX = 28;
-      const padY = 14;
-      const top = itemRect.top - containerRect.top - padY;
-      const left = itemRect.left - containerRect.left - padX;
-      const width = itemRect.width + padX * 2;
-      const height = itemRect.height + padY * 2;
-
-      // Direct style set for zero-lag tracking
-      bracket.style.top = `${top}px`;
-      bracket.style.left = `${left}px`;
-      bracket.style.width = `${width}px`;
-      bracket.style.height = `${height}px`;
-
-      // Keep looping during the CSS transition
-      if (performance.now() - startTime < trackDuration) {
-        rafLoopRef.current = requestAnimationFrame(updatePosition);
+    const loop = () => {
+      updateBracket();
+      // Keep tracking for 700ms (longer than CSS transition)
+      if (performance.now() - startTime < 700) {
+        rafIdRef.current = requestAnimationFrame(loop);
       }
     };
 
-    rafLoopRef.current = requestAnimationFrame(updatePosition);
+    rafIdRef.current = requestAnimationFrame(loop);
 
     return () => {
-      if (rafLoopRef.current) {
-        cancelAnimationFrame(rafLoopRef.current);
-        rafLoopRef.current = null;
+      if (rafIdRef.current) {
+        cancelAnimationFrame(rafIdRef.current);
+        rafIdRef.current = null;
       }
     };
-  }, [hoveredIndex]);
+  }, [hoveredIndex, updateBracket]);
 
   return (
     <section
@@ -108,11 +102,15 @@ const IndustriesMarquee = () => {
         </div>
 
         <div ref={itemsContainerRef} className="relative flex flex-col items-center gap-2 md:gap-3 px-6">
-          {/* Animated bracket indicator */}
+          {/* Animated bracket — uses transition for smooth visual but position is set via RAF */}
           <div
             ref={bracketRef}
             className="absolute pointer-events-none"
-            style={{ opacity: 0, zIndex: 5 }}
+            style={{
+              opacity: 0,
+              zIndex: 5,
+              transition: "opacity 0.2s ease",
+            }}
           >
             <span className="absolute top-0 left-0 w-5 h-5 border-t-2 border-l-2" style={{ borderColor: "rgba(30,30,30,0.3)" }} />
             <span className="absolute top-0 right-0 w-5 h-5 border-t-2 border-r-2" style={{ borderColor: "rgba(30,30,30,0.3)" }} />
@@ -145,7 +143,6 @@ const IndustriesMarquee = () => {
                 {industry.name}
               </div>
 
-              {/* Description on hover */}
               <div
                 className="overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.76,0,0.24,1)]"
                 style={{
