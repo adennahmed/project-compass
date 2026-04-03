@@ -6,41 +6,50 @@ import adenPhoto from "@/assets/aden-ahmed.png";
 
 gsap.registerPlugin(ScrollTrigger);
 
+const COLLAPSED_H = 140;
+const EXPANDED_H = 600;
+const EXPANDED_W = 520;
+/* Eyes sit at ~35% from the top of the 1030px-tall source image */
+const EYE_CENTER_PCT = 35;
+
 const TeamSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const [expanded, setExpanded] = useState(false);
-  const imageRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.from(".team-headline", {
-        y: 60,
-        opacity: 0,
-        duration: 1,
-        ease: "power3.out",
+        y: 60, opacity: 0, duration: 1, ease: "power3.out",
         scrollTrigger: { trigger: ".team-headline", start: "top 82%" },
       });
-
       gsap.from(".team-strip", {
-        y: 40,
-        opacity: 0,
-        duration: 0.9,
-        ease: "power3.out",
+        y: 40, opacity: 0, duration: 0.9, ease: "power3.out",
         scrollTrigger: { trigger: ".team-strip", start: "top 85%" },
       });
     }, sectionRef);
-
     return () => ctx.revert();
   }, []);
+
+  const handleToggle = () => {
+    if (!containerRef.current) return;
+    const el = containerRef.current;
+    const next = !expanded;
+    setExpanded(next);
+
+    gsap.to(el, {
+      height: next ? EXPANDED_H : COLLAPSED_H,
+      maxWidth: next ? EXPANDED_W : 1200,
+      duration: 0.7,
+      ease: "power3.inOut",
+    });
+  };
 
   return (
     <section ref={sectionRef} id="team" className="py-32 md:py-40 px-6 md:px-12">
       {/* Header */}
       <div className="text-center mb-8">
-        <div
-          className="text-[11px] uppercase tracking-[0.18em] mb-4"
-          style={{ color: "#444444" }}
-        >
+        <div className="text-[11px] uppercase tracking-[0.18em] mb-4" style={{ color: "#444444" }}>
           OUR LEADERSHIP TEAM
         </div>
         <p
@@ -51,10 +60,7 @@ const TeamSection = () => {
           commercial strategy, and systems architecture. The people who built
           what's now, helping you build what's next.
         </p>
-        <a
-          href="#contact"
-          className="relative inline-block px-5 py-3 hover-target group"
-        >
+        <a href="#contact" className="relative inline-block px-5 py-3 hover-target group">
           <span className="absolute top-0 left-0 w-2.5 h-2.5 border-t border-l transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(255,255,255,0.25)" }} />
           <span className="absolute top-0 right-0 w-2.5 h-2.5 border-t border-r transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(255,255,255,0.25)" }} />
           <span className="absolute bottom-0 left-0 w-2.5 h-2.5 border-b border-l transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(255,255,255,0.25)" }} />
@@ -68,73 +74,83 @@ const TeamSection = () => {
       {/* Eye strip / Expanded portrait */}
       <div className="team-strip max-w-[1200px] mx-auto mt-16">
         <div
-          ref={imageRef}
+          ref={containerRef}
           className="relative cursor-pointer overflow-hidden mx-auto"
           style={{
-            maxWidth: expanded ? "520px" : "100%",
-            height: expanded ? "580px" : "100px",
+            maxWidth: 1200,
+            height: COLLAPSED_H,
             borderRadius: "4px",
-            transition: "all 0.7s cubic-bezier(0.76, 0, 0.24, 1)",
           }}
-          onClick={() => setExpanded(!expanded)}
+          onClick={handleToggle}
         >
-          {/* Real photo - positioned to show eyes when collapsed, full face when expanded */}
+          {/* Photo – covers full container, object-position shifts between eye-line and portrait */}
           <img
             src={adenPhoto}
             alt="Aden Ahmed"
-            className="absolute w-full object-cover"
+            draggable={false}
+            className="absolute inset-0 w-full h-full select-none"
             style={{
-              height: expanded ? "100%" : "auto",
-              width: "100%",
               objectFit: "cover",
-              /* When collapsed: position the image so only the eye region is visible.
-                 The eyes are roughly 38% from the top of the photo. 
-                 With 100px container height, we shift the image up to center eyes. */
-              objectPosition: expanded ? "center 20%" : "center 36%",
-              filter: expanded ? "none" : "contrast(1.1) brightness(0.85)",
-              transition: "all 0.7s cubic-bezier(0.76, 0, 0.24, 1)",
+              objectPosition: expanded ? "center 15%" : `center ${EYE_CENTER_PCT}%`,
+              transition: "object-position 0.7s cubic-bezier(0.76, 0, 0.24, 1)",
             }}
           />
 
-          {/* Gradient overlays for eye strip when collapsed */}
-          {!expanded && (
-            <>
-              <div
-                className="absolute inset-x-0 top-0 h-[30%] pointer-events-none"
-                style={{ background: "linear-gradient(to bottom, #080808 0%, transparent 100%)" }}
-              />
-              <div
-                className="absolute inset-x-0 bottom-0 h-[30%] pointer-events-none"
-                style={{ background: "linear-gradient(to top, #080808 0%, transparent 100%)" }}
-              />
-              <div
-                className="absolute inset-y-0 left-0 w-[15%] pointer-events-none"
-                style={{ background: "linear-gradient(to right, #080808 0%, transparent 100%)" }}
-              />
-              <div
-                className="absolute inset-y-0 right-0 w-[15%] pointer-events-none"
-                style={{ background: "linear-gradient(to left, #080808 0%, transparent 100%)" }}
-              />
-            </>
-          )}
+          {/* Edge fade overlays – fade out when expanded */}
+          <div
+            className="absolute inset-x-0 top-0 pointer-events-none"
+            style={{
+              height: "35%",
+              background: "linear-gradient(to bottom, #080808, transparent)",
+              opacity: expanded ? 0 : 1,
+              transition: "opacity 0.5s ease",
+            }}
+          />
+          <div
+            className="absolute inset-x-0 bottom-0 pointer-events-none"
+            style={{
+              height: "35%",
+              background: "linear-gradient(to top, #080808, transparent)",
+              opacity: expanded ? 0 : 1,
+              transition: "opacity 0.5s ease",
+            }}
+          />
+          <div
+            className="absolute inset-y-0 left-0 pointer-events-none"
+            style={{
+              width: "12%",
+              background: "linear-gradient(to right, #080808, transparent)",
+              opacity: expanded ? 0 : 1,
+              transition: "opacity 0.5s ease",
+            }}
+          />
+          <div
+            className="absolute inset-y-0 right-0 pointer-events-none"
+            style={{
+              width: "12%",
+              background: "linear-gradient(to left, #080808, transparent)",
+              opacity: expanded ? 0 : 1,
+              transition: "opacity 0.5s ease",
+            }}
+          />
 
-          {/* Role label when expanded */}
-          {expanded && (
-            <div
-              className="absolute bottom-[80px] right-[40px] flex items-center gap-2"
-              style={{
-                animation: "fadeIn 0.5s ease 0.3s both",
-              }}
-            >
-              <div className="w-2 h-2 rounded-full" style={{ background: "rgba(255,255,255,0.4)" }} />
-              <span className="text-[10px] uppercase tracking-[0.15em]" style={{ color: "rgba(255,255,255,0.5)" }}>
-                FOUNDER & PRINCIPAL ENGINEER
-              </span>
-            </div>
-          )}
+          {/* Role label – fades in when expanded */}
+          <div
+            className="absolute bottom-[60px] right-[40px] flex items-center gap-2 pointer-events-none"
+            style={{
+              opacity: expanded ? 1 : 0,
+              transform: expanded ? "translateY(0)" : "translateY(8px)",
+              transition: "opacity 0.4s ease 0.35s, transform 0.4s ease 0.35s",
+            }}
+          >
+            <div className="w-2 h-2 rounded-full" style={{ background: "rgba(255,255,255,0.4)" }} />
+            <span className="text-[10px] uppercase tracking-[0.15em]" style={{ color: "rgba(255,255,255,0.5)" }}>
+              FOUNDER & PRINCIPAL ENGINEER
+            </span>
+          </div>
         </div>
 
-        {/* Info bar below */}
+        {/* Info bar */}
         <div className="flex items-center justify-between mt-4 px-2">
           <div className="text-[11px] uppercase tracking-[0.15em]" style={{ color: "rgba(255,255,255,0.35)" }}>
             01 / 01
@@ -151,10 +167,11 @@ const TeamSection = () => {
 
         {/* Expanded details */}
         <div
-          className="overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.76,0,0.24,1)]"
+          className="overflow-hidden"
           style={{
             maxHeight: expanded ? "200px" : "0px",
             opacity: expanded ? 1 : 0,
+            transition: "max-height 0.6s cubic-bezier(0.76,0,0.24,1), opacity 0.5s ease 0.15s",
           }}
         >
           <div className="flex items-start justify-between mt-4 px-2">
