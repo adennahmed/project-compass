@@ -226,7 +226,7 @@ const SolutionsSection = () => {
                       {i === 3 && (
                         <>
                           {Array.from({ length: 12 }).map((_, j) => (
-                            <ellipse key={j} cx="100" cy="100" rx={15 + j * 7} ry={50 + j * 4} stroke={s.textColor} strokeWidth="0.6" fill="none" transform={`rotate(${j * 15} 100 100)`} opacity="0.88" />
+                            <ellipse key={j} cx="100" cy="100" rx={15 + j * 7} ry={50 + j * 4} stroke="#000000" strokeWidth="1" fill="none" transform={`rotate(${j * 15} 100 100)`} />
                           ))}
                         </>
                       )}
