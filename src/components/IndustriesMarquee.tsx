@@ -21,6 +21,7 @@ const IndustriesMarquee = () => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const bracketRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const rafLoopRef = useRef<number | null>(null);
 
   const setItemRef = useCallback((el: HTMLDivElement | null, i: number) => {
     itemRefs.current[i] = el;
@@ -33,18 +34,29 @@ const IndustriesMarquee = () => {
     });
   }, []);
 
-  // Animate bracket — use RAF to wait for DOM to settle after hover expansion
+  // Continuously track bracket position using RAF loop for perfectly synced animation
   useEffect(() => {
     const bracket = bracketRef.current;
     if (!bracket) return;
 
+    // Cancel any existing loop
+    if (rafLoopRef.current) {
+      cancelAnimationFrame(rafLoopRef.current);
+      rafLoopRef.current = null;
+    }
+
     if (hoveredIndex === null) {
-      gsap.to(bracket, { opacity: 0, duration: 0.25, ease: "power2.out" });
+      gsap.to(bracket, { opacity: 0, duration: 0.2, ease: "power2.out" });
       return;
     }
 
-    // Wait a frame for the CSS transition to start so dimensions are updating
-    const raf = requestAnimationFrame(() => {
+    // Show bracket immediately
+    gsap.set(bracket, { opacity: 1 });
+
+    const startTime = performance.now();
+    const trackDuration = 600; // track for duration of CSS transition
+
+    const updatePosition = () => {
       const item = itemRefs.current[hoveredIndex];
       const container = itemsContainerRef.current;
       if (!item || !container) return;
@@ -52,47 +64,32 @@ const IndustriesMarquee = () => {
       const containerRect = container.getBoundingClientRect();
       const itemRect = item.getBoundingClientRect();
 
-      const padX = 32;
-      const padY = 12;
+      const padX = 28;
+      const padY = 14;
       const top = itemRect.top - containerRect.top - padY;
       const left = itemRect.left - containerRect.left - padX;
       const width = itemRect.width + padX * 2;
       const height = itemRect.height + padY * 2;
 
-      gsap.to(bracket, {
-        top, left, width, height,
-        opacity: 1,
-        duration: 0.4,
-        ease: "power3.out",
-      });
-    });
+      // Direct style set for zero-lag tracking
+      bracket.style.top = `${top}px`;
+      bracket.style.left = `${left}px`;
+      bracket.style.width = `${width}px`;
+      bracket.style.height = `${height}px`;
 
-    // Also update after the CSS transition completes
-    const timeout = setTimeout(() => {
-      const item = itemRefs.current[hoveredIndex];
-      const container = itemsContainerRef.current;
-      if (!item || !container || !bracket) return;
+      // Keep looping during the CSS transition
+      if (performance.now() - startTime < trackDuration) {
+        rafLoopRef.current = requestAnimationFrame(updatePosition);
+      }
+    };
 
-      const containerRect = container.getBoundingClientRect();
-      const itemRect = item.getBoundingClientRect();
-
-      const padX = 32;
-      const padY = 12;
-      const top = itemRect.top - containerRect.top - padY;
-      const left = itemRect.left - containerRect.left - padX;
-      const width = itemRect.width + padX * 2;
-      const height = itemRect.height + padY * 2;
-
-      gsap.to(bracket, {
-        top, left, width, height,
-        duration: 0.3,
-        ease: "power3.out",
-      });
-    }, 500);
+    rafLoopRef.current = requestAnimationFrame(updatePosition);
 
     return () => {
-      cancelAnimationFrame(raf);
-      clearTimeout(timeout);
+      if (rafLoopRef.current) {
+        cancelAnimationFrame(rafLoopRef.current);
+        rafLoopRef.current = null;
+      }
     };
   }, [hoveredIndex]);
 
