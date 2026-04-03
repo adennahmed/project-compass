@@ -241,7 +241,7 @@ const SolutionsSection = () => {
                       {s.num}
                     </div>
                     <p
-                      className="text-[9.5px] md:text-[10px] uppercase tracking-[0.08em] leading-[1.38] [text-wrap:balance]"
+                      className="text-[9.5px] md:text-[10px] uppercase tracking-[0.08em] leading-[1.38] [text-wrap:balance] font-medium"
                       style={{ color: s.textColor }}
                     >
                       {s.body}
