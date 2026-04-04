@@ -27,7 +27,6 @@ const HeroSection = ({ animate }: HeroSectionProps) => {
     const offset = getInwardOffset();
 
     const ctx = gsap.context(() => {
-      // Start with halves pushed inward (overlapping at center)
       gsap.set(".hero-half-left", { x: offset });
       gsap.set(".hero-half-right", { x: -offset });
       gsap.set(".scroll-indicator, .hero-bottom-left, .hero-bottom-right, .hero-logo-watermark", { opacity: 0 });
@@ -115,10 +114,11 @@ const HeroSection = ({ animate }: HeroSectionProps) => {
         </div>
       </div>
 
+      {/* Scroll indicator with gold shimmer */}
       <div className="scroll-indicator absolute bottom-8 left-1/2 -translate-x-1/2 z-10 hidden sm:block">
         <div className="flex flex-col items-center gap-2">
           <div className="relative h-[50px] w-[1px] overflow-hidden" style={{ background: "hsl(var(--foreground) / 0.08)" }}>
-            <div className="animate-scroll-line absolute left-0 top-0 h-[15px] w-full" style={{ background: "hsl(var(--foreground) / 0.4)" }} />
+            <div className="animate-scroll-line absolute left-0 top-0 h-[15px] w-full" style={{ background: "linear-gradient(to bottom, transparent, #C8A96E, transparent)" }} />
           </div>
         </div>
       </div>
