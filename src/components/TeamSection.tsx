@@ -54,6 +54,7 @@ const members: TeamMember[] = [
 const TeamSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const [expandedIdx, setExpandedIdx] = useState<number | null>(null);
+  const [visualExpandedIdx, setVisualExpandedIdx] = useState<number | null>(null);
   const stripRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
