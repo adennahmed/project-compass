@@ -46,8 +46,7 @@ const members: TeamMember[] = [
 
 const COLLAPSED_H = 120;
 const EXPANDED_H = 560;
-const SECTION_MIN_H = EXPANDED_H + 400; // enough room so nothing outside shifts
-const ANIM_MS = 0.7;
+const ANIM_MS = 0.75;
 const EASE = "expo.inOut";
 
 const TeamSection = () => {
@@ -55,7 +54,9 @@ const TeamSection = () => {
   const stripRefs = useRef<(HTMLDivElement | null)[]>([]);
   const imgRefs = useRef<(HTMLImageElement | null)[]>([]);
   const labelRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const bioRef = useRef<HTMLDivElement>(null);
+  const bioNameRef = useRef<HTMLDivElement>(null);
+  const bioPRef = useRef<HTMLParagraphElement>(null);
+  const bioContainerRef = useRef<HTMLDivElement>(null);
   const expandedIdx = useRef<number | null>(null);
   const busy = useRef(false);
   const [bioData, setBioData] = useState<number | null>(null);
@@ -93,11 +94,15 @@ const TeamSection = () => {
     const isCollapse = prev === idx;
     const next = isCollapse ? null : idx;
 
+    // If switching between members (not collapsing), update text immediately
+    // and just crossfade the text content
+    const isSwitching = prev !== null && next !== null;
+
     const tl = gsap.timeline({
       onComplete: () => {
         expandedIdx.current = next;
         busy.current = false;
-        setBioData(next);
+        if (!isSwitching) setBioData(next);
       },
     });
 
@@ -110,7 +115,11 @@ const TeamSection = () => {
       if (ps) tl.to(ps, { height: COLLAPSED_H, duration: ANIM_MS, ease: EASE, overwrite: true }, 0);
       if (pi) tl.to(pi, { scale: 1.18, objectPosition: `center ${members[prev].eyePct}%`, duration: ANIM_MS, ease: EASE, overwrite: true }, 0);
       if (pl) tl.to(pl, { opacity: 0, y: 8, duration: 0.25, ease: "power2.in" }, 0);
-      if (bioRef.current) tl.to(bioRef.current, { opacity: 0, y: 10, duration: 0.25, ease: "power2.in" }, 0);
+
+      // If collapsing (not switching), fade out bio
+      if (!isSwitching && bioContainerRef.current) {
+        tl.to(bioContainerRef.current, { opacity: 0, duration: 0.3, ease: "power2.in" }, 0);
+      }
     }
 
     // Expand next
@@ -118,20 +127,36 @@ const TeamSection = () => {
       const ns = stripRefs.current[next];
       const ni = imgRefs.current[next];
       const nl = labelRefs.current[next];
-      const delay = prev !== null ? 0.12 : 0;
+      const delay = prev !== null ? 0.1 : 0;
 
       if (ns) tl.to(ns, { height: EXPANDED_H, duration: ANIM_MS, ease: EASE, overwrite: true }, delay);
       if (ni) tl.to(ni, { scale: 1, objectPosition: members[next].expandedPos, duration: ANIM_MS, ease: EASE, overwrite: true }, delay);
       if (nl) tl.to(nl, { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }, delay + ANIM_MS * 0.55);
 
-      // Update bio content early so it's ready for fade-in
-      setBioData(next);
-      if (bioRef.current) {
-        tl.fromTo(bioRef.current,
-          { opacity: 0, y: 14 },
-          { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" },
-          delay + ANIM_MS * 0.5
-        );
+      if (isSwitching) {
+        // Crossfade: fade out old text, swap content, fade in new text — all in place
+        const textEls = [bioNameRef.current, bioPRef.current].filter(Boolean);
+        tl.to(textEls, {
+          opacity: 0,
+          duration: 0.2,
+          ease: "power2.in",
+          onComplete: () => setBioData(next),
+        }, delay + 0.05);
+        tl.to(textEls, {
+          opacity: 1,
+          duration: 0.3,
+          ease: "power2.out",
+        }, delay + 0.3);
+      } else {
+        // First expand — set data and fade in container
+        setBioData(next);
+        if (bioContainerRef.current) {
+          tl.fromTo(bioContainerRef.current,
+            { opacity: 0 },
+            { opacity: 1, duration: 0.45, ease: "power2.out" },
+            delay + ANIM_MS * 0.45
+          );
+        }
       }
     }
   }, []);
@@ -140,16 +165,14 @@ const TeamSection = () => {
     <section
       ref={sectionRef}
       id="team"
-      className="relative overflow-hidden"
+      className="relative overflow-hidden flex flex-col"
       style={{
-        minHeight: SECTION_MIN_H,
-        paddingTop: "6rem",
-        paddingBottom: "10rem",
+        minHeight: "100vh",
         background: "hsl(var(--background))",
       }}
     >
-      {/* Header */}
-      <div className="team-header-content mb-24 text-center px-4">
+      {/* Header — pinned to top area */}
+      <div className="team-header-content text-center px-4 pt-16 pb-8">
         <div
           className="mb-5 text-[11px] uppercase tracking-[0.18em]"
           style={{ color: "hsl(var(--foreground) / 0.35)" }}
@@ -174,78 +197,84 @@ const TeamSection = () => {
         </a>
       </div>
 
-      {/* Strips row — flush, no gaps, no padding */}
-      <div className="team-strips-row flex w-full">
-        {members.map((member, idx) => (
-          <div key={member.name} className="flex-1 min-w-0">
-            <button
-              type="button"
-              className="relative block w-full text-left cursor-pointer"
-              onClick={() => handleToggle(idx)}
-              aria-label={`Toggle ${member.name} profile`}
-            >
-              <div
-                ref={(el) => { stripRefs.current[idx] = el; }}
-                className="relative overflow-hidden"
-                style={{ height: COLLAPSED_H }}
+      {/* Center area — strips vertically centered, items-center so expanded card stays aligned */}
+      <div className="flex-1 flex flex-col justify-center">
+        <div className="team-strips-row flex w-full items-center">
+          {members.map((member, idx) => (
+            <div key={member.name} className="flex-1 min-w-0">
+              <button
+                type="button"
+                className="relative block w-full text-left cursor-pointer"
+                onClick={() => handleToggle(idx)}
+                aria-label={`Toggle ${member.name} profile`}
               >
-                <img
-                  ref={(el) => { imgRefs.current[idx] = el; }}
-                  src={member.photo}
-                  alt={member.name}
-                  draggable={false}
-                  className="absolute inset-0 h-full w-full select-none"
-                  style={{
-                    objectFit: "cover",
-                    objectPosition: `center ${member.eyePct}%`,
-                    transform: "scale(1.18)",
-                    transformOrigin: "center center",
-                    willChange: "transform, object-position",
-                  }}
-                />
-
-                {/* Top/bottom gradient fades */}
-                <div className="pointer-events-none absolute inset-x-0 top-0" style={{ height: "35%", background: "linear-gradient(to bottom, hsl(var(--background)), transparent)" }} />
-                <div className="pointer-events-none absolute inset-x-0 bottom-0" style={{ height: "35%", background: "linear-gradient(to top, hsl(var(--background)), transparent)" }} />
-
-                {/* Role label */}
                 <div
-                  ref={(el) => { labelRefs.current[idx] = el; }}
-                  className="pointer-events-none absolute bottom-4 left-4 flex items-center gap-2 rounded-sm px-2.5 py-1.5"
-                  style={{
-                    opacity: 0,
-                    transform: "translateY(8px)",
-                    background: "hsl(var(--background) / 0.68)",
-                    backdropFilter: "blur(8px)",
-                  }}
+                  ref={(el) => { stripRefs.current[idx] = el; }}
+                  className="relative overflow-hidden"
+                  style={{ height: COLLAPSED_H }}
                 >
-                  <div className="h-1.5 w-1.5 rounded-full" style={{ background: "hsl(var(--foreground) / 0.55)" }} />
-                  <span className="text-[9px] uppercase tracking-[0.14em]" style={{ color: "hsl(var(--foreground) / 0.78)" }}>
-                    {member.role}
-                  </span>
+                  <img
+                    ref={(el) => { imgRefs.current[idx] = el; }}
+                    src={member.photo}
+                    alt={member.name}
+                    draggable={false}
+                    className="absolute inset-0 h-full w-full select-none"
+                    style={{
+                      objectFit: "cover",
+                      objectPosition: `center ${member.eyePct}%`,
+                      transform: "scale(1.18)",
+                      transformOrigin: "center center",
+                      willChange: "transform, object-position",
+                    }}
+                  />
+
+                  {/* Top/bottom gradient fades */}
+                  <div className="pointer-events-none absolute inset-x-0 top-0" style={{ height: "35%", background: "linear-gradient(to bottom, hsl(var(--background)), transparent)" }} />
+                  <div className="pointer-events-none absolute inset-x-0 bottom-0" style={{ height: "35%", background: "linear-gradient(to top, hsl(var(--background)), transparent)" }} />
+
+                  {/* Role label */}
+                  <div
+                    ref={(el) => { labelRefs.current[idx] = el; }}
+                    className="pointer-events-none absolute bottom-4 left-4 flex items-center gap-2 rounded-sm px-2.5 py-1.5"
+                    style={{
+                      opacity: 0,
+                      transform: "translateY(8px)",
+                      background: "hsl(var(--background) / 0.68)",
+                      backdropFilter: "blur(8px)",
+                    }}
+                  >
+                    <div className="h-1.5 w-1.5 rounded-full" style={{ background: "hsl(var(--foreground) / 0.55)" }} />
+                    <span className="text-[9px] uppercase tracking-[0.14em]" style={{ color: "hsl(var(--foreground) / 0.78)" }}>
+                      {member.role}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            </button>
-          </div>
-        ))}
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
 
-      {/* Bio */}
+      {/* Bio — pinned to bottom area, fixed height so no shift */}
       <div
-        ref={bioRef}
-        className="mx-auto mt-14 max-w-[900px] text-center px-4"
-        style={{ opacity: 0 }}
+        ref={bioContainerRef}
+        className="text-center px-4 pb-16 pt-8"
+        style={{ opacity: 0, minHeight: 100 }}
       >
-        {bioData !== null && (
-          <>
-            <div className="text-[11px] uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.38)" }}>
-              {members[bioData].name} / {members[bioData].role}
-            </div>
-            <p className="mt-4 text-[12px] uppercase tracking-[0.08em] leading-[1.8]" style={{ color: "hsl(var(--foreground) / 0.52)" }}>
-              {members[bioData].bio}
-            </p>
-          </>
-        )}
+        <div
+          ref={bioNameRef}
+          className="text-[11px] uppercase tracking-[0.18em]"
+          style={{ color: "hsl(var(--foreground) / 0.38)" }}
+        >
+          {bioData !== null ? `${members[bioData].name}  ·  ${members[bioData].role}` : "\u00A0"}
+        </div>
+        <p
+          ref={bioPRef}
+          className="mx-auto mt-4 max-w-[900px] text-[12px] uppercase tracking-[0.08em] leading-[1.8]"
+          style={{ color: "hsl(var(--foreground) / 0.52)" }}
+        >
+          {bioData !== null ? members[bioData].bio : "\u00A0"}
+        </p>
       </div>
     </section>
   );
