@@ -84,8 +84,11 @@ const TeamSection = () => {
     const expandedH = isMobile ? MOBILE_EXPANDED_H : Math.max(DESKTOP_MIN_EXPANDED_H, el.offsetWidth * 1.1);
 
     const isClosing = expandedIdx === idx;
+    
+    // Close the previously expanded card
     if (expandedIdx !== null && expandedIdx !== idx) {
-      const prev = stripRefs.current[expandedIdx];
+      const prevIdx = expandedIdx;
+      const prev = stripRefs.current[prevIdx];
       if (prev) {
         const currentH = prev.getBoundingClientRect().height;
         prev.style.height = `${currentH}px`;
@@ -93,22 +96,26 @@ const TeamSection = () => {
           height: prev.offsetWidth / 4,
           duration: 0.6,
           ease: "power3.inOut",
+          onStart: () => { setVisualExpandedIdx(null); },
           onComplete: () => { prev.style.height = ""; },
         });
       }
     }
 
-    setExpandedIdx(isClosing ? null : idx);
     if (isClosing) {
       const currentH = el.getBoundingClientRect().height;
       el.style.height = `${currentH}px`;
+      setVisualExpandedIdx(null);
       gsap.to(el, {
         height: el.offsetWidth / 4,
         duration: 0.7,
         ease: "power3.inOut",
         onComplete: () => { el.style.height = ""; },
       });
+      setExpandedIdx(null);
     } else {
+      setExpandedIdx(idx);
+      setVisualExpandedIdx(idx);
       const currentH = el.getBoundingClientRect().height;
       el.style.height = `${currentH}px`;
       gsap.to(el, {
