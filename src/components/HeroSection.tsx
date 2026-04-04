@@ -7,13 +7,13 @@ interface HeroSectionProps {
   animate: boolean;
 }
 
-const getSplitDistance = () => {
+const getInwardOffset = () => {
   if (typeof window === "undefined") return 0;
   const w = window.innerWidth;
   if (w < 480) return 0;
   if (w < 640) return Math.max(w * 0.06, 15);
-  if (w < 1100) return Math.min(w * 0.1, 100);
-  return Math.min(Math.max(w * 0.18, 170), 380);
+  if (w < 1100) return Math.min(w * 0.12, 120);
+  return Math.min(Math.max(w * 0.16, 150), 340);
 };
 
 const HeroSection = ({ animate }: HeroSectionProps) => {
@@ -24,22 +24,25 @@ const HeroSection = ({ animate }: HeroSectionProps) => {
     if (!animate || hasAnimated.current || !sectionRef.current) return;
     hasAnimated.current = true;
 
+    const offset = getInwardOffset();
+
     const ctx = gsap.context(() => {
-      gsap.set(".hero-half-left", { x: 0 });
-      gsap.set(".hero-half-right", { x: 0 });
+      // Start with halves pushed inward (overlapping at center)
+      gsap.set(".hero-half-left", { x: offset });
+      gsap.set(".hero-half-right", { x: -offset });
       gsap.set(".scroll-indicator, .hero-bottom-left, .hero-bottom-right, .hero-logo-watermark", { opacity: 0 });
 
       gsap
         .timeline()
         .to(".hero-half-left", {
-          x: () => -getSplitDistance(),
+          x: 0,
           duration: 0.95,
           ease: "power3.inOut",
         })
         .to(
           ".hero-half-right",
           {
-            x: () => getSplitDistance(),
+            x: 0,
             duration: 0.95,
             ease: "power3.inOut",
           },
@@ -57,7 +60,7 @@ const HeroSection = ({ animate }: HeroSectionProps) => {
   return (
     <section
       ref={sectionRef}
-      className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-4 sm:px-6 md:px-12"
+      className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden"
     >
       <h1 className="sr-only">Building the Systems That Drive Growth.</h1>
 
@@ -65,8 +68,8 @@ const HeroSection = ({ animate }: HeroSectionProps) => {
         <HeroParticleSphere />
       </div>
 
-      <div aria-hidden="true" className="hero-split-container relative z-10 flex flex-col sm:flex-row min-h-[30vh] sm:min-h-[58vh] w-full max-w-[1800px] items-center justify-center gap-0 px-2">
-        <div className="hero-half-left will-change-transform">
+      <div aria-hidden="true" className="hero-split-container relative z-10 flex flex-col sm:flex-row min-h-[30vh] sm:min-h-[58vh] w-full items-center justify-center gap-0">
+        <div className="hero-half-left will-change-transform sm:w-1/2 px-4 sm:px-6 md:px-12">
           <p
             className="whitespace-nowrap text-center sm:text-left text-[7vw] sm:text-[clamp(1.6rem,4.9vw,5.3rem)] font-bold uppercase leading-[0.92] tracking-[-0.03em] text-foreground"
             style={{ fontFamily: "'Inter', sans-serif" }}
@@ -76,7 +79,7 @@ const HeroSection = ({ animate }: HeroSectionProps) => {
             SYSTEMS
           </p>
         </div>
-        <div className="hero-half-right will-change-transform">
+        <div className="hero-half-right will-change-transform sm:w-1/2 px-4 sm:px-6 md:px-12">
           <p
             className="whitespace-nowrap text-center sm:text-right text-[7vw] sm:text-[clamp(1.6rem,4.9vw,5.3rem)] font-bold uppercase leading-[0.92] tracking-[-0.03em] text-foreground"
             style={{ fontFamily: "'Inter', sans-serif" }}
