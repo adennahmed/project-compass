@@ -25,7 +25,7 @@ const members: TeamMember[] = [
     role: "Chief Technology Officer",
     title: "Technology",
     photo: mohammedPhoto,
-    eyePct: 34,
+    eyePct: 32,
     expandedPos: "center 20%",
     bio: "Seasoned technologist with deep expertise in cloud architecture, machine learning pipelines, and enterprise platform engineering. Transforms complex technical challenges into scalable, production-grade systems.",
   },
@@ -34,7 +34,7 @@ const members: TeamMember[] = [
     role: "Founder & Principal Engineer",
     title: "Leadership",
     photo: adenPhoto,
-    eyePct: 31,
+    eyePct: 29,
     expandedPos: "center 18%",
     bio: "Full-stack engineer and founder with deep expertise in systems architecture, AI integration, and revenue technology. Building infrastructure that scales companies from ambition to market dominance.",
   },
@@ -64,10 +64,22 @@ const BracketButton = ({ label, href }: { label: string; href?: string }) => {
       rel={href ? "noopener noreferrer" : undefined}
       className="group relative inline-block px-5 py-2.5 hover-target"
     >
-      <span className="absolute left-0 top-0 h-2 w-2 border-l border-t transition-all duration-300 group-hover:h-3 group-hover:w-3" style={{ borderColor: "hsl(var(--foreground) / 0.25)" }} />
-      <span className="absolute right-0 top-0 h-2 w-2 border-r border-t transition-all duration-300 group-hover:h-3 group-hover:w-3" style={{ borderColor: "hsl(var(--foreground) / 0.25)" }} />
-      <span className="absolute bottom-0 left-0 h-2 w-2 border-b border-l transition-all duration-300 group-hover:h-3 group-hover:w-3" style={{ borderColor: "hsl(var(--foreground) / 0.25)" }} />
-      <span className="absolute bottom-0 right-0 h-2 w-2 border-b border-r transition-all duration-300 group-hover:h-3 group-hover:w-3" style={{ borderColor: "hsl(var(--foreground) / 0.25)" }} />
+      <span
+        className="absolute left-0 top-0 h-2 w-2 border-l border-t transition-all duration-300 group-hover:h-3 group-hover:w-3"
+        style={{ borderColor: "hsl(var(--foreground) / 0.25)" }}
+      />
+      <span
+        className="absolute right-0 top-0 h-2 w-2 border-r border-t transition-all duration-300 group-hover:h-3 group-hover:w-3"
+        style={{ borderColor: "hsl(var(--foreground) / 0.25)" }}
+      />
+      <span
+        className="absolute bottom-0 left-0 h-2 w-2 border-b border-l transition-all duration-300 group-hover:h-3 group-hover:w-3"
+        style={{ borderColor: "hsl(var(--foreground) / 0.25)" }}
+      />
+      <span
+        className="absolute bottom-0 right-0 h-2 w-2 border-b border-r transition-all duration-300 group-hover:h-3 group-hover:w-3"
+        style={{ borderColor: "hsl(var(--foreground) / 0.25)" }}
+      />
       <span className="text-[10px] uppercase tracking-[0.14em]" style={{ color: "hsl(var(--foreground) / 0.6)" }}>
         <LinkText>{label}</LinkText>
       </span>
@@ -98,11 +110,17 @@ const TeamSection = () => {
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.from(".team-header-content", {
-        y: 60, opacity: 0, duration: 1, ease: "power3.out",
+        y: 60,
+        opacity: 0,
+        duration: 1,
+        ease: "power3.out",
         scrollTrigger: { trigger: ".team-header-content", start: "top 82%" },
       });
       gsap.from(".team-strips-row", {
-        y: 50, opacity: 0, duration: 1, ease: "power3.out",
+        y: 50,
+        opacity: 0,
+        duration: 1,
+        ease: "power3.out",
         scrollTrigger: { trigger: ".team-strips-row", start: "top 85%" },
       });
     }, sectionRef);
@@ -132,7 +150,18 @@ const TeamSection = () => {
       const pl = labelRefs.current[prev];
 
       if (ps) tl.to(ps, { height: COLLAPSED_H, duration: ANIM_MS, ease: EASE, overwrite: true }, 0);
-      if (pi) tl.to(pi, { scale: 1.18, objectPosition: `center ${members[prev].eyePct}%`, duration: ANIM_MS, ease: EASE, overwrite: true }, 0);
+      if (pi)
+        tl.to(
+          pi,
+          {
+            scale: 1.18,
+            objectPosition: `center ${members[prev].eyePct}%`,
+            duration: ANIM_MS,
+            ease: EASE,
+            overwrite: true,
+          },
+          0,
+        );
       if (pl) tl.to(pl, { opacity: 0, y: 8, duration: 0.25, ease: "power2.in" }, 0);
 
       if (!isSwitching && bioContainerRef.current) {
@@ -147,26 +176,44 @@ const TeamSection = () => {
       const delay = prev !== null ? 0.1 : 0;
 
       if (ns) tl.to(ns, { height: EXPANDED_H, duration: ANIM_MS, ease: EASE, overwrite: true }, delay);
-      if (ni) tl.to(ni, { scale: 1, objectPosition: members[next].expandedPos, duration: ANIM_MS, ease: EASE, overwrite: true }, delay);
+      if (ni)
+        tl.to(
+          ni,
+          { scale: 1, objectPosition: members[next].expandedPos, duration: ANIM_MS, ease: EASE, overwrite: true },
+          delay,
+        );
       if (nl) tl.to(nl, { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }, delay + ANIM_MS * 0.55);
 
       if (isSwitching) {
         if (bioInnerRef.current) {
-          tl.to(bioInnerRef.current, {
-            opacity: 0, duration: 0.2, ease: "power2.in",
-            onComplete: () => setBioData(next),
-          }, delay + 0.05);
-          tl.to(bioInnerRef.current, {
-            opacity: 1, duration: 0.3, ease: "power2.out",
-          }, delay + 0.3);
+          tl.to(
+            bioInnerRef.current,
+            {
+              opacity: 0,
+              duration: 0.2,
+              ease: "power2.in",
+              onComplete: () => setBioData(next),
+            },
+            delay + 0.05,
+          );
+          tl.to(
+            bioInnerRef.current,
+            {
+              opacity: 1,
+              duration: 0.3,
+              ease: "power2.out",
+            },
+            delay + 0.3,
+          );
         }
       } else {
         setBioData(next);
         if (bioContainerRef.current) {
-          tl.fromTo(bioContainerRef.current,
+          tl.fromTo(
+            bioContainerRef.current,
             { opacity: 0 },
             { opacity: 1, duration: 0.45, ease: "power2.out" },
-            delay + ANIM_MS * 0.45
+            delay + ANIM_MS * 0.45,
           );
         }
       }
@@ -184,18 +231,36 @@ const TeamSection = () => {
     >
       {/* Header */}
       <div className="team-header-content text-center px-4 pt-16 pb-8">
-        <div className="mb-5 text-[11px] uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.35)" }}>
+        <div
+          className="mb-5 text-[11px] uppercase tracking-[0.18em]"
+          style={{ color: "hsl(var(--foreground) / 0.35)" }}
+        >
           OUR LEADERSHIP TEAM
         </div>
-        <p className="mx-auto mb-10 max-w-[520px] text-[13px] uppercase tracking-[0.1em] leading-[1.8]" style={{ color: "hsl(var(--foreground) / 0.5)" }}>
-          A global network of advisors, operators and investors. The people who
-          built what&apos;s now, helping you build what&apos;s next.
+        <p
+          className="mx-auto mb-10 max-w-[520px] text-[13px] uppercase tracking-[0.1em] leading-[1.8]"
+          style={{ color: "hsl(var(--foreground) / 0.5)" }}
+        >
+          A global network of advisors, operators and investors. The people who built what&apos;s now, helping you build
+          what&apos;s next.
         </p>
         <a href="#contact" className="group relative inline-block px-5 py-3 hover-target">
-          <span className="absolute left-0 top-0 h-2.5 w-2.5 border-l border-t transition-all duration-300 group-hover:h-3.5 group-hover:w-3.5" style={{ borderColor: "hsl(var(--foreground) / 0.25)" }} />
-          <span className="absolute right-0 top-0 h-2.5 w-2.5 border-r border-t transition-all duration-300 group-hover:h-3.5 group-hover:w-3.5" style={{ borderColor: "hsl(var(--foreground) / 0.25)" }} />
-          <span className="absolute bottom-0 left-0 h-2.5 w-2.5 border-b border-l transition-all duration-300 group-hover:h-3.5 group-hover:w-3.5" style={{ borderColor: "hsl(var(--foreground) / 0.25)" }} />
-          <span className="absolute bottom-0 right-0 h-2.5 w-2.5 border-b border-r transition-all duration-300 group-hover:h-3.5 group-hover:w-3.5" style={{ borderColor: "hsl(var(--foreground) / 0.25)" }} />
+          <span
+            className="absolute left-0 top-0 h-2.5 w-2.5 border-l border-t transition-all duration-300 group-hover:h-3.5 group-hover:w-3.5"
+            style={{ borderColor: "hsl(var(--foreground) / 0.25)" }}
+          />
+          <span
+            className="absolute right-0 top-0 h-2.5 w-2.5 border-r border-t transition-all duration-300 group-hover:h-3.5 group-hover:w-3.5"
+            style={{ borderColor: "hsl(var(--foreground) / 0.25)" }}
+          />
+          <span
+            className="absolute bottom-0 left-0 h-2.5 w-2.5 border-b border-l transition-all duration-300 group-hover:h-3.5 group-hover:w-3.5"
+            style={{ borderColor: "hsl(var(--foreground) / 0.25)" }}
+          />
+          <span
+            className="absolute bottom-0 right-0 h-2.5 w-2.5 border-b border-r transition-all duration-300 group-hover:h-3.5 group-hover:w-3.5"
+            style={{ borderColor: "hsl(var(--foreground) / 0.25)" }}
+          />
           <span className="text-[12px] uppercase tracking-[0.12em]" style={{ color: "hsl(var(--foreground) / 0.6)" }}>
             <LinkText>Meet the Team</LinkText>
           </span>
@@ -214,12 +279,16 @@ const TeamSection = () => {
                 aria-label={`Toggle ${member.name} profile`}
               >
                 <div
-                  ref={(el) => { stripRefs.current[idx] = el; }}
+                  ref={(el) => {
+                    stripRefs.current[idx] = el;
+                  }}
                   className="relative overflow-hidden"
                   style={{ height: COLLAPSED_H }}
                 >
                   <img
-                    ref={(el) => { imgRefs.current[idx] = el; }}
+                    ref={(el) => {
+                      imgRefs.current[idx] = el;
+                    }}
                     src={member.photo}
                     alt={member.name}
                     draggable={false}
@@ -232,20 +301,38 @@ const TeamSection = () => {
                       willChange: "transform, object-position",
                     }}
                   />
-                  <div className="pointer-events-none absolute inset-x-0 top-0" style={{ height: "35%", background: "linear-gradient(to bottom, hsl(var(--background)), transparent)" }} />
-                  <div className="pointer-events-none absolute inset-x-0 bottom-0" style={{ height: "35%", background: "linear-gradient(to top, hsl(var(--background)), transparent)" }} />
+                  <div
+                    className="pointer-events-none absolute inset-x-0 top-0"
+                    style={{
+                      height: "35%",
+                      background: "linear-gradient(to bottom, hsl(var(--background)), transparent)",
+                    }}
+                  />
+                  <div
+                    className="pointer-events-none absolute inset-x-0 bottom-0"
+                    style={{
+                      height: "35%",
+                      background: "linear-gradient(to top, hsl(var(--background)), transparent)",
+                    }}
+                  />
 
                   <div
-                    ref={(el) => { labelRefs.current[idx] = el; }}
+                    ref={(el) => {
+                      labelRefs.current[idx] = el;
+                    }}
                     className="pointer-events-none absolute bottom-4 left-4 flex items-center gap-2 rounded-sm px-2.5 py-1.5"
                     style={{
-                      opacity: 0, transform: "translateY(8px)",
+                      opacity: 0,
+                      transform: "translateY(8px)",
                       background: "hsl(var(--background) / 0.68)",
                       backdropFilter: "blur(8px)",
                     }}
                   >
                     <div className="h-1.5 w-1.5 rounded-full" style={{ background: "hsl(var(--foreground) / 0.55)" }} />
-                    <span className="text-[9px] uppercase tracking-[0.14em]" style={{ color: "hsl(var(--foreground) / 0.78)" }}>
+                    <span
+                      className="text-[9px] uppercase tracking-[0.14em]"
+                      style={{ color: "hsl(var(--foreground) / 0.78)" }}
+                    >
                       {member.role}
                     </span>
                   </div>
@@ -257,11 +344,7 @@ const TeamSection = () => {
       </div>
 
       {/* Bio footer — matches reference layout */}
-      <div
-        ref={bioContainerRef}
-        className="px-6 md:px-10 pb-10"
-        style={{ opacity: 0, minHeight: 120 }}
-      >
+      <div ref={bioContainerRef} className="px-6 md:px-10 pb-10" style={{ opacity: 0, minHeight: 120 }}>
         <div ref={bioInnerRef}>
           {/* Divider */}
           <div className="w-full h-px mb-5" style={{ background: "hsl(var(--foreground) / 0.1)" }} />
@@ -269,13 +352,17 @@ const TeamSection = () => {
           {/* Row 1: counter + name/title */}
           <div className="flex items-baseline justify-between mb-5">
             <div className="text-[10px] uppercase tracking-[0.16em]" style={{ color: "hsl(var(--foreground) / 0.35)" }}>
-              {bioData !== null ? `${String(bioData + 1).padStart(2, "0")} / ${String(members.length).padStart(2, "0")}` : "\u00A0"}
+              {bioData !== null
+                ? `${String(bioData + 1).padStart(2, "0")} / ${String(members.length).padStart(2, "0")}`
+                : "\u00A0"}
             </div>
             <div className="text-[10px] uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.5)" }}>
               {bioData !== null && (
                 <>
                   <span style={{ color: "hsl(var(--foreground) / 0.6)" }}>{members[bioData].name}</span>
-                  <span className="mx-4" style={{ color: "hsl(var(--foreground) / 0.2)" }}>|</span>
+                  <span className="mx-4" style={{ color: "hsl(var(--foreground) / 0.2)" }}>
+                    |
+                  </span>
                   <span>{members[bioData].title}</span>
                 </>
               )}
@@ -298,7 +385,17 @@ const TeamSection = () => {
                 style={{ border: "1px solid hsl(var(--foreground) / 0.15)" }}
                 aria-label="LinkedIn"
               >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: "hsl(var(--foreground) / 0.5)" }}>
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{ color: "hsl(var(--foreground) / 0.5)" }}
+                >
                   <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
                   <rect width="4" height="12" x="2" y="9" />
                   <circle cx="4" cy="4" r="2" />
