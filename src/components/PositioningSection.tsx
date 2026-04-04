@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -18,6 +18,115 @@ const tiles = [
     desc: "Kozai is not a consultancy. We don't advise, broker, or package solutions. We build, implement, and deliver technology that produces measurable outcomes.",
   },
 ];
+
+const TiltCard = ({ tile, index }: { tile: typeof tiles[0]; index: number }) => {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const glowRef = useRef<HTMLDivElement>(null);
+  const lineRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const card = cardRef.current;
+    if (!card) return;
+    const rect = card.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+
+    gsap.to(card, {
+      rotateY: x * 8,
+      rotateX: -y * 6,
+      duration: 0.4,
+      ease: "power2.out",
+      overwrite: true,
+    });
+
+    if (glowRef.current) {
+      gsap.to(glowRef.current, {
+        background: `radial-gradient(circle at ${(x + 0.5) * 100}% ${(y + 0.5) * 100}%, rgba(200, 169, 110, 0.12), transparent 60%)`,
+        opacity: 1,
+        duration: 0.3,
+        overwrite: true,
+      });
+    }
+  }, []);
+
+  const handleMouseEnter = useCallback(() => {
+    const card = cardRef.current;
+    if (!card) return;
+    gsap.to(card, {
+      backgroundColor: "#161616",
+      borderColor: "rgba(200, 169, 110, 0.25)",
+      y: -4,
+      duration: 0.3,
+    });
+    if (lineRef.current) {
+      gsap.to(lineRef.current, { scaleX: 1, duration: 0.5, ease: "power3.out" });
+    }
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    const card = cardRef.current;
+    if (!card) return;
+    gsap.to(card, {
+      rotateY: 0,
+      rotateX: 0,
+      backgroundColor: "#111111",
+      borderColor: "rgba(255,255,255,0.07)",
+      y: 0,
+      duration: 0.5,
+      ease: "power3.out",
+    });
+    if (glowRef.current) {
+      gsap.to(glowRef.current, { opacity: 0, duration: 0.4 });
+    }
+    if (lineRef.current) {
+      gsap.to(lineRef.current, { scaleX: 0, duration: 0.4, ease: "power2.in" });
+    }
+  }, []);
+
+  return (
+    <div style={{ perspective: "800px" }}>
+      <div
+        ref={cardRef}
+        className={`positioning-tile p-8 group relative overflow-hidden`}
+        style={{
+          background: "#111111",
+          border: "1px solid rgba(255,255,255,0.07)",
+          borderRadius: "3px",
+          transformStyle: "preserve-3d",
+          willChange: "transform",
+        }}
+        onMouseMove={handleMouseMove}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
+        {/* Gold glow overlay */}
+        <div
+          ref={glowRef}
+          className="absolute inset-0 pointer-events-none"
+          style={{ opacity: 0, borderRadius: "3px" }}
+        />
+
+        <h3 className="text-[20px] md:text-[24px] font-medium mb-2 text-white relative z-10">
+          {tile.title}
+        </h3>
+
+        {/* Gold accent line */}
+        <div
+          ref={lineRef}
+          className="h-[1px] w-12 mb-4 origin-left"
+          style={{ background: "#C8A96E", transform: "scaleX(0)" }}
+        />
+
+        <p
+          className="text-[15px] leading-[1.75] relative z-10"
+          style={{ color: "#888888" }}
+        >
+          {tile.desc}
+        </p>
+      </div>
+    </div>
+  );
+};
 
 const PositioningSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
@@ -79,41 +188,7 @@ const PositioningSection = () => {
 
       <div className="positioning-tiles grid md:grid-cols-3 gap-8">
         {tiles.map((tile, i) => (
-          <div
-            key={i}
-            className="positioning-tile p-8 group transition-all duration-300"
-            style={{
-              background: "#111111",
-              border: "1px solid rgba(255,255,255,0.07)",
-              borderRadius: "3px",
-            }}
-            onMouseEnter={(e) => {
-              gsap.to(e.currentTarget, {
-                backgroundColor: "#161616",
-                borderColor: "rgba(255,255,255,0.16)",
-                y: -4,
-                duration: 0.3,
-              });
-            }}
-            onMouseLeave={(e) => {
-              gsap.to(e.currentTarget, {
-                backgroundColor: "#111111",
-                borderColor: "rgba(255,255,255,0.07)",
-                y: 0,
-                duration: 0.3,
-              });
-            }}
-          >
-            <h3 className="text-[20px] md:text-[24px] font-medium mb-4 text-white">
-              {tile.title}
-            </h3>
-            <p
-              className="text-[15px] leading-[1.75]"
-              style={{ color: "#888888" }}
-            >
-              {tile.desc}
-            </p>
-          </div>
+          <TiltCard key={i} tile={tile} index={i} />
         ))}
       </div>
     </section>

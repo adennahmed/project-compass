@@ -87,9 +87,9 @@ const WhoWeServeSection = () => {
           return (
             <div
               key={seg.num}
-              className="serve-card relative p-8 md:p-10 flex flex-col cursor-default"
+              className="serve-card relative p-8 md:p-10 flex flex-col cursor-default overflow-hidden"
               style={{
-                border: `1px solid ${isHovered ? "rgba(255,255,255,0.18)" : "rgba(255,255,255,0.07)"}`,
+                border: `1px solid ${isHovered ? "rgba(200, 169, 110, 0.3)" : "rgba(255,255,255,0.07)"}`,
                 borderRadius: "2px",
                 background: isHovered ? "#111111" : "transparent",
                 transform: isHovered ? "translateY(-6px)" : "translateY(0)",
@@ -100,6 +100,15 @@ const WhoWeServeSection = () => {
               onMouseEnter={() => setHoveredIndex(i)}
               onMouseLeave={() => setHoveredIndex(null)}
             >
+              {/* Gold top border that fills on hover */}
+              <div
+                className="absolute top-0 left-0 h-[2px] transition-all duration-700 ease-out"
+                style={{
+                  background: "linear-gradient(90deg, #C8A96E, #e8d5a8)",
+                  width: isHovered ? "100%" : "0%",
+                }}
+              />
+
               <span
                 className="text-[13px] block mb-5"
                 style={{ color: "#444444" }}
@@ -123,7 +132,12 @@ const WhoWeServeSection = () => {
                     className="text-[14px] flex items-start gap-2"
                     style={{ color: "rgba(255,255,255,0.65)" }}
                   >
-                    <span style={{ color: "#C8A96E" }}>—</span>
+                    <span
+                      className="transition-all duration-500"
+                      style={{ color: isHovered ? "#C8A96E" : "rgba(255,255,255,0.25)" }}
+                    >
+                      —
+                    </span>
                     {item}
                   </li>
                 ))}

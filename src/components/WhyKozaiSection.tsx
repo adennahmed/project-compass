@@ -24,6 +24,7 @@ const rows = [
 
 const WhyKozaiSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
+  const numRefs = useRef<(HTMLSpanElement | null)[]>([]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -35,36 +36,52 @@ const WhyKozaiSection = () => {
         scrollTrigger: { trigger: ".why-headline", start: "top 82%" },
       });
 
-      rows.forEach((_, i) => {
-        const row = `.why-row-${i}`;
-        gsap.from(`${row} .why-num`, {
-          x: -30,
-          opacity: 0,
-          duration: 0.6,
-          ease: "power3.out",
-          scrollTrigger: { trigger: row, start: "top 80%" },
-        });
-        gsap.from(`${row} .why-title`, {
+      rows.forEach((row, i) => {
+        const rowSel = `.why-row-${i}`;
+
+        // Animate number counting up
+        const numEl = numRefs.current[i];
+        if (numEl) {
+          const target = parseInt(row.num, 10);
+          ScrollTrigger.create({
+            trigger: rowSel,
+            start: "top 80%",
+            once: true,
+            onEnter: () => {
+              const obj = { val: 0 };
+              gsap.to(obj, {
+                val: target,
+                duration: 1.2,
+                ease: "power2.out",
+                onUpdate: () => {
+                  if (numEl) numEl.textContent = String(Math.round(obj.val)).padStart(2, "0");
+                },
+              });
+            },
+          });
+        }
+
+        gsap.from(`${rowSel} .why-title`, {
           y: 40,
           opacity: 0,
           duration: 0.8,
           ease: "power3.out",
-          scrollTrigger: { trigger: row, start: "top 80%" },
+          scrollTrigger: { trigger: rowSel, start: "top 80%" },
         });
-        gsap.from(`${row} .why-body`, {
+        gsap.from(`${rowSel} .why-body`, {
           y: 30,
           opacity: 0,
           duration: 0.7,
           delay: 0.15,
           ease: "power2.out",
-          scrollTrigger: { trigger: row, start: "top 78%" },
+          scrollTrigger: { trigger: rowSel, start: "top 78%" },
         });
-        // Draw-on SVG
-        gsap.from(`${row} svg path, ${row} svg circle, ${row} svg line`, {
+        // Draw-on SVG + gold pulse
+        gsap.from(`${rowSel} svg path, ${rowSel} svg circle, ${rowSel} svg line, ${rowSel} svg ellipse`, {
           strokeDashoffset: 400,
           duration: 1.6,
           ease: "power2.out",
-          scrollTrigger: { trigger: `${row} svg`, start: "top 78%" },
+          scrollTrigger: { trigger: `${rowSel} svg`, start: "top 78%" },
         });
       });
     }, sectionRef);
@@ -88,21 +105,27 @@ const WhyKozaiSection = () => {
         {rows.map((row, i) => (
           <div
             key={i}
-            className={`why-row-${i} grid grid-cols-1 md:grid-cols-[80px_1fr_1fr] gap-4 md:gap-12 items-start py-8 md:py-12`}
+            className={`why-row-${i} grid grid-cols-1 md:grid-cols-[80px_1fr_1fr] gap-4 md:gap-12 items-start py-8 md:py-12 group`}
             style={{
               borderTop: "1px solid rgba(255,255,255,0.07)",
             }}
           >
             <span
-              className="why-num text-[48px] md:text-[64px] font-extralight"
+              ref={(el) => { numRefs.current[i] = el; }}
+              className="why-num text-[48px] md:text-[64px] font-extralight transition-colors duration-700"
               style={{ color: "rgba(255,255,255,0.06)" }}
             >
-              {row.num}
+              00
             </span>
             <div>
               <h3 className="why-title text-[24px] md:text-[30px] font-normal mb-4">
                 {row.title}
               </h3>
+              {/* Gold accent line */}
+              <div
+                className="h-[1px] w-0 mb-4 transition-all duration-700 ease-out group-hover:w-16"
+                style={{ background: "#C8A96E" }}
+              />
               <p
                 className="why-body text-[15px] leading-[1.75]"
                 style={{ color: "#888888" }}
@@ -117,6 +140,7 @@ const WhyKozaiSection = () => {
                 viewBox="0 0 200 200"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
+                className="transition-transform duration-700 ease-out group-hover:scale-110 group-hover:rotate-[8deg]"
               >
                 {i === 0 && (
                   <path

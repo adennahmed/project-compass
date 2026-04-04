@@ -16,10 +16,33 @@ const navLinks = [
 
 const Navigation = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("");
   const navRef = useRef<HTMLElement>(null);
   const mobileLinksRef = useRef<HTMLUListElement>(null);
   const lastScrollY = useRef(0);
   const navVisible = useRef(true);
+
+  // Track active section
+  useEffect(() => {
+    const sectionIds = navLinks.map((l) => l.href.replace("#", ""));
+    const triggers: ScrollTrigger[] = [];
+
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      triggers.push(
+        ScrollTrigger.create({
+          trigger: el,
+          start: "top center",
+          end: "bottom center",
+          onEnter: () => setActiveSection(id),
+          onEnterBack: () => setActiveSection(id),
+        })
+      );
+    });
+
+    return () => triggers.forEach((t) => t.kill());
+  }, []);
 
   useEffect(() => {
     const nav = navRef.current;
@@ -108,17 +131,29 @@ const Navigation = () => {
         </a>
 
         <div className="hidden md:flex items-center gap-6">
-          {navLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              className="text-[12px] uppercase tracking-[0.08em] hover-target"
-              style={{ color: "rgba(255,255,255,0.65)" }}
-              onClick={(e) => { e.preventDefault(); scrollTo(link.href); }}
-            >
-              <LinkText>{link.label}</LinkText>
-            </a>
-          ))}
+          {navLinks.map((link) => {
+            const isActive = activeSection === link.href.replace("#", "");
+            return (
+              <a
+                key={link.label}
+                href={link.href}
+                className="relative text-[12px] uppercase tracking-[0.08em] hover-target flex flex-col items-center"
+                style={{ color: isActive ? "rgba(200, 169, 110, 0.9)" : "rgba(255,255,255,0.65)" }}
+                onClick={(e) => { e.preventDefault(); scrollTo(link.href); }}
+              >
+                <LinkText>{link.label}</LinkText>
+                {/* Gold dot indicator */}
+                <span
+                  className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full transition-all duration-500"
+                  style={{
+                    background: "#C8A96E",
+                    opacity: isActive ? 1 : 0,
+                    transform: `translateX(-50%) scale(${isActive ? 1 : 0})`,
+                  }}
+                />
+              </a>
+            );
+          })}
         </div>
 
         <button className="md:hidden flex flex-col gap-[4px] p-2" onClick={openMobile} aria-label="Open menu">
