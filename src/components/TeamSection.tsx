@@ -172,8 +172,8 @@ const TeamSection = () => {
   };
 
   return (
-    <section ref={sectionRef} id="team" className="px-4 py-24 sm:px-6 md:px-12 md:py-40">
-      <div className="mb-8 text-center">
+    <section ref={sectionRef} id="team" className="py-24 md:py-40 overflow-hidden">
+      <div className="mb-8 text-center px-4 sm:px-6 md:px-12">
         <div className="mb-4 text-[11px] uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.35)" }}>
           OUR LEADERSHIP TEAM
         </div>
@@ -211,8 +211,8 @@ const TeamSection = () => {
       <div
         className={`team-strip-row ${
           isDesktop
-            ? "relative left-1/2 mt-14 flex h-[clamp(430px,34vw,500px)] w-screen max-w-none -translate-x-1/2 items-center gap-3 px-4 sm:px-6 md:px-12"
-            : "mx-auto mt-12 flex flex-col gap-4"
+            ? "relative mt-14 flex h-[clamp(430px,34vw,500px)] items-center gap-3 px-4 sm:px-6 md:px-12"
+            : "mx-auto mt-12 flex flex-col gap-4 px-4 sm:px-6 md:px-12"
         }`}
       >
         {isDesktop && (
