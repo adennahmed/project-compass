@@ -8,9 +8,7 @@ import lalaPhoto from "@/assets/lala-malik.jpg";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const STRIP_H = 150;
 const EXPANDED_H = 580;
-const MOBILE_STRIP_H = 120;
 const MOBILE_EXPANDED_H = 420;
 
 interface TeamMember {
@@ -82,21 +80,42 @@ const TeamSection = () => {
     const el = stripRefs.current[idx];
     if (!el) return;
     const isMobile = window.innerWidth < 768;
-    const collapsedH = isMobile ? MOBILE_STRIP_H : STRIP_H;
     const expandedH = isMobile ? MOBILE_EXPANDED_H : EXPANDED_H;
 
     const isClosing = expandedIdx === idx;
     if (expandedIdx !== null && expandedIdx !== idx) {
       const prev = stripRefs.current[expandedIdx];
-      if (prev) gsap.to(prev, { height: collapsedH, duration: 0.6, ease: "power3.inOut" });
+      if (prev) {
+        const currentH = prev.getBoundingClientRect().height;
+        prev.style.height = `${currentH}px`;
+        gsap.to(prev, {
+          height: prev.offsetWidth / 4,
+          duration: 0.6,
+          ease: "power3.inOut",
+          onComplete: () => { prev.style.height = ""; },
+        });
+      }
     }
 
     setExpandedIdx(isClosing ? null : idx);
-    gsap.to(el, {
-      height: isClosing ? collapsedH : expandedH,
-      duration: 0.7,
-      ease: "power3.inOut",
-    });
+    if (isClosing) {
+      const currentH = el.getBoundingClientRect().height;
+      el.style.height = `${currentH}px`;
+      gsap.to(el, {
+        height: el.offsetWidth / 4,
+        duration: 0.7,
+        ease: "power3.inOut",
+        onComplete: () => { el.style.height = ""; },
+      });
+    } else {
+      const currentH = el.getBoundingClientRect().height;
+      el.style.height = `${currentH}px`;
+      gsap.to(el, {
+        height: expandedH,
+        duration: 0.7,
+        ease: "power3.inOut",
+      });
+    }
   };
 
   return (
@@ -152,7 +171,7 @@ const TeamSection = () => {
                 }}
                 className="relative cursor-pointer overflow-hidden"
                 style={{
-                  height: typeof window !== "undefined" && window.innerWidth < 768 ? MOBILE_STRIP_H : STRIP_H,
+                  aspectRatio: isExpanded ? undefined : "4 / 1",
                   borderRadius: "4px",
                 }}
                 onClick={() => handleToggle(idx)}
