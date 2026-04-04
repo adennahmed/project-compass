@@ -16,7 +16,6 @@ const legalLinks = [
   { label: "Cookie Policy", href: "#" },
 ];
 
-// Particle spiral canvas
 const FooterParticleArt = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animRef = useRef<number>(0);
@@ -70,30 +69,18 @@ const FooterParticleArt = () => {
 
   useEffect(() => {
     const cleanup = initCanvas();
-    const handleResize = () => {
-      cleanup?.();
-      initCanvas();
-    };
+    const handleResize = () => { cleanup?.(); initCanvas(); };
     window.addEventListener("resize", handleResize);
-    return () => {
-      cleanup?.();
-      window.removeEventListener("resize", handleResize);
-    };
+    return () => { cleanup?.(); window.removeEventListener("resize", handleResize); };
   }, [initCanvas]);
 
-  return (
-    <canvas
-      ref={canvasRef}
-      className="absolute inset-0 pointer-events-none"
-      style={{ zIndex: 0 }}
-    />
-  );
+  return <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none" style={{ zIndex: 0 }} />;
 };
 
 const Footer = () => {
   return (
     <footer className="relative overflow-hidden" style={{ background: "#080808" }}>
-      <div className="grid md:grid-cols-2 min-h-[500px]">
+      <div className="grid md:grid-cols-2 min-h-[400px] md:min-h-[500px]">
         {/* Left - Particle Art */}
         <div className="relative hidden md:block">
           <FooterParticleArt />
@@ -101,13 +88,12 @@ const Footer = () => {
 
         {/* Right - Accent block */}
         <div
-          className="relative flex flex-col justify-between p-10 md:p-14"
+          className="relative flex flex-col justify-between p-8 sm:p-10 md:p-14"
           style={{ background: "#C8A96E", borderRadius: "16px 0 0 0" }}
         >
-          {/* CTA */}
           <div>
             <h3
-              className="text-[24px] md:text-[32px] font-bold uppercase leading-[1.1] mb-4"
+              className="text-[22px] sm:text-[24px] md:text-[32px] font-bold uppercase leading-[1.1] mb-4"
               style={{ color: "#1a1a1a" }}
             >
               Own What's Next.
@@ -129,14 +115,13 @@ const Footer = () => {
             </a>
           </div>
 
-          {/* Bottom nav + legal */}
           <div>
-            <div className="flex flex-wrap gap-x-8 gap-y-2 mb-8">
+            <div className="flex flex-wrap gap-x-5 md:gap-x-8 gap-y-2 mb-8">
               {navLinks.map((link) => (
                 <a
                   key={link.label}
                   href={link.href}
-                  className="text-[14px] md:text-[16px] font-bold uppercase hover-target"
+                  className="text-[12px] md:text-[16px] font-bold uppercase hover-target"
                   style={{ color: "#1a1a1a" }}
                 >
                   <LinkText>{link.label}</LinkText>
@@ -145,7 +130,7 @@ const Footer = () => {
             </div>
 
             <div
-              className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pt-6"
+              className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-6"
               style={{ borderTop: "1px solid rgba(30,30,30,0.15)" }}
             >
               <p className="text-[11px] uppercase tracking-[0.06em]" style={{ color: "rgba(30,30,30,0.45)" }}>

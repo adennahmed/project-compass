@@ -54,7 +54,7 @@ const PositioningSection = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} className="py-32 md:py-40 px-6 md:px-12 max-w-[1200px] mx-auto">
+    <section ref={sectionRef} className="py-24 md:py-40 px-4 sm:px-6 md:px-12 max-w-[1200px] mx-auto">
       <div
         className="text-[11px] uppercase tracking-[0.18em] mb-6"
         style={{ color: "#444444" }}

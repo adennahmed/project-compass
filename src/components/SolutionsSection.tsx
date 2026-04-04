@@ -14,7 +14,6 @@ const solutions = [
     textColor: "hsl(0 0% 100%)",
     accentColor: "hsl(0 0% 100%)",
     bodyWidth: 290,
-    symbolOpacity: 1,
   },
   {
     num: "02 / 04",
@@ -24,7 +23,6 @@ const solutions = [
     textColor: "hsl(0 0% 0%)",
     accentColor: "hsl(0 0% 0%)",
     bodyWidth: 290,
-    symbolOpacity: 1,
   },
   {
     num: "03 / 04",
@@ -34,7 +32,6 @@ const solutions = [
     textColor: "hsl(0 0% 0%)",
     accentColor: "hsl(0 0% 0%)",
     bodyWidth: 290,
-    symbolOpacity: 1,
   },
   {
     num: "04 / 04",
@@ -44,7 +41,6 @@ const solutions = [
     textColor: "hsl(0 0% 0%)",
     accentColor: "hsl(0 0% 0%)",
     bodyWidth: 290,
-    symbolOpacity: 1,
   },
 ];
 
@@ -56,17 +52,11 @@ const SolutionsSection = () => {
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.from(".solutions-eyebrow", {
-        y: 25,
-        opacity: 0,
-        duration: 0.7,
-        ease: "power2.out",
+        y: 25, opacity: 0, duration: 0.7, ease: "power2.out",
         scrollTrigger: { trigger: ".solutions-eyebrow", start: "top 84%" },
       });
       gsap.from(".solutions-headline", {
-        y: 45,
-        opacity: 0,
-        duration: 0.85,
-        ease: "power3.out",
+        y: 45, opacity: 0, duration: 0.85, ease: "power3.out",
         scrollTrigger: { trigger: ".solutions-headline", start: "top 82%" },
       });
 
@@ -76,11 +66,7 @@ const SolutionsSection = () => {
           trigger: sectionRef.current,
           start: "top 70%",
           onEnter: () => {
-            gsap.to(revealRef.current, {
-              xPercent: 0,
-              duration: 0.9,
-              ease: "power3.inOut",
-            });
+            gsap.to(revealRef.current, { xPercent: 0, duration: 0.9, ease: "power3.inOut" });
           },
           once: true,
         });
@@ -103,9 +89,9 @@ const SolutionsSection = () => {
         style={{ background: "hsl(32 22% 93%)", zIndex: 0 }}
       />
 
-      <div className="relative z-10 py-32 md:py-40">
-        <div className="px-6 md:px-12 max-w-[1200px] mx-auto mb-16">
-          <div className="grid md:grid-cols-2 gap-12">
+      <div className="relative z-10 py-24 md:py-40">
+        <div className="px-4 sm:px-6 md:px-12 max-w-[1200px] mx-auto mb-12 md:mb-16">
+          <div className="grid md:grid-cols-2 gap-8 md:gap-12">
             <div>
               <div
                 className="solutions-eyebrow text-[11px] uppercase tracking-[0.18em] mb-6"
@@ -114,7 +100,7 @@ const SolutionsSection = () => {
                 OUR ETHOS
               </div>
               <h2
-                className="solutions-headline text-[36px] md:text-[48px] font-light leading-[1.1] max-w-[500px]"
+                className="solutions-headline text-[28px] sm:text-[36px] md:text-[48px] font-light leading-[1.1] max-w-[500px]"
                 style={{ color: "hsl(0 0% 10%)" }}
               >
                 Vision Matters. Velocity Wins.
@@ -122,7 +108,7 @@ const SolutionsSection = () => {
             </div>
             <div className="flex flex-col justify-end">
               <p
-                className="text-[15px] leading-[1.75] mb-6 max-w-[480px]"
+                className="text-[14px] md:text-[15px] leading-[1.75] mb-6 max-w-[480px]"
                 style={{ color: "hsl(0 0% 40%)" }}
               >
                 Our comprehensive technology platform shifts the odds. With infrastructure
@@ -142,7 +128,8 @@ const SolutionsSection = () => {
           </div>
         </div>
 
-        <div className="flex gap-2 px-6 md:px-8" style={{ scrollbarWidth: "none" }}>
+        {/* Mobile: vertical stack, Desktop: horizontal row */}
+        <div className="flex flex-col md:flex-row gap-2 px-4 sm:px-6 md:px-8" style={{ scrollbarWidth: "none" }}>
           {solutions.map((s, i) => {
             const isExpanded = expandedIndex === i;
             const hasExpanded = expandedIndex !== null;
@@ -151,28 +138,33 @@ const SolutionsSection = () => {
             return (
               <div
                 key={i}
-                className="relative cursor-pointer overflow-hidden"
+                className="relative cursor-pointer overflow-hidden md:min-w-0"
                 style={{
                   flex: `${flexValue} 1 0%`,
-                  minWidth: 0,
-                  height: "560px",
+                  height: "auto",
+                  minHeight: "320px",
                   background: s.color,
                   transition: "flex 0.55s cubic-bezier(0.76, 0, 0.24, 1)",
-                  padding: "28px 26px 34px",
+                  padding: "24px 22px 28px",
                   borderRadius: "18px",
                 }}
                 onMouseEnter={() => setExpandedIndex(i)}
                 onMouseLeave={() => setExpandedIndex(null)}
               >
-                <div className="flex h-full flex-col items-center text-center">
+                <style>{`
+                  @media (min-width: 768px) {
+                    .solutions-card { height: 560px !important; min-height: 560px !important; }
+                  }
+                `}</style>
+                <div className={`flex h-full flex-col items-center text-center solutions-card`}>
                   <h3
-                    className="text-[20px] md:text-[24px] font-bold uppercase leading-[1.15] whitespace-pre-line"
+                    className="text-[18px] md:text-[24px] font-bold uppercase leading-[1.15] whitespace-pre-line"
                     style={{ color: s.textColor }}
                   >
                     {s.title}
                   </h3>
 
-                  <div className="flex flex-1 w-full items-center justify-center" style={{ padding: "18px 0 148px" }}>
+                  <div className="hidden md:flex flex-1 w-full items-center justify-center" style={{ padding: "18px 0 148px" }}>
                     <svg
                       width="240"
                       height="240"
@@ -234,10 +226,10 @@ const SolutionsSection = () => {
                   </div>
 
                   <div
-                    className="absolute left-1/2 bottom-[34px] -translate-x-1/2 text-center"
-                    style={{ width: `${s.bodyWidth}px`, maxWidth: "calc(100% - 52px)" }}
+                    className="mt-auto md:absolute md:left-1/2 md:bottom-[34px] md:-translate-x-1/2 text-center pt-4 md:pt-0"
+                    style={{ width: "100%", maxWidth: `${s.bodyWidth}px` }}
                   >
-                    <div className="text-[11px] uppercase tracking-[0.15em] mb-5" style={{ color: s.accentColor }}>
+                    <div className="text-[11px] uppercase tracking-[0.15em] mb-3 md:mb-5" style={{ color: s.accentColor }}>
                       {s.num}
                     </div>
                     <p

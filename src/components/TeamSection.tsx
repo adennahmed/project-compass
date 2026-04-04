@@ -10,14 +10,16 @@ gsap.registerPlugin(ScrollTrigger);
 
 const STRIP_H = 120;
 const EXPANDED_H = 580;
+const MOBILE_STRIP_H = 100;
+const MOBILE_EXPANDED_H = 420;
 
 interface TeamMember {
   name: string;
   role: string;
   title: string;
   photo: string;
-  eyePct: number; // objectPosition % for collapsed eye-line
-  expandedPct: string; // objectPosition for expanded portrait
+  eyePct: number;
+  expandedPct: string;
   bio: string;
 }
 
@@ -59,17 +61,11 @@ const TeamSection = () => {
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.from(".team-headline", {
-        y: 60,
-        opacity: 0,
-        duration: 1,
-        ease: "power3.out",
+        y: 60, opacity: 0, duration: 1, ease: "power3.out",
         scrollTrigger: { trigger: ".team-headline", start: "top 82%" },
       });
       gsap.from(".team-strip-row", {
-        y: 40,
-        opacity: 0,
-        duration: 0.9,
-        ease: "power3.out",
+        y: 40, opacity: 0, duration: 0.9, ease: "power3.out",
         scrollTrigger: { trigger: ".team-strip-row", start: "top 85%" },
       });
     }, sectionRef);
@@ -79,24 +75,26 @@ const TeamSection = () => {
   const handleToggle = (idx: number) => {
     const el = stripRefs.current[idx];
     if (!el) return;
+    const isMobile = window.innerWidth < 768;
+    const collapsedH = isMobile ? MOBILE_STRIP_H : STRIP_H;
+    const expandedH = isMobile ? MOBILE_EXPANDED_H : EXPANDED_H;
 
     const isClosing = expandedIdx === idx;
-    // Close previously expanded
     if (expandedIdx !== null && expandedIdx !== idx) {
       const prev = stripRefs.current[expandedIdx];
-      if (prev) gsap.to(prev, { height: STRIP_H, duration: 0.6, ease: "power3.inOut" });
+      if (prev) gsap.to(prev, { height: collapsedH, duration: 0.6, ease: "power3.inOut" });
     }
 
     setExpandedIdx(isClosing ? null : idx);
     gsap.to(el, {
-      height: isClosing ? STRIP_H : EXPANDED_H,
+      height: isClosing ? collapsedH : expandedH,
       duration: 0.7,
       ease: "power3.inOut",
     });
   };
 
   return (
-    <section ref={sectionRef} id="team" className="py-32 md:py-40 px-6 md:px-12">
+    <section ref={sectionRef} id="team" className="py-24 md:py-40 px-4 sm:px-6 md:px-12">
       {/* Header */}
       <div className="text-center mb-8">
         <div className="text-[11px] uppercase tracking-[0.18em] mb-4" style={{ color: "#444444" }}>
@@ -110,41 +108,27 @@ const TeamSection = () => {
           people who built what's now, helping you build what's next.
         </p>
         <a href="#contact" className="relative inline-block px-5 py-3 hover-target group">
-          <span
-            className="absolute top-0 left-0 w-2.5 h-2.5 border-t border-l transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5"
-            style={{ borderColor: "rgba(255,255,255,0.25)" }}
-          />
-          <span
-            className="absolute top-0 right-0 w-2.5 h-2.5 border-t border-r transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5"
-            style={{ borderColor: "rgba(255,255,255,0.25)" }}
-          />
-          <span
-            className="absolute bottom-0 left-0 w-2.5 h-2.5 border-b border-l transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5"
-            style={{ borderColor: "rgba(255,255,255,0.25)" }}
-          />
-          <span
-            className="absolute bottom-0 right-0 w-2.5 h-2.5 border-b border-r transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5"
-            style={{ borderColor: "rgba(255,255,255,0.25)" }}
-          />
+          <span className="absolute top-0 left-0 w-2.5 h-2.5 border-t border-l transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(255,255,255,0.25)" }} />
+          <span className="absolute top-0 right-0 w-2.5 h-2.5 border-t border-r transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(255,255,255,0.25)" }} />
+          <span className="absolute bottom-0 left-0 w-2.5 h-2.5 border-b border-l transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(255,255,255,0.25)" }} />
+          <span className="absolute bottom-0 right-0 w-2.5 h-2.5 border-b border-r transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(255,255,255,0.25)" }} />
           <span className="text-[12px] uppercase tracking-[0.12em]" style={{ color: "rgba(255,255,255,0.6)" }}>
             <LinkText>Meet the Team</LinkText>
           </span>
         </a>
       </div>
 
-      {/* 3-up eye strip row */}
-      <div className="team-strip-row mx-auto mt-16 flex gap-3" style={{ maxWidth: "calc(100% - 48px)" }}>
+      {/* 3-up on desktop, stacked on mobile */}
+      <div className="team-strip-row mx-auto mt-12 md:mt-16 flex flex-col md:flex-row gap-3" style={{ maxWidth: "calc(100% - 16px)" }}>
         {members.map((m, idx) => {
           const isExpanded = expandedIdx === idx;
           return (
             <div key={m.name} className="flex-1 min-w-0">
               {/* Image strip */}
               <div
-                ref={(el) => {
-                  stripRefs.current[idx] = el;
-                }}
+                ref={(el) => { stripRefs.current[idx] = el; }}
                 className="relative cursor-pointer overflow-hidden"
-                style={{ height: STRIP_H, borderRadius: "4px" }}
+                style={{ height: typeof window !== "undefined" && window.innerWidth < 768 ? MOBILE_STRIP_H : STRIP_H, borderRadius: "4px" }}
                 onClick={() => handleToggle(idx)}
               >
                 <img
@@ -157,52 +141,19 @@ const TeamSection = () => {
                     objectFit: "cover",
                     objectPosition: isExpanded ? m.expandedPct : `center ${m.eyePct}%`,
                     transform: isExpanded ? "scale(1)" : "scale(2.2)",
-                    transition:
-                      "object-position 0.7s cubic-bezier(0.76, 0, 0.24, 1), transform 0.7s cubic-bezier(0.76, 0, 0.24, 1)",
+                    transition: "object-position 0.7s cubic-bezier(0.76, 0, 0.24, 1), transform 0.7s cubic-bezier(0.76, 0, 0.24, 1)",
                   }}
                 />
 
                 {/* Edge fades */}
-                <div
-                  className="absolute inset-x-0 top-0 pointer-events-none"
-                  style={{
-                    height: "35%",
-                    background: "linear-gradient(to bottom, #080808, transparent)",
-                    opacity: isExpanded ? 0 : 1,
-                    transition: "opacity 0.5s ease",
-                  }}
-                />
-                <div
-                  className="absolute inset-x-0 bottom-0 pointer-events-none"
-                  style={{
-                    height: "35%",
-                    background: "linear-gradient(to top, #080808, transparent)",
-                    opacity: isExpanded ? 0 : 1,
-                    transition: "opacity 0.5s ease",
-                  }}
-                />
-                <div
-                  className="absolute inset-y-0 left-0 pointer-events-none"
-                  style={{
-                    width: "18%",
-                    background: "linear-gradient(to right, #080808, transparent)",
-                    opacity: isExpanded ? 0 : 1,
-                    transition: "opacity 0.5s ease",
-                  }}
-                />
-                <div
-                  className="absolute inset-y-0 right-0 pointer-events-none"
-                  style={{
-                    width: "18%",
-                    background: "linear-gradient(to left, #080808, transparent)",
-                    opacity: isExpanded ? 0 : 1,
-                    transition: "opacity 0.5s ease",
-                  }}
-                />
+                <div className="absolute inset-x-0 top-0 pointer-events-none" style={{ height: "35%", background: "linear-gradient(to bottom, #080808, transparent)", opacity: isExpanded ? 0 : 1, transition: "opacity 0.5s ease" }} />
+                <div className="absolute inset-x-0 bottom-0 pointer-events-none" style={{ height: "35%", background: "linear-gradient(to top, #080808, transparent)", opacity: isExpanded ? 0 : 1, transition: "opacity 0.5s ease" }} />
+                <div className="absolute inset-y-0 left-0 pointer-events-none" style={{ width: "18%", background: "linear-gradient(to right, #080808, transparent)", opacity: isExpanded ? 0 : 1, transition: "opacity 0.5s ease" }} />
+                <div className="absolute inset-y-0 right-0 pointer-events-none" style={{ width: "18%", background: "linear-gradient(to left, #080808, transparent)", opacity: isExpanded ? 0 : 1, transition: "opacity 0.5s ease" }} />
 
                 {/* Role label on expanded */}
                 <div
-                  className="absolute bottom-[16px] left-[16px] flex items-center gap-2 pointer-events-none"
+                  className="absolute bottom-[12px] md:bottom-[16px] left-[12px] md:left-[16px] flex items-center gap-2 pointer-events-none"
                   style={{
                     opacity: isExpanded ? 1 : 0,
                     transform: isExpanded ? "translateY(0)" : "translateY(8px)",
@@ -225,11 +176,11 @@ const TeamSection = () => {
                 <div className="text-[10px] uppercase tracking-[0.15em]" style={{ color: "rgba(255,255,255,0.35)" }}>
                   {String(idx + 1).padStart(2, "0")} / {String(members.length).padStart(2, "0")}
                 </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-[11px] uppercase tracking-[0.1em]" style={{ color: "rgba(255,255,255,0.7)" }}>
+                <div className="flex items-center gap-2 md:gap-3">
+                  <span className="text-[10px] md:text-[11px] uppercase tracking-[0.1em]" style={{ color: "rgba(255,255,255,0.7)" }}>
                     {m.name}
                   </span>
-                  <span className="text-[10px] uppercase tracking-[0.1em]" style={{ color: "rgba(255,255,255,0.35)" }}>
+                  <span className="text-[9px] md:text-[10px] uppercase tracking-[0.1em] hidden sm:inline" style={{ color: "rgba(255,255,255,0.35)" }}>
                     {m.title}
                   </span>
                 </div>
@@ -245,48 +196,23 @@ const TeamSection = () => {
                 }}
               >
                 <div className="mt-3 px-1">
-                  <p
-                    className="text-[10px] uppercase tracking-[0.06em] leading-[1.7] mb-3"
-                    style={{ color: "rgba(255,255,255,0.45)" }}
-                  >
+                  <p className="text-[10px] uppercase tracking-[0.06em] leading-[1.7] mb-3" style={{ color: "rgba(255,255,255,0.45)" }}>
                     {m.bio}
                   </p>
                   <div className="flex items-center gap-3">
                     <a href="#" className="flex items-center gap-2 hover-target">
-                      <svg
-                        width="14"
-                        height="14"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="rgba(255,255,255,0.5)"
-                        strokeWidth="2"
-                      >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="2">
                         <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
                         <rect x="2" y="9" width="4" height="12" />
                         <circle cx="4" cy="4" r="2" />
                       </svg>
                     </a>
                     <a href="#" className="relative inline-block px-3 py-1.5 hover-target group">
-                      <span
-                        className="absolute top-0 left-0 w-1.5 h-1.5 border-t border-l"
-                        style={{ borderColor: "rgba(255,255,255,0.2)" }}
-                      />
-                      <span
-                        className="absolute top-0 right-0 w-1.5 h-1.5 border-t border-r"
-                        style={{ borderColor: "rgba(255,255,255,0.2)" }}
-                      />
-                      <span
-                        className="absolute bottom-0 left-0 w-1.5 h-1.5 border-b border-l"
-                        style={{ borderColor: "rgba(255,255,255,0.2)" }}
-                      />
-                      <span
-                        className="absolute bottom-0 right-0 w-1.5 h-1.5 border-b border-r"
-                        style={{ borderColor: "rgba(255,255,255,0.2)" }}
-                      />
-                      <span
-                        className="text-[9px] uppercase tracking-[0.12em]"
-                        style={{ color: "rgba(255,255,255,0.5)" }}
-                      >
+                      <span className="absolute top-0 left-0 w-1.5 h-1.5 border-t border-l" style={{ borderColor: "rgba(255,255,255,0.2)" }} />
+                      <span className="absolute top-0 right-0 w-1.5 h-1.5 border-t border-r" style={{ borderColor: "rgba(255,255,255,0.2)" }} />
+                      <span className="absolute bottom-0 left-0 w-1.5 h-1.5 border-b border-l" style={{ borderColor: "rgba(255,255,255,0.2)" }} />
+                      <span className="absolute bottom-0 right-0 w-1.5 h-1.5 border-b border-r" style={{ borderColor: "rgba(255,255,255,0.2)" }} />
+                      <span className="text-[9px] uppercase tracking-[0.12em]" style={{ color: "rgba(255,255,255,0.5)" }}>
                         Connect
                       </span>
                     </a>

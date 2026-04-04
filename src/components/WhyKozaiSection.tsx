@@ -73,7 +73,7 @@ const WhyKozaiSection = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} id="why-kozai" className="py-32 md:py-40 px-6 md:px-12 max-w-[1200px] mx-auto">
+    <section ref={sectionRef} id="why-kozai" className="py-24 md:py-40 px-4 sm:px-6 md:px-12 max-w-[1200px] mx-auto">
       <div
         className="text-[11px] uppercase tracking-[0.18em] mb-6"
         style={{ color: "#444444" }}
@@ -88,7 +88,7 @@ const WhyKozaiSection = () => {
         {rows.map((row, i) => (
           <div
             key={i}
-            className={`why-row-${i} grid md:grid-cols-[80px_1fr_1fr] gap-8 md:gap-12 items-start py-12`}
+            className={`why-row-${i} grid grid-cols-1 md:grid-cols-[80px_1fr_1fr] gap-4 md:gap-12 items-start py-8 md:py-12`}
             style={{
               borderTop: "1px solid rgba(255,255,255,0.07)",
             }}
@@ -110,7 +110,7 @@ const WhyKozaiSection = () => {
                 {row.body}
               </p>
             </div>
-            <div className="why-visual flex items-center justify-center">
+            <div className="why-visual hidden md:flex items-center justify-center">
               <svg
                 width="160"
                 height="160"
