@@ -55,7 +55,7 @@ const ANIM_MS = 0.75;
 const EASE = "expo.inOut";
 
 /* Bracket button matching existing site style */
-const BracketButton = ({ children, href }: { children: React.ReactNode; href?: string }) => {
+const BracketButton = ({ label, href }: { label: string; href?: string }) => {
   const Tag = href ? "a" : "button";
   return (
     <Tag
@@ -69,7 +69,7 @@ const BracketButton = ({ children, href }: { children: React.ReactNode; href?: s
       <span className="absolute bottom-0 left-0 h-2 w-2 border-b border-l transition-all duration-300 group-hover:h-3 group-hover:w-3" style={{ borderColor: "hsl(var(--foreground) / 0.25)" }} />
       <span className="absolute bottom-0 right-0 h-2 w-2 border-b border-r transition-all duration-300 group-hover:h-3 group-hover:w-3" style={{ borderColor: "hsl(var(--foreground) / 0.25)" }} />
       <span className="text-[10px] uppercase tracking-[0.14em]" style={{ color: "hsl(var(--foreground) / 0.6)" }}>
-        <LinkText>{children}</LinkText>
+        <LinkText>{label}</LinkText>
       </span>
     </Tag>
   );
