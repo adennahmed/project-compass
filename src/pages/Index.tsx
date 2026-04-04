@@ -68,6 +68,8 @@ const Index = () => {
         <WhoWeServeSection />
         <ClientsSection />
         <WhyKozaiSection />
+        {/* Black spacer before team */}
+        <div className="h-[30vh]" />
         <TeamSection />
         <ContactSection />
       </main>
