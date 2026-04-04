@@ -36,7 +36,7 @@ const members: TeamMember[] = [
     role: "Founder & Principal Engineer",
     title: "Leadership",
     photo: adenPhoto,
-    eyePct: 30,
+    eyePct: 28,
     expandedPct: "center 15%",
     bio: "Full-stack engineer and founder with deep expertise in systems architecture, AI integration, and revenue technology. Building infrastructure that scales companies from ambition to market dominance.",
   },
