@@ -267,26 +267,38 @@ const TeamSection = () => {
         </a>
       </div>
 
-      {/* Center — strips with bold text above/below */}
+      {/* Center — strips with bold text layered behind */}
       <div className="flex-1 flex flex-col justify-center">
-        <div className="relative flex flex-col items-center">
-          {/* Bold text ABOVE — positioned so strips overlap it */}
+        {/* Grid stacks all children in the same cell */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr", gridTemplateRows: "1fr" }}>
+          {/* Bold text layer — row 1, behind photos */}
           <div
-            className="team-bold-text pointer-events-none text-center w-full"
-            style={{ position: "relative", zIndex: 0, marginBottom: "-2rem" }}
+            className="pointer-events-none flex flex-col items-center justify-center gap-[calc(var(--strip-h,120px)+1.5rem)]"
+            style={{ gridArea: "1 / 1", zIndex: 0 }}
           >
             <p
-              className="text-[clamp(1.4rem,3.2vw,3.2rem)] font-bold uppercase leading-[1.15] tracking-[-0.01em]"
+              className="text-center text-[clamp(1.4rem,3.2vw,3.2rem)] font-bold uppercase leading-[1.15] tracking-[-0.01em]"
               style={{ color: "hsl(var(--foreground) / 0.85)", fontFamily: "'Inter', sans-serif" }}
             >
               WE SPOT GAPS BEFORE
               <br />
               THEY'RE OBVIOUS.
             </p>
+            <p
+              className="text-center text-[clamp(1.4rem,3.2vw,3.2rem)] font-bold uppercase leading-[1.15] tracking-[-0.01em]"
+              style={{ color: "hsl(var(--foreground) / 0.85)", fontFamily: "'Inter', sans-serif" }}
+            >
+              ENGINEER THEM INTO
+              <br />
+              SYSTEMS THAT SCALE.
+            </p>
           </div>
 
-          {/* Strips row — higher z-index so expanded photos cover text */}
-          <div className="team-strips-row flex w-full items-center" style={{ position: "relative", zIndex: 2 }}>
+          {/* Strips row — same cell, higher z-index */}
+          <div
+            className="team-strips-row flex w-full items-center self-center"
+            style={{ gridArea: "1 / 1", zIndex: 2 }}
+          >
             {members.map((member, idx) => (
               <div key={member.name} className="flex-1 min-w-0">
                 <button
@@ -357,21 +369,6 @@ const TeamSection = () => {
                 </button>
               </div>
             ))}
-          </div>
-
-          {/* Bold text BELOW — positioned so strips overlap it */}
-          <div
-            className="team-bold-text pointer-events-none text-center w-full"
-            style={{ position: "relative", zIndex: 0, marginTop: "-2rem" }}
-          >
-            <p
-              className="text-[clamp(1.4rem,3.2vw,3.2rem)] font-bold uppercase leading-[1.15] tracking-[-0.01em]"
-              style={{ color: "hsl(var(--foreground) / 0.85)", fontFamily: "'Inter', sans-serif" }}
-            >
-              ENGINEER THEM INTO
-              <br />
-              SYSTEMS THAT SCALE.
-            </p>
           </div>
         </div>
       </div>
