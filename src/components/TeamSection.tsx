@@ -11,16 +11,19 @@ gsap.registerPlugin(ScrollTrigger);
 interface TeamMember {
   name: string;
   role: string;
+  title: string;
   photo: string;
   eyePct: number;
   expandedPos: string;
   bio: string;
+  linkedin?: string;
 }
 
 const members: TeamMember[] = [
   {
-    name: "Mohammed Khan",
+    name: "Muhammad Khan",
     role: "Chief Technology Officer",
+    title: "Technology",
     photo: mohammedPhoto,
     eyePct: 34,
     expandedPos: "center 20%",
@@ -29,6 +32,7 @@ const members: TeamMember[] = [
   {
     name: "Aden Ahmed",
     role: "Founder & Principal Engineer",
+    title: "Leadership",
     photo: adenPhoto,
     eyePct: 31,
     expandedPos: "center 18%",
@@ -37,6 +41,7 @@ const members: TeamMember[] = [
   {
     name: "Lala Malik",
     role: "Chief Compliance & Strategy Officer",
+    title: "Compliance & Strategy",
     photo: lalaPhoto,
     eyePct: 25,
     expandedPos: "center 15%",
@@ -49,19 +54,38 @@ const EXPANDED_H = 560;
 const ANIM_MS = 0.75;
 const EASE = "expo.inOut";
 
+/* Bracket button matching existing site style */
+const BracketButton = ({ label, href }: { label: string; href?: string }) => {
+  const Tag = href ? "a" : "button";
+  return (
+    <Tag
+      href={href}
+      target={href ? "_blank" : undefined}
+      rel={href ? "noopener noreferrer" : undefined}
+      className="group relative inline-block px-5 py-2.5 hover-target"
+    >
+      <span className="absolute left-0 top-0 h-2 w-2 border-l border-t transition-all duration-300 group-hover:h-3 group-hover:w-3" style={{ borderColor: "hsl(var(--foreground) / 0.25)" }} />
+      <span className="absolute right-0 top-0 h-2 w-2 border-r border-t transition-all duration-300 group-hover:h-3 group-hover:w-3" style={{ borderColor: "hsl(var(--foreground) / 0.25)" }} />
+      <span className="absolute bottom-0 left-0 h-2 w-2 border-b border-l transition-all duration-300 group-hover:h-3 group-hover:w-3" style={{ borderColor: "hsl(var(--foreground) / 0.25)" }} />
+      <span className="absolute bottom-0 right-0 h-2 w-2 border-b border-r transition-all duration-300 group-hover:h-3 group-hover:w-3" style={{ borderColor: "hsl(var(--foreground) / 0.25)" }} />
+      <span className="text-[10px] uppercase tracking-[0.14em]" style={{ color: "hsl(var(--foreground) / 0.6)" }}>
+        <LinkText>{label}</LinkText>
+      </span>
+    </Tag>
+  );
+};
+
 const TeamSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const stripRefs = useRef<(HTMLDivElement | null)[]>([]);
   const imgRefs = useRef<(HTMLImageElement | null)[]>([]);
   const labelRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const bioNameRef = useRef<HTMLDivElement>(null);
-  const bioPRef = useRef<HTMLParagraphElement>(null);
   const bioContainerRef = useRef<HTMLDivElement>(null);
+  const bioInnerRef = useRef<HTMLDivElement>(null);
   const expandedIdx = useRef<number | null>(null);
   const busy = useRef(false);
   const [bioData, setBioData] = useState<number | null>(null);
 
-  // Initial GSAP set
   useEffect(() => {
     members.forEach((m, i) => {
       const s = stripRefs.current[i];
@@ -71,7 +95,6 @@ const TeamSection = () => {
     });
   }, []);
 
-  // Scroll entrance
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.from(".team-header-content", {
@@ -93,9 +116,6 @@ const TeamSection = () => {
     const prev = expandedIdx.current;
     const isCollapse = prev === idx;
     const next = isCollapse ? null : idx;
-
-    // If switching between members (not collapsing), update text immediately
-    // and just crossfade the text content
     const isSwitching = prev !== null && next !== null;
 
     const tl = gsap.timeline({
@@ -106,7 +126,6 @@ const TeamSection = () => {
       },
     });
 
-    // Collapse previous
     if (prev !== null) {
       const ps = stripRefs.current[prev];
       const pi = imgRefs.current[prev];
@@ -116,13 +135,11 @@ const TeamSection = () => {
       if (pi) tl.to(pi, { scale: 1.18, objectPosition: `center ${members[prev].eyePct}%`, duration: ANIM_MS, ease: EASE, overwrite: true }, 0);
       if (pl) tl.to(pl, { opacity: 0, y: 8, duration: 0.25, ease: "power2.in" }, 0);
 
-      // If collapsing (not switching), fade out bio
       if (!isSwitching && bioContainerRef.current) {
         tl.to(bioContainerRef.current, { opacity: 0, duration: 0.3, ease: "power2.in" }, 0);
       }
     }
 
-    // Expand next
     if (next !== null) {
       const ns = stripRefs.current[next];
       const ni = imgRefs.current[next];
@@ -134,21 +151,16 @@ const TeamSection = () => {
       if (nl) tl.to(nl, { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }, delay + ANIM_MS * 0.55);
 
       if (isSwitching) {
-        // Crossfade: fade out old text, swap content, fade in new text — all in place
-        const textEls = [bioNameRef.current, bioPRef.current].filter(Boolean);
-        tl.to(textEls, {
-          opacity: 0,
-          duration: 0.2,
-          ease: "power2.in",
-          onComplete: () => setBioData(next),
-        }, delay + 0.05);
-        tl.to(textEls, {
-          opacity: 1,
-          duration: 0.3,
-          ease: "power2.out",
-        }, delay + 0.3);
+        if (bioInnerRef.current) {
+          tl.to(bioInnerRef.current, {
+            opacity: 0, duration: 0.2, ease: "power2.in",
+            onComplete: () => setBioData(next),
+          }, delay + 0.05);
+          tl.to(bioInnerRef.current, {
+            opacity: 1, duration: 0.3, ease: "power2.out",
+          }, delay + 0.3);
+        }
       } else {
-        // First expand — set data and fade in container
         setBioData(next);
         if (bioContainerRef.current) {
           tl.fromTo(bioContainerRef.current,
@@ -161,28 +173,21 @@ const TeamSection = () => {
     }
   }, []);
 
+  const firstName = bioData !== null ? members[bioData].name.split(" ")[0] : "";
+
   return (
     <section
       ref={sectionRef}
       id="team"
       className="relative overflow-hidden flex flex-col"
-      style={{
-        minHeight: "100vh",
-        background: "hsl(var(--background))",
-      }}
+      style={{ minHeight: "100vh", background: "hsl(var(--background))" }}
     >
-      {/* Header — pinned to top area */}
+      {/* Header */}
       <div className="team-header-content text-center px-4 pt-16 pb-8">
-        <div
-          className="mb-5 text-[11px] uppercase tracking-[0.18em]"
-          style={{ color: "hsl(var(--foreground) / 0.35)" }}
-        >
+        <div className="mb-5 text-[11px] uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.35)" }}>
           OUR LEADERSHIP TEAM
         </div>
-        <p
-          className="mx-auto mb-10 max-w-[520px] text-[13px] uppercase tracking-[0.1em] leading-[1.8]"
-          style={{ color: "hsl(var(--foreground) / 0.5)" }}
-        >
+        <p className="mx-auto mb-10 max-w-[520px] text-[13px] uppercase tracking-[0.1em] leading-[1.8]" style={{ color: "hsl(var(--foreground) / 0.5)" }}>
           A global network of advisors, operators and investors. The people who
           built what&apos;s now, helping you build what&apos;s next.
         </p>
@@ -197,7 +202,7 @@ const TeamSection = () => {
         </a>
       </div>
 
-      {/* Center area — strips vertically centered, items-center so expanded card stays aligned */}
+      {/* Center — strips */}
       <div className="flex-1 flex flex-col justify-center">
         <div className="team-strips-row flex w-full items-center">
           {members.map((member, idx) => (
@@ -227,18 +232,14 @@ const TeamSection = () => {
                       willChange: "transform, object-position",
                     }}
                   />
-
-                  {/* Top/bottom gradient fades */}
                   <div className="pointer-events-none absolute inset-x-0 top-0" style={{ height: "35%", background: "linear-gradient(to bottom, hsl(var(--background)), transparent)" }} />
                   <div className="pointer-events-none absolute inset-x-0 bottom-0" style={{ height: "35%", background: "linear-gradient(to top, hsl(var(--background)), transparent)" }} />
 
-                  {/* Role label */}
                   <div
                     ref={(el) => { labelRefs.current[idx] = el; }}
                     className="pointer-events-none absolute bottom-4 left-4 flex items-center gap-2 rounded-sm px-2.5 py-1.5"
                     style={{
-                      opacity: 0,
-                      transform: "translateY(8px)",
+                      opacity: 0, transform: "translateY(8px)",
                       background: "hsl(var(--background) / 0.68)",
                       backdropFilter: "blur(8px)",
                     }}
@@ -255,26 +256,69 @@ const TeamSection = () => {
         </div>
       </div>
 
-      {/* Bio — pinned to bottom area, fixed height so no shift */}
+      {/* Bio footer — matches reference layout */}
       <div
         ref={bioContainerRef}
-        className="text-center px-4 pb-16 pt-8"
-        style={{ opacity: 0, minHeight: 100 }}
+        className="px-6 md:px-10 pb-10"
+        style={{ opacity: 0, minHeight: 120 }}
       >
-        <div
-          ref={bioNameRef}
-          className="text-[11px] uppercase tracking-[0.18em]"
-          style={{ color: "hsl(var(--foreground) / 0.38)" }}
-        >
-          {bioData !== null ? `${members[bioData].name}  ·  ${members[bioData].role}` : "\u00A0"}
+        <div ref={bioInnerRef}>
+          {/* Divider */}
+          <div className="w-full h-px mb-5" style={{ background: "hsl(var(--foreground) / 0.1)" }} />
+
+          {/* Row 1: counter + name/title */}
+          <div className="flex items-baseline justify-between mb-5">
+            <div className="text-[10px] uppercase tracking-[0.16em]" style={{ color: "hsl(var(--foreground) / 0.35)" }}>
+              {bioData !== null ? `${String(bioData + 1).padStart(2, "0")} / ${String(members.length).padStart(2, "0")}` : "\u00A0"}
+            </div>
+            <div className="text-[10px] uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.5)" }}>
+              {bioData !== null && (
+                <>
+                  <span style={{ color: "hsl(var(--foreground) / 0.6)" }}>{members[bioData].name}</span>
+                  <span className="mx-4" style={{ color: "hsl(var(--foreground) / 0.2)" }}>|</span>
+                  <span>{members[bioData].title}</span>
+                </>
+              )}
+            </div>
+          </div>
+
+          {/* Divider */}
+          <div className="w-full h-px mb-5" style={{ background: "hsl(var(--foreground) / 0.07)" }} />
+
+          {/* Row 2: buttons left + bio right */}
+          <div className="flex flex-col md:flex-row items-start md:items-start justify-between gap-6">
+            {/* Left: buttons */}
+            <div className="flex items-center gap-3 shrink-0">
+              {/* LinkedIn icon */}
+              <a
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center w-8 h-8 rounded-sm hover-target"
+                style={{ border: "1px solid hsl(var(--foreground) / 0.15)" }}
+                aria-label="LinkedIn"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: "hsl(var(--foreground) / 0.5)" }}>
+                  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+                  <rect width="4" height="12" x="2" y="9" />
+                  <circle cx="4" cy="4" r="2" />
+                </svg>
+              </a>
+              <BracketButton label={`Connect with ${firstName}`} />
+              {/* Vertical separator */}
+              <div className="h-5 w-px" style={{ background: "hsl(var(--foreground) / 0.12)" }} />
+              <BracketButton label="Full Bio" />
+            </div>
+
+            {/* Right: bio text */}
+            <p
+              className="max-w-[620px] text-[10px] uppercase tracking-[0.1em] leading-[1.9]"
+              style={{ color: "hsl(var(--foreground) / 0.45)" }}
+            >
+              {bioData !== null ? members[bioData].bio : "\u00A0"}
+            </p>
+          </div>
         </div>
-        <p
-          ref={bioPRef}
-          className="mx-auto mt-4 max-w-[900px] text-[12px] uppercase tracking-[0.08em] leading-[1.8]"
-          style={{ color: "hsl(var(--foreground) / 0.52)" }}
-        >
-          {bioData !== null ? members[bioData].bio : "\u00A0"}
-        </p>
       </div>
     </section>
   );
