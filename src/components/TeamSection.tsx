@@ -19,6 +19,7 @@ interface TeamMember {
   title: string;
   photo: string;
   eyePct: number;
+  zoomPct: number;
   expandedPct: string;
   bio: string;
 }
