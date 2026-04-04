@@ -10,8 +10,9 @@ interface HeroSectionProps {
 const getSplitDistance = () => {
   if (typeof window === "undefined") return 0;
   const w = window.innerWidth;
-  if (w < 480) return 0; // No split on very small screens
-  if (w < 640) return Math.max(w * 0.08, 20);
+  if (w < 480) return 0;
+  if (w < 640) return Math.max(w * 0.06, 15);
+  if (w < 1100) return Math.min(w * 0.1, 100);
   return Math.min(Math.max(w * 0.18, 170), 380);
 };
 
