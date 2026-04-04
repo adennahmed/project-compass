@@ -3,8 +3,8 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import LinkText from "./LinkText";
 import adenPhoto from "@/assets/aden-ahmed.png";
-import exec1Photo from "@/assets/exec-placeholder-1.jpg";
-import exec2Photo from "@/assets/exec-placeholder-2.jpg";
+import mohammedPhoto from "@/assets/mohammed-khan.jpg";
+import lalaPhoto from "@/assets/lala-malik.jpg";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -23,13 +23,13 @@ interface TeamMember {
 
 const members: TeamMember[] = [
   {
-    name: "James Whitfield",
-    role: "Chief Strategy Officer",
-    title: "Strategy",
-    photo: exec1Photo,
-    eyePct: 34,
+    name: "Mohammed Khan",
+    role: "Chief Technology Officer",
+    title: "Technology",
+    photo: mohammedPhoto,
+    eyePct: 30,
     expandedPct: "center 15%",
-    bio: "Former management consultant turned operator. 15 years orchestrating go-to-market strategy, M&A diligence, and commercial transformation across high-growth technology companies.",
+    bio: "Seasoned technologist with deep expertise in cloud architecture, machine learning pipelines, and enterprise platform engineering. Transforms complex technical challenges into scalable, production-grade systems.",
   },
   {
     name: "Aden Ahmed",
@@ -41,13 +41,13 @@ const members: TeamMember[] = [
     bio: "Full-stack engineer and founder with deep expertise in systems architecture, AI integration, and revenue technology. Building infrastructure that scales companies from ambition to market dominance.",
   },
   {
-    name: "Richard Moreau",
-    role: "Chief Technology Officer",
-    title: "Technology",
-    photo: exec2Photo,
-    eyePct: 36,
+    name: "Lala Malik",
+    role: "Chief Compliance & Strategy Officer",
+    title: "Compliance & Strategy",
+    photo: lalaPhoto,
+    eyePct: 32,
     expandedPct: "center 15%",
-    bio: "Systems architect with two decades of experience in distributed infrastructure, data pipelines, and platform engineering. Turns complexity into competitive advantage.",
+    bio: "Regulatory strategist and commercial operator with extensive experience in governance frameworks, risk management, and go-to-market execution. Ensures every growth lever is built on a foundation of compliance and trust.",
   },
 ];
 
