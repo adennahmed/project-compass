@@ -8,8 +8,8 @@ import lalaPhoto from "@/assets/lala-malik.jpg";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const EXPANDED_H = 580;
 const MOBILE_EXPANDED_H = 420;
+const DESKTOP_MIN_EXPANDED_H = 580;
 
 interface TeamMember {
   name: string;
@@ -54,6 +54,7 @@ const members: TeamMember[] = [
 const TeamSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const [expandedIdx, setExpandedIdx] = useState<number | null>(null);
+  const [visualExpandedIdx, setVisualExpandedIdx] = useState<number | null>(null);
   const stripRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
@@ -80,11 +81,14 @@ const TeamSection = () => {
     const el = stripRefs.current[idx];
     if (!el) return;
     const isMobile = window.innerWidth < 768;
-    const expandedH = isMobile ? MOBILE_EXPANDED_H : EXPANDED_H;
+    const expandedH = isMobile ? MOBILE_EXPANDED_H : Math.max(DESKTOP_MIN_EXPANDED_H, el.offsetWidth * 1.1);
 
     const isClosing = expandedIdx === idx;
+    
+    // Close the previously expanded card
     if (expandedIdx !== null && expandedIdx !== idx) {
-      const prev = stripRefs.current[expandedIdx];
+      const prevIdx = expandedIdx;
+      const prev = stripRefs.current[prevIdx];
       if (prev) {
         const currentH = prev.getBoundingClientRect().height;
         prev.style.height = `${currentH}px`;
@@ -92,22 +96,26 @@ const TeamSection = () => {
           height: prev.offsetWidth / 4,
           duration: 0.6,
           ease: "power3.inOut",
+          onStart: () => { setVisualExpandedIdx(null); },
           onComplete: () => { prev.style.height = ""; },
         });
       }
     }
 
-    setExpandedIdx(isClosing ? null : idx);
     if (isClosing) {
       const currentH = el.getBoundingClientRect().height;
       el.style.height = `${currentH}px`;
+      setVisualExpandedIdx(null);
       gsap.to(el, {
         height: el.offsetWidth / 4,
         duration: 0.7,
         ease: "power3.inOut",
         onComplete: () => { el.style.height = ""; },
       });
+      setExpandedIdx(null);
     } else {
+      setExpandedIdx(idx);
+      setVisualExpandedIdx(idx);
       const currentH = el.getBoundingClientRect().height;
       el.style.height = `${currentH}px`;
       gsap.to(el, {
@@ -161,7 +169,7 @@ const TeamSection = () => {
         style={{ maxWidth: "calc(100% - 16px)" }}
       >
         {members.map((m, idx) => {
-          const isExpanded = expandedIdx === idx;
+          const isExpanded = visualExpandedIdx === idx;
           return (
             <div key={m.name} className="flex-1 min-w-0">
               {/* Image strip */}
