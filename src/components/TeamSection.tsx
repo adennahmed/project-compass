@@ -8,9 +8,9 @@ import lalaPhoto from "@/assets/lala-malik.jpg";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const STRIP_H = 120;
+const STRIP_H = 150;
 const EXPANDED_H = 580;
-const MOBILE_STRIP_H = 100;
+const MOBILE_STRIP_H = 120;
 const MOBILE_EXPANDED_H = 420;
 
 interface TeamMember {
@@ -166,7 +166,7 @@ const TeamSection = () => {
                   style={{
                     objectFit: "cover",
                     objectPosition: isExpanded ? m.expandedPct : `center ${m.eyePct}%`,
-                    transform: isExpanded ? "scale(1)" : "scale(2.2)",
+                    transform: isExpanded ? "scale(1)" : "scale(1.9)",
                     transition:
                       "object-position 0.7s cubic-bezier(0.76, 0, 0.24, 1), transform 0.7s cubic-bezier(0.76, 0, 0.24, 1)",
                   }}
