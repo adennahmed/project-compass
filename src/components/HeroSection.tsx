@@ -9,7 +9,9 @@ interface HeroSectionProps {
 
 const getSplitDistance = () => {
   if (typeof window === "undefined") return 0;
-  return Math.min(Math.max(window.innerWidth * 0.18, 170), 380);
+  const w = window.innerWidth;
+  if (w < 640) return Math.max(w * 0.12, 40);
+  return Math.min(Math.max(w * 0.18, 170), 380);
 };
 
 const HeroSection = ({ animate }: HeroSectionProps) => {
@@ -53,7 +55,7 @@ const HeroSection = ({ animate }: HeroSectionProps) => {
   return (
     <section
       ref={sectionRef}
-      className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 md:px-12"
+      className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-4 sm:px-6 md:px-12"
     >
       <h1 className="sr-only">Building the Systems That Drive Growth.</h1>
 
@@ -61,10 +63,10 @@ const HeroSection = ({ animate }: HeroSectionProps) => {
         <HeroParticleSphere />
       </div>
 
-      <div aria-hidden="true" className="hero-split-container relative z-10 flex min-h-[58vh] w-full max-w-[1800px] items-center justify-center gap-0">
+      <div aria-hidden="true" className="hero-split-container relative z-10 flex min-h-[40vh] sm:min-h-[58vh] w-full max-w-[1800px] items-center justify-center gap-0">
         <div className="hero-half-left will-change-transform">
           <p
-            className="whitespace-nowrap text-left text-[clamp(2.5rem,4.9vw,5.3rem)] font-bold uppercase leading-[0.92] tracking-[-0.03em] text-foreground"
+            className="whitespace-nowrap text-left text-[clamp(1.6rem,4.9vw,5.3rem)] font-bold uppercase leading-[0.92] tracking-[-0.03em] text-foreground"
             style={{ fontFamily: "'Inter', sans-serif" }}
           >
             BUILDING THE
@@ -74,7 +76,7 @@ const HeroSection = ({ animate }: HeroSectionProps) => {
         </div>
         <div className="hero-half-right will-change-transform">
           <p
-            className="whitespace-nowrap text-right text-[clamp(2.5rem,4.9vw,5.3rem)] font-bold uppercase leading-[0.92] tracking-[-0.03em] text-foreground"
+            className="whitespace-nowrap text-right text-[clamp(1.6rem,4.9vw,5.3rem)] font-bold uppercase leading-[0.92] tracking-[-0.03em] text-foreground"
             style={{ fontFamily: "'Inter', sans-serif" }}
           >
             THAT
@@ -84,7 +86,7 @@ const HeroSection = ({ animate }: HeroSectionProps) => {
         </div>
       </div>
 
-      <div className="absolute bottom-8 left-6 md:left-12 right-6 md:right-12 flex items-end justify-between z-10">
+      <div className="absolute bottom-8 left-4 sm:left-6 md:left-12 right-4 sm:right-6 md:right-12 flex items-end justify-between z-10">
         <div className="hero-bottom-left">
           <a href="#contact" className="relative inline-block px-5 py-3 hover-target group">
             <span className="absolute top-0 left-0 h-2.5 w-2.5 border-l border-t transition-all duration-300 group-hover:h-3.5 group-hover:w-3.5" style={{ borderColor: "hsl(var(--foreground) / 0.25)" }} />
@@ -108,7 +110,7 @@ const HeroSection = ({ animate }: HeroSectionProps) => {
         </div>
       </div>
 
-      <div className="scroll-indicator absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
+      <div className="scroll-indicator absolute bottom-8 left-1/2 -translate-x-1/2 z-10 hidden sm:block">
         <div className="flex flex-col items-center gap-2">
           <div className="relative h-[50px] w-[1px] overflow-hidden" style={{ background: "hsl(var(--foreground) / 0.08)" }}>
             <div className="animate-scroll-line absolute left-0 top-0 h-[15px] w-full" style={{ background: "hsl(var(--foreground) / 0.4)" }} />
@@ -116,7 +118,7 @@ const HeroSection = ({ animate }: HeroSectionProps) => {
         </div>
       </div>
 
-      <div className="absolute bottom-8 right-6 md:right-12 z-10 hero-logo-watermark">
+      <div className="absolute bottom-8 right-4 sm:right-6 md:right-12 z-10 hero-logo-watermark hidden sm:block">
         <img src="/kozai-logo-white.svg" alt="" className="h-8 opacity-20" />
       </div>
 
