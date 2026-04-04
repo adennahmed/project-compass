@@ -177,7 +177,7 @@ const TeamSection = () => {
                 }}
                 className="relative cursor-pointer overflow-hidden"
                 style={{
-                  height: typeof window !== "undefined" && window.innerWidth < 768 ? MOBILE_STRIP_H : STRIP_H,
+                  aspectRatio: isExpanded ? undefined : "4 / 1",
                   borderRadius: "4px",
                 }}
                 onClick={() => handleToggle(idx)}
