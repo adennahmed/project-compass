@@ -13,7 +13,7 @@ const getSplitDistance = () => {
   if (w < 480) return 0;
   if (w < 640) return Math.max(w * 0.06, 15);
   if (w < 1100) return Math.min(w * 0.1, 100);
-  return Math.min(Math.max(w * 0.18, 170), 380);
+  return Math.min(Math.max(w * 0.16, 150), 340);
 };
 
 const HeroSection = ({ animate }: HeroSectionProps) => {
@@ -65,10 +65,10 @@ const HeroSection = ({ animate }: HeroSectionProps) => {
         <HeroParticleSphere />
       </div>
 
-      <div aria-hidden="true" className="hero-split-container relative z-10 flex flex-col sm:flex-row min-h-[30vh] sm:min-h-[58vh] w-full max-w-[1800px] items-center justify-center gap-0 px-2">
-        <div className="hero-half-left will-change-transform">
+      <div aria-hidden="true" className="hero-split-container relative z-10 flex flex-col sm:flex-row min-h-[30vh] sm:min-h-[58vh] w-full items-center justify-center gap-0">
+        <div className="hero-half-left will-change-transform sm:flex-1 sm:flex sm:justify-end sm:pr-0">
           <p
-            className="whitespace-nowrap text-center sm:text-left text-[7vw] sm:text-[clamp(1.6rem,4.9vw,5.3rem)] font-bold uppercase leading-[0.92] tracking-[-0.03em] text-foreground"
+            className="whitespace-nowrap text-center sm:text-right text-[7vw] sm:text-[clamp(1.6rem,4.9vw,5.3rem)] font-bold uppercase leading-[0.92] tracking-[-0.03em] text-foreground"
             style={{ fontFamily: "'Inter', sans-serif" }}
           >
             BUILDING THE
@@ -76,9 +76,9 @@ const HeroSection = ({ animate }: HeroSectionProps) => {
             SYSTEMS
           </p>
         </div>
-        <div className="hero-half-right will-change-transform">
+        <div className="hero-half-right will-change-transform sm:flex-1 sm:flex sm:justify-start sm:pl-0">
           <p
-            className="whitespace-nowrap text-center sm:text-right text-[7vw] sm:text-[clamp(1.6rem,4.9vw,5.3rem)] font-bold uppercase leading-[0.92] tracking-[-0.03em] text-foreground"
+            className="whitespace-nowrap text-center sm:text-left text-[7vw] sm:text-[clamp(1.6rem,4.9vw,5.3rem)] font-bold uppercase leading-[0.92] tracking-[-0.03em] text-foreground"
             style={{ fontFamily: "'Inter', sans-serif" }}
           >
             THAT
