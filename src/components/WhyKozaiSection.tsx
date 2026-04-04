@@ -110,7 +110,7 @@ const WhyKozaiSection = () => {
                 {row.body}
               </p>
             </div>
-            <div className="why-visual flex items-center justify-center">
+            <div className="why-visual hidden md:flex items-center justify-center">
               <svg
                 width="160"
                 height="160"
