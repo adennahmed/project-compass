@@ -23,15 +23,6 @@ interface TeamMember {
 
 const members: TeamMember[] = [
   {
-    name: "Aden Ahmed",
-    role: "Founder & Principal Engineer",
-    title: "Leadership",
-    photo: adenPhoto,
-    eyePct: 32,
-    expandedPct: "center 15%",
-    bio: "Full-stack engineer and founder with deep expertise in systems architecture, AI integration, and revenue technology. Building infrastructure that scales companies from ambition to market dominance.",
-  },
-  {
     name: "James Whitfield",
     role: "Chief Strategy Officer",
     title: "Strategy",
