@@ -267,79 +267,112 @@ const TeamSection = () => {
         </a>
       </div>
 
-      {/* Center — strips */}
+      {/* Center — strips with bold text above/below */}
       <div className="flex-1 flex flex-col justify-center">
-        <div className="team-strips-row flex w-full items-center">
-          {members.map((member, idx) => (
-            <div key={member.name} className="flex-1 min-w-0">
-              <button
-                type="button"
-                className="relative block w-full text-left cursor-pointer"
-                onClick={() => handleToggle(idx)}
-                aria-label={`Toggle ${member.name} profile`}
-              >
-                <div
-                  ref={(el) => {
-                    stripRefs.current[idx] = el;
-                  }}
-                  className="relative overflow-hidden"
-                  style={{ height: COLLAPSED_H }}
-                >
-                  <img
-                    ref={(el) => {
-                      imgRefs.current[idx] = el;
-                    }}
-                    src={member.photo}
-                    alt={member.name}
-                    draggable={false}
-                    className="absolute inset-0 h-full w-full select-none"
-                    style={{
-                      objectFit: "cover",
-                      objectPosition: `center ${member.eyePct}%`,
-                      transform: "scale(1.18)",
-                      transformOrigin: "center center",
-                      willChange: "transform, object-position",
-                    }}
-                  />
-                  <div
-                    className="pointer-events-none absolute inset-x-0 top-0"
-                    style={{
-                      height: "35%",
-                      background: "linear-gradient(to bottom, hsl(var(--background)), transparent)",
-                    }}
-                  />
-                  <div
-                    className="pointer-events-none absolute inset-x-0 bottom-0"
-                    style={{
-                      height: "35%",
-                      background: "linear-gradient(to top, hsl(var(--background)), transparent)",
-                    }}
-                  />
+        <div className="relative">
+          {/* Bold text ABOVE the strips — behind the photos */}
+          <div
+            className="team-bold-text pointer-events-none text-center pb-10"
+            style={{ position: "relative", zIndex: 0 }}
+          >
+            <p
+              className="text-[clamp(1.4rem,3.2vw,3.2rem)] font-bold uppercase leading-[1.15] tracking-[-0.01em]"
+              style={{ color: "hsl(var(--foreground) / 0.85)", fontFamily: "'Inter', sans-serif" }}
+            >
+              WE SPOT GAPS BEFORE
+              <br />
+              THEY'RE OBVIOUS.
+            </p>
+          </div>
 
+          {/* Strips row — higher z-index so expanded photos cover text */}
+          <div className="team-strips-row flex w-full items-center" style={{ position: "relative", zIndex: 2 }}>
+            {members.map((member, idx) => (
+              <div key={member.name} className="flex-1 min-w-0">
+                <button
+                  type="button"
+                  className="relative block w-full text-left cursor-pointer"
+                  onClick={() => handleToggle(idx)}
+                  aria-label={`Toggle ${member.name} profile`}
+                >
                   <div
                     ref={(el) => {
-                      labelRefs.current[idx] = el;
+                      stripRefs.current[idx] = el;
                     }}
-                    className="pointer-events-none absolute bottom-4 left-4 flex items-center gap-2 rounded-sm px-2.5 py-1.5"
-                    style={{
-                      opacity: 0,
-                      transform: "translateY(8px)",
-                      background: "hsl(var(--background) / 0.68)",
-                      backdropFilter: "blur(8px)",
-                    }}
+                    className="relative overflow-hidden"
+                    style={{ height: COLLAPSED_H }}
                   >
-                    <div className="h-1.5 w-1.5 rounded-full" style={{ background: "hsl(var(--foreground) / 0.55)" }} />
-                    <span
-                      className="text-[9px] uppercase tracking-[0.14em]"
-                      style={{ color: "hsl(var(--foreground) / 0.78)" }}
+                    <img
+                      ref={(el) => {
+                        imgRefs.current[idx] = el;
+                      }}
+                      src={member.photo}
+                      alt={member.name}
+                      draggable={false}
+                      className="absolute inset-0 h-full w-full select-none"
+                      style={{
+                        objectFit: "cover",
+                        objectPosition: `center ${member.eyePct}%`,
+                        transform: "scale(1.18)",
+                        transformOrigin: "center center",
+                        willChange: "transform, object-position",
+                      }}
+                    />
+                    <div
+                      className="pointer-events-none absolute inset-x-0 top-0"
+                      style={{
+                        height: "35%",
+                        background: "linear-gradient(to bottom, hsl(var(--background)), transparent)",
+                      }}
+                    />
+                    <div
+                      className="pointer-events-none absolute inset-x-0 bottom-0"
+                      style={{
+                        height: "35%",
+                        background: "linear-gradient(to top, hsl(var(--background)), transparent)",
+                      }}
+                    />
+
+                    <div
+                      ref={(el) => {
+                        labelRefs.current[idx] = el;
+                      }}
+                      className="pointer-events-none absolute bottom-4 left-4 flex items-center gap-2 rounded-sm px-2.5 py-1.5"
+                      style={{
+                        opacity: 0,
+                        transform: "translateY(8px)",
+                        background: "hsl(var(--background) / 0.68)",
+                        backdropFilter: "blur(8px)",
+                      }}
                     >
-                      {member.role}
-                    </span>
+                      <div className="h-1.5 w-1.5 rounded-full" style={{ background: "hsl(var(--foreground) / 0.55)" }} />
+                      <span
+                        className="text-[9px] uppercase tracking-[0.14em]"
+                        style={{ color: "hsl(var(--foreground) / 0.78)" }}
+                      >
+                        {member.role}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              </button>
-            </div>
-          ))}
+                </button>
+              </div>
+            ))}
+          </div>
+
+          {/* Bold text BELOW the strips — behind the photos */}
+          <div
+            className="team-bold-text pointer-events-none text-center pt-10"
+            style={{ position: "relative", zIndex: 0 }}
+          >
+            <p
+              className="text-[clamp(1.4rem,3.2vw,3.2rem)] font-bold uppercase leading-[1.15] tracking-[-0.01em]"
+              style={{ color: "hsl(var(--foreground) / 0.85)", fontFamily: "'Inter', sans-serif" }}
+            >
+              ENGINEER THEM INTO
+              <br />
+              SYSTEMS THAT SCALE.
+            </p>
+          </div>
         </div>
       </div>
 
