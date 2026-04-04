@@ -25,7 +25,7 @@ const members: TeamMember[] = [
     role: "Chief Technology Officer",
     title: "Technology",
     photo: mohammedPhoto,
-    eyePct: 32,
+    eyePct: 31,
     expandedPos: "center 20%",
     bio: "Seasoned technologist with deep expertise in cloud architecture, machine learning pipelines, and enterprise platform engineering. Transforms complex technical challenges into scalable, production-grade systems.",
   },
