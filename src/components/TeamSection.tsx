@@ -8,11 +8,11 @@ import lalaPhoto from "@/assets/lala-malik.jpg";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const MOBILE_COLLAPSED_H = 140;
-const DESKTOP_COLLAPSED_H = 130;
-const MOBILE_EXPANDED_H = 380;
-const DESKTOP_MIN_EXPANDED_H = 420;
-const DESKTOP_MAX_EXPANDED_H = 520;
+const MOBILE_COLLAPSED_H = 156;
+const DESKTOP_COLLAPSED_H = 148;
+const MOBILE_EXPANDED_H = 420;
+const DESKTOP_MIN_EXPANDED_H = 480;
+const DESKTOP_MAX_EXPANDED_H = 560;
 
 interface TeamMember {
   name: string;
@@ -33,8 +33,8 @@ const members: TeamMember[] = [
     title: "Technology",
     photo: mohammedPhoto,
     eyePct: 34,
-    expandedPct: "center 36%",
-    collapsedScale: 1.16,
+    expandedPct: "center 30%",
+    collapsedScale: 1.1,
     expandedScale: 1,
     bio: "Seasoned technologist with deep expertise in cloud architecture, machine learning pipelines, and enterprise platform engineering. Transforms complex technical challenges into scalable, production-grade systems.",
   },
@@ -44,9 +44,9 @@ const members: TeamMember[] = [
     title: "Leadership",
     photo: adenPhoto,
     eyePct: 31,
-    expandedPct: "center 34%",
-    collapsedScale: 1.14,
-    expandedScale: 1.0,
+    expandedPct: "center 28%",
+    collapsedScale: 1.08,
+    expandedScale: 1,
     bio: "Full-stack engineer and founder with deep expertise in systems architecture, AI integration, and revenue technology. Building infrastructure that scales companies from ambition to market dominance.",
   },
   {
@@ -55,8 +55,8 @@ const members: TeamMember[] = [
     title: "Compliance & Strategy",
     photo: lalaPhoto,
     eyePct: 25,
-    expandedPct: "center 29%",
-    collapsedScale: 1.18,
+    expandedPct: "center 24%",
+    collapsedScale: 1.1,
     expandedScale: 1,
     bio: "Regulatory strategist and commercial operator with extensive experience in governance frameworks, risk management, and go-to-market execution. Ensures every growth lever is built on a foundation of compliance and trust.",
   },
@@ -73,7 +73,7 @@ const TeamSection = () => {
 
   const getExpandedHeight = (el: HTMLDivElement) => {
     if (!isDesktop) return MOBILE_EXPANDED_H;
-    return Math.min(DESKTOP_MAX_EXPANDED_H, Math.max(DESKTOP_MIN_EXPANDED_H, el.offsetWidth * 0.56));
+    return Math.min(DESKTOP_MAX_EXPANDED_H, Math.max(DESKTOP_MIN_EXPANDED_H, el.offsetWidth * 0.8));
   };
 
   const syncCardState = (idx: number, expanded: boolean) => {
@@ -105,16 +105,16 @@ const TeamSection = () => {
 
     gsap.to(shell, {
       height: expanded ? getExpandedHeight(shell) : getCollapsedHeight(),
-      duration: expanded ? 0.65 : 0.55,
-      ease: "power3.inOut",
+      duration: expanded ? 0.95 : 0.75,
+      ease: "expo.inOut",
       overwrite: true,
     });
 
     gsap.to(image, {
       objectPosition: expanded ? member.expandedPct : `center ${member.eyePct}%`,
       scale: expanded ? member.expandedScale : member.collapsedScale,
-      duration: expanded ? 0.65 : 0.55,
-      ease: "power3.inOut",
+      duration: expanded ? 0.95 : 0.75,
+      ease: "expo.inOut",
       overwrite: true,
     });
   };
@@ -151,7 +151,7 @@ const TeamSection = () => {
 
   useEffect(() => {
     members.forEach((_, idx) => syncCardState(idx, expandedIdx === idx));
-  }, [expandedIdx, isDesktop]);
+  }, [isDesktop]);
 
   const handleToggle = (idx: number) => {
     const nextExpanded = expandedIdx === idx ? null : idx;
