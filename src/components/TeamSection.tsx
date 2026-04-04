@@ -45,7 +45,7 @@ const members: TeamMember[] = [
     role: "Chief Technology Officer",
     title: "Technology",
     photo: exec2Photo,
-    eyePct: 33,
+    eyePct: 36,
     expandedPct: "center 15%",
     bio: "Systems architect with two decades of experience in distributed infrastructure, data pipelines, and platform engineering. Turns complexity into competitive advantage.",
   },
@@ -110,10 +110,22 @@ const TeamSection = () => {
           people who built what's now, helping you build what's next.
         </p>
         <a href="#contact" className="relative inline-block px-5 py-3 hover-target group">
-          <span className="absolute top-0 left-0 w-2.5 h-2.5 border-t border-l transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(255,255,255,0.25)" }} />
-          <span className="absolute top-0 right-0 w-2.5 h-2.5 border-t border-r transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(255,255,255,0.25)" }} />
-          <span className="absolute bottom-0 left-0 w-2.5 h-2.5 border-b border-l transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(255,255,255,0.25)" }} />
-          <span className="absolute bottom-0 right-0 w-2.5 h-2.5 border-b border-r transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(255,255,255,0.25)" }} />
+          <span
+            className="absolute top-0 left-0 w-2.5 h-2.5 border-t border-l transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5"
+            style={{ borderColor: "rgba(255,255,255,0.25)" }}
+          />
+          <span
+            className="absolute top-0 right-0 w-2.5 h-2.5 border-t border-r transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5"
+            style={{ borderColor: "rgba(255,255,255,0.25)" }}
+          />
+          <span
+            className="absolute bottom-0 left-0 w-2.5 h-2.5 border-b border-l transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5"
+            style={{ borderColor: "rgba(255,255,255,0.25)" }}
+          />
+          <span
+            className="absolute bottom-0 right-0 w-2.5 h-2.5 border-b border-r transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5"
+            style={{ borderColor: "rgba(255,255,255,0.25)" }}
+          />
           <span className="text-[12px] uppercase tracking-[0.12em]" style={{ color: "rgba(255,255,255,0.6)" }}>
             <LinkText>Meet the Team</LinkText>
           </span>
@@ -128,7 +140,9 @@ const TeamSection = () => {
             <div key={m.name} className="flex-1 min-w-0">
               {/* Image strip */}
               <div
-                ref={(el) => { stripRefs.current[idx] = el; }}
+                ref={(el) => {
+                  stripRefs.current[idx] = el;
+                }}
                 className="relative cursor-pointer overflow-hidden"
                 style={{ height: STRIP_H, borderRadius: "4px" }}
                 onClick={() => handleToggle(idx)}
@@ -147,10 +161,42 @@ const TeamSection = () => {
                 />
 
                 {/* Edge fades */}
-                <div className="absolute inset-x-0 top-0 pointer-events-none" style={{ height: "35%", background: "linear-gradient(to bottom, #080808, transparent)", opacity: isExpanded ? 0 : 1, transition: "opacity 0.5s ease" }} />
-                <div className="absolute inset-x-0 bottom-0 pointer-events-none" style={{ height: "35%", background: "linear-gradient(to top, #080808, transparent)", opacity: isExpanded ? 0 : 1, transition: "opacity 0.5s ease" }} />
-                <div className="absolute inset-y-0 left-0 pointer-events-none" style={{ width: "18%", background: "linear-gradient(to right, #080808, transparent)", opacity: isExpanded ? 0 : 1, transition: "opacity 0.5s ease" }} />
-                <div className="absolute inset-y-0 right-0 pointer-events-none" style={{ width: "18%", background: "linear-gradient(to left, #080808, transparent)", opacity: isExpanded ? 0 : 1, transition: "opacity 0.5s ease" }} />
+                <div
+                  className="absolute inset-x-0 top-0 pointer-events-none"
+                  style={{
+                    height: "35%",
+                    background: "linear-gradient(to bottom, #080808, transparent)",
+                    opacity: isExpanded ? 0 : 1,
+                    transition: "opacity 0.5s ease",
+                  }}
+                />
+                <div
+                  className="absolute inset-x-0 bottom-0 pointer-events-none"
+                  style={{
+                    height: "35%",
+                    background: "linear-gradient(to top, #080808, transparent)",
+                    opacity: isExpanded ? 0 : 1,
+                    transition: "opacity 0.5s ease",
+                  }}
+                />
+                <div
+                  className="absolute inset-y-0 left-0 pointer-events-none"
+                  style={{
+                    width: "18%",
+                    background: "linear-gradient(to right, #080808, transparent)",
+                    opacity: isExpanded ? 0 : 1,
+                    transition: "opacity 0.5s ease",
+                  }}
+                />
+                <div
+                  className="absolute inset-y-0 right-0 pointer-events-none"
+                  style={{
+                    width: "18%",
+                    background: "linear-gradient(to left, #080808, transparent)",
+                    opacity: isExpanded ? 0 : 1,
+                    transition: "opacity 0.5s ease",
+                  }}
+                />
 
                 {/* Role label on expanded */}
                 <div
@@ -205,18 +251,40 @@ const TeamSection = () => {
                   </p>
                   <div className="flex items-center gap-3">
                     <a href="#" className="flex items-center gap-2 hover-target">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="2">
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="rgba(255,255,255,0.5)"
+                        strokeWidth="2"
+                      >
                         <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
                         <rect x="2" y="9" width="4" height="12" />
                         <circle cx="4" cy="4" r="2" />
                       </svg>
                     </a>
                     <a href="#" className="relative inline-block px-3 py-1.5 hover-target group">
-                      <span className="absolute top-0 left-0 w-1.5 h-1.5 border-t border-l" style={{ borderColor: "rgba(255,255,255,0.2)" }} />
-                      <span className="absolute top-0 right-0 w-1.5 h-1.5 border-t border-r" style={{ borderColor: "rgba(255,255,255,0.2)" }} />
-                      <span className="absolute bottom-0 left-0 w-1.5 h-1.5 border-b border-l" style={{ borderColor: "rgba(255,255,255,0.2)" }} />
-                      <span className="absolute bottom-0 right-0 w-1.5 h-1.5 border-b border-r" style={{ borderColor: "rgba(255,255,255,0.2)" }} />
-                      <span className="text-[9px] uppercase tracking-[0.12em]" style={{ color: "rgba(255,255,255,0.5)" }}>
+                      <span
+                        className="absolute top-0 left-0 w-1.5 h-1.5 border-t border-l"
+                        style={{ borderColor: "rgba(255,255,255,0.2)" }}
+                      />
+                      <span
+                        className="absolute top-0 right-0 w-1.5 h-1.5 border-t border-r"
+                        style={{ borderColor: "rgba(255,255,255,0.2)" }}
+                      />
+                      <span
+                        className="absolute bottom-0 left-0 w-1.5 h-1.5 border-b border-l"
+                        style={{ borderColor: "rgba(255,255,255,0.2)" }}
+                      />
+                      <span
+                        className="absolute bottom-0 right-0 w-1.5 h-1.5 border-b border-r"
+                        style={{ borderColor: "rgba(255,255,255,0.2)" }}
+                      />
+                      <span
+                        className="text-[9px] uppercase tracking-[0.12em]"
+                        style={{ color: "rgba(255,255,255,0.5)" }}
+                      >
                         Connect
                       </span>
                     </a>
