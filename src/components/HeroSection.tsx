@@ -64,10 +64,10 @@ const HeroSection = ({ animate }: HeroSectionProps) => {
         <HeroParticleSphere />
       </div>
 
-      <div aria-hidden="true" className="hero-split-container relative z-10 flex min-h-[40vh] sm:min-h-[58vh] w-full max-w-[1800px] items-center justify-center gap-0">
+      <div aria-hidden="true" className="hero-split-container relative z-10 flex flex-col sm:flex-row min-h-[30vh] sm:min-h-[58vh] w-full max-w-[1800px] items-center justify-center gap-0 px-2">
         <div className="hero-half-left will-change-transform">
           <p
-            className="whitespace-nowrap text-left text-[clamp(1.6rem,4.9vw,5.3rem)] font-bold uppercase leading-[0.92] tracking-[-0.03em] text-foreground"
+            className="whitespace-nowrap text-center sm:text-left text-[7vw] sm:text-[clamp(1.6rem,4.9vw,5.3rem)] font-bold uppercase leading-[0.92] tracking-[-0.03em] text-foreground"
             style={{ fontFamily: "'Inter', sans-serif" }}
           >
             BUILDING THE
@@ -77,7 +77,7 @@ const HeroSection = ({ animate }: HeroSectionProps) => {
         </div>
         <div className="hero-half-right will-change-transform">
           <p
-            className="whitespace-nowrap text-right text-[clamp(1.6rem,4.9vw,5.3rem)] font-bold uppercase leading-[0.92] tracking-[-0.03em] text-foreground"
+            className="whitespace-nowrap text-center sm:text-right text-[7vw] sm:text-[clamp(1.6rem,4.9vw,5.3rem)] font-bold uppercase leading-[0.92] tracking-[-0.03em] text-foreground"
             style={{ fontFamily: "'Inter', sans-serif" }}
           >
             THAT
