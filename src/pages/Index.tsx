@@ -69,6 +69,31 @@ const Index = () => {
         <ClientsSection />
         <WhyKozaiSection />
         <TeamSection />
+
+        {/* Spacer + subtle gold line transition between Team and Contact */}
+        <div className="relative" style={{ background: "#080808" }}>
+          <div className="h-24 md:h-32" />
+          <div className="flex items-center justify-center">
+            <div
+              className="h-px w-[60px] opacity-0"
+              style={{ background: "#C8A96E" }}
+              ref={(el) => {
+                if (!el) return;
+                const obs = new IntersectionObserver(([entry]) => {
+                  if (entry.isIntersecting) {
+                    el.style.transition = "width 1s cubic-bezier(0.76, 0, 0.24, 1), opacity 0.6s ease";
+                    el.style.width = "120px";
+                    el.style.opacity = "0.3";
+                    obs.disconnect();
+                  }
+                }, { threshold: 0.5 });
+                obs.observe(el);
+              }}
+            />
+          </div>
+          <div className="h-24 md:h-32" />
+        </div>
+
         <ContactSection />
       </main>
       <Footer />
