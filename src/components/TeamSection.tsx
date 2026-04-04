@@ -285,7 +285,7 @@ const TeamSection = () => {
               THEY'RE OBVIOUS.
             </p>
             <p
-              className="text-center text-[clamp(1.4rem,3.2vw,3.2rem)] font-bold uppercase leading-[1.15] tracking-[-0.01em]"
+              className="text-center text-[clamp(0.9rem,1.8vw,1.6rem)] font-bold uppercase leading-[1.15] tracking-[-0.01em]"
               style={{ color: "hsl(var(--foreground) / 0.85)", fontFamily: "'Inter', sans-serif" }}
             >
               ENGINEER THEM INTO
