@@ -45,7 +45,7 @@ const members: TeamMember[] = [
     role: "Chief Compliance & Strategy Officer",
     title: "Compliance & Strategy",
     photo: lalaPhoto,
-    eyePct: 26,
+    eyePct: 23,
     expandedPct: "center 15%",
     bio: "Regulatory strategist and commercial operator with extensive experience in governance frameworks, risk management, and go-to-market execution. Ensures every growth lever is built on a foundation of compliance and trust.",
   },
