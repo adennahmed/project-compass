@@ -81,7 +81,7 @@ const TeamSection = () => {
     const el = stripRefs.current[idx];
     if (!el) return;
     const isMobile = window.innerWidth < 768;
-    const expandedH = isMobile ? MOBILE_EXPANDED_H : Math.max(DESKTOP_MIN_EXPANDED_H, el.offsetWidth * 1.1);
+    const expandedH = isMobile ? MOBILE_EXPANDED_H : Math.min(680, Math.max(DESKTOP_MIN_EXPANDED_H, el.offsetWidth * 0.7));
 
     const isClosing = expandedIdx === idx;
     
