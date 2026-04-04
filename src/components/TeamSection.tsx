@@ -3,8 +3,8 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import LinkText from "./LinkText";
 import adenPhoto from "@/assets/aden-ahmed.png";
-import exec1Photo from "@/assets/exec-placeholder-1.jpg";
-import exec2Photo from "@/assets/exec-placeholder-2.jpg";
+import mohammedPhoto from "@/assets/mohammed-khan.jpg";
+import lalaPhoto from "@/assets/lala-malik.jpg";
 
 gsap.registerPlugin(ScrollTrigger);
 
