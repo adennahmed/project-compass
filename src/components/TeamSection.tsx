@@ -166,7 +166,7 @@ const TeamSection = () => {
                   style={{
                     objectFit: "cover",
                     objectPosition: isExpanded ? m.expandedPct : `center ${m.eyePct}%`,
-                    transform: isExpanded ? "scale(1)" : "scale(2.2)",
+                    transform: isExpanded ? "scale(1)" : "scale(1.9)",
                     transition:
                       "object-position 0.7s cubic-bezier(0.76, 0, 0.24, 1), transform 0.7s cubic-bezier(0.76, 0, 0.24, 1)",
                   }}
