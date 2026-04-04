@@ -23,15 +23,6 @@ interface TeamMember {
 
 const members: TeamMember[] = [
   {
-    name: "Aden Ahmed",
-    role: "Founder & Principal Engineer",
-    title: "Leadership",
-    photo: adenPhoto,
-    eyePct: 32,
-    expandedPct: "center 15%",
-    bio: "Full-stack engineer and founder with deep expertise in systems architecture, AI integration, and revenue technology. Building infrastructure that scales companies from ambition to market dominance.",
-  },
-  {
     name: "James Whitfield",
     role: "Chief Strategy Officer",
     title: "Strategy",
@@ -39,6 +30,15 @@ const members: TeamMember[] = [
     eyePct: 34,
     expandedPct: "center 15%",
     bio: "Former management consultant turned operator. 15 years orchestrating go-to-market strategy, M&A diligence, and commercial transformation across high-growth technology companies.",
+  },
+  {
+    name: "Aden Ahmed",
+    role: "Founder & Principal Engineer",
+    title: "Leadership",
+    photo: adenPhoto,
+    eyePct: 32,
+    expandedPct: "center 15%",
+    bio: "Full-stack engineer and founder with deep expertise in systems architecture, AI integration, and revenue technology. Building infrastructure that scales companies from ambition to market dominance.",
   },
   {
     name: "Richard Moreau",
@@ -121,7 +121,7 @@ const TeamSection = () => {
       </div>
 
       {/* 3-up eye strip row */}
-      <div className="team-strip-row max-w-[1400px] mx-auto mt-16 flex gap-4">
+      <div className="team-strip-row mx-auto mt-16 flex gap-3" style={{ maxWidth: "calc(100% - 48px)" }}>
         {members.map((m, idx) => {
           const isExpanded = expandedIdx === idx;
           return (
