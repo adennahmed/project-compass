@@ -8,11 +8,11 @@ import lalaPhoto from "@/assets/lala-malik.jpg";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const MOBILE_COLLAPSED_H = 112;
-const DESKTOP_COLLAPSED_H = 96;
-const MOBILE_EXPANDED_H = 360;
-const DESKTOP_MIN_EXPANDED_H = 340;
-const DESKTOP_MAX_EXPANDED_H = 400;
+const MOBILE_COLLAPSED_H = 140;
+const DESKTOP_COLLAPSED_H = 130;
+const MOBILE_EXPANDED_H = 380;
+const DESKTOP_MIN_EXPANDED_H = 420;
+const DESKTOP_MAX_EXPANDED_H = 520;
 
 interface TeamMember {
   name: string;
@@ -35,7 +35,7 @@ const members: TeamMember[] = [
     eyePct: 34,
     expandedPct: "center 36%",
     collapsedScale: 1.16,
-    expandedScale: 1.02,
+    expandedScale: 1,
     bio: "Seasoned technologist with deep expertise in cloud architecture, machine learning pipelines, and enterprise platform engineering. Transforms complex technical challenges into scalable, production-grade systems.",
   },
   {
@@ -46,7 +46,7 @@ const members: TeamMember[] = [
     eyePct: 31,
     expandedPct: "center 34%",
     collapsedScale: 1.14,
-    expandedScale: 1,
+    expandedScale: 1.0,
     bio: "Full-stack engineer and founder with deep expertise in systems architecture, AI integration, and revenue technology. Building infrastructure that scales companies from ambition to market dominance.",
   },
   {
@@ -57,7 +57,7 @@ const members: TeamMember[] = [
     eyePct: 25,
     expandedPct: "center 29%",
     collapsedScale: 1.18,
-    expandedScale: 1.03,
+    expandedScale: 1,
     bio: "Regulatory strategist and commercial operator with extensive experience in governance frameworks, risk management, and go-to-market execution. Ensures every growth lever is built on a foundation of compliance and trust.",
   },
 ];
