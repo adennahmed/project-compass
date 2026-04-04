@@ -121,7 +121,7 @@ const TeamSection = () => {
       </div>
 
       {/* 3-up eye strip row */}
-      <div className="team-strip-row max-w-[1400px] mx-auto mt-16 flex gap-4">
+      <div className="team-strip-row mx-auto mt-16 flex gap-3" style={{ maxWidth: "calc(100% - 48px)" }}>
         {members.map((m, idx) => {
           const isExpanded = expandedIdx === idx;
           return (
