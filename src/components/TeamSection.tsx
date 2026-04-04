@@ -211,50 +211,18 @@ const TeamSection = () => {
       <div
         className={`team-strip-row ${
           isDesktop
-            ? "relative mt-14 flex h-[clamp(430px,34vw,500px)] items-center gap-3 px-4 sm:px-6 md:px-12"
+            ? "relative mt-14 flex items-center gap-3 px-4 sm:px-6 md:px-12"
             : "mx-auto mt-12 flex flex-col gap-4 px-4 sm:px-6 md:px-12"
         }`}
       >
-        {isDesktop && (
-          <>
-            <div
-              className="pointer-events-none absolute left-1/2 top-[calc(50%-9rem)] z-10 w-full max-w-[760px] -translate-x-1/2 px-6 text-center transition-opacity duration-500"
-              style={{ opacity: expandedIdx === null ? 1 : 0 }}
-            >
-              <p
-                className="text-[clamp(2rem,3.2vw,3.75rem)] font-bold uppercase leading-[0.95] tracking-[-0.05em] text-foreground"
-                style={{ fontFamily: "'Inter', sans-serif" }}
-              >
-                WE SPOT TRENDS BEFORE
-                <br />
-                THEY&apos;RE TRENDS.
-              </p>
-            </div>
-
-            <div
-              className="pointer-events-none absolute left-1/2 top-[calc(50%+5.5rem)] z-10 w-full max-w-[900px] -translate-x-1/2 px-6 text-center transition-opacity duration-500"
-              style={{ opacity: expandedIdx === null ? 1 : 0 }}
-            >
-              <p
-                className="text-[clamp(2rem,3.2vw,3.75rem)] font-bold uppercase leading-[0.95] tracking-[-0.05em] text-foreground"
-                style={{ fontFamily: "'Inter', sans-serif" }}
-              >
-                TRANSFORM THEM INTO
-                <br />
-                COMPANIES THAT MATTER.
-              </p>
-            </div>
-          </>
-        )}
-
         {members.map((member, idx) => {
           const isExpanded = expandedIdx === idx;
 
           return (
-            <div key={member.name} className={`min-w-0 flex-1 ${isDesktop ? "relative h-full" : "relative"}`}>
+            <div key={member.name} className="min-w-0 flex-1 relative">
               <button
                 type="button"
-                className={`${isDesktop ? "absolute inset-x-0 top-1/2 -translate-y-1/2" : "relative block w-full"} text-left`}
+                className="relative block w-full text-left"
                 onClick={() => handleToggle(idx)}
                 aria-expanded={isExpanded}
                 aria-label={`Toggle ${member.name} profile`}
