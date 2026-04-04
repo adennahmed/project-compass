@@ -162,13 +162,19 @@ const TeamSection = () => {
                   alt={m.name}
                   draggable={false}
                   loading="lazy"
-                  className="absolute inset-0 w-full h-full select-none"
+                  className="absolute left-1/2 select-none"
                   style={{
+                    width: "100%",
+                    height: "auto",
+                    minHeight: "100%",
+                    minWidth: "100%",
                     objectFit: "cover",
-                    objectPosition: isExpanded ? m.expandedPct : `center ${m.eyePct}%`,
-                    transform: isExpanded ? "scale(1)" : "scale(1.9)",
-                    transition:
-                      "object-position 0.7s cubic-bezier(0.76, 0, 0.24, 1), transform 0.7s cubic-bezier(0.76, 0, 0.24, 1)",
+                    top: isExpanded ? "0%" : "0%",
+                    transform: isExpanded
+                      ? `translateX(-50%) scale(1)`
+                      : `translateX(-50%) scale(1.9) translateY(-${m.eyePct}%)`,
+                    transformOrigin: "center top",
+                    transition: "transform 0.7s cubic-bezier(0.76, 0, 0.24, 1)",
                   }}
                 />
 
