@@ -88,7 +88,7 @@ const WhyKozaiSection = () => {
         {rows.map((row, i) => (
           <div
             key={i}
-            className={`why-row-${i} grid md:grid-cols-[80px_1fr_1fr] gap-8 md:gap-12 items-start py-12`}
+            className={`why-row-${i} grid grid-cols-1 md:grid-cols-[80px_1fr_1fr] gap-4 md:gap-12 items-start py-8 md:py-12`}
             style={{
               borderTop: "1px solid rgba(255,255,255,0.07)",
             }}
