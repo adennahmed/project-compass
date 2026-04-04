@@ -8,8 +8,11 @@ import lalaPhoto from "@/assets/lala-malik.jpg";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const MOBILE_EXPANDED_H = 420;
-const DESKTOP_MIN_EXPANDED_H = 580;
+const MOBILE_COLLAPSED_H = 112;
+const DESKTOP_COLLAPSED_H = 96;
+const MOBILE_EXPANDED_H = 360;
+const DESKTOP_MIN_EXPANDED_H = 340;
+const DESKTOP_MAX_EXPANDED_H = 400;
 
 interface TeamMember {
   name: string;
@@ -18,6 +21,8 @@ interface TeamMember {
   photo: string;
   eyePct: number;
   expandedPct: string;
+  collapsedScale: number;
+  expandedScale: number;
   bio: string;
 }
 
@@ -27,8 +32,10 @@ const members: TeamMember[] = [
     role: "Chief Technology Officer",
     title: "Technology",
     photo: mohammedPhoto,
-    eyePct: 30,
-    expandedPct: "center 15%",
+    eyePct: 34,
+    expandedPct: "center 36%",
+    collapsedScale: 1.16,
+    expandedScale: 1.02,
     bio: "Seasoned technologist with deep expertise in cloud architecture, machine learning pipelines, and enterprise platform engineering. Transforms complex technical challenges into scalable, production-grade systems.",
   },
   {
@@ -36,8 +43,10 @@ const members: TeamMember[] = [
     role: "Founder & Principal Engineer",
     title: "Leadership",
     photo: adenPhoto,
-    eyePct: 28,
-    expandedPct: "center 15%",
+    eyePct: 31,
+    expandedPct: "center 34%",
+    collapsedScale: 1.14,
+    expandedScale: 1,
     bio: "Full-stack engineer and founder with deep expertise in systems architecture, AI integration, and revenue technology. Building infrastructure that scales companies from ambition to market dominance.",
   },
   {
@@ -45,17 +54,70 @@ const members: TeamMember[] = [
     role: "Chief Compliance & Strategy Officer",
     title: "Compliance & Strategy",
     photo: lalaPhoto,
-    eyePct: 22,
-    expandedPct: "center 15%",
+    eyePct: 25,
+    expandedPct: "center 29%",
+    collapsedScale: 1.18,
+    expandedScale: 1.03,
     bio: "Regulatory strategist and commercial operator with extensive experience in governance frameworks, risk management, and go-to-market execution. Ensures every growth lever is built on a foundation of compliance and trust.",
   },
 ];
 
 const TeamSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
-  const [expandedIdx, setExpandedIdx] = useState<number | null>(null);
-  const [visualExpandedIdx, setVisualExpandedIdx] = useState<number | null>(null);
   const stripRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const imageRefs = useRef<(HTMLImageElement | null)[]>([]);
+  const [expandedIdx, setExpandedIdx] = useState<number | null>(null);
+  const [isDesktop, setIsDesktop] = useState(() => (typeof window !== "undefined" ? window.innerWidth >= 768 : false));
+
+  const getCollapsedHeight = () => (isDesktop ? DESKTOP_COLLAPSED_H : MOBILE_COLLAPSED_H);
+
+  const getExpandedHeight = (el: HTMLDivElement) => {
+    if (!isDesktop) return MOBILE_EXPANDED_H;
+    return Math.min(DESKTOP_MAX_EXPANDED_H, Math.max(DESKTOP_MIN_EXPANDED_H, el.offsetWidth * 0.56));
+  };
+
+  const syncCardState = (idx: number, expanded: boolean) => {
+    const shell = stripRefs.current[idx];
+    const image = imageRefs.current[idx];
+    const member = members[idx];
+
+    if (!shell || !image) return;
+
+    gsap.set(shell, {
+      height: expanded ? getExpandedHeight(shell) : getCollapsedHeight(),
+    });
+
+    gsap.set(image, {
+      objectPosition: expanded ? member.expandedPct : `center ${member.eyePct}%`,
+      scale: expanded ? member.expandedScale : member.collapsedScale,
+    });
+  };
+
+  const animateCard = (idx: number, expanded: boolean) => {
+    const shell = stripRefs.current[idx];
+    const image = imageRefs.current[idx];
+    const member = members[idx];
+
+    if (!shell || !image) return;
+
+    gsap.killTweensOf(shell);
+    gsap.killTweensOf(image);
+
+    gsap.to(shell, {
+      height: expanded ? getExpandedHeight(shell) : getCollapsedHeight(),
+      duration: expanded ? 0.65 : 0.55,
+      ease: "power3.inOut",
+      overwrite: true,
+    });
+
+    gsap.to(image, {
+      objectPosition: expanded ? member.expandedPct : `center ${member.eyePct}%`,
+      scale: expanded ? member.expandedScale : member.collapsedScale,
+      duration: expanded ? 0.65 : 0.55,
+      ease: "power3.inOut",
+      overwrite: true,
+    });
+  };
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -66,6 +128,7 @@ const TeamSection = () => {
         ease: "power3.out",
         scrollTrigger: { trigger: ".team-headline", start: "top 82%" },
       });
+
       gsap.from(".team-strip-row", {
         y: 40,
         opacity: 0,
@@ -74,272 +137,253 @@ const TeamSection = () => {
         scrollTrigger: { trigger: ".team-strip-row", start: "top 85%" },
       });
     }, sectionRef);
+
     return () => ctx.revert();
   }, []);
 
+  useEffect(() => {
+    const handleResize = () => setIsDesktop(window.innerWidth >= 768);
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    members.forEach((_, idx) => syncCardState(idx, expandedIdx === idx));
+  }, [expandedIdx, isDesktop]);
+
   const handleToggle = (idx: number) => {
-    const el = stripRefs.current[idx];
-    if (!el) return;
-    const isMobile = window.innerWidth < 768;
-    const expandedH = isMobile ? MOBILE_EXPANDED_H : Math.min(680, Math.max(DESKTOP_MIN_EXPANDED_H, el.offsetWidth * 0.7));
+    const nextExpanded = expandedIdx === idx ? null : idx;
 
-    const isClosing = expandedIdx === idx;
-    
-    // Close the previously expanded card
     if (expandedIdx !== null && expandedIdx !== idx) {
-      const prevIdx = expandedIdx;
-      const prev = stripRefs.current[prevIdx];
-      if (prev) {
-        const currentH = prev.getBoundingClientRect().height;
-        prev.style.height = `${currentH}px`;
-        gsap.to(prev, {
-          height: prev.offsetWidth / 4,
-          duration: 0.6,
-          ease: "power3.inOut",
-          onStart: () => { setVisualExpandedIdx(null); },
-          onComplete: () => { prev.style.height = ""; },
-        });
-      }
+      animateCard(expandedIdx, false);
     }
 
-    if (isClosing) {
-      const currentH = el.getBoundingClientRect().height;
-      el.style.height = `${currentH}px`;
-      setVisualExpandedIdx(null);
-      gsap.to(el, {
-        height: el.offsetWidth / 4,
-        duration: 0.7,
-        ease: "power3.inOut",
-        onComplete: () => { el.style.height = ""; },
-      });
-      setExpandedIdx(null);
-    } else {
-      setExpandedIdx(idx);
-      setVisualExpandedIdx(idx);
-      const currentH = el.getBoundingClientRect().height;
-      el.style.height = `${currentH}px`;
-      gsap.to(el, {
-        height: expandedH,
-        duration: 0.7,
-        ease: "power3.inOut",
-      });
+    if (nextExpanded !== null) {
+      animateCard(nextExpanded, true);
     }
+
+    if (expandedIdx === idx) {
+      animateCard(idx, false);
+    }
+
+    setExpandedIdx(nextExpanded);
   };
 
   return (
-    <section ref={sectionRef} id="team" className="py-24 md:py-40 px-4 sm:px-6 md:px-12">
-      {/* Header */}
-      <div className="text-center mb-8">
-        <div className="text-[11px] uppercase tracking-[0.18em] mb-4" style={{ color: "#444444" }}>
+    <section ref={sectionRef} id="team" className="px-4 py-24 sm:px-6 md:px-12 md:py-40">
+      <div className="mb-8 text-center">
+        <div className="mb-4 text-[11px] uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.35)" }}>
           OUR LEADERSHIP TEAM
         </div>
+
         <p
-          className="team-headline text-[13px] uppercase tracking-[0.1em] leading-[1.8] max-w-[500px] mx-auto mb-8"
-          style={{ color: "rgba(255,255,255,0.5)" }}
+          className="team-headline mx-auto mb-8 max-w-[520px] text-[13px] uppercase tracking-[0.1em] leading-[1.8]"
+          style={{ color: "hsl(var(--foreground) / 0.5)" }}
         >
-          A focused team with deep experience in technology delivery, commercial strategy, and systems architecture. The
-          people who built what's now, helping you build what's next.
+          A global network of advisors, operators and investors. The people who built what&apos;s now, helping you build what&apos;s next.
         </p>
-        <a href="#contact" className="relative inline-block px-5 py-3 hover-target group">
+
+        <a href="#contact" className="group relative inline-block px-5 py-3 hover-target">
           <span
-            className="absolute top-0 left-0 w-2.5 h-2.5 border-t border-l transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5"
-            style={{ borderColor: "rgba(255,255,255,0.25)" }}
+            className="absolute left-0 top-0 h-2.5 w-2.5 border-l border-t transition-all duration-300 group-hover:h-3.5 group-hover:w-3.5"
+            style={{ borderColor: "hsl(var(--foreground) / 0.25)" }}
           />
           <span
-            className="absolute top-0 right-0 w-2.5 h-2.5 border-t border-r transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5"
-            style={{ borderColor: "rgba(255,255,255,0.25)" }}
+            className="absolute right-0 top-0 h-2.5 w-2.5 border-r border-t transition-all duration-300 group-hover:h-3.5 group-hover:w-3.5"
+            style={{ borderColor: "hsl(var(--foreground) / 0.25)" }}
           />
           <span
-            className="absolute bottom-0 left-0 w-2.5 h-2.5 border-b border-l transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5"
-            style={{ borderColor: "rgba(255,255,255,0.25)" }}
+            className="absolute bottom-0 left-0 h-2.5 w-2.5 border-b border-l transition-all duration-300 group-hover:h-3.5 group-hover:w-3.5"
+            style={{ borderColor: "hsl(var(--foreground) / 0.25)" }}
           />
           <span
-            className="absolute bottom-0 right-0 w-2.5 h-2.5 border-b border-r transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5"
-            style={{ borderColor: "rgba(255,255,255,0.25)" }}
+            className="absolute bottom-0 right-0 h-2.5 w-2.5 border-b border-r transition-all duration-300 group-hover:h-3.5 group-hover:w-3.5"
+            style={{ borderColor: "hsl(var(--foreground) / 0.25)" }}
           />
-          <span className="text-[12px] uppercase tracking-[0.12em]" style={{ color: "rgba(255,255,255,0.6)" }}>
+          <span className="text-[12px] uppercase tracking-[0.12em]" style={{ color: "hsl(var(--foreground) / 0.6)" }}>
             <LinkText>Meet the Team</LinkText>
           </span>
         </a>
       </div>
 
-      {/* 3-up on desktop, stacked on mobile */}
       <div
-        className="team-strip-row mx-auto mt-12 md:mt-16 flex flex-col md:flex-row gap-3"
-        style={{ maxWidth: "calc(100% - 16px)" }}
+        className={`team-strip-row ${
+          isDesktop
+            ? "relative left-1/2 mt-14 flex h-[clamp(430px,34vw,500px)] w-screen max-w-none -translate-x-1/2 items-center gap-3 px-4 sm:px-6 md:px-12"
+            : "mx-auto mt-12 flex flex-col gap-4"
+        }`}
       >
-        {members.map((m, idx) => {
-          const isExpanded = visualExpandedIdx === idx;
-          return (
-            <div key={m.name} className="flex-1 min-w-0">
-              {/* Image strip */}
-              <div
-                ref={(el) => {
-                  stripRefs.current[idx] = el;
-                }}
-                className="relative cursor-pointer overflow-hidden"
-                style={{
-                  aspectRatio: isExpanded ? undefined : "4 / 1",
-                  borderRadius: "4px",
-                }}
-                onClick={() => handleToggle(idx)}
+        {isDesktop && (
+          <>
+            <div
+              className="pointer-events-none absolute left-1/2 top-[calc(50%-9rem)] z-10 w-full max-w-[760px] -translate-x-1/2 px-6 text-center transition-opacity duration-500"
+              style={{ opacity: expandedIdx === null ? 1 : 0 }}
+            >
+              <p
+                className="text-[clamp(2rem,3.2vw,3.75rem)] font-bold uppercase leading-[0.95] tracking-[-0.05em] text-foreground"
+                style={{ fontFamily: "'Inter', sans-serif" }}
               >
-                <img
-                  src={m.photo}
-                  alt={m.name}
-                  draggable={false}
-                  loading="lazy"
-                  className="absolute inset-0 w-full h-full select-none"
-                  style={{
-                    objectFit: "cover",
-                    objectPosition: isExpanded ? m.expandedPct : `center ${m.eyePct}%`,
-                    transform: isExpanded ? "scale(1)" : "scale(1.9)",
-                    transition:
-                      "object-position 0.7s cubic-bezier(0.76, 0, 0.24, 1), transform 0.7s cubic-bezier(0.76, 0, 0.24, 1)",
-                  }}
-                />
+                WE SPOT TRENDS BEFORE
+                <br />
+                THEY&apos;RE TRENDS.
+              </p>
+            </div>
 
-                {/* Edge fades */}
-                <div
-                  className="absolute inset-x-0 top-0 pointer-events-none"
-                  style={{
-                    height: "35%",
-                    background: "linear-gradient(to bottom, #080808, transparent)",
-                    opacity: isExpanded ? 0 : 1,
-                    transition: "opacity 0.5s ease",
-                  }}
-                />
-                <div
-                  className="absolute inset-x-0 bottom-0 pointer-events-none"
-                  style={{
-                    height: "35%",
-                    background: "linear-gradient(to top, #080808, transparent)",
-                    opacity: isExpanded ? 0 : 1,
-                    transition: "opacity 0.5s ease",
-                  }}
-                />
-                <div
-                  className="absolute inset-y-0 left-0 pointer-events-none"
-                  style={{
-                    width: "18%",
-                    background: "linear-gradient(to right, #080808, transparent)",
-                    opacity: isExpanded ? 0 : 1,
-                    transition: "opacity 0.5s ease",
-                  }}
-                />
-                <div
-                  className="absolute inset-y-0 right-0 pointer-events-none"
-                  style={{
-                    width: "18%",
-                    background: "linear-gradient(to left, #080808, transparent)",
-                    opacity: isExpanded ? 0 : 1,
-                    transition: "opacity 0.5s ease",
-                  }}
-                />
+            <div
+              className="pointer-events-none absolute left-1/2 top-[calc(50%+5.5rem)] z-10 w-full max-w-[900px] -translate-x-1/2 px-6 text-center transition-opacity duration-500"
+              style={{ opacity: expandedIdx === null ? 1 : 0 }}
+            >
+              <p
+                className="text-[clamp(2rem,3.2vw,3.75rem)] font-bold uppercase leading-[0.95] tracking-[-0.05em] text-foreground"
+                style={{ fontFamily: "'Inter', sans-serif" }}
+              >
+                TRANSFORM THEM INTO
+                <br />
+                COMPANIES THAT MATTER.
+              </p>
+            </div>
+          </>
+        )}
 
-                {/* Role label on expanded */}
+        {members.map((member, idx) => {
+          const isExpanded = expandedIdx === idx;
+
+          return (
+            <div key={member.name} className={`min-w-0 flex-1 ${isDesktop ? "relative h-full" : "relative"}`}>
+              <button
+                type="button"
+                className={`${isDesktop ? "absolute inset-x-0 top-1/2 -translate-y-1/2" : "relative block w-full"} text-left`}
+                onClick={() => handleToggle(idx)}
+                aria-expanded={isExpanded}
+                aria-label={`Toggle ${member.name} profile`}
+              >
                 <div
-                  className="absolute bottom-[12px] md:bottom-[16px] left-[12px] md:left-[16px] flex items-center gap-2 pointer-events-none"
+                  ref={(el) => {
+                    stripRefs.current[idx] = el;
+                  }}
+                  className="relative overflow-hidden"
                   style={{
-                    opacity: isExpanded ? 1 : 0,
-                    transform: isExpanded ? "translateY(0)" : "translateY(8px)",
-                    transition: "opacity 0.4s ease 0.35s, transform 0.4s ease 0.35s",
-                    background: "rgba(0,0,0,0.55)",
-                    padding: "5px 10px",
-                    borderRadius: "3px",
-                    backdropFilter: "blur(4px)",
+                    height: isDesktop ? DESKTOP_COLLAPSED_H : MOBILE_COLLAPSED_H,
+                    borderRadius: "4px",
                   }}
                 >
-                  <div className="w-1.5 h-1.5 rounded-full" style={{ background: "rgba(255,255,255,0.5)" }} />
-                  <span className="text-[8px] uppercase tracking-[0.15em]" style={{ color: "rgba(255,255,255,0.75)" }}>
-                    {m.role}
-                  </span>
-                </div>
-              </div>
+                  <img
+                    ref={(el) => {
+                      imageRefs.current[idx] = el;
+                    }}
+                    src={member.photo}
+                    alt={member.name}
+                    draggable={false}
+                    loading="lazy"
+                    className="absolute inset-0 h-full w-full select-none"
+                    style={{
+                      objectFit: "cover",
+                      objectPosition: isExpanded ? member.expandedPct : `center ${member.eyePct}%`,
+                      transform: `scale(${isExpanded ? member.expandedScale : member.collapsedScale})`,
+                      transformOrigin: "center center",
+                      willChange: "transform, object-position",
+                    }}
+                  />
 
-              {/* Info bar */}
-              <div className="flex items-center justify-between mt-3 px-1">
-                <div className="text-[10px] uppercase tracking-[0.15em]" style={{ color: "rgba(255,255,255,0.35)" }}>
-                  {String(idx + 1).padStart(2, "0")} / {String(members.length).padStart(2, "0")}
-                </div>
-                <div className="flex items-center gap-2 md:gap-3">
-                  <span
-                    className="text-[10px] md:text-[11px] uppercase tracking-[0.1em]"
-                    style={{ color: "rgba(255,255,255,0.7)" }}
-                  >
-                    {m.name}
-                  </span>
-                  <span
-                    className="text-[9px] md:text-[10px] uppercase tracking-[0.1em] hidden sm:inline"
-                    style={{ color: "rgba(255,255,255,0.35)" }}
-                  >
-                    {m.title}
-                  </span>
-                </div>
-              </div>
+                  <div
+                    className="pointer-events-none absolute inset-x-0 top-0 transition-opacity duration-500"
+                    style={{
+                      height: "38%",
+                      background: "linear-gradient(to bottom, hsl(var(--background)), transparent)",
+                      opacity: isExpanded ? 0.12 : 1,
+                    }}
+                  />
+                  <div
+                    className="pointer-events-none absolute inset-x-0 bottom-0 transition-opacity duration-500"
+                    style={{
+                      height: "38%",
+                      background: "linear-gradient(to top, hsl(var(--background)), transparent)",
+                      opacity: isExpanded ? 0.12 : 1,
+                    }}
+                  />
+                  <div
+                    className="pointer-events-none absolute inset-y-0 left-0 transition-opacity duration-500"
+                    style={{
+                      width: "18%",
+                      background: "linear-gradient(to right, hsl(var(--background)), transparent)",
+                      opacity: isExpanded ? 0.35 : 1,
+                    }}
+                  />
+                  <div
+                    className="pointer-events-none absolute inset-y-0 right-0 transition-opacity duration-500"
+                    style={{
+                      width: "18%",
+                      background: "linear-gradient(to left, hsl(var(--background)), transparent)",
+                      opacity: isExpanded ? 0.35 : 1,
+                    }}
+                  />
 
-              {/* Expanded details */}
-              <div
-                className="overflow-hidden"
-                style={{
-                  maxHeight: isExpanded ? "200px" : "0px",
-                  opacity: isExpanded ? 1 : 0,
-                  transition: "max-height 0.6s cubic-bezier(0.76,0,0.24,1), opacity 0.5s ease 0.15s",
-                }}
-              >
-                <div className="mt-3 px-1">
-                  <p
-                    className="text-[10px] uppercase tracking-[0.06em] leading-[1.7] mb-3"
-                    style={{ color: "rgba(255,255,255,0.45)" }}
+                  <div
+                    className="pointer-events-none absolute bottom-3 left-3 flex items-center gap-2 rounded-sm px-2.5 py-1.5 transition-all duration-500 md:bottom-4 md:left-4"
+                    style={{
+                      opacity: isExpanded ? 1 : 0,
+                      transform: isExpanded ? "translateY(0)" : "translateY(8px)",
+                      background: "hsl(var(--background) / 0.68)",
+                      backdropFilter: "blur(8px)",
+                    }}
                   >
-                    {m.bio}
-                  </p>
-                  <div className="flex items-center gap-3">
-                    <a href="#" className="flex items-center gap-2 hover-target">
-                      <svg
-                        width="14"
-                        height="14"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="rgba(255,255,255,0.5)"
-                        strokeWidth="2"
-                      >
-                        <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-                        <rect x="2" y="9" width="4" height="12" />
-                        <circle cx="4" cy="4" r="2" />
-                      </svg>
-                    </a>
-                    <a href="#" className="relative inline-block px-3 py-1.5 hover-target group">
-                      <span
-                        className="absolute top-0 left-0 w-1.5 h-1.5 border-t border-l"
-                        style={{ borderColor: "rgba(255,255,255,0.2)" }}
-                      />
-                      <span
-                        className="absolute top-0 right-0 w-1.5 h-1.5 border-t border-r"
-                        style={{ borderColor: "rgba(255,255,255,0.2)" }}
-                      />
-                      <span
-                        className="absolute bottom-0 left-0 w-1.5 h-1.5 border-b border-l"
-                        style={{ borderColor: "rgba(255,255,255,0.2)" }}
-                      />
-                      <span
-                        className="absolute bottom-0 right-0 w-1.5 h-1.5 border-b border-r"
-                        style={{ borderColor: "rgba(255,255,255,0.2)" }}
-                      />
-                      <span
-                        className="text-[9px] uppercase tracking-[0.12em]"
-                        style={{ color: "rgba(255,255,255,0.5)" }}
-                      >
-                        Connect
-                      </span>
-                    </a>
+                    <div className="h-1.5 w-1.5 rounded-full" style={{ background: "hsl(var(--foreground) / 0.55)" }} />
+                    <span className="text-[8px] uppercase tracking-[0.14em] md:text-[9px]" style={{ color: "hsl(var(--foreground) / 0.78)" }}>
+                      {member.role}
+                    </span>
                   </div>
                 </div>
-              </div>
+              </button>
+
+              {!isDesktop && (
+                <>
+                  <div className="mt-3 flex items-center justify-between px-1">
+                    <div className="text-[10px] uppercase tracking-[0.15em]" style={{ color: "hsl(var(--foreground) / 0.35)" }}>
+                      {String(idx + 1).padStart(2, "0")} / {String(members.length).padStart(2, "0")}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] uppercase tracking-[0.1em]" style={{ color: "hsl(var(--foreground) / 0.7)" }}>
+                        {member.name}
+                      </span>
+                      <span className="text-[9px] uppercase tracking-[0.1em]" style={{ color: "hsl(var(--foreground) / 0.35)" }}>
+                        {member.title}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div
+                    className="overflow-hidden"
+                    style={{
+                      maxHeight: isExpanded ? "220px" : "0px",
+                      opacity: isExpanded ? 1 : 0,
+                      transition: "max-height 0.5s cubic-bezier(0.76,0,0.24,1), opacity 0.35s ease",
+                    }}
+                  >
+                    <div className="mt-3 px-1">
+                      <p className="text-[10px] uppercase tracking-[0.06em] leading-[1.7]" style={{ color: "hsl(var(--foreground) / 0.48)" }}>
+                        {member.bio}
+                      </p>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           );
         })}
       </div>
+
+      {isDesktop && expandedIdx !== null && (
+        <div className="mx-auto mt-10 max-w-[900px] text-center animate-fade-in">
+          <div className="text-[11px] uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.38)" }}>
+            {members[expandedIdx].name} / {members[expandedIdx].role}
+          </div>
+          <p className="mt-4 text-[12px] uppercase tracking-[0.08em] leading-[1.8]" style={{ color: "hsl(var(--foreground) / 0.52)" }}>
+            {members[expandedIdx].bio}
+          </p>
+        </div>
+      )}
     </section>
   );
 };
