@@ -8,7 +8,6 @@ import lalaPhoto from "@/assets/lala-malik.jpg";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const EXPANDED_H = 580;
 const MOBILE_EXPANDED_H = 420;
 
 interface TeamMember {
