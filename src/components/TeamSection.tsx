@@ -269,11 +269,11 @@ const TeamSection = () => {
 
       {/* Center — strips with bold text above/below */}
       <div className="flex-1 flex flex-col justify-center">
-        <div className="relative">
-          {/* Bold text ABOVE the strips — behind the photos */}
+        <div className="relative flex flex-col items-center">
+          {/* Bold text ABOVE — positioned so strips overlap it */}
           <div
-            className="team-bold-text pointer-events-none text-center pb-10"
-            style={{ position: "relative", zIndex: 0 }}
+            className="team-bold-text pointer-events-none text-center w-full"
+            style={{ position: "relative", zIndex: 0, marginBottom: "-2rem" }}
           >
             <p
               className="text-[clamp(1.4rem,3.2vw,3.2rem)] font-bold uppercase leading-[1.15] tracking-[-0.01em]"
@@ -359,10 +359,10 @@ const TeamSection = () => {
             ))}
           </div>
 
-          {/* Bold text BELOW the strips — behind the photos */}
+          {/* Bold text BELOW — positioned so strips overlap it */}
           <div
-            className="team-bold-text pointer-events-none text-center pt-10"
-            style={{ position: "relative", zIndex: 0 }}
+            className="team-bold-text pointer-events-none text-center w-full"
+            style={{ position: "relative", zIndex: 0, marginTop: "-2rem" }}
           >
             <p
               className="text-[clamp(1.4rem,3.2vw,3.2rem)] font-bold uppercase leading-[1.15] tracking-[-0.01em]"
