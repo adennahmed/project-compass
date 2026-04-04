@@ -169,7 +169,7 @@ const TeamSection = () => {
         style={{ maxWidth: "calc(100% - 16px)" }}
       >
         {members.map((m, idx) => {
-          const isExpanded = expandedIdx === idx;
+          const isExpanded = visualExpandedIdx === idx;
           return (
             <div key={m.name} className="flex-1 min-w-0">
               {/* Image strip */}
