@@ -219,10 +219,10 @@ const TeamSection = () => {
           const isExpanded = expandedIdx === idx;
 
           return (
-            <div key={member.name} className={`min-w-0 flex-1 ${isDesktop ? "relative h-full" : "relative"}`}>
+            <div key={member.name} className="min-w-0 flex-1 relative">
               <button
                 type="button"
-                className={`${isDesktop ? "absolute inset-x-0 top-1/2 -translate-y-1/2" : "relative block w-full"} text-left`}
+                className="relative block w-full text-left"
                 onClick={() => handleToggle(idx)}
                 aria-expanded={isExpanded}
                 aria-label={`Toggle ${member.name} profile`}
