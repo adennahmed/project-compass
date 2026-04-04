@@ -304,10 +304,10 @@ const TeamSection = () => {
                   <circle cx="4" cy="4" r="2" />
                 </svg>
               </a>
-              <BracketButton>Connect with {firstName}</BracketButton>
+              <BracketButton label={`Connect with ${firstName}`} />
               {/* Vertical separator */}
               <div className="h-5 w-px" style={{ background: "hsl(var(--foreground) / 0.12)" }} />
-              <BracketButton>Full Bio</BracketButton>
+              <BracketButton label="Full Bio" />
             </div>
 
             {/* Right: bio text */}
