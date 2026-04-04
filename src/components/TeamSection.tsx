@@ -158,23 +158,32 @@ const TeamSection = () => {
                 style={{
                   height: typeof window !== "undefined" && window.innerWidth < 768 ? MOBILE_STRIP_H : STRIP_H,
                   borderRadius: "4px",
+                  aspectRatio: isExpanded ? undefined : "4 / 1",
                 }}
                 onClick={() => handleToggle(idx)}
               >
-                <img
-                  src={m.photo}
-                  alt={m.name}
-                  draggable={false}
-                  loading="lazy"
-                  className="absolute inset-0 w-full h-full select-none"
-                  style={{
-                    objectFit: "cover",
-                    objectPosition: isExpanded ? m.expandedPct : `center ${m.eyePct}%`,
-                    transform: isExpanded ? "scale(1)" : "scale(1.9)",
-                    transition:
-                      "object-position 0.7s cubic-bezier(0.76, 0, 0.24, 1), transform 0.7s cubic-bezier(0.76, 0, 0.24, 1)",
-                  }}
-                />
+                {/* Inner image wrapper with fixed aspect ratio for stable positioning */}
+                <div
+                  className="absolute inset-0 overflow-hidden"
+                  style={{ borderRadius: "4px" }}
+                >
+                  <img
+                    src={m.photo}
+                    alt={m.name}
+                    draggable={false}
+                    loading="lazy"
+                    className="absolute w-full select-none"
+                    style={{
+                      height: isExpanded ? "100%" : "500%",
+                      objectFit: "cover",
+                      objectPosition: "center top",
+                      top: isExpanded ? "0" : `-${m.eyePct * 5 - 50}%`,
+                      left: 0,
+                      transition:
+                        "height 0.7s cubic-bezier(0.76, 0, 0.24, 1), top 0.7s cubic-bezier(0.76, 0, 0.24, 1)",
+                    }}
+                  />
+                </div>
 
                 {/* Edge fades */}
                 <div
