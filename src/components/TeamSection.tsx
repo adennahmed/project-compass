@@ -45,7 +45,7 @@ const members: TeamMember[] = [
     role: "Chief Compliance & Strategy Officer",
     title: "Compliance & Strategy",
     photo: lalaPhoto,
-    eyePct: 30,
+    eyePct: 26,
     expandedPct: "center 15%",
     bio: "Regulatory strategist and commercial operator with extensive experience in governance frameworks, risk management, and go-to-market execution. Ensures every growth lever is built on a foundation of compliance and trust.",
   },
@@ -157,7 +157,8 @@ const TeamSection = () => {
                     objectFit: "cover",
                     objectPosition: isExpanded ? m.expandedPct : `center ${m.eyePct}%`,
                     transform: isExpanded ? "scale(1)" : "scale(2.2)",
-                    transition: "object-position 0.7s cubic-bezier(0.76, 0, 0.24, 1), transform 0.7s cubic-bezier(0.76, 0, 0.24, 1)",
+                    transition:
+                      "object-position 0.7s cubic-bezier(0.76, 0, 0.24, 1), transform 0.7s cubic-bezier(0.76, 0, 0.24, 1)",
                   }}
                 />
 
