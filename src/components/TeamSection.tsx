@@ -143,8 +143,8 @@ const TeamSection = () => {
       className="relative overflow-hidden"
       style={{
         minHeight: SECTION_MIN_H,
-        paddingTop: "12rem",
-        paddingBottom: "12rem",
+        paddingTop: "6rem",
+        paddingBottom: "10rem",
         background: "hsl(var(--background))",
       }}
     >
