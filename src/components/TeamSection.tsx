@@ -161,14 +161,18 @@ const TeamSection = () => {
                 }}
                 onClick={() => handleToggle(idx)}
               >
-                <div
-                  className="absolute inset-0 select-none"
+                <img
+                  src={m.photo}
+                  alt={m.name}
+                  draggable={false}
+                  loading="lazy"
+                  className="absolute inset-0 w-full h-full select-none"
                   style={{
-                    backgroundImage: `url(${m.photo})`,
-                    backgroundSize: isExpanded ? "cover" : `${m.zoomPct}%`,
-                    backgroundPosition: isExpanded ? m.expandedPct : `center ${m.eyePct}%`,
-                    backgroundRepeat: "no-repeat",
-                    transition: "background-size 0.7s cubic-bezier(0.76, 0, 0.24, 1), background-position 0.7s cubic-bezier(0.76, 0, 0.24, 1)",
+                    objectFit: "cover",
+                    objectPosition: isExpanded ? m.expandedPct : `center ${m.eyePct}%`,
+                    transform: isExpanded ? "scale(1)" : "scale(1.9)",
+                    transition:
+                      "object-position 0.7s cubic-bezier(0.76, 0, 0.24, 1), transform 0.7s cubic-bezier(0.76, 0, 0.24, 1)",
                   }}
                 />
 
