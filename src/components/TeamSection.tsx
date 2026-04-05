@@ -134,109 +134,113 @@ const FullBioModal = ({ member, onClose }: { member: TeamMember | null; onClose:
       ref={overlayRef}
       className="fixed inset-0 z-[100] flex items-center justify-center"
       style={{ opacity: 0 }}
-      onClick={(e) => {
-        if (e.target === e.currentTarget) handleClose();
+      onMouseDown={(e) => {
+        if (e.target === overlayRef.current || !(panelRef.current?.contains(e.target as Node))) {
+          handleClose();
+        }
       }}
     >
-      {/* Backdrop */}
-      <div className="absolute inset-0" style={{ background: "hsl(var(--background) / 0.85)", backdropFilter: "blur(12px)" }} />
+      {/* Backdrop — pointer-events-none so clicks pass through to overlay */}
+      <div className="absolute inset-0 pointer-events-none" style={{ background: "hsl(var(--background) / 0.85)", backdropFilter: "blur(12px)" }} />
 
-      {/* Panel */}
+      {/* Panel — side by side layout */}
       <div
         ref={panelRef}
-        className="relative w-[90vw] max-w-[680px] overflow-hidden"
+        className="relative z-10 flex w-[90vw] max-w-[880px] overflow-hidden"
         style={{
           background: "hsl(var(--background))",
           border: "1px solid hsl(var(--foreground) / 0.08)",
           opacity: 0,
+          maxHeight: "80vh",
         }}
       >
-        {/* Close button */}
-        <button
-          onClick={handleClose}
-          className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center hover-target transition-opacity hover:opacity-100"
-          style={{ opacity: 0.5 }}
-          aria-label="Close"
-        >
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <line x1="1" y1="1" x2="13" y2="13" />
-            <line x1="13" y1="1" x2="1" y2="13" />
-          </svg>
-        </button>
-
-        {/* Photo */}
-        <div className="relative w-full" style={{ height: 380 }}>
+        {/* Left: Photo — full height, contained */}
+        <div className="relative w-[42%] shrink-0 overflow-hidden" style={{ minHeight: 420 }}>
           <img
             src={m.photo}
             alt={m.name}
             className="absolute inset-0 w-full h-full object-cover"
-            style={{ objectPosition: "center 15%" }}
+            style={{ objectPosition: "center 10%" }}
           />
+          {/* Subtle right-edge fade */}
           <div
-            className="absolute inset-x-0 bottom-0"
-            style={{ height: "50%", background: "linear-gradient(to top, hsl(var(--background)), transparent)" }}
+            className="absolute inset-y-0 right-0 w-16 pointer-events-none"
+            style={{ background: "linear-gradient(to left, hsl(var(--background)), transparent)" }}
           />
         </div>
 
-        {/* Content */}
-        <div className="px-8 pb-8 -mt-8 relative z-10">
-          {/* Name & role */}
-          <div className="mb-1">
+        {/* Right: Content */}
+        <div className="flex-1 flex flex-col justify-between p-8 relative">
+          {/* Close button */}
+          <button
+            onClick={handleClose}
+            className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center hover-target transition-opacity hover:opacity-100"
+            style={{ opacity: 0.5 }}
+            aria-label="Close"
+          >
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <line x1="1" y1="1" x2="13" y2="13" />
+              <line x1="13" y1="1" x2="1" y2="13" />
+            </svg>
+          </button>
+
+          <div>
+            {/* Name & role */}
             <h3
-              className="text-[13px] uppercase tracking-[0.14em] font-medium"
+              className="text-[13px] uppercase tracking-[0.14em] font-medium mb-1"
               style={{ color: "hsl(var(--foreground) / 0.9)" }}
             >
               {m.name}
             </h3>
-          </div>
-          <div
-            className="text-[10px] uppercase tracking-[0.16em] mb-5"
-            style={{ color: "hsl(var(--foreground) / 0.4)" }}
-          >
-            {m.role}
-          </div>
-
-          {/* Gold accent line */}
-          <div className="w-8 h-px mb-5" style={{ background: "hsl(var(--accent) / 0.5)" }} />
-
-          {/* Bio */}
-          <p
-            className="text-[11px] uppercase tracking-[0.08em] leading-[2] mb-6"
-            style={{ color: "hsl(var(--foreground) / 0.5)" }}
-          >
-            {m.fullBio}
-          </p>
-
-          {/* Bottom divider */}
-          <div className="w-full h-px mb-5" style={{ background: "hsl(var(--foreground) / 0.07)" }} />
-
-          {/* Actions */}
-          <div className="flex items-center gap-3">
-            <a
-              href={m.linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center w-8 h-8 rounded-sm hover-target"
-              style={{ border: "1px solid hsl(var(--foreground) / 0.15)" }}
-              aria-label="LinkedIn"
+            <div
+              className="text-[10px] uppercase tracking-[0.16em] mb-5"
+              style={{ color: "hsl(var(--foreground) / 0.4)" }}
             >
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                style={{ color: "hsl(var(--foreground) / 0.5)" }}
+              {m.role}
+            </div>
+
+            {/* Gold accent line */}
+            <div className="w-8 h-px mb-5" style={{ background: "hsl(var(--accent) / 0.5)" }} />
+
+            {/* Bio */}
+            <p
+              className="text-[11px] uppercase tracking-[0.08em] leading-[2] mb-6"
+              style={{ color: "hsl(var(--foreground) / 0.5)" }}
+            >
+              {m.fullBio}
+            </p>
+          </div>
+
+          {/* Bottom: divider + actions */}
+          <div>
+            <div className="w-full h-px mb-5" style={{ background: "hsl(var(--foreground) / 0.07)" }} />
+            <div className="flex items-center gap-3">
+              <a
+                href={m.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center w-8 h-8 rounded-sm hover-target"
+                style={{ border: "1px solid hsl(var(--foreground) / 0.15)" }}
+                aria-label="LinkedIn"
               >
-                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-                <rect width="4" height="12" x="2" y="9" />
-                <circle cx="4" cy="4" r="2" />
-              </svg>
-            </a>
-            <BracketButton label={`Connect with ${m.name.split(" ")[0]}`} href={m.linkedin} />
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{ color: "hsl(var(--foreground) / 0.5)" }}
+                >
+                  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+                  <rect width="4" height="12" x="2" y="9" />
+                  <circle cx="4" cy="4" r="2" />
+                </svg>
+              </a>
+              <BracketButton label={`Connect with ${m.name.split(" ")[0]}`} href={m.linkedin} />
+            </div>
           </div>
         </div>
       </div>
