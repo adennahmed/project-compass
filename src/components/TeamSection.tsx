@@ -551,13 +551,16 @@ const TeamSection = () => {
         <div ref={bioInnerRef}>
           <div className="w-full h-px mb-5" style={{ background: "hsl(var(--foreground) / 0.1)" }} />
 
-          <div className="flex items-baseline justify-between mb-5">
+          <div className="relative flex items-baseline mb-5">
             <div className="text-[10px] uppercase tracking-[0.16em]" style={{ color: "hsl(var(--foreground) / 0.35)" }}>
               {bioData !== null
                 ? `${String(bioData + 1).padStart(2, "0")} / ${String(members.length).padStart(2, "0")}`
                 : "\u00A0"}
             </div>
-            <div className="text-[10px] uppercase tracking-[0.18em]" style={{ color: "hsl(var(--foreground) / 0.5)" }}>
+            <div
+              className="absolute left-1/2 -translate-x-1/2 text-[10px] uppercase tracking-[0.18em]"
+              style={{ color: "hsl(var(--foreground) / 0.5)" }}
+            >
               {bioData !== null && (
                 <>
                   <span style={{ color: "hsl(var(--foreground) / 0.6)" }}>{members[bioData].name}</span>
@@ -612,9 +615,9 @@ const TeamSection = () => {
               />
             </div>
 
-            <div className="flex-1 flex justify-center">
+            <div className="flex-1 flex justify-start">
               <p
-                className="max-w-[620px] text-[10px] uppercase tracking-[0.1em] leading-[1.9] text-center"
+                className="max-w-[620px] text-[10px] uppercase tracking-[0.1em] leading-[1.9]"
                 style={{ color: "hsl(var(--foreground) / 0.45)" }}
               >
                 {bioData !== null ? members[bioData].bio : "\u00A0"}
