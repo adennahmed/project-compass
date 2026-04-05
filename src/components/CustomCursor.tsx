@@ -18,10 +18,20 @@ const CustomCursor = () => {
 
     window.addEventListener("mousemove", onMouseMove);
 
-    // Cursor context states
     const label = cursor.querySelector("#cursor-label") as HTMLElement;
 
     const addCursorListeners = () => {
+      // Clickable elements — expand cursor with ring
+      const clickables = document.querySelectorAll('a, button, [role="button"], input[type="submit"], .hover-target, [data-cursor="view"]');
+      clickables.forEach((el) => {
+        el.addEventListener("mouseenter", () => {
+          cursor.classList.add("clickable");
+        });
+        el.addEventListener("mouseleave", () => {
+          cursor.classList.remove("clickable");
+        });
+      });
+
       document.querySelectorAll('[data-cursor="drag"]').forEach((el) => {
         el.addEventListener("mouseenter", () => {
           cursor.className = "drag";
@@ -35,17 +45,16 @@ const CustomCursor = () => {
 
       document.querySelectorAll('[data-cursor="view"]').forEach((el) => {
         el.addEventListener("mouseenter", () => {
-          cursor.className = "view";
+          cursor.classList.add("view");
           if (label) label.textContent = "VIEW";
         });
         el.addEventListener("mouseleave", () => {
-          cursor.className = "";
+          cursor.classList.remove("view");
           if (label) label.textContent = "";
         });
       });
     };
 
-    // Run initially and on DOM changes
     addCursorListeners();
     const observer = new MutationObserver(addCursorListeners);
     observer.observe(document.body, { childList: true, subtree: true });
