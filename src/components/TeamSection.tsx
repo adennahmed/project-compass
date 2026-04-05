@@ -16,7 +16,8 @@ interface TeamMember {
   eyePct: number;
   expandedPos: string;
   bio: string;
-  linkedin?: string;
+  fullBio: string;
+  linkedin: string;
 }
 
 const members: TeamMember[] = [
@@ -28,6 +29,8 @@ const members: TeamMember[] = [
     eyePct: 31,
     expandedPos: "center 20%",
     bio: "Seasoned technologist with deep expertise in cloud architecture, machine learning pipelines, and enterprise platform engineering. Transforms complex technical challenges into scalable, production-grade systems.",
+    fullBio: "Seasoned technologist with deep expertise in cloud architecture, machine learning pipelines, and enterprise platform engineering. Transforms complex technical challenges into scalable, production-grade systems. Previously led infrastructure teams at multiple high-growth startups, architecting distributed systems processing millions of transactions daily. His approach combines rigorous engineering discipline with a relentless focus on developer experience and operational excellence.",
+    linkedin: "https://www.linkedin.com/in/ehabkhan/",
   },
   {
     name: "Aden Ahmed",
@@ -37,6 +40,8 @@ const members: TeamMember[] = [
     eyePct: 29,
     expandedPos: "center 18%",
     bio: "Full-stack engineer and founder with deep expertise in systems architecture, AI integration, and revenue technology. Building infrastructure that scales companies from ambition to market dominance.",
+    fullBio: "Full-stack engineer and founder with deep expertise in systems architecture, AI integration, and revenue technology. Building infrastructure that scales companies from ambition to market dominance. With a background spanning enterprise SaaS, fintech, and AI-native products, Aden has consistently delivered platforms that bridge the gap between technical innovation and commercial outcomes. He founded Kozai to give ambitious companies the engineering firepower they deserve.",
+    linkedin: "https://www.linkedin.com/in/adenahmed/",
   },
   {
     name: "Lala Malik",
@@ -46,6 +51,8 @@ const members: TeamMember[] = [
     eyePct: 25,
     expandedPos: "center 15%",
     bio: "Regulatory strategist and commercial operator with extensive experience in governance frameworks, risk management, and go-to-market execution. Ensures every growth lever is built on a foundation of compliance and trust.",
+    fullBio: "Regulatory strategist and commercial operator with extensive experience in governance frameworks, risk management, and go-to-market execution. Ensures every growth lever is built on a foundation of compliance and trust. Lala has guided organizations through complex regulatory landscapes across multiple jurisdictions, building compliance-first cultures that accelerate rather than hinder growth. Her strategic vision ensures Kozai's clients scale with confidence and integrity.",
+    linkedin: "https://www.linkedin.com/in/lalamalik/",
   },
 ];
 
@@ -55,13 +62,14 @@ const ANIM_MS = 0.75;
 const EASE = "expo.inOut";
 
 /* Bracket button matching existing site style */
-const BracketButton = ({ label, href }: { label: string; href?: string }) => {
+const BracketButton = ({ label, href, onClick }: { label: string; href?: string; onClick?: () => void }) => {
   const Tag = href ? "a" : "button";
   return (
     <Tag
       href={href}
       target={href ? "_blank" : undefined}
       rel={href ? "noopener noreferrer" : undefined}
+      onClick={onClick}
       className="group relative inline-block px-5 py-2.5 hover-target"
     >
       <span
@@ -87,6 +95,155 @@ const BracketButton = ({ label, href }: { label: string; href?: string }) => {
   );
 };
 
+/* Full Bio Modal */
+const FullBioModal = ({ member, onClose }: { member: TeamMember | null; onClose: () => void }) => {
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    if (member) {
+      setVisible(true);
+      const tl = gsap.timeline();
+      tl.fromTo(overlayRef.current, { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out" }, 0);
+      tl.fromTo(
+        panelRef.current,
+        { opacity: 0, y: 40, scale: 0.97 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.55, ease: "expo.out" },
+        0.1,
+      );
+    }
+  }, [member]);
+
+  const handleClose = () => {
+    const tl = gsap.timeline({
+      onComplete: () => {
+        setVisible(false);
+        onClose();
+      },
+    });
+    tl.to(panelRef.current, { opacity: 0, y: 20, scale: 0.97, duration: 0.35, ease: "power2.in" }, 0);
+    tl.to(overlayRef.current, { opacity: 0, duration: 0.3, ease: "power2.in" }, 0.1);
+  };
+
+  if (!member && !visible) return null;
+  const m = member || members[0];
+
+  return (
+    <div
+      ref={overlayRef}
+      className="fixed inset-0 z-[100] flex items-center justify-center"
+      style={{ opacity: 0 }}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) handleClose();
+      }}
+    >
+      {/* Backdrop */}
+      <div className="absolute inset-0" style={{ background: "hsl(var(--background) / 0.85)", backdropFilter: "blur(12px)" }} />
+
+      {/* Panel */}
+      <div
+        ref={panelRef}
+        className="relative w-[90vw] max-w-[680px] overflow-hidden"
+        style={{
+          background: "hsl(var(--background))",
+          border: "1px solid hsl(var(--foreground) / 0.08)",
+          opacity: 0,
+        }}
+      >
+        {/* Close button */}
+        <button
+          onClick={handleClose}
+          className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center hover-target transition-opacity hover:opacity-100"
+          style={{ opacity: 0.5 }}
+          aria-label="Close"
+        >
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <line x1="1" y1="1" x2="13" y2="13" />
+            <line x1="13" y1="1" x2="1" y2="13" />
+          </svg>
+        </button>
+
+        {/* Photo */}
+        <div className="relative w-full" style={{ height: 280 }}>
+          <img
+            src={m.photo}
+            alt={m.name}
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{ objectPosition: m.expandedPos }}
+          />
+          <div
+            className="absolute inset-x-0 bottom-0"
+            style={{ height: "50%", background: "linear-gradient(to top, hsl(var(--background)), transparent)" }}
+          />
+        </div>
+
+        {/* Content */}
+        <div className="px-8 pb-8 -mt-8 relative z-10">
+          {/* Name & role */}
+          <div className="mb-1">
+            <h3
+              className="text-[13px] uppercase tracking-[0.14em] font-medium"
+              style={{ color: "hsl(var(--foreground) / 0.9)" }}
+            >
+              {m.name}
+            </h3>
+          </div>
+          <div
+            className="text-[10px] uppercase tracking-[0.16em] mb-5"
+            style={{ color: "hsl(var(--foreground) / 0.4)" }}
+          >
+            {m.role}
+          </div>
+
+          {/* Gold accent line */}
+          <div className="w-8 h-px mb-5" style={{ background: "hsl(var(--accent) / 0.5)" }} />
+
+          {/* Bio */}
+          <p
+            className="text-[11px] uppercase tracking-[0.08em] leading-[2] mb-6"
+            style={{ color: "hsl(var(--foreground) / 0.5)" }}
+          >
+            {m.fullBio}
+          </p>
+
+          {/* Bottom divider */}
+          <div className="w-full h-px mb-5" style={{ background: "hsl(var(--foreground) / 0.07)" }} />
+
+          {/* Actions */}
+          <div className="flex items-center gap-3">
+            <a
+              href={m.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center w-8 h-8 rounded-sm hover-target"
+              style={{ border: "1px solid hsl(var(--foreground) / 0.15)" }}
+              aria-label="LinkedIn"
+            >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                style={{ color: "hsl(var(--foreground) / 0.5)" }}
+              >
+                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+                <rect width="4" height="12" x="2" y="9" />
+                <circle cx="4" cy="4" r="2" />
+              </svg>
+            </a>
+            <BracketButton label={`Connect with ${m.name.split(" ")[0]}`} href={m.linkedin} />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const TeamSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const stripRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -97,6 +254,7 @@ const TeamSection = () => {
   const expandedIdx = useRef<number | null>(null);
   const busy = useRef(false);
   const [bioData, setBioData] = useState<number | null>(null);
+  const [modalMember, setModalMember] = useState<TeamMember | null>(null);
 
   useEffect(() => {
     members.forEach((m, i) => {
@@ -229,6 +387,9 @@ const TeamSection = () => {
       className="relative overflow-hidden flex flex-col"
       style={{ minHeight: "100vh", background: "hsl(var(--background))" }}
     >
+      {/* Full Bio Modal */}
+      <FullBioModal member={modalMember} onClose={() => setModalMember(null)} />
+
       {/* Header */}
       <div className="team-header-content text-center px-4 pt-16 pb-8">
         <div
@@ -269,9 +430,8 @@ const TeamSection = () => {
 
       {/* Center — strips with bold text layered behind */}
       <div className="flex-1 flex flex-col justify-center">
-        {/* Grid stacks all children in the same cell */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr", gridTemplateRows: "1fr" }}>
-          {/* Bold text layer — row 1, behind photos */}
+          {/* Bold text layer — behind photos */}
           <div
             className="pointer-events-none flex flex-col items-center justify-center gap-[calc(var(--strip-h,120px)+1.5rem)]"
             style={{ gridArea: "1 / 1", zIndex: 0 }}
@@ -294,7 +454,7 @@ const TeamSection = () => {
             </p>
           </div>
 
-          {/* Strips row — same cell, higher z-index */}
+          {/* Strips row */}
           <div
             className="team-strips-row flex w-full items-center self-center"
             style={{ gridArea: "1 / 1", zIndex: 2 }}
@@ -373,13 +533,11 @@ const TeamSection = () => {
         </div>
       </div>
 
-      {/* Bio footer — matches reference layout */}
+      {/* Bio footer */}
       <div ref={bioContainerRef} className="px-6 md:px-10 pb-10" style={{ opacity: 0, minHeight: 120 }}>
         <div ref={bioInnerRef}>
-          {/* Divider */}
           <div className="w-full h-px mb-5" style={{ background: "hsl(var(--foreground) / 0.1)" }} />
 
-          {/* Row 1: counter + name/title */}
           <div className="flex items-baseline justify-between mb-5">
             <div className="text-[10px] uppercase tracking-[0.16em]" style={{ color: "hsl(var(--foreground) / 0.35)" }}>
               {bioData !== null
@@ -399,16 +557,13 @@ const TeamSection = () => {
             </div>
           </div>
 
-          {/* Divider */}
           <div className="w-full h-px mb-5" style={{ background: "hsl(var(--foreground) / 0.07)" }} />
 
-          {/* Row 2: buttons left + bio right */}
           <div className="flex flex-col md:flex-row items-start md:items-start justify-between gap-6">
-            {/* Left: buttons */}
             <div className="flex items-center gap-3 shrink-0">
               {/* LinkedIn icon */}
               <a
-                href="#"
+                href={bioData !== null ? members[bioData].linkedin : "#"}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center w-8 h-8 rounded-sm hover-target"
@@ -431,13 +586,19 @@ const TeamSection = () => {
                   <circle cx="4" cy="4" r="2" />
                 </svg>
               </a>
-              <BracketButton label={`Connect with ${firstName}`} />
-              {/* Vertical separator */}
+              <BracketButton
+                label={`Connect with ${firstName}`}
+                href={bioData !== null ? members[bioData].linkedin : "#"}
+              />
               <div className="h-5 w-px" style={{ background: "hsl(var(--foreground) / 0.12)" }} />
-              <BracketButton label="Full Bio" />
+              <BracketButton
+                label="Full Bio"
+                onClick={() => {
+                  if (bioData !== null) setModalMember(members[bioData]);
+                }}
+              />
             </div>
 
-            {/* Right: bio text */}
             <p
               className="max-w-[620px] text-[10px] uppercase tracking-[0.1em] leading-[1.9]"
               style={{ color: "hsl(var(--foreground) / 0.45)" }}
