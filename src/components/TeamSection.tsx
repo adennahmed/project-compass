@@ -165,12 +165,12 @@ const FullBioModal = ({ member, onClose }: { member: TeamMember | null; onClose:
         </button>
 
         {/* Photo */}
-        <div className="relative w-full" style={{ height: 280 }}>
+        <div className="relative w-full" style={{ height: 380 }}>
           <img
             src={m.photo}
             alt={m.name}
             className="absolute inset-0 w-full h-full object-cover"
-            style={{ objectPosition: m.expandedPos }}
+            style={{ objectPosition: "center 15%" }}
           />
           <div
             className="absolute inset-x-0 bottom-0"
