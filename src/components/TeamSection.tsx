@@ -29,7 +29,8 @@ const members: TeamMember[] = [
     eyePct: 31,
     expandedPos: "center 20%",
     bio: "Seasoned technologist with deep expertise in cloud architecture, machine learning pipelines, and enterprise platform engineering. Transforms complex technical challenges into scalable, production-grade systems.",
-    fullBio: "Seasoned technologist with deep expertise in cloud architecture, machine learning pipelines, and enterprise platform engineering. Transforms complex technical challenges into scalable, production-grade systems. Previously led infrastructure teams at multiple high-growth startups, architecting distributed systems processing millions of transactions daily. His approach combines rigorous engineering discipline with a relentless focus on developer experience and operational excellence.",
+    fullBio:
+      "Seasoned technologist with deep expertise in cloud architecture, machine learning pipelines, and enterprise platform engineering. Transforms complex technical challenges into scalable, production-grade systems. Previously led infrastructure teams at multiple high-growth startups, architecting distributed systems processing millions of transactions daily. His approach combines rigorous engineering discipline with a relentless focus on developer experience and operational excellence.",
     linkedin: "https://www.linkedin.com/in/ehabkhan/",
   },
   {
@@ -40,7 +41,8 @@ const members: TeamMember[] = [
     eyePct: 29,
     expandedPos: "center 18%",
     bio: "Full-stack engineer and founder with deep expertise in systems architecture, AI integration, and revenue technology. Building infrastructure that scales companies from ambition to market dominance.",
-    fullBio: "Full-stack engineer and founder with deep expertise in systems architecture, AI integration, and revenue technology. Building infrastructure that scales companies from ambition to market dominance. With a background spanning enterprise SaaS, fintech, and AI-native products, Aden has consistently delivered platforms that bridge the gap between technical innovation and commercial outcomes. He founded Kozai to give ambitious companies the engineering firepower they deserve.",
+    fullBio:
+      "Full-stack engineer and founder with deep expertise in systems architecture, AI integration, and revenue technology. Building infrastructure that scales companies from ambition to market dominance. With a background spanning enterprise SaaS, fintech, and AI-native products, Aden has consistently delivered platforms that bridge the gap between technical innovation and commercial outcomes. He founded Kozai to give ambitious companies the engineering firepower they deserve.",
     linkedin: "https://www.linkedin.com/in/adenahmed/",
   },
   {
@@ -51,7 +53,8 @@ const members: TeamMember[] = [
     eyePct: 25,
     expandedPos: "center 15%",
     bio: "Regulatory strategist and commercial operator with extensive experience in governance frameworks, risk management, and go-to-market execution. Ensures every growth lever is built on a foundation of compliance and trust.",
-    fullBio: "Regulatory strategist and commercial operator with extensive experience in governance frameworks, risk management, and go-to-market execution. Ensures every growth lever is built on a foundation of compliance and trust. Lala has guided organizations through complex regulatory landscapes across multiple jurisdictions, building compliance-first cultures that accelerate rather than hinder growth. Her strategic vision ensures Kozai's clients scale with confidence and integrity.",
+    fullBio:
+      "Regulatory strategist and commercial operator with extensive experience in governance frameworks, risk management, and go-to-market execution. Ensures every growth lever is built on a foundation of compliance and trust. Lala has guided organizations through complex regulatory landscapes across multiple jurisdictions, building compliance-first cultures that accelerate rather than hinder growth. Her strategic vision ensures Kozai's clients scale with confidence and integrity.",
     linkedin: "https://www.linkedin.com/in/lalamalik/",
   },
 ];
@@ -135,13 +138,16 @@ const FullBioModal = ({ member, onClose }: { member: TeamMember | null; onClose:
       className="fixed inset-0 z-[100] flex items-center justify-center"
       style={{ opacity: 0 }}
       onMouseDown={(e) => {
-        if (e.target === overlayRef.current || !(panelRef.current?.contains(e.target as Node))) {
+        if (e.target === overlayRef.current || !panelRef.current?.contains(e.target as Node)) {
           handleClose();
         }
       }}
     >
       {/* Backdrop — pointer-events-none so clicks pass through to overlay */}
-      <div className="absolute inset-0 pointer-events-none" style={{ background: "hsl(var(--background) / 0.85)", backdropFilter: "blur(12px)" }} />
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{ background: "hsl(var(--background) / 0.85)", backdropFilter: "blur(12px)" }}
+      />
 
       {/* Panel — side by side layout */}
       <div
@@ -521,7 +527,10 @@ const TeamSection = () => {
                         backdropFilter: "blur(8px)",
                       }}
                     >
-                      <div className="h-1.5 w-1.5 rounded-full" style={{ background: "hsl(var(--foreground) / 0.55)" }} />
+                      <div
+                        className="h-1.5 w-1.5 rounded-full"
+                        style={{ background: "hsl(var(--foreground) / 0.55)" }}
+                      />
                       <span
                         className="text-[9px] uppercase tracking-[0.14em]"
                         style={{ color: "hsl(var(--foreground) / 0.78)" }}
@@ -563,7 +572,7 @@ const TeamSection = () => {
 
           <div className="w-full h-px mb-5" style={{ background: "hsl(var(--foreground) / 0.07)" }} />
 
-          <div className="flex flex-col md:flex-row items-start md:items-start justify-between gap-6">
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
             <div className="flex items-center gap-3 shrink-0">
               {/* LinkedIn icon */}
               <a
@@ -603,12 +612,14 @@ const TeamSection = () => {
               />
             </div>
 
-            <p
-              className="max-w-[620px] text-[10px] uppercase tracking-[0.1em] leading-[1.9]"
-              style={{ color: "hsl(var(--foreground) / 0.45)" }}
-            >
-              {bioData !== null ? members[bioData].bio : "\u00A0"}
-            </p>
+            <div className="flex-1 flex justify-center">
+              <p
+                className="max-w-[620px] text-[10px] uppercase tracking-[0.1em] leading-[1.9] text-center"
+                style={{ color: "hsl(var(--foreground) / 0.45)" }}
+              >
+                {bioData !== null ? members[bioData].bio : "\u00A0"}
+              </p>
+            </div>
           </div>
         </div>
       </div>
