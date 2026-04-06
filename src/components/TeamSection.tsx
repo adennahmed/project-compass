@@ -5,6 +5,7 @@ import LinkText from "./LinkText";
 import adenPhoto from "@/assets/aden-ahmed.png";
 import mohammedPhoto from "@/assets/mohammed-khan.jpg";
 import lalaPhoto from "@/assets/lala-malik.jpg";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 gsap.registerPlugin(ScrollTrigger);
 
