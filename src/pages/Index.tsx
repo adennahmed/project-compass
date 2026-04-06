@@ -15,10 +15,15 @@ import TeamSection from "@/components/TeamSection";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 import SmoothScroll from "@/components/SmoothScroll";
+import ContactSidebar from "@/components/ContactSidebar";
 
 const Index = () => {
   const [heroAnimate, setHeroAnimate] = useState(false);
   const [showPreloader, setShowPreloader] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const openSidebar = useCallback(() => setSidebarOpen(true), []);
+  const closeSidebar = useCallback(() => setSidebarOpen(false), []);
 
   const handlePreloaderTransition = useCallback(() => {
     setHeroAnimate(true);
@@ -35,9 +40,9 @@ const Index = () => {
       {showPreloader && <Preloader onComplete={handlePreloaderComplete} onTransitionStart={handlePreloaderTransition} />}
       <Navigation />
       <main>
-        <HeroSection animate={heroAnimate} />
+        <HeroSection animate={heroAnimate} onOpenSidebar={openSidebar} />
         <PositioningSection />
-        <SolutionsSection />
+        <SolutionsSection onOpenSidebar={openSidebar} />
 
         {/* Shared dot background wrapper for Our Focus + Industries */}
         <div className="relative" style={{ background: "#EEEAE4" }}>
@@ -68,7 +73,7 @@ const Index = () => {
         <WhoWeServeSection />
         <ClientsSection />
         <WhyKozaiSection />
-        <TeamSection />
+        <TeamSection onOpenSidebar={openSidebar} />
 
         {/* Spacer + subtle gold line transition between Team and Contact */}
         <div className="relative" style={{ background: "#080808" }}>
@@ -94,9 +99,10 @@ const Index = () => {
           <div className="h-24 md:h-32" />
         </div>
 
-        <ContactSection />
+        <ContactSection onOpenSidebar={openSidebar} />
       </main>
-      <Footer />
+      <Footer onOpenSidebar={openSidebar} />
+      <ContactSidebar open={sidebarOpen} onClose={closeSidebar} />
     </>
   );
 };
