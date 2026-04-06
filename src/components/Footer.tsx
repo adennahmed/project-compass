@@ -108,7 +108,7 @@ const Footer = ({ onOpenSidebar }: FooterProps) => {
             >
               Breakthrough founders. Pre-market investors. Transformative partners. Reach out, and let's move.
             </p>
-            <a href="#contact" className="relative inline-block px-6 py-3 hover-target group mb-12">
+            <button onClick={onOpenSidebar} className="relative inline-block px-6 py-3 hover-target group mb-12">
               <span className="absolute top-0 left-0 w-2.5 h-2.5 border-t border-l transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(30,30,30,0.3)" }} />
               <span className="absolute top-0 right-0 w-2.5 h-2.5 border-t border-r transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(30,30,30,0.3)" }} />
               <span className="absolute bottom-0 left-0 w-2.5 h-2.5 border-b border-l transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(30,30,30,0.3)" }} />
@@ -116,7 +116,7 @@ const Footer = ({ onOpenSidebar }: FooterProps) => {
               <span className="text-[12px] uppercase tracking-[0.12em]" style={{ color: "rgba(30,30,30,0.85)" }}>
                 <LinkText>Contact Us</LinkText>
               </span>
-            </a>
+            </button>
           </div>
 
           <div>
