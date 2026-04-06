@@ -176,7 +176,7 @@ const FullBioModal = ({ member, onClose }: { member: TeamMember | null; onClose:
         </div>
 
         {/* Right: Content */}
-        <div className="flex-1 flex flex-col justify-between p-8 relative">
+        <div className="flex-1 flex flex-col justify-between p-6 md:p-8 relative overflow-y-auto">
           {/* Close button */}
           <button
             onClick={handleClose}
