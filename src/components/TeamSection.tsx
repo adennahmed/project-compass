@@ -31,7 +31,7 @@ const members: TeamMember[] = [
     expandedPos: "center 20%",
     bio: "Seasoned technologist with deep expertise in cloud architecture, machine learning pipelines, and enterprise platform engineering. Transforms complex technical challenges into scalable, production-grade systems.",
     fullBio:
-      "Muhammad leads Kozai's technical direction — from infrastructure and cloud systems to machine learning and platform engineering. Before Kozai, he built and scaled backend systems at high-growth startups. He cares about clean architecture, fast iteration, and shipping things that actually work.",
+      "Muhammad leads Kozai's technical direction, from infrastructure and cloud systems to machine learning and platform engineering. Before Kozai, he built and scaled backend systems at high-growth startups. He cares about clean architecture, fast iteration, and shipping things that actually work.",
     linkedin: "https://www.linkedin.com/in/ehabkhan/",
   },
   {
@@ -55,7 +55,7 @@ const members: TeamMember[] = [
     expandedPos: "center 15%",
     bio: "Regulatory strategist and commercial operator with extensive experience in governance frameworks, risk management, and go-to-market execution. Ensures every growth lever is built on a foundation of compliance and trust.",
     fullBio:
-      "Lala keeps Kozai and its clients on solid ground. She handles compliance, risk, and go-to-market strategy — making sure growth doesn't come at the cost of trust. She's worked across multiple regulatory environments and knows how to build systems that scale without cutting corners.",
+      "Lala keeps Kozai and its clients on solid ground. She handles compliance, risk, and go-to-market strategy, making sure growth doesn't come at the cost of trust. She's worked across multiple regulatory environments and knows how to build systems that scale without cutting corners.",
     linkedin: "https://www.linkedin.com/in/lalamalik/",
   },
 ];
@@ -161,8 +161,10 @@ const FullBioModal = ({ member, onClose }: { member: TeamMember | null; onClose:
         }}
       >
         {/* Left: Photo */}
-        <div className="relative w-full md:w-[42%] shrink-0 overflow-hidden h-[240px] md:h-auto" style={{ minHeight: undefined }}>
-
+        <div
+          className="relative w-full md:w-[42%] shrink-0 overflow-hidden h-[240px] md:h-auto"
+          style={{ minHeight: undefined }}
+        >
           <img
             src={m.photo}
             alt={m.name}
@@ -300,98 +302,101 @@ const TeamSection = () => {
     return () => ctx.revert();
   }, []);
 
-  const handleToggle = useCallback((idx: number) => {
-    if (busy.current) return;
-    busy.current = true;
+  const handleToggle = useCallback(
+    (idx: number) => {
+      if (busy.current) return;
+      busy.current = true;
 
-    const prev = expandedIdx.current;
-    const isCollapse = prev === idx;
-    const next = isCollapse ? null : idx;
-    const isSwitching = prev !== null && next !== null;
+      const prev = expandedIdx.current;
+      const isCollapse = prev === idx;
+      const next = isCollapse ? null : idx;
+      const isSwitching = prev !== null && next !== null;
 
-    const tl = gsap.timeline({
-      onComplete: () => {
-        expandedIdx.current = next;
-        busy.current = false;
-        if (!isSwitching) setBioData(next);
-      },
-    });
+      const tl = gsap.timeline({
+        onComplete: () => {
+          expandedIdx.current = next;
+          busy.current = false;
+          if (!isSwitching) setBioData(next);
+        },
+      });
 
-    if (prev !== null) {
-      const ps = stripRefs.current[prev];
-      const pi = imgRefs.current[prev];
-      const pl = labelRefs.current[prev];
+      if (prev !== null) {
+        const ps = stripRefs.current[prev];
+        const pi = imgRefs.current[prev];
+        const pl = labelRefs.current[prev];
 
-      if (ps) tl.to(ps, { height: collapsedH, duration: ANIM_MS, ease: EASE, overwrite: true }, 0);
-      if (pi)
-        tl.to(
-          pi,
-          {
-            scale: 1.18,
-            objectPosition: `center ${members[prev].eyePct}%`,
-            duration: ANIM_MS,
-            ease: EASE,
-            overwrite: true,
-          },
-          0,
-        );
-      if (pl) tl.to(pl, { opacity: 0, y: 8, duration: 0.25, ease: "power2.in" }, 0);
-
-      if (!isSwitching && bioContainerRef.current) {
-        tl.to(bioContainerRef.current, { opacity: 0, duration: 0.3, ease: "power2.in" }, 0);
-      }
-    }
-
-    if (next !== null) {
-      const ns = stripRefs.current[next];
-      const ni = imgRefs.current[next];
-      const nl = labelRefs.current[next];
-      const delay = prev !== null ? 0.1 : 0;
-
-      if (ns) tl.to(ns, { height: expandedH, duration: ANIM_MS, ease: EASE, overwrite: true }, delay);
-      if (ni)
-        tl.to(
-          ni,
-          { scale: 1, objectPosition: members[next].expandedPos, duration: ANIM_MS, ease: EASE, overwrite: true },
-          delay,
-        );
-      if (nl) tl.to(nl, { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }, delay + ANIM_MS * 0.55);
-
-      if (isSwitching) {
-        if (bioInnerRef.current) {
+        if (ps) tl.to(ps, { height: collapsedH, duration: ANIM_MS, ease: EASE, overwrite: true }, 0);
+        if (pi)
           tl.to(
-            bioInnerRef.current,
+            pi,
             {
-              opacity: 0,
-              duration: 0.2,
-              ease: "power2.in",
-              onComplete: () => setBioData(next),
+              scale: 1.18,
+              objectPosition: `center ${members[prev].eyePct}%`,
+              duration: ANIM_MS,
+              ease: EASE,
+              overwrite: true,
             },
-            delay + 0.05,
+            0,
           );
-          tl.to(
-            bioInnerRef.current,
-            {
-              opacity: 1,
-              duration: 0.3,
-              ease: "power2.out",
-            },
-            delay + 0.3,
-          );
-        }
-      } else {
-        setBioData(next);
-        if (bioContainerRef.current) {
-          tl.fromTo(
-            bioContainerRef.current,
-            { opacity: 0 },
-            { opacity: 1, duration: 0.45, ease: "power2.out" },
-            delay + ANIM_MS * 0.45,
-          );
+        if (pl) tl.to(pl, { opacity: 0, y: 8, duration: 0.25, ease: "power2.in" }, 0);
+
+        if (!isSwitching && bioContainerRef.current) {
+          tl.to(bioContainerRef.current, { opacity: 0, duration: 0.3, ease: "power2.in" }, 0);
         }
       }
-    }
-  }, [collapsedH, expandedH]);
+
+      if (next !== null) {
+        const ns = stripRefs.current[next];
+        const ni = imgRefs.current[next];
+        const nl = labelRefs.current[next];
+        const delay = prev !== null ? 0.1 : 0;
+
+        if (ns) tl.to(ns, { height: expandedH, duration: ANIM_MS, ease: EASE, overwrite: true }, delay);
+        if (ni)
+          tl.to(
+            ni,
+            { scale: 1, objectPosition: members[next].expandedPos, duration: ANIM_MS, ease: EASE, overwrite: true },
+            delay,
+          );
+        if (nl) tl.to(nl, { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }, delay + ANIM_MS * 0.55);
+
+        if (isSwitching) {
+          if (bioInnerRef.current) {
+            tl.to(
+              bioInnerRef.current,
+              {
+                opacity: 0,
+                duration: 0.2,
+                ease: "power2.in",
+                onComplete: () => setBioData(next),
+              },
+              delay + 0.05,
+            );
+            tl.to(
+              bioInnerRef.current,
+              {
+                opacity: 1,
+                duration: 0.3,
+                ease: "power2.out",
+              },
+              delay + 0.3,
+            );
+          }
+        } else {
+          setBioData(next);
+          if (bioContainerRef.current) {
+            tl.fromTo(
+              bioContainerRef.current,
+              { opacity: 0 },
+              { opacity: 1, duration: 0.45, ease: "power2.out" },
+              delay + ANIM_MS * 0.45,
+            );
+          }
+        }
+      }
+    },
+    [collapsedH, expandedH],
+  );
 
   const firstName = bioData !== null ? members[bioData].name.split(" ")[0] : "";
 
