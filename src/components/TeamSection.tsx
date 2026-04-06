@@ -556,20 +556,20 @@ const TeamSection = () => {
         <div ref={bioInnerRef}>
           <div className="w-full h-px mb-5" style={{ background: "hsl(var(--foreground) / 0.1)" }} />
 
-          <div className="relative flex items-baseline mb-5">
+          <div className="relative flex flex-col md:flex-row md:items-baseline mb-5 gap-1 md:gap-0">
             <div className="text-[10px] uppercase tracking-[0.16em]" style={{ color: "hsl(var(--foreground) / 0.35)" }}>
               {bioData !== null
                 ? `${String(bioData + 1).padStart(2, "0")} / ${String(members.length).padStart(2, "0")}`
                 : "\u00A0"}
             </div>
             <div
-              className="absolute left-1/2 -translate-x-1/2 text-[10px] uppercase tracking-[0.18em]"
+              className="md:absolute md:left-1/2 md:-translate-x-1/2 text-[10px] uppercase tracking-[0.18em]"
               style={{ color: "hsl(var(--foreground) / 0.5)" }}
             >
               {bioData !== null && (
                 <>
                   <span style={{ color: "hsl(var(--foreground) / 0.6)" }}>{members[bioData].name}</span>
-                  <span className="mx-4" style={{ color: "hsl(var(--foreground) / 0.2)" }}>
+                  <span className="mx-2 md:mx-4" style={{ color: "hsl(var(--foreground) / 0.2)" }}>
                     |
                   </span>
                   <span>{members[bioData].title}</span>
