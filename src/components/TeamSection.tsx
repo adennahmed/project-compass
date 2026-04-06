@@ -487,7 +487,7 @@ const TeamSection = () => {
                       stripRefs.current[idx] = el;
                     }}
                     className="relative overflow-hidden"
-                    style={{ height: COLLAPSED_H }}
+                    style={{ height: collapsedH }}
                   >
                     <img
                       ref={(el) => {
