@@ -5,6 +5,7 @@ import HeroParticleSphere from "./HeroParticleSphere";
 
 interface HeroSectionProps {
   animate: boolean;
+  onOpenSidebar?: () => void;
 }
 
 const getInwardOffset = () => {
