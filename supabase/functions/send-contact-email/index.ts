@@ -133,6 +133,33 @@ async function enqueueEmail(
   idempotencyKey: string,
 ) {
   const messageId = crypto.randomUUID();
+  const normalizedEmail = to.toLowerCase();
+
+  // Get or create unsubscribe token
+  let unsubscribeToken: string;
+  const { data: existingToken } = await supabase
+    .from("email_unsubscribe_tokens")
+    .select("token, used_at")
+    .eq("email", normalizedEmail)
+    .maybeSingle();
+
+  if (existingToken && !existingToken.used_at) {
+    unsubscribeToken = existingToken.token;
+  } else if (!existingToken) {
+    unsubscribeToken = generateToken();
+    await supabase
+      .from("email_unsubscribe_tokens")
+      .upsert({ token: unsubscribeToken, email: normalizedEmail }, { onConflict: "email", ignoreDuplicates: true });
+    // Re-read in case of race
+    const { data: stored } = await supabase
+      .from("email_unsubscribe_tokens")
+      .select("token")
+      .eq("email", normalizedEmail)
+      .maybeSingle();
+    unsubscribeToken = stored?.token || unsubscribeToken;
+  } else {
+    unsubscribeToken = generateToken(); // fallback
+  }
 
   // Log pending
   await supabase.from("email_send_log").insert({
@@ -155,6 +182,7 @@ async function enqueueEmail(
       purpose: "transactional",
       label: templateName,
       idempotency_key: idempotencyKey,
+      unsubscribe_token: unsubscribeToken,
       queued_at: new Date().toISOString(),
     },
   });
