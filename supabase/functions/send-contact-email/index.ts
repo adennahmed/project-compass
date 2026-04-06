@@ -128,6 +128,7 @@ async function enqueueEmail(
   to: string,
   subject: string,
   html: string,
+  plainText: string,
   templateName: string,
   idempotencyKey: string,
 ) {
