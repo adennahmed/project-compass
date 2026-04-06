@@ -15,6 +15,7 @@ const ContactSidebar = ({ open, onClose }: ContactSidebarProps) => {
   const overlayRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
