@@ -93,7 +93,7 @@ const HeroSection = ({ animate, onOpenSidebar }: HeroSectionProps) => {
 
       <div className="absolute bottom-8 left-4 sm:left-6 md:left-12 right-4 sm:right-6 md:right-12 flex items-end justify-between z-10">
         <div className="hero-bottom-left">
-          <a href="#contact" className="relative inline-block px-5 py-3 hover-target group">
+          <button onClick={onOpenSidebar} className="relative inline-block px-5 py-3 hover-target group">
             <span className="absolute top-0 left-0 h-2.5 w-2.5 border-l border-t transition-all duration-300 group-hover:h-3.5 group-hover:w-3.5" style={{ borderColor: "hsl(var(--foreground) / 0.25)" }} />
             <span className="absolute right-0 top-0 h-2.5 w-2.5 border-r border-t transition-all duration-300 group-hover:h-3.5 group-hover:w-3.5" style={{ borderColor: "hsl(var(--foreground) / 0.25)" }} />
             <span className="absolute bottom-0 left-0 h-2.5 w-2.5 border-b border-l transition-all duration-300 group-hover:h-3.5 group-hover:w-3.5" style={{ borderColor: "hsl(var(--foreground) / 0.25)" }} />
@@ -101,7 +101,7 @@ const HeroSection = ({ animate, onOpenSidebar }: HeroSectionProps) => {
             <span className="text-[11px] uppercase tracking-[0.14em]" style={{ color: "hsl(var(--foreground) / 0.65)" }}>
               <LinkText>Contact Us</LinkText>
             </span>
-          </a>
+          </button>
         </div>
         <div className="hero-bottom-right max-w-[480px] hidden md:block">
           <p
