@@ -44,7 +44,11 @@ const solutions = [
   },
 ];
 
-const SolutionsSection = () => {
+interface SolutionsSectionProps {
+  onOpenSidebar?: () => void;
+}
+
+const SolutionsSection = ({ onOpenSidebar }: SolutionsSectionProps) => {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const sectionRef = useRef<HTMLElement>(null);
   const revealRef = useRef<HTMLDivElement>(null);
