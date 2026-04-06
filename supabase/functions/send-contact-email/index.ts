@@ -65,29 +65,34 @@ serve(async (req) => {
       );
     }
 
+    // Helper to call send-transactional-email via HTTP
+    const sendEmail = async (templateName: string, recipientEmail: string, idempotencyKey: string, templateData: Record<string, unknown>) => {
+      const res = await fetch(`${supabaseUrl}/functions/v1/send-transactional-email`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${supabaseKey}`,
+        },
+        body: JSON.stringify({ templateName, recipientEmail, idempotencyKey, templateData }),
+      });
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`send-transactional-email [${res.status}]: ${text}`);
+      }
+      return res.json();
+    };
+
     // Send confirmation email to the person who submitted
     try {
-      await supabase.functions.invoke("send-transactional-email", {
-        body: {
-          templateName: "inquiry-confirmation",
-          recipientEmail: email,
-          idempotencyKey: `inquiry-confirm-${submissionId}`,
-          templateData: { firstName },
-        },
-      });
+      await sendEmail("inquiry-confirmation", email, `inquiry-confirm-${submissionId}`, { firstName });
     } catch (emailErr) {
       console.error("Confirmation email error:", emailErr);
     }
 
     // Send notification email to admin
     try {
-      await supabase.functions.invoke("send-transactional-email", {
-        body: {
-          templateName: "inquiry-notification",
-          recipientEmail: NOTIFY_EMAIL,
-          idempotencyKey: `inquiry-notify-${submissionId}`,
-          templateData: { firstName, lastName, email, phone, businessName, businessType, role: role || null, message },
-        },
+      await sendEmail("inquiry-notification", NOTIFY_EMAIL, `inquiry-notify-${submissionId}`, {
+        firstName, lastName, email, phone, businessName, businessType, role: role || null, message,
       });
     } catch (emailErr) {
       console.error("Notification email error:", emailErr);
