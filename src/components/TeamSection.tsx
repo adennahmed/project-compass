@@ -152,16 +152,16 @@ const FullBioModal = ({ member, onClose }: { member: TeamMember | null; onClose:
       {/* Panel — side by side layout */}
       <div
         ref={panelRef}
-        className="relative z-10 flex w-[90vw] max-w-[880px] overflow-hidden"
+        className="relative z-10 flex flex-col md:flex-row w-[95vw] md:w-[90vw] max-w-[880px] overflow-hidden max-h-[90vh] md:max-h-[80vh]"
         style={{
           background: "hsl(var(--background))",
           border: "1px solid hsl(var(--foreground) / 0.08)",
           opacity: 0,
-          maxHeight: "80vh",
         }}
       >
-        {/* Left: Photo — full height, contained */}
-        <div className="relative w-[42%] shrink-0 overflow-hidden" style={{ minHeight: 420 }}>
+        {/* Left: Photo */}
+        <div className="relative w-full md:w-[42%] shrink-0 overflow-hidden" style={{ minHeight: 220 }}>
+          <div className="md:hidden" style={{ height: 260 }} />
           <img
             src={m.photo}
             alt={m.name}
