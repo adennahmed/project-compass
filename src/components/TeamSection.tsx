@@ -160,8 +160,8 @@ const FullBioModal = ({ member, onClose }: { member: TeamMember | null; onClose:
         }}
       >
         {/* Left: Photo */}
-        <div className="relative w-full md:w-[42%] shrink-0 overflow-hidden" style={{ minHeight: 220 }}>
-          <div className="md:hidden" style={{ height: 260 }} />
+        <div className="relative w-full md:w-[42%] shrink-0 overflow-hidden h-[240px] md:h-auto" style={{ minHeight: undefined }}>
+
           <img
             src={m.photo}
             alt={m.name}
