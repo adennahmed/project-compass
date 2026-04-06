@@ -119,7 +119,7 @@ const SolutionsSection = ({ onOpenSidebar }: SolutionsSectionProps) => {
                 that works. With experts who&apos;ve been there. With the right pressure — pushing
                 you forward, not under.
               </p>
-              <a href="#contact" className="relative inline-block px-5 py-3 hover-target group self-start">
+              <button onClick={onOpenSidebar} className="relative inline-block px-5 py-3 hover-target group self-start">
                 <span className="absolute top-0 left-0 w-2.5 h-2.5 border-t border-l transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "hsl(0 0% 12% / 0.25)" }} />
                 <span className="absolute top-0 right-0 w-2.5 h-2.5 border-t border-r transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "hsl(0 0% 12% / 0.25)" }} />
                 <span className="absolute bottom-0 left-0 w-2.5 h-2.5 border-b border-l transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "hsl(0 0% 12% / 0.25)" }} />
@@ -127,7 +127,7 @@ const SolutionsSection = ({ onOpenSidebar }: SolutionsSectionProps) => {
                 <span className="text-[12px] uppercase tracking-[0.12em]" style={{ color: "hsl(0 0% 12% / 0.75)" }}>
                   <LinkText>Join Us</LinkText>
                 </span>
-              </a>
+              </button>
             </div>
           </div>
         </div>
