@@ -348,7 +348,7 @@ const TeamSection = () => {
       const nl = labelRefs.current[next];
       const delay = prev !== null ? 0.1 : 0;
 
-      if (ns) tl.to(ns, { height: EXPANDED_H, duration: ANIM_MS, ease: EASE, overwrite: true }, delay);
+      if (ns) tl.to(ns, { height: expandedH, duration: ANIM_MS, ease: EASE, overwrite: true }, delay);
       if (ni)
         tl.to(
           ni,
