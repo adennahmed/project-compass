@@ -391,7 +391,7 @@ const TeamSection = () => {
         }
       }
     }
-  }, []);
+  }, [collapsedH, expandedH]);
 
   const firstName = bioData !== null ? members[bioData].name.split(" ")[0] : "";
 
