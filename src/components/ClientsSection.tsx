@@ -8,32 +8,32 @@ const clients = [
   {
     name: "Meridian Partners",
     tagline: "STRATEGIC GROWTH ADVISORY, REDEFINED.",
-    logo: "MP",
+    logo: "/partners/meridian-partners.png",
   },
   {
     name: "Northbridge Group",
     tagline: "OPERATIONAL EXCELLENCE, DELIVERED.",
-    logo: "NG",
+    logo: "/partners/northbridge-group.png",
   },
   {
     name: "Vantage Retail Co.",
     tagline: "COMMERCE INFRASTRUCTURE, REIMAGINED.",
-    logo: "VR",
+    logo: "/partners/vantage-retail.png",
   },
   {
     name: "Harlow Industries",
     tagline: "INDUSTRIAL SYSTEMS, MODERNIZED.",
-    logo: "HI",
+    logo: "/partners/harlow-industries.png",
   },
   {
     name: "Clearview Health",
     tagline: "PATIENT ENGAGEMENT, TRANSFORMED.",
-    logo: "CH",
+    logo: "/partners/clearview-health.png",
   },
   {
     name: "Stratum Capital",
     tagline: "PRIVATE ASSET ANALYSIS, REIMAGINED.",
-    logo: "SC",
+    logo: "/partners/stratum-capital.png",
   },
 ];
 
@@ -77,7 +77,6 @@ const ClientsSection = () => {
 
   const client = clients[activeIndex];
 
-  // Get visible side clients
   const getSideClients = (direction: "left" | "right") => {
     const result: { client: typeof clients[0]; index: number; offset: number }[] = [];
     const count = 2;
@@ -145,12 +144,15 @@ const ClientsSection = () => {
                   opacity: 0.25 - offset * 0.08,
                 }}
               >
-                <div
-                  className="text-[48px] font-light mb-3"
-                  style={{ color: "rgba(30,30,30,0.3)" }}
-                >
-                  {c.logo}
-                </div>
+                <img
+                  src={c.logo}
+                  alt={c.name}
+                  loading="lazy"
+                  width={80}
+                  height={80}
+                  className="mb-3 grayscale"
+                  style={{ opacity: 0.3 }}
+                />
                 <div
                   className="text-[12px] uppercase tracking-[0.1em] font-semibold"
                   style={{ color: "rgba(30,30,30,0.25)" }}
@@ -170,7 +172,6 @@ const ClientsSection = () => {
               minHeight: "500px",
             }}
           >
-            {/* Corner brackets */}
             <span className="absolute top-5 left-5 w-4 h-4 border-t border-l" style={{ borderColor: "rgba(30,30,30,0.15)" }} />
             <span className="absolute top-5 right-5 w-4 h-4 border-t border-r" style={{ borderColor: "rgba(30,30,30,0.15)" }} />
             <span className="absolute bottom-5 left-5 w-4 h-4 border-b border-l" style={{ borderColor: "rgba(30,30,30,0.15)" }} />
@@ -183,14 +184,17 @@ const ClientsSection = () => {
               {client.name}
             </h3>
 
-            {/* Placeholder logo */}
+            {/* Logo image */}
             <div className="flex items-center justify-center mb-8" style={{ minHeight: "100px" }}>
-              <div
-                className="text-[72px] font-extralight leading-none"
-                style={{ color: "rgba(30,30,30,0.2)" }}
-              >
-                {client.logo}
-              </div>
+              <img
+                src={client.logo}
+                alt={`${client.name} logo`}
+                loading="lazy"
+                width={120}
+                height={120}
+                className="object-contain"
+                style={{ maxHeight: "120px", opacity: 0.7 }}
+              />
             </div>
 
             <p
@@ -200,7 +204,6 @@ const ClientsSection = () => {
               {client.tagline}
             </p>
 
-            {/* Bottom link */}
             <div className="mt-12">
               <a href="#" className="relative inline-block px-5 py-2.5 hover-target group">
                 <span className="absolute top-0 left-0 w-2 h-2 border-t border-l transition-all duration-300 group-hover:w-3 group-hover:h-3" style={{ borderColor: "rgba(30,30,30,0.2)" }} />
@@ -227,12 +230,15 @@ const ClientsSection = () => {
                   opacity: 0.25 - offset * 0.08,
                 }}
               >
-                <div
-                  className="text-[48px] font-light mb-3"
-                  style={{ color: "rgba(30,30,30,0.3)" }}
-                >
-                  {c.logo}
-                </div>
+                <img
+                  src={c.logo}
+                  alt={c.name}
+                  loading="lazy"
+                  width={80}
+                  height={80}
+                  className="mb-3 grayscale"
+                  style={{ opacity: 0.3 }}
+                />
                 <div
                   className="text-[12px] uppercase tracking-[0.1em] font-semibold"
                   style={{ color: "rgba(30,30,30,0.25)" }}

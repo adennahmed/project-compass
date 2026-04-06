@@ -1,10 +1,10 @@
 import * as React from 'npm:react@18.3.1'
 import {
-  Body, Container, Head, Heading, Html, Preview, Text, Section, Link, Hr,
+  Body, Container, Head, Heading, Html, Preview, Text, Section, Link, Hr, Img,
 } from 'npm:@react-email/components@0.0.22'
 import type { TemplateEntry } from './registry.ts'
 
-const SITE_NAME = "KOZAI"
+const LOGO_URL = "https://mmuicazqthylbhcnolax.supabase.co/storage/v1/object/public/email-assets/kozai-logo-white.png"
 
 interface InquiryConfirmationProps {
   firstName?: string
@@ -19,7 +19,7 @@ const InquiryConfirmationEmail = ({ firstName }: InquiryConfirmationProps) => (
         {/* Header */}
         <Section style={header}>
           <table width="100%" cellPadding="0" cellSpacing="0"><tbody><tr>
-            <td><Text style={logoText}>{SITE_NAME}</Text></td>
+            <td><Img src={LOGO_URL} alt="Kozai" width="90" height="auto" style={logoImg} /></td>
             <td align="right"><Text style={headerLabel}>INQUIRY CONFIRMATION</Text></td>
           </tr></tbody></table>
         </Section>
@@ -80,7 +80,7 @@ export const template = {
 const main = { backgroundColor: '#ffffff', fontFamily: "'Helvetica Neue', Arial, sans-serif" }
 const container = { maxWidth: '600px', margin: '0 auto', backgroundColor: '#080808' }
 const header = { padding: '32px 40px 24px', borderBottom: '1px solid rgba(255,255,255,0.07)' }
-const logoText = { fontSize: '16px', fontWeight: '700' as const, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: '#ffffff', margin: '0' }
+const logoImg = { display: 'block' as const }
 const headerLabel = { fontSize: '10px', letterSpacing: '0.14em', textTransform: 'uppercase' as const, color: 'rgba(255,255,255,0.3)', margin: '0' }
 const goldLine = { height: '2px', background: 'linear-gradient(90deg, #C8A96E 0%, rgba(200,169,110,0.2) 100%)' }
 const content = { padding: '48px 40px 40px' }

@@ -84,7 +84,7 @@ const FooterParticleArt = () => {
 const Footer = ({ onOpenSidebar }: FooterProps) => {
   return (
     <footer className="relative overflow-hidden" style={{ background: "#080808" }}>
-      <div className="grid md:grid-cols-2 min-h-[400px] md:min-h-[500px]">
+      <div className="grid md:grid-cols-2 min-h-[400px]">
         {/* Left - Particle Art */}
         <div className="relative hidden md:block">
           <FooterParticleArt />
