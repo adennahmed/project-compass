@@ -225,6 +225,7 @@ serve(async (req) => {
         email,
         "We've received your inquiry — Kozai",
         buildConfirmationHtml(firstName),
+        `Thank you ${firstName}, we've received your inquiry. A member of our team will be in touch soon. — Kozai`,
         "inquiry-confirmation",
         `inquiry-confirm-${submissionId}`,
       );
