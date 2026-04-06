@@ -130,7 +130,9 @@ const IndustriesMarquee = () => {
                 className="uppercase leading-[1.1] transition-all duration-500 ease-[cubic-bezier(0.76,0,0.24,1)]"
                 style={{
                   fontFamily: "'Inter', sans-serif",
-                  fontSize: hoveredIndex === i ? "56px" : "34px",
+                  fontSize: hoveredIndex === i
+                    ? (window.innerWidth < 768 ? "28px" : "56px")
+                    : (window.innerWidth < 768 ? "18px" : "34px"),
                   fontWeight: hoveredIndex === i ? 700 : 300,
                   color: hoveredIndex === i
                     ? "rgba(30,30,30,0.95)"
