@@ -67,11 +67,13 @@ serve(async (req) => {
 
     // Helper to call send-transactional-email via HTTP
     const sendEmail = async (templateName: string, recipientEmail: string, idempotencyKey: string, templateData: Record<string, unknown>) => {
+      const anonKey = Deno.env.get("SUPABASE_ANON_KEY") || Deno.env.get("SUPABASE_PUBLISHABLE_KEY") || "";
       const res = await fetch(`${supabaseUrl}/functions/v1/send-transactional-email`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${supabaseKey}`,
+          "apikey": anonKey,
         },
         body: JSON.stringify({ templateName, recipientEmail, idempotencyKey, templateData }),
       });
