@@ -9,7 +9,6 @@ const corsHeaders = {
 };
 
 const NOTIFY_EMAIL = "adenah04@outlook.com";
-const GATEWAY_URL = "https://connector-gateway.lovable.dev/resend";
 
 const ContactSchema = z.object({
   firstName: z.string().trim().min(1).max(100),
@@ -21,165 +20,6 @@ const ContactSchema = z.object({
   role: z.enum(["FOUNDER", "EXECUTIVE", "PARTNER", "OTHER"]).nullable().optional(),
   message: z.string().trim().max(2000).optional().default(""),
 });
-
-function buildConfirmationHtml(firstName: string) {
-  return `
-  <!DOCTYPE html>
-  <html lang="en">
-  <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
-  <body style="margin:0;padding:0;background:#080808;font-family:'Helvetica Neue',Arial,sans-serif;">
-    <div style="max-width:600px;margin:0 auto;background:#080808;">
-      <!-- Header bar -->
-      <div style="padding:32px 40px 24px;border-bottom:1px solid rgba(255,255,255,0.07);">
-        <table width="100%"><tr>
-          <td><span style="font-size:16px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#ffffff;">KOZAI</span></td>
-          <td align="right"><span style="font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.3);">INQUIRY CONFIRMATION</span></td>
-        </tr></table>
-      </div>
-
-      <!-- Gold accent line -->
-      <div style="height:2px;background:linear-gradient(90deg,#C8A96E 0%,rgba(200,169,110,0.2) 100%);"></div>
-
-      <!-- Main content -->
-      <div style="padding:48px 40px 40px;">
-        <p style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:#C8A96E;margin:0 0 24px;">THANK YOU</p>
-        <h1 style="font-size:28px;font-weight:700;color:#ffffff;margin:0 0 8px;text-transform:uppercase;line-height:1.15;">${firstName},</h1>
-        <h2 style="font-size:28px;font-weight:300;color:rgba(255,255,255,0.7);margin:0 0 32px;text-transform:uppercase;line-height:1.15;">We've received your inquiry.</h2>
-
-        <div style="width:60px;height:1px;background:rgba(255,255,255,0.12);margin:0 0 32px;"></div>
-
-        <p style="font-size:14px;color:rgba(255,255,255,0.55);line-height:1.8;margin:0 0 24px;">
-          A member of our team will be reviewing your submission and will be in touch. We appreciate your interest in working with Kozai.
-        </p>
-
-        <p style="font-size:14px;color:rgba(255,255,255,0.55);line-height:1.8;margin:0 0 40px;">
-          In the meantime, feel free to reply directly to this email if you have any additional details to share.
-        </p>
-
-        <!-- CTA bracket button -->
-        <div style="display:inline-block;border:1px solid rgba(200,169,110,0.3);padding:12px 28px;">
-          <a href="https://kozai.lovable.app" style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#C8A96E;text-decoration:none;">Visit Kozai →</a>
-        </div>
-      </div>
-
-      <!-- Footer -->
-      <div style="padding:24px 40px 32px;border-top:1px solid rgba(255,255,255,0.07);">
-        <table width="100%"><tr>
-          <td><span style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.2);">© 2026 KOZAI</span></td>
-          <td align="right"><span style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.15);">STRATEGY · SYSTEMS · SCALE</span></td>
-        </tr></table>
-      </div>
-    </div>
-  </body>
-  </html>`;
-}
-
-function buildNotificationHtml(data: {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  businessName: string;
-  businessType: string;
-  role: string | null;
-  message: string;
-}) {
-  const field = (label: string, value: string | null) =>
-    value ? `
-    <tr>
-      <td style="padding:10px 16px 10px 0;font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.12em;vertical-align:top;white-space:nowrap;border-bottom:1px solid rgba(255,255,255,0.04);">${label}</td>
-      <td style="padding:10px 0;font-size:14px;color:rgba(255,255,255,0.8);border-bottom:1px solid rgba(255,255,255,0.04);">${value}</td>
-    </tr>` : "";
-
-  return `
-  <!DOCTYPE html>
-  <html lang="en">
-  <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
-  <body style="margin:0;padding:0;background:#080808;font-family:'Helvetica Neue',Arial,sans-serif;">
-    <div style="max-width:600px;margin:0 auto;background:#080808;">
-      <!-- Header bar -->
-      <div style="padding:32px 40px 24px;border-bottom:1px solid rgba(255,255,255,0.07);">
-        <table width="100%"><tr>
-          <td><span style="font-size:16px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#ffffff;">KOZAI</span></td>
-          <td align="right"><span style="font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#C8A96E;">NEW INQUIRY</span></td>
-        </tr></table>
-      </div>
-
-      <!-- Gold accent line -->
-      <div style="height:2px;background:linear-gradient(90deg,#C8A96E 0%,rgba(200,169,110,0.2) 100%);"></div>
-
-      <!-- Main content -->
-      <div style="padding:48px 40px 40px;">
-        <h1 style="font-size:22px;font-weight:700;color:#ffffff;margin:0 0 6px;text-transform:uppercase;line-height:1.15;">${data.firstName} ${data.lastName}</h1>
-        <p style="font-size:13px;color:rgba(255,255,255,0.4);margin:0 0 32px;">submitted an inquiry through the website</p>
-
-        <div style="width:60px;height:1px;background:rgba(200,169,110,0.3);margin:0 0 28px;"></div>
-
-        <!-- Details table -->
-        <table style="width:100%;border-collapse:collapse;margin-bottom:28px;">
-          ${field("Name", `${data.firstName} ${data.lastName}`)}
-          ${field("Email", data.email)}
-          ${field("Phone", data.phone)}
-          ${field("Role", data.role)}
-          ${field("Business", data.businessName)}
-          ${field("Type", data.businessType)}
-        </table>
-
-        ${data.message ? `
-        <div style="margin-bottom:32px;">
-          <p style="font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.12em;margin:0 0 12px;">Message</p>
-          <div style="padding:20px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:4px;">
-            <p style="font-size:14px;color:rgba(255,255,255,0.7);line-height:1.8;margin:0;">${data.message}</p>
-          </div>
-        </div>` : ""}
-
-        <!-- Reply CTA -->
-        <div style="display:inline-block;border:1px solid rgba(200,169,110,0.3);padding:12px 28px;">
-          <a href="mailto:${data.email}" style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#C8A96E;text-decoration:none;">Reply to ${data.firstName} →</a>
-        </div>
-      </div>
-
-      <!-- Footer -->
-      <div style="padding:24px 40px 32px;border-top:1px solid rgba(255,255,255,0.07);">
-        <table width="100%"><tr>
-          <td><span style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.2);">© 2026 KOZAI</span></td>
-          <td align="right"><span style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.15);">INQUIRY SYSTEM</span></td>
-        </tr></table>
-      </div>
-    </div>
-  </body>
-  </html>`;
-}
-
-async function sendEmail(to: string, subject: string, html: string) {
-  const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-  const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
-
-  if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
-  if (!RESEND_API_KEY) throw new Error("RESEND_API_KEY is not configured");
-
-  const response = await fetch(`${GATEWAY_URL}/emails`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${LOVABLE_API_KEY}`,
-      "X-Connection-Api-Key": RESEND_API_KEY,
-    },
-    body: JSON.stringify({
-      from: "Kozai <onboarding@resend.dev>",
-      to: [to],
-      subject,
-      html,
-      reply_to: NOTIFY_EMAIL,
-    }),
-  });
-
-  const result = await response.json();
-  if (!response.ok) {
-    throw new Error(`Resend API failed [${response.status}]: ${JSON.stringify(result)}`);
-  }
-  return result;
-}
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -203,7 +43,10 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
+    // Save to database
+    const submissionId = crypto.randomUUID();
     const { error: dbError } = await supabase.from("contact_submissions").insert({
+      id: submissionId,
       first_name: firstName,
       last_name: lastName,
       email,
@@ -224,22 +67,28 @@ serve(async (req) => {
 
     // Send confirmation email to the person who submitted
     try {
-      await sendEmail(
-        email,
-        "We've received your inquiry — Kozai",
-        buildConfirmationHtml(firstName)
-      );
+      await supabase.functions.invoke("send-transactional-email", {
+        body: {
+          templateName: "inquiry-confirmation",
+          recipientEmail: email,
+          idempotencyKey: `inquiry-confirm-${submissionId}`,
+          templateData: { firstName },
+        },
+      });
     } catch (emailErr) {
       console.error("Confirmation email error:", emailErr);
     }
 
-    // Send notification email to adenah04@outlook.com
+    // Send notification email to admin
     try {
-      await sendEmail(
-        NOTIFY_EMAIL,
-        `New Inquiry from ${firstName} ${lastName}`,
-        buildNotificationHtml({ firstName, lastName, email, phone, businessName, businessType, role: role || null, message })
-      );
+      await supabase.functions.invoke("send-transactional-email", {
+        body: {
+          templateName: "inquiry-notification",
+          recipientEmail: NOTIFY_EMAIL,
+          idempotencyKey: `inquiry-notify-${submissionId}`,
+          templateData: { firstName, lastName, email, phone, businessName, businessType, role: role || null, message },
+        },
+      });
     } catch (emailErr) {
       console.error("Notification email error:", emailErr);
     }
