@@ -85,7 +85,7 @@ function buildNotificationHtml(data: {
   <div style="max-width:600px;margin:0 auto;background:#080808;">
     <div style="padding:32px 40px 24px;border-bottom:1px solid rgba(255,255,255,0.07);">
       <table width="100%"><tr>
-        <td><span style="font-size:16px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#ffffff;">KOZAI</span></td>
+        <td><img src="https://mmuicazqthylbhcnolax.supabase.co/storage/v1/object/public/email-assets/kozai-logo-white.png" alt="Kozai" width="90" style="display:block;" /></td>
         <td align="right"><span style="font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#C8A96E;">NEW INQUIRY</span></td>
       </tr></table>
     </div>
