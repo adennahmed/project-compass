@@ -266,15 +266,19 @@ const TeamSection = () => {
   const busy = useRef(false);
   const [bioData, setBioData] = useState<number | null>(null);
   const [modalMember, setModalMember] = useState<TeamMember | null>(null);
+  const isMobile = useIsMobile();
+
+  const collapsedH = isMobile ? 80 : COLLAPSED_H;
+  const expandedH = isMobile ? 320 : EXPANDED_H;
 
   useEffect(() => {
     members.forEach((m, i) => {
       const s = stripRefs.current[i];
       const img = imgRefs.current[i];
-      if (s) gsap.set(s, { height: COLLAPSED_H });
+      if (s) gsap.set(s, { height: collapsedH });
       if (img) gsap.set(img, { scale: 1.18, objectPosition: `center ${m.eyePct}%` });
     });
-  }, []);
+  }, [collapsedH]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
