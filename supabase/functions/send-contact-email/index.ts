@@ -240,6 +240,7 @@ serve(async (req) => {
         NOTIFY_EMAIL,
         `New Inquiry from ${firstName} ${lastName}`,
         buildNotificationHtml({ firstName, lastName, email, phone, businessName, businessType, role: role || null, message }),
+        `New inquiry from ${firstName} ${lastName} (${email}). Phone: ${phone || "N/A"}. Business: ${businessName || "N/A"}. Message: ${message || "N/A"}`,
         "inquiry-notification",
         `inquiry-notify-${submissionId}`,
       );
