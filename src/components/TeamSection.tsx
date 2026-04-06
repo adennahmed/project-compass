@@ -30,7 +30,7 @@ const members: TeamMember[] = [
     expandedPos: "center 20%",
     bio: "Seasoned technologist with deep expertise in cloud architecture, machine learning pipelines, and enterprise platform engineering. Transforms complex technical challenges into scalable, production-grade systems.",
     fullBio:
-      "Seasoned technologist with deep expertise in cloud architecture, machine learning pipelines, and enterprise platform engineering. Transforms complex technical challenges into scalable, production-grade systems. Previously led infrastructure teams at multiple high-growth startups, architecting distributed systems processing millions of transactions daily. His approach combines rigorous engineering discipline with a relentless focus on developer experience and operational excellence.",
+      "Muhammad leads Kozai's technical direction — from infrastructure and cloud systems to machine learning and platform engineering. Before Kozai, he built and scaled backend systems at high-growth startups. He cares about clean architecture, fast iteration, and shipping things that actually work.",
     linkedin: "https://www.linkedin.com/in/ehabkhan/",
   },
   {
