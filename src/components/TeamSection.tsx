@@ -42,7 +42,7 @@ const members: TeamMember[] = [
     expandedPos: "center 18%",
     bio: "Full-stack engineer and founder with deep expertise in systems architecture, AI integration, and revenue technology. Building infrastructure that scales companies from ambition to market dominance.",
     fullBio:
-      "Full-stack engineer and founder with deep expertise in systems architecture, AI integration, and revenue technology. Building infrastructure that scales companies from ambition to market dominance. With a background spanning enterprise SaaS, fintech, and AI-native products, Aden has consistently delivered platforms that bridge the gap between technical innovation and commercial outcomes. He founded Kozai to give ambitious companies the engineering firepower they deserve.",
+      "Aden founded Kozai to give growing companies access to the kind of engineering they shouldn't have to wait for. He's a full-stack builder with experience across SaaS, fintech, and AI — focused on turning good ideas into production-grade products.",
     linkedin: "https://www.linkedin.com/in/adenahmed/",
   },
   {
