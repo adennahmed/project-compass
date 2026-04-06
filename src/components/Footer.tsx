@@ -142,14 +142,14 @@ const Footer = ({ onOpenSidebar }: FooterProps) => {
               </p>
               <div className="flex flex-wrap gap-4">
                 {legalLinks.map((link) => (
-                  <a
+                  <Link
                     key={link.label}
-                    href={link.href}
+                    to={link.href}
                     className="text-[11px] uppercase tracking-[0.06em] hover-target"
                     style={{ color: "rgba(30,30,30,0.45)" }}
                   >
                     {link.label}
-                  </a>
+                  </Link>
                 ))}
               </div>
             </div>
