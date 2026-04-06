@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import LinkText from "./LinkText";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const roles = ["FOUNDER", "EXECUTIVE", "PARTNER", "OTHER"];
 
@@ -13,6 +15,7 @@ const ContactSidebar = ({ open, onClose }: ContactSidebarProps) => {
   const overlayRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -226,14 +229,49 @@ const ContactSidebar = ({ open, onClose }: ContactSidebarProps) => {
           <button
             type="button"
             className="relative inline-block px-6 py-3 hover-target group"
-            onClick={(e) => e.preventDefault()}
+            disabled={submitting}
+            onClick={async () => {
+              if (!formData.firstName || !formData.lastName || !formData.email) {
+                toast.error("Please fill in your name and email.");
+                return;
+              }
+              if (!formData.agree) {
+                toast.error("Please agree to the Privacy Policy.");
+                return;
+              }
+              setSubmitting(true);
+              try {
+                const { error } = await supabase.functions.invoke("send-contact-email", {
+                  body: {
+                    firstName: formData.firstName,
+                    lastName: formData.lastName,
+                    email: formData.email,
+                    phone: formData.phone,
+                    businessName: formData.businessName,
+                    businessType: formData.businessType,
+                    role: selectedRole,
+                    message: formData.message,
+                  },
+                });
+                if (error) throw error;
+                toast.success("Inquiry sent successfully. We'll be in touch.");
+                setFormData({ firstName: "", lastName: "", email: "", phone: "", businessName: "", businessType: "", message: "", agree: false });
+                setSelectedRole(null);
+                onClose();
+              } catch (err) {
+                console.error(err);
+                toast.error("Something went wrong. Please try again.");
+              } finally {
+                setSubmitting(false);
+              }
+            }}
           >
             <span className="absolute top-0 left-0 w-2.5 h-2.5 border-t border-l transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(30,30,30,0.25)" }} />
             <span className="absolute top-0 right-0 w-2.5 h-2.5 border-t border-r transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(30,30,30,0.25)" }} />
             <span className="absolute bottom-0 left-0 w-2.5 h-2.5 border-b border-l transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(30,30,30,0.25)" }} />
             <span className="absolute bottom-0 right-0 w-2.5 h-2.5 border-b border-r transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(30,30,30,0.25)" }} />
-            <span className="text-[12px] uppercase tracking-[0.12em]" style={{ color: "rgba(30,30,30,0.75)" }}>
-              <LinkText>Send Message</LinkText>
+            <span className="text-[12px] uppercase tracking-[0.12em]" style={{ color: submitting ? "rgba(30,30,30,0.35)" : "rgba(30,30,30,0.75)" }}>
+              <LinkText>{submitting ? "Sending..." : "Send Message"}</LinkText>
             </span>
           </button>
         </div>
