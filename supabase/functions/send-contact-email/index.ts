@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.2";
+import { z } from "https://esm.sh/zod@3.23.8";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -7,7 +8,16 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
-const NOTIFY_EMAIL = "adenah04@outlook.com";
+const ContactSchema = z.object({
+  firstName: z.string().trim().min(1).max(100),
+  lastName: z.string().trim().min(1).max(100),
+  email: z.string().trim().email().max(255),
+  phone: z.string().trim().max(30).optional().default(""),
+  businessName: z.string().trim().max(200).optional().default(""),
+  businessType: z.string().trim().max(200).optional().default(""),
+  role: z.enum(["FOUNDER", "EXECUTIVE", "PARTNER", "OTHER"]).nullable().optional(),
+  message: z.string().trim().max(2000).optional().default(""),
+});
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -16,16 +26,17 @@ serve(async (req) => {
 
   try {
     const body = await req.json();
-    const { firstName, lastName, email, phone, businessName, businessType, role, message } = body;
+    const parsed = ContactSchema.safeParse(body);
 
-    if (!firstName || !lastName || !email) {
+    if (!parsed.success) {
       return new Response(
-        JSON.stringify({ error: "First name, last name, and email are required." }),
+        JSON.stringify({ error: "Invalid input.", details: parsed.error.flatten().fieldErrors }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    // Store in database
+    const { firstName, lastName, email, phone, businessName, businessType, role, message } = parsed.data;
+
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
