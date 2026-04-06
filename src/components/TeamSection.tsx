@@ -54,7 +54,7 @@ const members: TeamMember[] = [
     expandedPos: "center 15%",
     bio: "Regulatory strategist and commercial operator with extensive experience in governance frameworks, risk management, and go-to-market execution. Ensures every growth lever is built on a foundation of compliance and trust.",
     fullBio:
-      "Regulatory strategist and commercial operator with extensive experience in governance frameworks, risk management, and go-to-market execution. Ensures every growth lever is built on a foundation of compliance and trust. Lala has guided organizations through complex regulatory landscapes across multiple jurisdictions, building compliance-first cultures that accelerate rather than hinder growth. Her strategic vision ensures Kozai's clients scale with confidence and integrity.",
+      "Lala keeps Kozai and its clients on solid ground. She handles compliance, risk, and go-to-market strategy — making sure growth doesn't come at the cost of trust. She's worked across multiple regulatory environments and knows how to build systems that scale without cutting corners.",
     linkedin: "https://www.linkedin.com/in/lalamalik/",
   },
 ];
