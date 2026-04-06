@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import LinkText from "./LinkText";
 
 const navLinks = [
@@ -11,10 +12,13 @@ const navLinks = [
 ];
 
 const legalLinks = [
-  { label: "Privacy Policy", href: "#" },
-  { label: "Terms and Conditions", href: "#" },
-  { label: "Cookie Policy", href: "#" },
+  { label: "Privacy Policy", href: "/privacy-policy" },
+  { label: "Terms and Conditions", href: "/terms-and-conditions" },
 ];
+
+interface FooterProps {
+  onOpenSidebar?: () => void;
+}
 
 const FooterParticleArt = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
