@@ -231,9 +231,9 @@ const ContactSidebar = ({ open, onClose }: ContactSidebarProps) => {
             />
             <span>
               By checking this box I agree to the{" "}
-              <a href="#" className="underline" style={{ color: "#1a1a1a" }}>
+              <Link to="/privacy-policy" className="underline" style={{ color: "#1a1a1a" }} onClick={(e) => e.stopPropagation()}>
                 Privacy Policy
-              </a>
+              </Link>
             </span>
           </label>
 
