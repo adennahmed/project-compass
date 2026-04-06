@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -19,6 +20,7 @@ const BRACKET_PAD_X = 28;
 const BRACKET_PAD_Y = 14;
 
 const IndustriesMarquee = () => {
+  const isMobile = useIsMobile();
   const sectionRef = useRef<HTMLElement>(null);
   const itemsContainerRef = useRef<HTMLDivElement>(null);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
@@ -130,7 +132,9 @@ const IndustriesMarquee = () => {
                 className="uppercase leading-[1.1] transition-all duration-500 ease-[cubic-bezier(0.76,0,0.24,1)]"
                 style={{
                   fontFamily: "'Inter', sans-serif",
-                  fontSize: hoveredIndex === i ? "56px" : "34px",
+                  fontSize: hoveredIndex === i
+                    ? (isMobile ? "28px" : "56px")
+                    : (isMobile ? "18px" : "34px"),
                   fontWeight: hoveredIndex === i ? 700 : 300,
                   color: hoveredIndex === i
                     ? "rgba(30,30,30,0.95)"

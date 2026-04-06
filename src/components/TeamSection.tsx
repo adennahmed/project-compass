@@ -1,10 +1,11 @@
-import { useEffect, useRef, useCallback, useState } from "react";
+import { useEffect, useRef, useCallback, useState, useMemo } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import LinkText from "./LinkText";
 import adenPhoto from "@/assets/aden-ahmed.png";
 import mohammedPhoto from "@/assets/mohammed-khan.jpg";
 import lalaPhoto from "@/assets/lala-malik.jpg";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -30,7 +31,7 @@ const members: TeamMember[] = [
     expandedPos: "center 20%",
     bio: "Seasoned technologist with deep expertise in cloud architecture, machine learning pipelines, and enterprise platform engineering. Transforms complex technical challenges into scalable, production-grade systems.",
     fullBio:
-      "Seasoned technologist with deep expertise in cloud architecture, machine learning pipelines, and enterprise platform engineering. Transforms complex technical challenges into scalable, production-grade systems. Previously led infrastructure teams at multiple high-growth startups, architecting distributed systems processing millions of transactions daily. His approach combines rigorous engineering discipline with a relentless focus on developer experience and operational excellence.",
+      "Muhammad leads Kozai's technical direction — from infrastructure and cloud systems to machine learning and platform engineering. Before Kozai, he built and scaled backend systems at high-growth startups. He cares about clean architecture, fast iteration, and shipping things that actually work.",
     linkedin: "https://www.linkedin.com/in/ehabkhan/",
   },
   {
@@ -42,7 +43,7 @@ const members: TeamMember[] = [
     expandedPos: "center 18%",
     bio: "Full-stack engineer and founder with deep expertise in systems architecture, AI integration, and revenue technology. Building infrastructure that scales companies from ambition to market dominance.",
     fullBio:
-      "Full-stack engineer and founder with deep expertise in systems architecture, AI integration, and revenue technology. Building infrastructure that scales companies from ambition to market dominance. With a background spanning enterprise SaaS, fintech, and AI-native products, Aden has consistently delivered platforms that bridge the gap between technical innovation and commercial outcomes. He founded Kozai to give ambitious companies the engineering firepower they deserve.",
+      "Aden founded Kozai to give growing companies access to the kind of engineering they shouldn't have to wait for. He's a full-stack builder with experience across SaaS, fintech, and AI — focused on turning good ideas into production-grade products.",
     linkedin: "https://www.linkedin.com/in/adenahmed/",
   },
   {
@@ -54,7 +55,7 @@ const members: TeamMember[] = [
     expandedPos: "center 15%",
     bio: "Regulatory strategist and commercial operator with extensive experience in governance frameworks, risk management, and go-to-market execution. Ensures every growth lever is built on a foundation of compliance and trust.",
     fullBio:
-      "Regulatory strategist and commercial operator with extensive experience in governance frameworks, risk management, and go-to-market execution. Ensures every growth lever is built on a foundation of compliance and trust. Lala has guided organizations through complex regulatory landscapes across multiple jurisdictions, building compliance-first cultures that accelerate rather than hinder growth. Her strategic vision ensures Kozai's clients scale with confidence and integrity.",
+      "Lala keeps Kozai and its clients on solid ground. She handles compliance, risk, and go-to-market strategy — making sure growth doesn't come at the cost of trust. She's worked across multiple regulatory environments and knows how to build systems that scale without cutting corners.",
     linkedin: "https://www.linkedin.com/in/lalamalik/",
   },
 ];
@@ -152,16 +153,16 @@ const FullBioModal = ({ member, onClose }: { member: TeamMember | null; onClose:
       {/* Panel — side by side layout */}
       <div
         ref={panelRef}
-        className="relative z-10 flex w-[90vw] max-w-[880px] overflow-hidden"
+        className="relative z-10 flex flex-col md:flex-row w-[95vw] md:w-[90vw] max-w-[880px] overflow-hidden max-h-[90vh] md:max-h-[80vh]"
         style={{
           background: "hsl(var(--background))",
           border: "1px solid hsl(var(--foreground) / 0.08)",
           opacity: 0,
-          maxHeight: "80vh",
         }}
       >
-        {/* Left: Photo — full height, contained */}
-        <div className="relative w-[42%] shrink-0 overflow-hidden" style={{ minHeight: 420 }}>
+        {/* Left: Photo */}
+        <div className="relative w-full md:w-[42%] shrink-0 overflow-hidden h-[240px] md:h-auto" style={{ minHeight: undefined }}>
+
           <img
             src={m.photo}
             alt={m.name}
@@ -176,7 +177,7 @@ const FullBioModal = ({ member, onClose }: { member: TeamMember | null; onClose:
         </div>
 
         {/* Right: Content */}
-        <div className="flex-1 flex flex-col justify-between p-8 relative">
+        <div className="flex-1 flex flex-col justify-between p-6 md:p-8 relative overflow-y-auto">
           {/* Close button */}
           <button
             onClick={handleClose}
@@ -265,15 +266,19 @@ const TeamSection = () => {
   const busy = useRef(false);
   const [bioData, setBioData] = useState<number | null>(null);
   const [modalMember, setModalMember] = useState<TeamMember | null>(null);
+  const isMobile = useIsMobile();
+
+  const collapsedH = isMobile ? 80 : COLLAPSED_H;
+  const expandedH = isMobile ? 320 : EXPANDED_H;
 
   useEffect(() => {
     members.forEach((m, i) => {
       const s = stripRefs.current[i];
       const img = imgRefs.current[i];
-      if (s) gsap.set(s, { height: COLLAPSED_H });
+      if (s) gsap.set(s, { height: collapsedH });
       if (img) gsap.set(img, { scale: 1.18, objectPosition: `center ${m.eyePct}%` });
     });
-  }, []);
+  }, [collapsedH]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -317,7 +322,7 @@ const TeamSection = () => {
       const pi = imgRefs.current[prev];
       const pl = labelRefs.current[prev];
 
-      if (ps) tl.to(ps, { height: COLLAPSED_H, duration: ANIM_MS, ease: EASE, overwrite: true }, 0);
+      if (ps) tl.to(ps, { height: collapsedH, duration: ANIM_MS, ease: EASE, overwrite: true }, 0);
       if (pi)
         tl.to(
           pi,
@@ -343,7 +348,7 @@ const TeamSection = () => {
       const nl = labelRefs.current[next];
       const delay = prev !== null ? 0.1 : 0;
 
-      if (ns) tl.to(ns, { height: EXPANDED_H, duration: ANIM_MS, ease: EASE, overwrite: true }, delay);
+      if (ns) tl.to(ns, { height: expandedH, duration: ANIM_MS, ease: EASE, overwrite: true }, delay);
       if (ni)
         tl.to(
           ni,
@@ -386,7 +391,7 @@ const TeamSection = () => {
         }
       }
     }
-  }, []);
+  }, [collapsedH, expandedH]);
 
   const firstName = bioData !== null ? members[bioData].name.split(" ")[0] : "";
 
@@ -482,7 +487,7 @@ const TeamSection = () => {
                       stripRefs.current[idx] = el;
                     }}
                     className="relative overflow-hidden"
-                    style={{ height: COLLAPSED_H }}
+                    style={{ height: collapsedH }}
                   >
                     <img
                       ref={(el) => {
@@ -551,20 +556,20 @@ const TeamSection = () => {
         <div ref={bioInnerRef}>
           <div className="w-full h-px mb-5" style={{ background: "hsl(var(--foreground) / 0.1)" }} />
 
-          <div className="relative flex items-baseline mb-5">
+          <div className="relative flex flex-col md:flex-row md:items-baseline mb-5 gap-1 md:gap-0">
             <div className="text-[10px] uppercase tracking-[0.16em]" style={{ color: "hsl(var(--foreground) / 0.35)" }}>
               {bioData !== null
                 ? `${String(bioData + 1).padStart(2, "0")} / ${String(members.length).padStart(2, "0")}`
                 : "\u00A0"}
             </div>
             <div
-              className="absolute left-1/2 -translate-x-1/2 text-[10px] uppercase tracking-[0.18em]"
+              className="md:absolute md:left-1/2 md:-translate-x-1/2 text-[10px] uppercase tracking-[0.18em]"
               style={{ color: "hsl(var(--foreground) / 0.5)" }}
             >
               {bioData !== null && (
                 <>
                   <span style={{ color: "hsl(var(--foreground) / 0.6)" }}>{members[bioData].name}</span>
-                  <span className="mx-4" style={{ color: "hsl(var(--foreground) / 0.2)" }}>
+                  <span className="mx-2 md:mx-4" style={{ color: "hsl(var(--foreground) / 0.2)" }}>
                     |
                   </span>
                   <span>{members[bioData].title}</span>
