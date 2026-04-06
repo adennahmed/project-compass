@@ -322,7 +322,7 @@ const TeamSection = () => {
       const pi = imgRefs.current[prev];
       const pl = labelRefs.current[prev];
 
-      if (ps) tl.to(ps, { height: COLLAPSED_H, duration: ANIM_MS, ease: EASE, overwrite: true }, 0);
+      if (ps) tl.to(ps, { height: collapsedH, duration: ANIM_MS, ease: EASE, overwrite: true }, 0);
       if (pi)
         tl.to(
           pi,
