@@ -20,6 +20,7 @@ const BRACKET_PAD_X = 28;
 const BRACKET_PAD_Y = 14;
 
 const IndustriesMarquee = () => {
+  const isMobile = useIsMobile();
   const sectionRef = useRef<HTMLElement>(null);
   const itemsContainerRef = useRef<HTMLDivElement>(null);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
