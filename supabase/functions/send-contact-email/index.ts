@@ -24,25 +24,54 @@ const ContactSchema = z.object({
 
 function buildConfirmationHtml(firstName: string) {
   return `
-  <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 560px; margin: 0 auto; padding: 40px 24px; background: #ffffff;">
-    <div style="border-bottom: 1px solid #e5e5e5; padding-bottom: 24px; margin-bottom: 32px;">
-      <h1 style="font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #1a1a1a; font-weight: 600; margin: 0;">Kozai</h1>
+  <!DOCTYPE html>
+  <html lang="en">
+  <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+  <body style="margin:0;padding:0;background:#080808;font-family:'Helvetica Neue',Arial,sans-serif;">
+    <div style="max-width:600px;margin:0 auto;background:#080808;">
+      <!-- Header bar -->
+      <div style="padding:32px 40px 24px;border-bottom:1px solid rgba(255,255,255,0.07);">
+        <table width="100%"><tr>
+          <td><span style="font-size:16px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#ffffff;">KOZAI</span></td>
+          <td align="right"><span style="font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.3);">INQUIRY CONFIRMATION</span></td>
+        </tr></table>
+      </div>
+
+      <!-- Gold accent line -->
+      <div style="height:2px;background:linear-gradient(90deg,#C8A96E 0%,rgba(200,169,110,0.2) 100%);"></div>
+
+      <!-- Main content -->
+      <div style="padding:48px 40px 40px;">
+        <p style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:#C8A96E;margin:0 0 24px;">THANK YOU</p>
+        <h1 style="font-size:28px;font-weight:700;color:#ffffff;margin:0 0 8px;text-transform:uppercase;line-height:1.15;">${firstName},</h1>
+        <h2 style="font-size:28px;font-weight:300;color:rgba(255,255,255,0.7);margin:0 0 32px;text-transform:uppercase;line-height:1.15;">We've received your inquiry.</h2>
+
+        <div style="width:60px;height:1px;background:rgba(255,255,255,0.12);margin:0 0 32px;"></div>
+
+        <p style="font-size:14px;color:rgba(255,255,255,0.55);line-height:1.8;margin:0 0 24px;">
+          A member of our team will be reviewing your submission and will be in touch. We appreciate your interest in working with Kozai.
+        </p>
+
+        <p style="font-size:14px;color:rgba(255,255,255,0.55);line-height:1.8;margin:0 0 40px;">
+          In the meantime, feel free to reply directly to this email if you have any additional details to share.
+        </p>
+
+        <!-- CTA bracket button -->
+        <div style="display:inline-block;border:1px solid rgba(200,169,110,0.3);padding:12px 28px;">
+          <a href="https://kozai.lovable.app" style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#C8A96E;text-decoration:none;">Visit Kozai →</a>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div style="padding:24px 40px 32px;border-top:1px solid rgba(255,255,255,0.07);">
+        <table width="100%"><tr>
+          <td><span style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.2);">© 2026 KOZAI</span></td>
+          <td align="right"><span style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.15);">STRATEGY · SYSTEMS · SCALE</span></td>
+        </tr></table>
+      </div>
     </div>
-    <h2 style="font-size: 24px; font-weight: 700; color: #1a1a1a; margin: 0 0 16px; line-height: 1.2;">
-      Thank you, ${firstName}.
-    </h2>
-    <p style="font-size: 14px; color: #555; line-height: 1.7; margin: 0 0 20px;">
-      We've received your inquiry and a member of our team will be reviewing it shortly. We appreciate your interest in working with Kozai.
-    </p>
-    <p style="font-size: 14px; color: #555; line-height: 1.7; margin: 0 0 32px;">
-      We'll be in touch soon.
-    </p>
-    <div style="border-top: 1px solid #e5e5e5; padding-top: 24px;">
-      <p style="font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: #999; margin: 0;">
-        Kozai — Strategy. Systems. Scale.
-      </p>
-    </div>
-  </div>`;
+  </body>
+  </html>`;
 }
 
 function buildNotificationHtml(data: {
@@ -56,35 +85,70 @@ function buildNotificationHtml(data: {
   message: string;
 }) {
   const field = (label: string, value: string | null) =>
-    value ? `<tr><td style="padding:6px 12px 6px 0;font-size:12px;color:#999;text-transform:uppercase;letter-spacing:0.08em;vertical-align:top;white-space:nowrap;">${label}</td><td style="padding:6px 0;font-size:14px;color:#1a1a1a;">${value}</td></tr>` : "";
+    value ? `
+    <tr>
+      <td style="padding:10px 16px 10px 0;font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.12em;vertical-align:top;white-space:nowrap;border-bottom:1px solid rgba(255,255,255,0.04);">${label}</td>
+      <td style="padding:10px 0;font-size:14px;color:rgba(255,255,255,0.8);border-bottom:1px solid rgba(255,255,255,0.04);">${value}</td>
+    </tr>` : "";
 
   return `
-  <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 560px; margin: 0 auto; padding: 40px 24px; background: #ffffff;">
-    <div style="border-bottom: 1px solid #e5e5e5; padding-bottom: 24px; margin-bottom: 32px;">
-      <h1 style="font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #1a1a1a; font-weight: 600; margin: 0;">Kozai — New Inquiry</h1>
+  <!DOCTYPE html>
+  <html lang="en">
+  <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+  <body style="margin:0;padding:0;background:#080808;font-family:'Helvetica Neue',Arial,sans-serif;">
+    <div style="max-width:600px;margin:0 auto;background:#080808;">
+      <!-- Header bar -->
+      <div style="padding:32px 40px 24px;border-bottom:1px solid rgba(255,255,255,0.07);">
+        <table width="100%"><tr>
+          <td><span style="font-size:16px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#ffffff;">KOZAI</span></td>
+          <td align="right"><span style="font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#C8A96E;">NEW INQUIRY</span></td>
+        </tr></table>
+      </div>
+
+      <!-- Gold accent line -->
+      <div style="height:2px;background:linear-gradient(90deg,#C8A96E 0%,rgba(200,169,110,0.2) 100%);"></div>
+
+      <!-- Main content -->
+      <div style="padding:48px 40px 40px;">
+        <h1 style="font-size:22px;font-weight:700;color:#ffffff;margin:0 0 6px;text-transform:uppercase;line-height:1.15;">${data.firstName} ${data.lastName}</h1>
+        <p style="font-size:13px;color:rgba(255,255,255,0.4);margin:0 0 32px;">submitted an inquiry through the website</p>
+
+        <div style="width:60px;height:1px;background:rgba(200,169,110,0.3);margin:0 0 28px;"></div>
+
+        <!-- Details table -->
+        <table style="width:100%;border-collapse:collapse;margin-bottom:28px;">
+          ${field("Name", `${data.firstName} ${data.lastName}`)}
+          ${field("Email", data.email)}
+          ${field("Phone", data.phone)}
+          ${field("Role", data.role)}
+          ${field("Business", data.businessName)}
+          ${field("Type", data.businessType)}
+        </table>
+
+        ${data.message ? `
+        <div style="margin-bottom:32px;">
+          <p style="font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.12em;margin:0 0 12px;">Message</p>
+          <div style="padding:20px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:4px;">
+            <p style="font-size:14px;color:rgba(255,255,255,0.7);line-height:1.8;margin:0;">${data.message}</p>
+          </div>
+        </div>` : ""}
+
+        <!-- Reply CTA -->
+        <div style="display:inline-block;border:1px solid rgba(200,169,110,0.3);padding:12px 28px;">
+          <a href="mailto:${data.email}" style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#C8A96E;text-decoration:none;">Reply to ${data.firstName} →</a>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div style="padding:24px 40px 32px;border-top:1px solid rgba(255,255,255,0.07);">
+        <table width="100%"><tr>
+          <td><span style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.2);">© 2026 KOZAI</span></td>
+          <td align="right"><span style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.15);">INQUIRY SYSTEM</span></td>
+        </tr></table>
+      </div>
     </div>
-    <h2 style="font-size: 20px; font-weight: 700; color: #1a1a1a; margin: 0 0 24px; line-height: 1.2;">
-      New inquiry from ${data.firstName} ${data.lastName}
-    </h2>
-    <table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
-      ${field("Name", `${data.firstName} ${data.lastName}`)}
-      ${field("Email", data.email)}
-      ${field("Phone", data.phone)}
-      ${field("Role", data.role)}
-      ${field("Business", data.businessName)}
-      ${field("Type", data.businessType)}
-    </table>
-    ${data.message ? `
-    <div style="margin-bottom:24px;">
-      <p style="font-size:12px;color:#999;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 8px;">Message</p>
-      <p style="font-size:14px;color:#1a1a1a;line-height:1.7;margin:0;padding:16px;background:#f9f8f6;border-radius:4px;">${data.message}</p>
-    </div>` : ""}
-    <div style="border-top: 1px solid #e5e5e5; padding-top: 24px;">
-      <p style="font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: #999; margin: 0;">
-        Kozai Inquiry System
-      </p>
-    </div>
-  </div>`;
+  </body>
+  </html>`;
 }
 
 async function sendEmail(to: string, subject: string, html: string) {

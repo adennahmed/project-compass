@@ -1,9 +1,17 @@
 import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import gsap from "gsap";
 import LinkText from "./LinkText";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
+const formatPhoneNumber = (value: string): string => {
+  const digits = value.replace(/\D/g, "");
+  if (digits.length === 0) return "";
+  if (digits.length <= 3) return `(${digits}`;
+  if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+  return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
+};
 const roles = ["FOUNDER", "EXECUTIVE", "PARTNER", "OTHER"];
 
 interface ContactSidebarProps {
@@ -29,7 +37,11 @@ const ContactSidebar = ({ open, onClose }: ContactSidebarProps) => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (name === "phone") {
+      setFormData((prev) => ({ ...prev, phone: formatPhoneNumber(value) }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   useEffect(() => {
@@ -219,9 +231,9 @@ const ContactSidebar = ({ open, onClose }: ContactSidebarProps) => {
             />
             <span>
               By checking this box I agree to the{" "}
-              <a href="#" className="underline" style={{ color: "#1a1a1a" }}>
+              <Link to="/privacy-policy" className="underline" style={{ color: "#1a1a1a" }} onClick={(e) => e.stopPropagation()}>
                 Privacy Policy
-              </a>
+              </Link>
             </span>
           </label>
 

@@ -1,15 +1,17 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import LinkText from "./LinkText";
-import ContactSidebar from "./ContactSidebar";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const ContactSection = () => {
+interface ContactSectionProps {
+  onOpenSidebar: () => void;
+}
+
+const ContactSection = ({ onOpenSidebar }: ContactSectionProps) => {
   const sectionRef = useRef<HTMLElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Particle wave canvas
   const initCanvas = useCallback(() => {
@@ -96,59 +98,55 @@ const ContactSection = () => {
   }, []);
 
   return (
-    <>
-      <section
-        id="contact"
-        ref={sectionRef}
-        className="relative min-h-[80vh] flex items-center overflow-hidden"
-        style={{ background: "#080808" }}
-      >
-        <canvas
-          ref={canvasRef}
-          className="absolute inset-0 pointer-events-none"
-          style={{ zIndex: 0 }}
-        />
+    <section
+      id="contact"
+      ref={sectionRef}
+      className="relative min-h-[80vh] flex items-center overflow-hidden"
+      style={{ background: "#080808" }}
+    >
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 pointer-events-none"
+        style={{ zIndex: 0 }}
+      />
 
-        <div className="relative z-10 px-6 md:px-12 max-w-[600px] py-32 md:py-40">
-          <div
-            className="contact-eyebrow text-[11px] uppercase tracking-[0.18em] mb-6"
-            style={{ color: "#C8A96E" }}
-          >
-            PARTNERS
-          </div>
-          <h2
-            className="contact-headline text-[28px] md:text-[40px] font-bold uppercase leading-[1.1] mb-6"
-            style={{ color: "#ffffff" }}
-          >
-            Partner at the Edge of What's Possible
-          </h2>
-          <div
-            className="w-[200px] h-[1px] mb-6"
-            style={{ background: "rgba(255,255,255,0.15)" }}
-          />
-          <p
-            className="contact-body text-[13px] uppercase tracking-[0.04em] leading-[1.7] mb-10 max-w-[380px]"
-            style={{ color: "rgba(255,255,255,0.5)" }}
-          >
-            Join forces with the ventures that are creating new markets. Partner early, transform fast, own the edge.
-          </p>
-          <button
-            onClick={() => setSidebarOpen(true)}
-            className="relative inline-block px-6 py-3 hover-target group"
-          >
-            <span className="absolute top-0 left-0 w-2.5 h-2.5 border-t border-l transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(255,255,255,0.25)" }} />
-            <span className="absolute top-0 right-0 w-2.5 h-2.5 border-t border-r transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(255,255,255,0.25)" }} />
-            <span className="absolute bottom-0 left-0 w-2.5 h-2.5 border-b border-l transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(255,255,255,0.25)" }} />
-            <span className="absolute bottom-0 right-0 w-2.5 h-2.5 border-b border-r transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(255,255,255,0.25)" }} />
-            <span className="text-[12px] uppercase tracking-[0.12em]" style={{ color: "rgba(255,255,255,0.75)" }}>
-              <LinkText>Partner With Us</LinkText>
-            </span>
-          </button>
+      <div className="relative z-10 px-6 md:px-12 max-w-[600px] py-32 md:py-40">
+        <div
+          className="contact-eyebrow text-[11px] uppercase tracking-[0.18em] mb-6"
+          style={{ color: "#C8A96E" }}
+        >
+          PARTNERS
         </div>
-      </section>
-
-      <ContactSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-    </>
+        <h2
+          className="contact-headline text-[28px] md:text-[40px] font-bold uppercase leading-[1.1] mb-6"
+          style={{ color: "#ffffff" }}
+        >
+          Partner at the Edge of What's Possible
+        </h2>
+        <div
+          className="w-[200px] h-[1px] mb-6"
+          style={{ background: "rgba(255,255,255,0.15)" }}
+        />
+        <p
+          className="contact-body text-[13px] uppercase tracking-[0.04em] leading-[1.7] mb-10 max-w-[380px]"
+          style={{ color: "rgba(255,255,255,0.5)" }}
+        >
+          Join forces with the ventures that are creating new markets. Partner early, transform fast, own the edge.
+        </p>
+        <button
+          onClick={onOpenSidebar}
+          className="relative inline-block px-6 py-3 hover-target group"
+        >
+          <span className="absolute top-0 left-0 w-2.5 h-2.5 border-t border-l transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(255,255,255,0.25)" }} />
+          <span className="absolute top-0 right-0 w-2.5 h-2.5 border-t border-r transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(255,255,255,0.25)" }} />
+          <span className="absolute bottom-0 left-0 w-2.5 h-2.5 border-b border-l transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(255,255,255,0.25)" }} />
+          <span className="absolute bottom-0 right-0 w-2.5 h-2.5 border-b border-r transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(255,255,255,0.25)" }} />
+          <span className="text-[12px] uppercase tracking-[0.12em]" style={{ color: "rgba(255,255,255,0.75)" }}>
+            <LinkText>Partner With Us</LinkText>
+          </span>
+        </button>
+      </div>
+    </section>
   );
 };
 

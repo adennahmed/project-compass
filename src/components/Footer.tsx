@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import LinkText from "./LinkText";
 
 const navLinks = [
@@ -11,10 +12,13 @@ const navLinks = [
 ];
 
 const legalLinks = [
-  { label: "Privacy Policy", href: "#" },
-  { label: "Terms and Conditions", href: "#" },
-  { label: "Cookie Policy", href: "#" },
+  { label: "Privacy Policy", href: "/privacy-policy" },
+  { label: "Terms and Conditions", href: "/terms-and-conditions" },
 ];
+
+interface FooterProps {
+  onOpenSidebar?: () => void;
+}
 
 const FooterParticleArt = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -77,7 +81,7 @@ const FooterParticleArt = () => {
   return <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none" style={{ zIndex: 0 }} />;
 };
 
-const Footer = () => {
+const Footer = ({ onOpenSidebar }: FooterProps) => {
   return (
     <footer className="relative overflow-hidden" style={{ background: "#080808" }}>
       <div className="grid md:grid-cols-2 min-h-[400px] md:min-h-[500px]">
@@ -104,7 +108,7 @@ const Footer = () => {
             >
               Breakthrough founders. Pre-market investors. Transformative partners. Reach out, and let's move.
             </p>
-            <a href="#contact" className="relative inline-block px-6 py-3 hover-target group mb-12">
+            <button onClick={onOpenSidebar} className="relative inline-block px-6 py-3 hover-target group mb-12">
               <span className="absolute top-0 left-0 w-2.5 h-2.5 border-t border-l transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(30,30,30,0.3)" }} />
               <span className="absolute top-0 right-0 w-2.5 h-2.5 border-t border-r transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(30,30,30,0.3)" }} />
               <span className="absolute bottom-0 left-0 w-2.5 h-2.5 border-b border-l transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(30,30,30,0.3)" }} />
@@ -112,7 +116,7 @@ const Footer = () => {
               <span className="text-[12px] uppercase tracking-[0.12em]" style={{ color: "rgba(30,30,30,0.85)" }}>
                 <LinkText>Contact Us</LinkText>
               </span>
-            </a>
+            </button>
           </div>
 
           <div>
@@ -138,14 +142,14 @@ const Footer = () => {
               </p>
               <div className="flex flex-wrap gap-4">
                 {legalLinks.map((link) => (
-                  <a
+                  <Link
                     key={link.label}
-                    href={link.href}
+                    to={link.href}
                     className="text-[11px] uppercase tracking-[0.06em] hover-target"
                     style={{ color: "rgba(30,30,30,0.45)" }}
                   >
                     {link.label}
-                  </a>
+                  </Link>
                 ))}
               </div>
             </div>

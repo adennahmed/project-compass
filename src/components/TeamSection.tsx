@@ -257,7 +257,11 @@ const FullBioModal = ({ member, onClose }: { member: TeamMember | null; onClose:
   );
 };
 
-const TeamSection = () => {
+interface TeamSectionProps {
+  onOpenSidebar?: () => void;
+}
+
+const TeamSection = ({ onOpenSidebar }: TeamSectionProps) => {
   const sectionRef = useRef<HTMLElement>(null);
   const stripRefs = useRef<(HTMLDivElement | null)[]>([]);
   const imgRefs = useRef<(HTMLImageElement | null)[]>([]);
