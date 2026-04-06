@@ -81,7 +81,7 @@ const FooterParticleArt = () => {
   return <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none" style={{ zIndex: 0 }} />;
 };
 
-const Footer = () => {
+const Footer = ({ onOpenSidebar }: FooterProps) => {
   return (
     <footer className="relative overflow-hidden" style={{ background: "#080808" }}>
       <div className="grid md:grid-cols-2 min-h-[400px] md:min-h-[500px]">
