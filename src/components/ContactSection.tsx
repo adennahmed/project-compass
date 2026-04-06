@@ -101,7 +101,7 @@ const ContactSection = ({ onOpenSidebar }: ContactSectionProps) => {
     <section
       id="contact"
       ref={sectionRef}
-      className="relative min-h-[80vh] flex items-center overflow-hidden"
+      className="relative flex items-center overflow-hidden"
       style={{ background: "#080808" }}
     >
       <canvas
