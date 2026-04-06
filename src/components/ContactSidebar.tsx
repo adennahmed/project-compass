@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import LinkText from "./LinkText";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const roles = ["FOUNDER", "EXECUTIVE", "PARTNER", "OTHER"];
 
