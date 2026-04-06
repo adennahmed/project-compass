@@ -17,7 +17,7 @@ const getInwardOffset = () => {
   return Math.min(Math.max(w * 0.16, 150), 340);
 };
 
-const HeroSection = ({ animate }: HeroSectionProps) => {
+const HeroSection = ({ animate, onOpenSidebar }: HeroSectionProps) => {
   const sectionRef = useRef<HTMLElement>(null);
   const hasAnimated = useRef(false);
 
