@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -41,24 +42,29 @@ const ClientsSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const isAnimating = useRef(false);
+  const touchStartX = useRef(0);
+  const touchDeltaX = useRef(0);
+  const carouselRef = useRef<HTMLDivElement>(null);
 
-  const navigateTo = (index: number) => {
+  const navigateTo = useCallback((index: number) => {
     if (isAnimating.current || index === activeIndex || index < 0 || index >= clients.length) return;
     isAnimating.current = true;
+    const direction = index > activeIndex ? 1 : -1;
 
     const card = document.querySelector(".client-main-card");
     if (card) {
       gsap.to(card, {
         opacity: 0,
-        y: -30,
-        duration: 0.35,
+        x: direction * -60,
+        scale: 0.96,
+        duration: 0.3,
         ease: "power2.in",
         onComplete: () => {
           setActiveIndex(index);
           gsap.fromTo(
             card,
-            { opacity: 0, y: 30 },
-            { opacity: 1, y: 0, duration: 0.45, ease: "power3.out", onComplete: () => { isAnimating.current = false; } }
+            { opacity: 0, x: direction * 60, scale: 0.96 },
+            { opacity: 1, x: 0, scale: 1, duration: 0.4, ease: "power3.out", onComplete: () => { isAnimating.current = false; } }
           );
         },
       });
@@ -66,7 +72,50 @@ const ClientsSection = () => {
       setActiveIndex(index);
       isAnimating.current = false;
     }
-  };
+  }, [activeIndex]);
+
+  const goNext = useCallback(() => {
+    if (activeIndex < clients.length - 1) navigateTo(activeIndex + 1);
+  }, [activeIndex, navigateTo]);
+
+  const goPrev = useCallback(() => {
+    if (activeIndex > 0) navigateTo(activeIndex - 1);
+  }, [activeIndex, navigateTo]);
+
+  // Touch / swipe handling
+  const handleTouchStart = useCallback((e: React.TouchEvent | React.MouseEvent) => {
+    const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
+    touchStartX.current = clientX;
+    touchDeltaX.current = 0;
+  }, []);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent | React.MouseEvent) => {
+    const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
+    touchDeltaX.current = clientX - touchStartX.current;
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    const threshold = 50;
+    if (touchDeltaX.current < -threshold) {
+      goNext();
+    } else if (touchDeltaX.current > threshold) {
+      goPrev();
+    }
+    touchDeltaX.current = 0;
+  }, [goNext, goPrev]);
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!sectionRef.current) return;
+      const rect = sectionRef.current.getBoundingClientRect();
+      if (rect.top > window.innerHeight || rect.bottom < 0) return;
+      if (e.key === "ArrowLeft") goPrev();
+      if (e.key === "ArrowRight") goNext();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [goNext, goPrev]);
 
   useEffect(() => {
     gsap.from(".clients-headline", {
@@ -129,8 +178,17 @@ const ClientsSection = () => {
           </a>
         </div>
 
-        {/* Cards carousel */}
-        <div className="relative flex items-center justify-center gap-6 md:gap-8 min-h-[520px]">
+        {/* Cards carousel — swipeable */}
+        <div
+          ref={carouselRef}
+          className="relative flex items-center justify-center gap-6 md:gap-8 min-h-[520px] select-none"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          onMouseDown={handleTouchStart}
+          onMouseMove={handleTouchMove}
+          onMouseUp={handleTouchEnd}
+        >
           {/* Left side ghosts */}
           <div className="hidden md:flex items-center gap-6 absolute left-0">
             {leftSide.reverse().map(({ client: c, index, offset }) => (
@@ -169,7 +227,7 @@ const ClientsSection = () => {
             style={{
               background: "#f5f2ed",
               borderRadius: "16px",
-              minHeight: "500px",
+              minHeight: "460px",
             }}
           >
             <span className="absolute top-5 left-5 w-4 h-4 border-t border-l" style={{ borderColor: "rgba(30,30,30,0.15)" }} />
@@ -198,23 +256,11 @@ const ClientsSection = () => {
             </div>
 
             <p
-              className="text-[11px] uppercase tracking-[0.14em] leading-[1.6] max-w-[260px] mb-auto"
+              className="text-[11px] uppercase tracking-[0.14em] leading-[1.6] max-w-[260px]"
               style={{ color: "rgba(30,30,30,0.45)" }}
             >
               {client.tagline}
             </p>
-
-            <div className="mt-12">
-              <a href="#" className="relative inline-block px-5 py-2.5 hover-target group">
-                <span className="absolute top-0 left-0 w-2 h-2 border-t border-l transition-all duration-300 group-hover:w-3 group-hover:h-3" style={{ borderColor: "rgba(30,30,30,0.2)" }} />
-                <span className="absolute top-0 right-0 w-2 h-2 border-t border-r transition-all duration-300 group-hover:w-3 group-hover:h-3" style={{ borderColor: "rgba(30,30,30,0.2)" }} />
-                <span className="absolute bottom-0 left-0 w-2 h-2 border-b border-l transition-all duration-300 group-hover:w-3 group-hover:h-3" style={{ borderColor: "rgba(30,30,30,0.2)" }} />
-                <span className="absolute bottom-0 right-0 w-2 h-2 border-b border-r transition-all duration-300 group-hover:w-3 group-hover:h-3" style={{ borderColor: "rgba(30,30,30,0.2)" }} />
-                <span className="text-[11px] uppercase tracking-[0.12em]" style={{ color: "rgba(30,30,30,0.6)" }}>
-                  Website
-                </span>
-              </a>
-            </div>
           </div>
 
           {/* Right side ghosts */}
@@ -250,19 +296,48 @@ const ClientsSection = () => {
           </div>
         </div>
 
-        {/* Navigation dots */}
-        <div className="flex items-center justify-center gap-3 mt-10">
-          {clients.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => navigateTo(i)}
-              className="w-2 h-2 rounded-full transition-all duration-300 hover-target"
-              style={{
-                background: i === activeIndex ? "#1a1a1a" : "rgba(30,30,30,0.2)",
-                transform: i === activeIndex ? "scale(1.3)" : "scale(1)",
-              }}
-            />
-          ))}
+        {/* Navigation: arrows + dots */}
+        <div className="flex items-center justify-center gap-4 mt-10">
+          <button
+            onClick={goPrev}
+            disabled={activeIndex === 0}
+            className="hover-target p-1.5 rounded-full transition-all duration-200"
+            style={{
+              opacity: activeIndex === 0 ? 0.2 : 0.6,
+              color: "#1a1a1a",
+            }}
+            aria-label="Previous company"
+          >
+            <ChevronLeft size={20} />
+          </button>
+
+          <div className="flex items-center gap-3">
+            {clients.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => navigateTo(i)}
+                className="w-2 h-2 rounded-full transition-all duration-300 hover-target"
+                style={{
+                  background: i === activeIndex ? "#1a1a1a" : "rgba(30,30,30,0.2)",
+                  transform: i === activeIndex ? "scale(1.3)" : "scale(1)",
+                }}
+                aria-label={`Go to ${clients[i].name}`}
+              />
+            ))}
+          </div>
+
+          <button
+            onClick={goNext}
+            disabled={activeIndex === clients.length - 1}
+            className="hover-target p-1.5 rounded-full transition-all duration-200"
+            style={{
+              opacity: activeIndex === clients.length - 1 ? 0.2 : 0.6,
+              color: "#1a1a1a",
+            }}
+            aria-label="Next company"
+          >
+            <ChevronRight size={20} />
+          </button>
         </div>
       </div>
     </section>
