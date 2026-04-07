@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import SEOHead from "@/components/SEOHead";
 
 const PrivacyPolicy = () => {
   useEffect(() => {
@@ -8,6 +9,11 @@ const PrivacyPolicy = () => {
 
   return (
     <div style={{ background: "#080808", minHeight: "100vh", color: "#ffffff" }}>
+      <SEOHead
+        title="Privacy Policy — Kozai"
+        description="Kozai's privacy policy outlines how we collect, use, and protect your personal information."
+        path="/privacy-policy"
+      />
       {/* Header */}
       <header className="px-6 md:px-12 py-8 flex items-center justify-between">
         <Link to="/" className="flex items-center">
