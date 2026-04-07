@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import SEOHead from "@/components/SEOHead";
 import Preloader from "@/components/Preloader";
 import CustomCursor from "@/components/CustomCursor";
 import Navigation from "@/components/Navigation";
