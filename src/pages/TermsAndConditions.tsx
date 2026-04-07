@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import SEOHead from "@/components/SEOHead";
 
 const TermsAndConditions = () => {
   useEffect(() => {
@@ -8,6 +9,11 @@ const TermsAndConditions = () => {
 
   return (
     <div style={{ background: "#080808", minHeight: "100vh", color: "#ffffff" }}>
+      <SEOHead
+        title="Terms and Conditions — Kozai"
+        description="Read Kozai's terms and conditions governing the use of our services and website."
+        path="/terms-and-conditions"
+      />
       {/* Header */}
       <header className="px-6 md:px-12 py-8 flex items-center justify-between">
         <Link to="/" className="flex items-center">

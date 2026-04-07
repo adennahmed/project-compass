@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import SEOHead from "@/components/SEOHead";
 import Preloader from "@/components/Preloader";
 import CustomCursor from "@/components/CustomCursor";
 import Navigation from "@/components/Navigation";
@@ -35,6 +36,11 @@ const Index = () => {
 
   return (
     <>
+      <SEOHead
+        title="Kozai — Technology Built to Drive Growth"
+        description="Kozai turns software and technology into measurable revenue performance — for growing companies, mid-market organizations, and enterprise environments."
+        path="/"
+      />
       <SmoothScroll />
       <CustomCursor />
       {showPreloader && <Preloader onComplete={handlePreloaderComplete} onTransitionStart={handlePreloaderTransition} />}
