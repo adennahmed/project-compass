@@ -36,6 +36,11 @@ const Index = () => {
 
   return (
     <>
+      <SEOHead
+        title="Kozai — Technology Built to Drive Growth"
+        description="Kozai turns software and technology into measurable revenue performance — for growing companies, mid-market organizations, and enterprise environments."
+        path="/"
+      />
       <SmoothScroll />
       <CustomCursor />
       {showPreloader && <Preloader onComplete={handlePreloaderComplete} onTransitionStart={handlePreloaderTransition} />}
