@@ -51,7 +51,7 @@ const InquiryConfirmationEmail = ({ firstName }: InquiryConfirmationProps) => (
 
           {/* CTA */}
           <Section style={ctaWrapper}>
-            <Link href="https://kozai.lovable.app" style={ctaLink}>
+            <Link href="https://www.kozai.ca" style={ctaLink}>
               Visit Kozai →
             </Link>
           </Section>

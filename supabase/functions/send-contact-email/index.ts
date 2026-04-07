@@ -53,7 +53,7 @@ function buildConfirmationHtml(firstName: string) {
       <p style="font-size:14px;color:rgba(255,255,255,0.55);line-height:1.8;margin:0 0 24px;">A member of our team will be reviewing your submission and will be in touch. We appreciate your interest in working with Kozai.</p>
       <p style="font-size:14px;color:rgba(255,255,255,0.55);line-height:1.8;margin:0 0 40px;">In the meantime, feel free to reply directly to this email if you have any additional details to share.</p>
       <div style="display:inline-block;border:1px solid rgba(200,169,110,0.3);padding:12px 28px;">
-        <a href="https://kozai.lovable.app" style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#C8A96E;text-decoration:none;">Visit Kozai →</a>
+        <a href="https://www.kozai.ca" style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#C8A96E;text-decoration:none;">Visit Kozai →</a>
       </div>
     </div>
     <div style="padding:24px 40px 32px;border-top:1px solid rgba(255,255,255,0.07);">
