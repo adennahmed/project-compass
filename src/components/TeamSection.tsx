@@ -453,121 +453,109 @@ const TeamSection = ({ onOpenSidebar }: TeamSectionProps) => {
         </a>
       </div>
 
-      {/* Center — two-column text and strips layout */}
-      <div className="flex-1 flex flex-col justify-center items-center gap-6 md:gap-8">
-        <div className="pointer-events-none grid w-full max-w-[88vw] md:max-w-[66%] grid-cols-2 items-end">
-          <p
-            className="text-center text-[clamp(0.9rem,1.8vw,1.6rem)] font-bold uppercase leading-[1.15] tracking-[-0.01em]"
-            style={{ color: "hsl(var(--foreground) / 0.85)", fontFamily: "'Inter', sans-serif" }}
+      {/* Center — grid overlay: text behind, strips in front */}
+      <div className="flex-1 flex flex-col justify-center">
+        <div style={{ display: "grid", gridTemplateColumns: "1fr", gridTemplateRows: "1fr" }}>
+          {/* Bold text layer — behind photos, two columns with top+bottom text per member */}
+          <div
+            className="pointer-events-none grid grid-cols-2 w-full max-w-[88vw] md:max-w-[66%] mx-auto self-center"
+            style={{ gridArea: "1 / 1", zIndex: 0 }}
           >
-            WE ARCHITECT WHAT
-            <br />
-            THE MARKET DEMANDS.
-          </p>
-          <p
-            className="text-center text-[clamp(0.9rem,1.8vw,1.6rem)] font-bold uppercase leading-[1.15] tracking-[-0.01em]"
-            style={{ color: "hsl(var(--foreground) / 0.85)", fontFamily: "'Inter', sans-serif" }}
-          >
-            WE SPOT GAPS BEFORE
-            <br />
-            THEY'RE OBVIOUS.
-          </p>
-        </div>
-
-        {/* Strips row */}
-        <div className="team-strips-row flex w-full max-w-[88vw] md:max-w-[66%] items-center">
-          {members.map((member, idx) => (
-            <div key={member.name} className="flex-1 min-w-0">
-              <button
-                type="button"
-                className="relative block w-full text-left cursor-pointer"
-                onClick={() => handleToggle(idx)}
-                aria-label={`Toggle ${member.name} profile`}
+            {/* Muhammad column */}
+            <div className="flex flex-col items-center justify-center gap-[calc(var(--strip-h,120px)+2rem)]">
+              <p
+                className="text-center text-[clamp(0.9rem,1.8vw,1.6rem)] font-bold uppercase leading-[1.15] tracking-[-0.01em]"
+                style={{ color: "hsl(var(--foreground) / 0.85)", fontFamily: "'Inter', sans-serif" }}
               >
-                <div
-                  ref={(el) => {
-                    stripRefs.current[idx] = el;
-                  }}
-                  className="relative overflow-hidden"
-                  style={{ height: collapsedH }}
-                >
-                  <img
-                    ref={(el) => {
-                      imgRefs.current[idx] = el;
-                    }}
-                    src={member.photo}
-                    alt={member.name}
-                    draggable={false}
-                    className="absolute inset-0 h-full w-full select-none"
-                    style={{
-                      objectFit: "cover",
-                      objectPosition: `center ${member.eyePct}%`,
-                      transform: "scale(1.18)",
-                      transformOrigin: "center center",
-                      willChange: "transform, object-position",
-                    }}
-                  />
-                  <div
-                    className="pointer-events-none absolute inset-x-0 top-0"
-                    style={{
-                      height: "35%",
-                      background: "linear-gradient(to bottom, hsl(var(--background)), transparent)",
-                    }}
-                  />
-                  <div
-                    className="pointer-events-none absolute inset-x-0 bottom-0"
-                    style={{
-                      height: "35%",
-                      background: "linear-gradient(to top, hsl(var(--background)), transparent)",
-                    }}
-                  />
-
-                  <div
-                    ref={(el) => {
-                      labelRefs.current[idx] = el;
-                    }}
-                    className="pointer-events-none absolute bottom-4 left-4 flex items-center gap-2 rounded-sm px-2.5 py-1.5"
-                    style={{
-                      opacity: 0,
-                      transform: "translateY(8px)",
-                      background: "hsl(var(--background) / 0.68)",
-                      backdropFilter: "blur(8px)",
-                    }}
-                  >
-                    <div
-                      className="h-1.5 w-1.5 rounded-full"
-                      style={{ background: "hsl(var(--foreground) / 0.55)" }}
-                    />
-                    <span
-                      className="text-[9px] uppercase tracking-[0.14em]"
-                      style={{ color: "hsl(var(--foreground) / 0.78)" }}
-                    >
-                      {member.role}
-                    </span>
-                  </div>
-                </div>
-              </button>
+                WE ARCHITECT WHAT
+                <br />
+                THE MARKET DEMANDS.
+              </p>
+              <p
+                className="text-center text-[clamp(0.9rem,1.8vw,1.6rem)] font-bold uppercase leading-[1.15] tracking-[-0.01em]"
+                style={{ color: "hsl(var(--foreground) / 0.85)", fontFamily: "'Inter', sans-serif" }}
+              >
+                WE TURN COMPLEXITY INTO
+                <br />
+                DECISIVE SYSTEMS.
+              </p>
             </div>
-          ))}
-        </div>
+            {/* Aden column */}
+            <div className="flex flex-col items-center justify-center gap-[calc(var(--strip-h,120px)+2rem)]">
+              <p
+                className="text-center text-[clamp(0.9rem,1.8vw,1.6rem)] font-bold uppercase leading-[1.15] tracking-[-0.01em]"
+                style={{ color: "hsl(var(--foreground) / 0.85)", fontFamily: "'Inter', sans-serif" }}
+              >
+                WE SPOT GAPS BEFORE
+                <br />
+                THEY'RE OBVIOUS.
+              </p>
+              <p
+                className="text-center text-[clamp(0.9rem,1.8vw,1.6rem)] font-bold uppercase leading-[1.15] tracking-[-0.01em]"
+                style={{ color: "hsl(var(--foreground) / 0.85)", fontFamily: "'Inter', sans-serif" }}
+              >
+                ENGINEER THEM INTO
+                <br />
+                SYSTEMS THAT SCALE.
+              </p>
+            </div>
+          </div>
 
-        <div className="pointer-events-none grid w-full max-w-[88vw] md:max-w-[66%] grid-cols-2 items-start">
-          <p
-            className="text-center text-[clamp(0.9rem,1.8vw,1.6rem)] font-bold uppercase leading-[1.15] tracking-[-0.01em]"
-            style={{ color: "hsl(var(--foreground) / 0.85)", fontFamily: "'Inter', sans-serif" }}
+          {/* Strips row — in front */}
+          <div
+            className="team-strips-row flex w-full max-w-[88vw] md:max-w-[66%] mx-auto items-center self-center"
+            style={{ gridArea: "1 / 1", zIndex: 2 }}
           >
-            WE TURN COMPLEXITY INTO
-            <br />
-            DECISIVE SYSTEMS.
-          </p>
-          <p
-            className="text-center text-[clamp(0.9rem,1.8vw,1.6rem)] font-bold uppercase leading-[1.15] tracking-[-0.01em]"
-            style={{ color: "hsl(var(--foreground) / 0.85)", fontFamily: "'Inter', sans-serif" }}
-          >
-            ENGINEER THEM INTO
-            <br />
-            SYSTEMS THAT SCALE.
-          </p>
+            {members.map((member, idx) => (
+              <div key={member.name} className="flex-1 min-w-0">
+                <button
+                  type="button"
+                  className="relative block w-full text-left cursor-pointer"
+                  onClick={() => handleToggle(idx)}
+                  aria-label={`Toggle ${member.name} profile`}
+                >
+                  <div
+                    ref={(el) => { stripRefs.current[idx] = el; }}
+                    className="relative overflow-hidden"
+                    style={{ height: collapsedH }}
+                  >
+                    <img
+                      ref={(el) => { imgRefs.current[idx] = el; }}
+                      src={member.photo}
+                      alt={member.name}
+                      draggable={false}
+                      className="absolute inset-0 h-full w-full select-none"
+                      style={{
+                        objectFit: "cover",
+                        objectPosition: `center ${member.eyePct}%`,
+                        transform: "scale(1.18)",
+                        transformOrigin: "center center",
+                        willChange: "transform, object-position",
+                      }}
+                    />
+                    <div
+                      className="pointer-events-none absolute inset-x-0 top-0"
+                      style={{ height: "35%", background: "linear-gradient(to bottom, hsl(var(--background)), transparent)" }}
+                    />
+                    <div
+                      className="pointer-events-none absolute inset-x-0 bottom-0"
+                      style={{ height: "35%", background: "linear-gradient(to top, hsl(var(--background)), transparent)" }}
+                    />
+                    <div
+                      ref={(el) => { labelRefs.current[idx] = el; }}
+                      className="pointer-events-none absolute bottom-4 left-4 flex items-center gap-2 rounded-sm px-2.5 py-1.5"
+                      style={{ opacity: 0, transform: "translateY(8px)", background: "hsl(var(--background) / 0.68)", backdropFilter: "blur(8px)" }}
+                    >
+                      <div className="h-1.5 w-1.5 rounded-full" style={{ background: "hsl(var(--foreground) / 0.55)" }} />
+                      <span className="text-[9px] uppercase tracking-[0.14em]" style={{ color: "hsl(var(--foreground) / 0.78)" }}>
+                        {member.role}
+                      </span>
+                    </div>
+                  </div>
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
