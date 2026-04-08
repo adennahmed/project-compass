@@ -481,7 +481,7 @@ const TeamSection = ({ onOpenSidebar }: TeamSectionProps) => {
 
           {/* Strips row */}
           <div
-            className="team-strips-row flex w-full items-center self-center"
+            className="team-strips-row flex w-full max-w-[66%] mx-auto items-center self-center"
             style={{ gridArea: "1 / 1", zIndex: 2 }}
           >
             {members.map((member, idx) => (
