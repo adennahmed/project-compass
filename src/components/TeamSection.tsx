@@ -542,7 +542,15 @@ const TeamSection = ({ onOpenSidebar }: TeamSectionProps) => {
               </div>
             ))}
           </div>
-        </div>
+
+        <p
+          className="text-center text-[clamp(0.9rem,1.8vw,1.6rem)] font-bold uppercase leading-[1.15] tracking-[-0.01em] mt-6 pointer-events-none"
+          style={{ color: "hsl(var(--foreground) / 0.85)", fontFamily: "'Inter', sans-serif" }}
+        >
+          WE SPOT GAPS BEFORE
+          <br />
+          THEY'RE OBVIOUS.
+        </p>
       </div>
 
       {/* Bio footer */}
