@@ -465,17 +465,17 @@ const TeamSection = ({ onOpenSidebar }: TeamSectionProps) => {
               className="text-center text-[clamp(0.9rem,1.8vw,1.6rem)] font-bold uppercase leading-[1.15] tracking-[-0.01em]"
               style={{ color: "hsl(var(--foreground) / 0.85)", fontFamily: "'Inter', sans-serif" }}
             >
-              WE SPOT GAPS BEFORE
+              WE BUILD WHAT OTHERS
               <br />
-              THEY'RE OBVIOUS.
+              ONLY TALK ABOUT.
             </p>
             <p
               className="text-center text-[clamp(0.9rem,1.8vw,1.6rem)] font-bold uppercase leading-[1.15] tracking-[-0.01em]"
               style={{ color: "hsl(var(--foreground) / 0.85)", fontFamily: "'Inter', sans-serif" }}
             >
-              ENGINEER THEM INTO
+              WE SPOT GAPS BEFORE
               <br />
-              SYSTEMS THAT SCALE.
+              THEY'RE OBVIOUS.
             </p>
           </div>
 
