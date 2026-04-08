@@ -126,7 +126,7 @@ const HeroSection = ({ animate, onOpenSidebar }: HeroSectionProps) => {
       </div>
 
       <div className="absolute bottom-8 right-4 sm:right-6 md:right-12 z-10 hero-logo-watermark hidden sm:block">
-        <img src="/kozai-logo-white.svg" alt="" className="h-8 opacity-20" />
+        <img src="/kozai-logo-white.svg" alt="Kozai logo" className="h-8 opacity-20" />
       </div>
 
       <style>{`
