@@ -60,6 +60,7 @@ const HeroSection = ({ animate, onOpenSidebar }: HeroSectionProps) => {
   return (
     <section
       ref={sectionRef}
+      aria-label="Hero — Building the Systems That Drive Growth"
       className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden"
     >
       <h1 className="sr-only">Building the Systems That Drive Growth.</h1>
