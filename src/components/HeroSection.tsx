@@ -60,6 +60,7 @@ const HeroSection = ({ animate, onOpenSidebar }: HeroSectionProps) => {
   return (
     <section
       ref={sectionRef}
+      aria-label="Hero — Building the Systems That Drive Growth"
       className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden"
     >
       <h1 className="sr-only">Building the Systems That Drive Growth.</h1>
@@ -125,7 +126,7 @@ const HeroSection = ({ animate, onOpenSidebar }: HeroSectionProps) => {
       </div>
 
       <div className="absolute bottom-8 right-4 sm:right-6 md:right-12 z-10 hero-logo-watermark hidden sm:block">
-        <img src="/kozai-logo-white.svg" alt="" className="h-8 opacity-20" />
+        <img src="/kozai-logo-white.svg" alt="Kozai logo" className="h-8 opacity-20" />
       </div>
 
       <style>{`

@@ -101,6 +101,7 @@ const ContactSection = ({ onOpenSidebar }: ContactSectionProps) => {
     <section
       id="contact"
       ref={sectionRef}
+      aria-label="Contact Kozai — Partner With Us"
       className="relative flex items-center overflow-hidden"
       style={{ background: "#080808" }}
     >

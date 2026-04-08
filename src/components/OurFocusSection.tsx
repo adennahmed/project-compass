@@ -28,6 +28,7 @@ const OurFocusSection = () => {
   return (
     <section
       ref={sectionRef}
+      aria-label="Our Focus — Precision-Built Technology"
       className="relative py-32 md:py-48 overflow-hidden"
       style={{ background: "transparent" }}
     >
