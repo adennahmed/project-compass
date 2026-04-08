@@ -4,7 +4,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import LinkText from "./LinkText";
 import adenPhoto from "@/assets/aden-ahmed.png";
 import mohammedPhoto from "@/assets/mohammed-khan.jpg";
-import lalaPhoto from "@/assets/lala-malik.jpg";
+// import lalaPhoto from "@/assets/lala-malik.jpg"; // Preserved for future restoration
 import { useIsMobile } from "@/hooks/use-mobile";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -20,6 +20,19 @@ interface TeamMember {
   fullBio: string;
   linkedin: string;
 }
+
+// Lala Malik data preserved for future restoration
+// const lalaData: TeamMember = {
+//   name: "Lala Malik",
+//   role: "Chief Compliance & Strategy Officer",
+//   title: "Compliance & Strategy",
+//   photo: lalaPhoto,
+//   eyePct: 25,
+//   expandedPos: "center 15%",
+//   bio: "Regulatory strategist and commercial operator with extensive experience in governance frameworks, risk management, and go-to-market execution. Ensures every growth lever is built on a foundation of compliance and trust.",
+//   fullBio: "Lala keeps Kozai and its clients on solid ground. She handles compliance, risk, and go-to-market strategy, making sure growth doesn't come at the cost of trust. She's worked across multiple regulatory environments and knows how to build systems that scale without cutting corners.",
+//   linkedin: "https://www.linkedin.com/in/lalamalik/",
+// };
 
 const members: TeamMember[] = [
   {
@@ -45,18 +58,6 @@ const members: TeamMember[] = [
     fullBio:
       "Aden founded Kozai to give growing companies access to the kind of engineering they shouldn't have to wait for. He's a full-stack builder with experience across SaaS, fintech, and AI — focused on turning good ideas into production-grade products.",
     linkedin: "https://www.linkedin.com/in/adenahmed/",
-  },
-  {
-    name: "Lala Malik",
-    role: "Chief Compliance & Strategy Officer",
-    title: "Compliance & Strategy",
-    photo: lalaPhoto,
-    eyePct: 25,
-    expandedPos: "center 15%",
-    bio: "Regulatory strategist and commercial operator with extensive experience in governance frameworks, risk management, and go-to-market execution. Ensures every growth lever is built on a foundation of compliance and trust.",
-    fullBio:
-      "Lala keeps Kozai and its clients on solid ground. She handles compliance, risk, and go-to-market strategy, making sure growth doesn't come at the cost of trust. She's worked across multiple regulatory environments and knows how to build systems that scale without cutting corners.",
-    linkedin: "https://www.linkedin.com/in/lalamalik/",
   },
 ];
 
@@ -464,23 +465,23 @@ const TeamSection = ({ onOpenSidebar }: TeamSectionProps) => {
               className="text-center text-[clamp(0.9rem,1.8vw,1.6rem)] font-bold uppercase leading-[1.15] tracking-[-0.01em]"
               style={{ color: "hsl(var(--foreground) / 0.85)", fontFamily: "'Inter', sans-serif" }}
             >
-              WE SPOT GAPS BEFORE
+              WE BUILD WHAT OTHERS
               <br />
-              THEY'RE OBVIOUS.
+              ONLY TALK ABOUT.
             </p>
             <p
               className="text-center text-[clamp(0.9rem,1.8vw,1.6rem)] font-bold uppercase leading-[1.15] tracking-[-0.01em]"
               style={{ color: "hsl(var(--foreground) / 0.85)", fontFamily: "'Inter', sans-serif" }}
             >
-              ENGINEER THEM INTO
+              WE SPOT GAPS BEFORE
               <br />
-              SYSTEMS THAT SCALE.
+              THEY'RE OBVIOUS.
             </p>
           </div>
 
           {/* Strips row */}
           <div
-            className="team-strips-row flex w-full items-center self-center"
+            className="team-strips-row flex w-full max-w-[66%] mx-auto items-center self-center"
             style={{ gridArea: "1 / 1", zIndex: 2 }}
           >
             {members.map((member, idx) => (
