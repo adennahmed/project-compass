@@ -456,27 +456,31 @@ const TeamSection = ({ onOpenSidebar }: TeamSectionProps) => {
       {/* Center — strips with bold text layered behind */}
       <div className="flex-1 flex flex-col justify-center">
         <div style={{ display: "grid", gridTemplateColumns: "1fr", gridTemplateRows: "1fr" }}>
-          {/* Bold text layer — behind photos */}
+          {/* Bold text layer — behind photos, using same flex layout as strips */}
           <div
-            className="pointer-events-none flex flex-col items-center justify-center gap-[calc(var(--strip-h,120px)+1.5rem)]"
+            className="pointer-events-none flex w-full max-w-[66%] mx-auto items-center self-center"
             style={{ gridArea: "1 / 1", zIndex: 0 }}
           >
-            <p
-              className="text-center text-[clamp(0.9rem,1.8vw,1.6rem)] font-bold uppercase leading-[1.15] tracking-[-0.01em]"
-              style={{ color: "hsl(var(--foreground) / 0.85)", fontFamily: "'Inter', sans-serif" }}
-            >
-              WE BUILD WHAT OTHERS
-              <br />
-              ONLY TALK ABOUT.
-            </p>
-            <p
-              className="text-center text-[clamp(0.9rem,1.8vw,1.6rem)] font-bold uppercase leading-[1.15] tracking-[-0.01em]"
-              style={{ color: "hsl(var(--foreground) / 0.85)", fontFamily: "'Inter', sans-serif" }}
-            >
-              WE SPOT GAPS BEFORE
-              <br />
-              THEY'RE OBVIOUS.
-            </p>
+            <div className="flex-1 min-w-0 flex items-center justify-center">
+              <p
+                className="text-center text-[clamp(0.9rem,1.8vw,1.6rem)] font-bold uppercase leading-[1.15] tracking-[-0.01em]"
+                style={{ color: "hsl(var(--foreground) / 0.85)", fontFamily: "'Inter', sans-serif" }}
+              >
+                WE ARCHITECT WHAT
+                <br />
+                THE MARKET DEMANDS.
+              </p>
+            </div>
+            <div className="flex-1 min-w-0 flex items-center justify-center">
+              <p
+                className="text-center text-[clamp(0.9rem,1.8vw,1.6rem)] font-bold uppercase leading-[1.15] tracking-[-0.01em]"
+                style={{ color: "hsl(var(--foreground) / 0.85)", fontFamily: "'Inter', sans-serif" }}
+              >
+                WE SPOT GAPS BEFORE
+                <br />
+                THEY'RE OBVIOUS.
+              </p>
+            </div>
           </div>
 
           {/* Strips row */}
