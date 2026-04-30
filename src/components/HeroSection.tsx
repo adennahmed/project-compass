@@ -1,57 +1,71 @@
-import { useLayoutEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import gsap from "gsap";
-import LinkText from "./LinkText";
-import HeroParticleSphere from "./HeroParticleSphere";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import HeroScene from "./HeroScene";
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface HeroSectionProps {
   animate: boolean;
-  onOpenSidebar?: () => void;
+  onContactClick?: () => void;
 }
 
-const getInwardOffset = () => {
-  if (typeof window === "undefined") return 0;
-  const w = window.innerWidth;
-  if (w < 480) return 0;
-  if (w < 640) return Math.max(w * 0.06, 15);
-  if (w < 1100) return Math.min(w * 0.12, 120);
-  return Math.min(Math.max(w * 0.16, 150), 340);
-};
-
-const HeroSection = ({ animate, onOpenSidebar }: HeroSectionProps) => {
+const HeroSection = ({ animate, onContactClick }: HeroSectionProps) => {
   const sectionRef = useRef<HTMLElement>(null);
-  const hasAnimated = useRef(false);
+  const introDone = useRef(false);
 
-  useLayoutEffect(() => {
-    if (!animate || hasAnimated.current || !sectionRef.current) return;
-    hasAnimated.current = true;
-
-    const offset = getInwardOffset();
+  useEffect(() => {
+    if (!animate || introDone.current || !sectionRef.current) return;
+    introDone.current = true;
 
     const ctx = gsap.context(() => {
-      gsap.set(".hero-half-left", { x: offset });
-      gsap.set(".hero-half-right", { x: -offset });
-      gsap.set(".scroll-indicator, .hero-bottom-left, .hero-bottom-right, .hero-logo-watermark", { opacity: 0 });
+      gsap.fromTo(
+        ".hero-eyebrow",
+        { yPercent: 110, opacity: 0 },
+        { yPercent: 0, opacity: 1, duration: 0.9, ease: "power3.out", delay: 0.1 }
+      );
+      gsap.fromTo(
+        ".hero-headline .reveal-line > span",
+        { yPercent: 105 },
+        { yPercent: 0, duration: 1.05, ease: "power3.out", stagger: 0.06, delay: 0.2 }
+      );
+      gsap.fromTo(
+        ".hero-sub",
+        { y: 24, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.9, ease: "power3.out", delay: 0.85 }
+      );
+      gsap.fromTo(
+        ".hero-foot",
+        { y: 18, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.7, ease: "power3.out", delay: 1.05, stagger: 0.08 }
+      );
+      gsap.fromTo(
+        ".hero-rule",
+        { scaleX: 0, transformOrigin: "0 50%" },
+        { scaleX: 1, duration: 1.4, ease: "power3.out", delay: 0.5 }
+      );
 
-      gsap
-        .timeline()
-        .to(".hero-half-left", {
-          x: 0,
-          duration: 0.95,
-          ease: "power3.inOut",
-        })
-        .to(
-          ".hero-half-right",
-          {
-            x: 0,
-            duration: 0.95,
-            ease: "power3.inOut",
-          },
-          "<"
-        )
-        .to(".hero-bottom-left", { opacity: 1, duration: 0.4, ease: "power2.out" }, "-=0.15")
-        .to(".hero-bottom-right", { opacity: 1, duration: 0.4, ease: "power2.out" }, "<0.05")
-        .to(".hero-logo-watermark", { opacity: 1, duration: 0.4, ease: "power2.out" }, "<")
-        .to(".scroll-indicator", { opacity: 1, duration: 0.4, ease: "power2.out" }, "-=0.2");
+      // Subtle parallax on the headline as the user scrolls past hero
+      gsap.to(".hero-headline", {
+        yPercent: -25,
+        ease: "none",
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top top",
+          end: "bottom top",
+          scrub: 0.6,
+        },
+      });
+      gsap.to(".hero-aux", {
+        opacity: 0,
+        ease: "none",
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top top",
+          end: "60% top",
+          scrub: 0.5,
+        },
+      });
     }, sectionRef);
 
     return () => ctx.revert();
@@ -60,82 +74,87 @@ const HeroSection = ({ animate, onOpenSidebar }: HeroSectionProps) => {
   return (
     <section
       ref={sectionRef}
-      aria-label="Hero — Building the Systems That Drive Growth"
-      className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden"
+      id="home"
+      className="relative isolate flex min-h-[100svh] w-full flex-col overflow-hidden bg-ink"
+      aria-label="Hero — Two engineers, building software that actually ships."
     >
-      <h1 className="sr-only">Building the Systems That Drive Growth.</h1>
+      <HeroScene active={animate} />
 
-      <div className="hero-sphere absolute inset-0 flex items-center justify-center pointer-events-auto">
-        <HeroParticleSphere />
-      </div>
-
-      <div aria-hidden="true" className="hero-split-container relative z-10 flex flex-col sm:flex-row min-h-[30vh] sm:min-h-[58vh] w-full items-center justify-center gap-0">
-        <div className="hero-half-left will-change-transform sm:w-1/2 px-4 sm:px-6 md:px-12">
-          <p
-            className="whitespace-nowrap text-center sm:text-left text-[7vw] sm:text-[clamp(1.6rem,4.9vw,5.3rem)] font-bold uppercase leading-[0.92] tracking-[-0.03em] text-foreground"
-            style={{ fontFamily: "'Inter', sans-serif" }}
-          >
-            BUILDING THE
-            <br />
-            SYSTEMS
-          </p>
+      {/* Top frame — eyebrow */}
+      <div className="relative z-10 flex w-full items-center justify-between px-6 pt-32 md:px-12 md:pt-36">
+        <div className="hero-eyebrow inline-flex overflow-hidden">
+          <span className="font-mono text-[11px] uppercase tracking-[0.32em] text-bone-mute">
+            <span className="text-signal">●</span>&nbsp;&nbsp;Available for new engagements — Spring 2026
+          </span>
         </div>
-        <div className="hero-half-right will-change-transform sm:w-1/2 px-4 sm:px-6 md:px-12">
-          <p
-            className="whitespace-nowrap text-center sm:text-right text-[7vw] sm:text-[clamp(1.6rem,4.9vw,5.3rem)] font-bold uppercase leading-[0.92] tracking-[-0.03em] text-foreground"
-            style={{ fontFamily: "'Inter', sans-serif" }}
-          >
-            THAT
-            <br />
-            DRIVE GROWTH.
-          </p>
+        <div className="hero-eyebrow hidden font-mono text-[11px] uppercase tracking-[0.32em] text-bone-mute md:inline-flex">
+          <span>Studio · Toronto / Remote</span>
         </div>
       </div>
 
-      <div className="absolute bottom-8 left-4 sm:left-6 md:left-12 right-4 sm:right-6 md:right-12 flex items-end justify-between z-10">
-        <div className="hero-bottom-left">
-          <button onClick={onOpenSidebar} className="relative inline-block px-5 py-3 hover-target group">
-            <span className="absolute top-0 left-0 h-2.5 w-2.5 border-l border-t transition-all duration-300 group-hover:h-3.5 group-hover:w-3.5" style={{ borderColor: "hsl(var(--foreground) / 0.25)" }} />
-            <span className="absolute right-0 top-0 h-2.5 w-2.5 border-r border-t transition-all duration-300 group-hover:h-3.5 group-hover:w-3.5" style={{ borderColor: "hsl(var(--foreground) / 0.25)" }} />
-            <span className="absolute bottom-0 left-0 h-2.5 w-2.5 border-b border-l transition-all duration-300 group-hover:h-3.5 group-hover:w-3.5" style={{ borderColor: "hsl(var(--foreground) / 0.25)" }} />
-            <span className="absolute bottom-0 right-0 h-2.5 w-2.5 border-b border-r transition-all duration-300 group-hover:h-3.5 group-hover:w-3.5" style={{ borderColor: "hsl(var(--foreground) / 0.25)" }} />
-            <span className="text-[11px] uppercase tracking-[0.14em]" style={{ color: "hsl(var(--foreground) / 0.65)" }}>
-              <LinkText>Contact Us</LinkText>
+      {/* Headline — pinned mid-screen, integrated with the 3D scene */}
+      <div className="relative z-10 flex flex-1 items-center justify-center px-6 md:px-12">
+        <h1
+          className="hero-headline display-headline w-full max-w-[1280px] text-bone"
+          style={{ fontSize: "clamp(2.5rem, 9vw, 8.5rem)" }}
+        >
+          <span className="reveal-line block">
+            <span>Two engineers.</span>
+          </span>
+          <span className="reveal-line block">
+            <span>
+              One <em className="not-italic font-extralight italic" style={{ fontFamily: "'Space Grotesk', serif" }}>obsession</em> —
             </span>
+          </span>
+          <span className="reveal-line block">
+            <span>
+              software that <span className="text-signal">actually ships</span>.
+            </span>
+          </span>
+        </h1>
+      </div>
+
+      {/* Subline + meta + CTA */}
+      <div className="hero-aux relative z-10 grid w-full grid-cols-1 gap-8 px-6 pb-12 md:grid-cols-12 md:px-12 md:pb-16">
+        <div className="md:col-span-7">
+          <div className="hero-rule mb-6 h-px w-[120px] bg-bone/30" />
+          <p className="hero-sub max-w-[640px] text-base leading-relaxed text-bone/70 md:text-lg">
+            Kozai is a two-person studio that designs and builds the internal tools, dashboards,
+            and platforms that small teams and enterprise operators rely on every day.
+            We don&rsquo;t sell software — we solve the problem behind the problem.
+          </p>
+        </div>
+        <div className="hero-foot flex items-end justify-end md:col-span-5">
+          <button
+            type="button"
+            onClick={onContactClick}
+            className="group relative inline-flex items-center gap-3 px-2 py-2 text-bone hover-target"
+            data-cursor-label="Talk to us"
+          >
+            <span className="font-mono text-[11px] uppercase tracking-[0.32em] text-bone-mute">[ 01 ]</span>
+            <span className="label-stack text-base md:text-lg">
+              <span>Have a project? Let&rsquo;s talk.</span>
+              <span className="text-signal">Tell us what&rsquo;s broken.</span>
+            </span>
+            <span className="ml-1 inline-block h-px w-12 bg-bone transition-all duration-500 group-hover:w-20 group-hover:bg-signal" />
           </button>
         </div>
-        <div className="hero-bottom-right max-w-[480px] hidden md:block">
-          <p
-            className="text-[12px] leading-[1.7] uppercase tracking-[0.04em]"
-            style={{ color: "hsl(var(--foreground) / 0.4)", fontFamily: "'Inter', sans-serif" }}
-          >
-            Kozai turns software and technology into measurable revenue performance
-            — for growing companies, mid-market organizations, and enterprise
-            environments that demand precision.
-          </p>
-        </div>
       </div>
 
-      {/* Scroll indicator with gold shimmer */}
-      <div className="scroll-indicator absolute bottom-8 left-1/2 -translate-x-1/2 z-10 hidden sm:block">
+      {/* Scroll cue */}
+      <div className="hero-aux pointer-events-none absolute bottom-6 left-1/2 z-10 hidden -translate-x-1/2 md:block">
         <div className="flex flex-col items-center gap-2">
-          <div className="relative h-[50px] w-[1px] overflow-hidden" style={{ background: "hsl(var(--foreground) / 0.08)" }}>
-            <div className="animate-scroll-line absolute left-0 top-0 h-[15px] w-full" style={{ background: "linear-gradient(to bottom, transparent, #C8A96E, transparent)" }} />
+          <span className="font-mono text-[10px] uppercase tracking-[0.32em] text-bone-mute">Scroll</span>
+          <div className="relative h-[40px] w-[1px] overflow-hidden bg-bone/15">
+            <div className="absolute left-0 top-0 h-[14px] w-full animate-[scroll-line_1.8s_ease-in-out_infinite] bg-gradient-to-b from-transparent via-signal to-transparent" />
           </div>
         </div>
-      </div>
-
-      <div className="absolute bottom-8 right-4 sm:right-6 md:right-12 z-10 hero-logo-watermark hidden sm:block">
-        <img src="/kozai-logo-white.svg" alt="Kozai logo" className="h-8 opacity-20" />
       </div>
 
       <style>{`
         @keyframes scroll-line {
           0% { transform: translateY(-100%); }
           100% { transform: translateY(400%); }
-        }
-        .animate-scroll-line {
-          animation: scroll-line 2s ease-in-out infinite;
         }
       `}</style>
     </section>

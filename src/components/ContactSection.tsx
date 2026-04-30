@@ -1,151 +1,226 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import LinkText from "./LinkText";
+import * as THREE from "three";
 
 gsap.registerPlugin(ScrollTrigger);
 
+const FluidBackground = () => {
+  const ref = useRef<HTMLCanvasElement>(null);
+  useEffect(() => {
+    const canvas = ref.current;
+    if (!canvas) return;
+
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    const setSize = () => renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
+    setSize();
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    const uniforms = {
+      uTime: { value: 0 },
+      uResolution: { value: new THREE.Vector2(canvas.clientWidth, canvas.clientHeight) },
+      uMouse: { value: new THREE.Vector2(0.5, 0.5) },
+    };
+
+    const mat = new THREE.ShaderMaterial({
+      uniforms,
+      vertexShader: `varying vec2 vUv; void main(){vUv=uv;gl_Position=vec4(position,1.0);}`,
+      fragmentShader: `
+        precision highp float;
+        varying vec2 vUv;
+        uniform float uTime;
+        uniform vec2 uResolution;
+        uniform vec2 uMouse;
+
+        float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+        float noise(vec2 p){
+          vec2 i=floor(p),f=fract(p);
+          vec2 u=f*f*(3.0-2.0*f);
+          return mix(mix(hash(i),hash(i+vec2(1,0)),u.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),u.x),u.y);
+        }
+        float fbm(vec2 p){float v=0.;float a=.5;for(int i=0;i<5;i++){v+=a*noise(p);p*=2.0;a*=0.5;}return v;}
+
+        void main(){
+          vec2 uv=vUv;
+          vec2 p=uv*2.0-1.0;
+          p.x*=uResolution.x/uResolution.y;
+          float t=uTime*0.06;
+          float n=fbm(p*1.4+vec2(t,t*0.7));
+          n=pow(n,1.4);
+          float band=smoothstep(0.4,0.55,n)-smoothstep(0.6,0.75,n);
+          vec3 ink=vec3(0.031,0.031,0.035);
+          vec3 sig=vec3(0.855,1.0,0.0);
+          vec3 col=mix(ink,sig*0.5+ink,band*0.18);
+          // mouse glow
+          float m=length(uv-uMouse);
+          col+=sig*0.05*smoothstep(0.4,0.0,m);
+          gl_FragColor=vec4(col,1.0);
+        }
+      `,
+    });
+    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), mat);
+    scene.add(mesh);
+
+    const onMove = (e: PointerEvent) => {
+      const r = canvas.getBoundingClientRect();
+      uniforms.uMouse.value.set((e.clientX - r.left) / r.width, 1 - (e.clientY - r.top) / r.height);
+    };
+    canvas.addEventListener("pointermove", onMove);
+
+    let raf = 0;
+    const start = performance.now();
+    const tick = () => {
+      uniforms.uTime.value = (performance.now() - start) / 1000;
+      renderer.render(scene, camera);
+      raf = requestAnimationFrame(tick);
+    };
+    tick();
+
+    const onResize = () => {
+      setSize();
+      uniforms.uResolution.value.set(canvas.clientWidth, canvas.clientHeight);
+    };
+    window.addEventListener("resize", onResize);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", onResize);
+      canvas.removeEventListener("pointermove", onMove);
+      mat.dispose();
+      mesh.geometry.dispose();
+      renderer.dispose();
+    };
+  }, []);
+  return <canvas ref={ref} className="absolute inset-0 h-full w-full" aria-hidden />;
+};
+
 interface ContactSectionProps {
-  onOpenSidebar: () => void;
+  onContactClick?: () => void;
 }
 
-const ContactSection = ({ onOpenSidebar }: ContactSectionProps) => {
+const ContactSection = ({ onContactClick }: ContactSectionProps) => {
   const sectionRef = useRef<HTMLElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  // Particle wave canvas
-  const initCanvas = useCallback(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const dpr = window.devicePixelRatio || 1;
-    const w = canvas.parentElement?.offsetWidth || window.innerWidth;
-    const h = canvas.parentElement?.offsetHeight || window.innerHeight;
-    canvas.width = w * dpr;
-    canvas.height = h * dpr;
-    canvas.style.width = `${w}px`;
-    canvas.style.height = `${h}px`;
-    ctx.scale(dpr, dpr);
-
-    const cols = 60;
-    const rows = 30;
-    const spacingX = w / cols;
-    const spacingY = h / rows;
-    let frame = 0;
-    let animId = 0;
-
-    const render = () => {
-      ctx.clearRect(0, 0, w, h);
-      frame += 0.008;
-
-      for (let i = 0; i < cols; i++) {
-        for (let j = 0; j < rows; j++) {
-          const x = i * spacingX + spacingX / 2;
-          const baseY = j * spacingY + spacingY / 2;
-          const wave = Math.sin(i * 0.15 + frame * 3) * 25 + Math.cos(j * 0.12 + frame * 2) * 15;
-          const y = baseY + wave;
-
-          const dist = Math.sqrt((x - w * 0.65) ** 2 + (y - h * 0.45) ** 2);
-          const maxDist = Math.sqrt(w * w + h * h) * 0.5;
-          const alpha = Math.max(0, 0.6 - (dist / maxDist) * 0.5);
-          const size = 1 + alpha * 1.5;
-
-          ctx.beginPath();
-          ctx.arc(x, y, size, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.5})`;
-          ctx.fill();
-        }
-      }
-
-      animId = requestAnimationFrame(render);
-    };
-
-    render();
-    return () => cancelAnimationFrame(animId);
-  }, []);
 
   useEffect(() => {
-    const cleanup = initCanvas();
-    const handleResize = () => {
-      cleanup?.();
-      initCanvas();
-    };
-    window.addEventListener("resize", handleResize);
-    return () => {
-      cleanup?.();
-      window.removeEventListener("resize", handleResize);
-    };
-  }, [initCanvas]);
-
-  useEffect(() => {
+    if (!sectionRef.current) return;
     const ctx = gsap.context(() => {
-      gsap.from(".contact-eyebrow", {
-        y: 20, opacity: 0, duration: 0.7, ease: "power2.out",
-        scrollTrigger: { trigger: ".contact-eyebrow", start: "top 85%" },
-      });
-      gsap.from(".contact-headline", {
-        y: 40, opacity: 0, duration: 0.85, ease: "power3.out",
-        scrollTrigger: { trigger: ".contact-headline", start: "top 82%" },
-      });
-      gsap.from(".contact-body", {
-        y: 25, opacity: 0, duration: 0.7, delay: 0.1, ease: "power2.out",
-        scrollTrigger: { trigger: ".contact-body", start: "top 84%" },
-      });
+      gsap.fromTo(
+        ".contact-line .reveal-line > span",
+        { yPercent: 105 },
+        {
+          yPercent: 0,
+          duration: 1.05,
+          ease: "power3.out",
+          stagger: 0.06,
+          scrollTrigger: { trigger: sectionRef.current, start: "top 70%" },
+        }
+      );
+      gsap.fromTo(
+        ".contact-meta",
+        { y: 30, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.9,
+          ease: "power3.out",
+          stagger: 0.08,
+          scrollTrigger: { trigger: sectionRef.current, start: "top 65%" },
+        }
+      );
     }, sectionRef);
     return () => ctx.revert();
   }, []);
 
   return (
     <section
-      id="contact"
       ref={sectionRef}
-      aria-label="Contact Kozai — Partner With Us"
-      className="relative flex items-center overflow-hidden"
-      style={{ background: "#080808" }}
+      id="contact"
+      className="relative isolate w-full overflow-hidden bg-ink py-32 md:py-48"
+      aria-label="Contact"
     >
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 pointer-events-none"
-        style={{ zIndex: 0 }}
-      />
+      <FluidBackground />
+      <div className="relative z-10 mx-auto max-w-[1440px] px-6 md:px-12">
+        <div className="grid grid-cols-1 gap-12 md:grid-cols-12">
+          <div className="contact-meta md:col-span-3">
+            <span className="font-mono text-[11px] uppercase tracking-[0.32em] text-bone-mute">
+              [ 06 ] — Get in touch
+            </span>
+            <div className="mt-6 h-px w-[80px] bg-signal" />
+            <p className="mt-6 max-w-[260px] text-sm leading-relaxed text-bone/65">
+              Tell us what&rsquo;s broken. We&rsquo;ll tell you if we can fix it — and how, in plain English, by Friday.
+            </p>
+          </div>
 
-      <div className="relative z-10 px-6 md:px-12 max-w-[600px] py-32 md:py-40">
-        <div
-          className="contact-eyebrow text-[11px] uppercase tracking-[0.18em] mb-6"
-          style={{ color: "#C8A96E" }}
-        >
-          PARTNERS
+          <div className="md:col-span-9">
+            <h2
+              className="contact-line display-headline text-bone"
+              style={{ fontSize: "clamp(2.5rem, 7vw, 7rem)", lineHeight: "0.95" }}
+            >
+              <span className="reveal-line block"><span>Have a project?</span></span>
+              <span className="reveal-line block"><span><span className="text-signal">Let&rsquo;s</span> talk.</span></span>
+            </h2>
+
+            <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-12">
+              <div className="contact-meta md:col-span-6">
+                <div className="font-mono text-[11px] uppercase tracking-[0.28em] text-bone-mute">Email</div>
+                <a
+                  href="mailto:hello@kozai.ca"
+                  className="group mt-2 inline-flex items-baseline gap-3 text-2xl text-bone hover-target md:text-3xl"
+                  data-cursor-label="Mail"
+                >
+                  <span className="label-stack">
+                    <span>hello@kozai.ca</span>
+                    <span className="text-signal">hello@kozai.ca</span>
+                  </span>
+                  <span className="inline-block h-px w-12 bg-bone/40 transition-all duration-500 group-hover:w-20 group-hover:bg-signal" />
+                </a>
+                <button
+                  type="button"
+                  onClick={onContactClick}
+                  className="group mt-10 inline-flex items-center gap-3 border border-bone/20 px-5 py-3 text-bone transition-colors duration-300 hover:border-signal hover-target"
+                >
+                  <span className="block h-1.5 w-1.5 rounded-full bg-signal" />
+                  <span className="label-stack font-mono text-[11px] uppercase tracking-[0.24em]">
+                    <span>Open project intake</span>
+                    <span className="text-signal">Tell us about it</span>
+                  </span>
+                  <span className="inline-block h-px w-8 bg-bone/40 transition-all duration-300 group-hover:w-14 group-hover:bg-signal" />
+                </button>
+              </div>
+
+              <div className="contact-meta md:col-span-6">
+                <div className="grid grid-cols-2 gap-x-6 gap-y-8">
+                  <div>
+                    <div className="font-mono text-[11px] uppercase tracking-[0.28em] text-bone-mute">Studio</div>
+                    <div className="mt-1.5 text-sm text-bone/85">Toronto, ON</div>
+                  </div>
+                  <div>
+                    <div className="font-mono text-[11px] uppercase tracking-[0.28em] text-bone-mute">Hours</div>
+                    <div className="mt-1.5 text-sm text-bone/85">Mon–Fri · 09–18 ET</div>
+                  </div>
+                  <div>
+                    <div className="font-mono text-[11px] uppercase tracking-[0.28em] text-bone-mute">Slot</div>
+                    <div className="mt-1.5 text-sm text-bone/85">One project · May 2026</div>
+                  </div>
+                  <div>
+                    <div className="font-mono text-[11px] uppercase tracking-[0.28em] text-bone-mute">Reply</div>
+                    <div className="mt-1.5 text-sm text-bone/85">Within 48 hours</div>
+                  </div>
+                </div>
+
+                <div className="mt-12 border-t border-bone/10 pt-6">
+                  <div className="font-mono text-[11px] uppercase tracking-[0.28em] text-bone-mute">Not for us</div>
+                  <p className="mt-2 max-w-[420px] text-sm leading-relaxed text-bone/55">
+                    Marketing sites, low-code rebuilds, generic CRM rollouts. We&rsquo;re built for harder problems —
+                    if that&rsquo;s yours, we&rsquo;ll happily refer you to people who do this well.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <h2
-          className="contact-headline text-[28px] md:text-[40px] font-bold uppercase leading-[1.1] mb-6"
-          style={{ color: "#ffffff" }}
-        >
-          Partner at the Edge of What's Possible
-        </h2>
-        <div
-          className="w-[200px] h-[1px] mb-6"
-          style={{ background: "rgba(255,255,255,0.15)" }}
-        />
-        <p
-          className="contact-body text-[13px] uppercase tracking-[0.04em] leading-[1.7] mb-10 max-w-[380px]"
-          style={{ color: "rgba(255,255,255,0.5)" }}
-        >
-          Join forces with the ventures that are creating new markets. Partner early, transform fast, own the edge.
-        </p>
-        <button
-          onClick={onOpenSidebar}
-          className="relative inline-block px-6 py-3 hover-target group"
-        >
-          <span className="absolute top-0 left-0 w-2.5 h-2.5 border-t border-l transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(255,255,255,0.25)" }} />
-          <span className="absolute top-0 right-0 w-2.5 h-2.5 border-t border-r transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(255,255,255,0.25)" }} />
-          <span className="absolute bottom-0 left-0 w-2.5 h-2.5 border-b border-l transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(255,255,255,0.25)" }} />
-          <span className="absolute bottom-0 right-0 w-2.5 h-2.5 border-b border-r transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(255,255,255,0.25)" }} />
-          <span className="text-[12px] uppercase tracking-[0.12em]" style={{ color: "rgba(255,255,255,0.75)" }}>
-            <LinkText>Partner With Us</LinkText>
-          </span>
-        </button>
       </div>
     </section>
   );

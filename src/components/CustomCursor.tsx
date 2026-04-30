@@ -8,68 +8,71 @@ const CustomCursor = () => {
     const cursor = cursorRef.current;
     if (!cursor) return;
 
-    const xTo = gsap.quickTo(cursor, "x", { duration: 0.35, ease: "power3" });
-    const yTo = gsap.quickTo(cursor, "y", { duration: 0.35, ease: "power3" });
-
-    const onMouseMove = (e: MouseEvent) => {
-      xTo(e.clientX);
-      yTo(e.clientY);
-    };
-
-    window.addEventListener("mousemove", onMouseMove);
-
+    const dot = cursor.querySelector("#cursor-dot") as HTMLElement;
+    const ring = cursor.querySelector("#cursor-ring") as HTMLElement;
     const label = cursor.querySelector("#cursor-label") as HTMLElement;
 
-    const addCursorListeners = () => {
-      // Clickable elements — expand cursor with ring
-      const clickables = document.querySelectorAll('a, button, [role="button"], input[type="submit"], .hover-target, [data-cursor="view"]');
-      clickables.forEach((el) => {
-        el.addEventListener("mouseenter", () => {
-          cursor.classList.add("clickable");
-        });
-        el.addEventListener("mouseleave", () => {
-          cursor.classList.remove("clickable");
-        });
-      });
+    const dotX = gsap.quickTo(dot, "x", { duration: 0.18, ease: "power3" });
+    const dotY = gsap.quickTo(dot, "y", { duration: 0.18, ease: "power3" });
+    const ringX = gsap.quickTo(ring, "x", { duration: 0.42, ease: "power3" });
+    const ringY = gsap.quickTo(ring, "y", { duration: 0.42, ease: "power3" });
+    const labelX = gsap.quickTo(label, "x", { duration: 0.42, ease: "power3" });
+    const labelY = gsap.quickTo(label, "y", { duration: 0.42, ease: "power3" });
 
-      document.querySelectorAll('[data-cursor="drag"]').forEach((el) => {
-        el.addEventListener("mouseenter", () => {
-          cursor.className = "drag";
-          if (label) label.textContent = "DRAG";
-        });
-        el.addEventListener("mouseleave", () => {
-          cursor.className = "";
-          if (label) label.textContent = "";
-        });
-      });
+    const onMove = (e: MouseEvent) => {
+      dotX(e.clientX);
+      dotY(e.clientY);
+      ringX(e.clientX);
+      ringY(e.clientY);
+      labelX(e.clientX);
+      labelY(e.clientY);
+    };
 
-      document.querySelectorAll('[data-cursor="view"]').forEach((el) => {
+    const setLabel = (text: string) => {
+      if (label) label.textContent = text;
+    };
+
+    const bind = () => {
+      const hoverables = document.querySelectorAll<HTMLElement>(
+        'a, button, [role="button"], input, textarea, .hover-target, [data-cursor]'
+      );
+      hoverables.forEach((el) => {
+        if (el.dataset.cursorBound === "1") return;
+        el.dataset.cursorBound = "1";
+        const mode = el.dataset.cursor;
+        const labelText = el.dataset.cursorLabel;
         el.addEventListener("mouseenter", () => {
-          cursor.classList.add("view");
-          if (label) label.textContent = "VIEW";
+          if (mode === "view") cursor.classList.add("view");
+          else if (mode === "drag") cursor.classList.add("drag");
+          else cursor.classList.add("hover");
+          if (labelText) setLabel(labelText);
+          else if (mode === "view") setLabel("View");
+          else if (mode === "drag") setLabel("Drag");
         });
         el.addEventListener("mouseleave", () => {
-          cursor.classList.remove("view");
-          if (label) label.textContent = "";
+          cursor.classList.remove("hover", "view", "drag");
+          setLabel("");
         });
       });
     };
 
-    addCursorListeners();
-    const observer = new MutationObserver(addCursorListeners);
+    bind();
+    const observer = new MutationObserver(bind);
     observer.observe(document.body, { childList: true, subtree: true });
 
+    window.addEventListener("mousemove", onMove);
+
     return () => {
-      window.removeEventListener("mousemove", onMouseMove);
       observer.disconnect();
+      window.removeEventListener("mousemove", onMove);
     };
   }, []);
 
   return (
-    <div id="cursor" ref={cursorRef}>
-      <div id="cursor-inner">
-        <span id="cursor-label"></span>
-      </div>
+    <div id="cursor" ref={cursorRef} aria-hidden>
+      <div id="cursor-ring" />
+      <div id="cursor-dot" />
+      <div id="cursor-label" />
     </div>
   );
 };

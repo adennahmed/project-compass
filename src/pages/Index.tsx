@@ -1,114 +1,54 @@
-import { useState, useCallback } from "react";
+import { useCallback, useState } from "react";
 import SEOHead from "@/components/SEOHead";
-import Preloader from "@/components/Preloader";
+import SmoothScroll from "@/components/SmoothScroll";
 import CustomCursor from "@/components/CustomCursor";
+import Preloader from "@/components/Preloader";
 import Navigation from "@/components/Navigation";
 import HeroSection from "@/components/HeroSection";
-import PositioningSection from "@/components/PositioningSection";
-import SolutionsSection from "@/components/SolutionsSection";
-import OurFocusSection from "@/components/OurFocusSection";
-import DotBackground from "@/components/DotBackground";
-import IndustriesMarquee from "@/components/IndustriesMarquee";
-import WhoWeServeSection from "@/components/WhoWeServeSection";
-import ClientsSection from "@/components/ClientsSection";
-import WhyKozaiSection from "@/components/WhyKozaiSection";
-import TeamSection from "@/components/TeamSection";
+import ManifestoSection from "@/components/ManifestoSection";
+import ServicesSection from "@/components/ServicesSection";
+import WorkSection from "@/components/WorkSection";
+import StackMarquee from "@/components/StackMarquee";
+import StudioSection from "@/components/StudioSection";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
-import SmoothScroll from "@/components/SmoothScroll";
-import ContactSidebar from "@/components/ContactSidebar";
+import ContactDrawer from "@/components/ContactDrawer";
 
 const Index = () => {
   const [heroAnimate, setHeroAnimate] = useState(false);
   const [showPreloader, setShowPreloader] = useState(true);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const openSidebar = useCallback(() => setSidebarOpen(true), []);
-  const closeSidebar = useCallback(() => setSidebarOpen(false), []);
+  const openDrawer = useCallback(() => setDrawerOpen(true), []);
+  const closeDrawer = useCallback(() => setDrawerOpen(false), []);
 
-  const handlePreloaderTransition = useCallback(() => {
-    setHeroAnimate(true);
-  }, []);
-
-  const handlePreloaderComplete = useCallback(() => {
-    setShowPreloader(false);
-  }, []);
+  const onPreloaderHandoff = useCallback(() => setHeroAnimate(true), []);
+  const onPreloaderComplete = useCallback(() => setShowPreloader(false), []);
 
   return (
     <>
       <SEOHead
-        title="Kozai — Technology Built to Drive Growth"
-        description="Kozai turns software and technology into measurable revenue performance — for growing companies, mid-market organizations, and enterprise environments."
+        title="Kozai — Two engineers, building software that ships."
+        description="Kozai is a two-person software studio that designs and builds the internal tools, dashboards, and platforms small teams and enterprise operators rely on every day."
         path="/"
       />
       <SmoothScroll />
       <CustomCursor />
-      {showPreloader && <Preloader onComplete={handlePreloaderComplete} onTransitionStart={handlePreloaderTransition} />}
-      <Navigation />
+      {showPreloader && (
+        <Preloader onComplete={onPreloaderComplete} onTransitionStart={onPreloaderHandoff} />
+      )}
+      <Navigation onContactClick={openDrawer} />
       <main>
-        <HeroSection animate={heroAnimate} onOpenSidebar={openSidebar} />
-        <PositioningSection />
-        <SolutionsSection onOpenSidebar={openSidebar} />
-
-        {/* Shared dot background wrapper for Our Focus + Industries */}
-        <div className="relative" style={{ background: "#EEEAE4" }}>
-          <DotBackground />
-          {/* Top fade */}
-          <div
-            className="absolute top-0 left-0 right-0 h-32 z-20 pointer-events-none"
-            style={{ background: "linear-gradient(to bottom, #EEEAE4, transparent)" }}
-          />
-          <OurFocusSection />
-          <IndustriesMarquee />
-          {/* Bottom fade */}
-          <div
-            className="absolute bottom-0 left-0 right-0 h-32 z-20 pointer-events-none"
-            style={{ background: "linear-gradient(to top, #EEEAE4, transparent)" }}
-          />
-        </div>
-
-        {/* Gradient transition from light to dark */}
-        <div className="relative">
-          <div
-            className="h-32 w-full"
-            style={{
-              background: "linear-gradient(to bottom, #EEEAE4, #080808)",
-            }}
-          />
-        </div>
-        <WhoWeServeSection />
-        <ClientsSection />
-        <WhyKozaiSection />
-        <TeamSection onOpenSidebar={openSidebar} />
-
-        {/* Spacer + subtle gold line transition between Team and Contact */}
-        <div className="relative" style={{ background: "#080808" }}>
-          <div className="h-24 md:h-32" />
-          <div className="flex items-center justify-center">
-            <div
-              className="h-px w-[60px] opacity-0"
-              style={{ background: "#C8A96E" }}
-              ref={(el) => {
-                if (!el) return;
-                const obs = new IntersectionObserver(([entry]) => {
-                  if (entry.isIntersecting) {
-                    el.style.transition = "width 1s cubic-bezier(0.76, 0, 0.24, 1), opacity 0.6s ease";
-                    el.style.width = "120px";
-                    el.style.opacity = "0.3";
-                    obs.disconnect();
-                  }
-                }, { threshold: 0.5 });
-                obs.observe(el);
-              }}
-            />
-          </div>
-          <div className="h-24 md:h-32" />
-        </div>
-
-        <ContactSection onOpenSidebar={openSidebar} />
+        <HeroSection animate={heroAnimate} onContactClick={openDrawer} />
+        <ManifestoSection />
+        <ServicesSection />
+        <WorkSection />
+        <StackMarquee />
+        <StudioSection />
+        <ContactSection onContactClick={openDrawer} />
       </main>
-      <Footer onOpenSidebar={openSidebar} />
-      <ContactSidebar open={sidebarOpen} onClose={closeSidebar} />
+      <Footer />
+      <ContactDrawer open={drawerOpen} onClose={closeDrawer} />
     </>
   );
 };

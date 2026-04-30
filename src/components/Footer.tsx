@@ -1,158 +1,157 @@
-import { useCallback, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import LinkText from "./LinkText";
+import { useEffect, useRef } from "react";
+import * as THREE from "three";
+import Logo from "./Logo";
 
-const navLinks = [
-  { label: "WHY KOZAI", href: "#why-kozai" },
-  { label: "SOLUTIONS", href: "#solutions" },
-  { label: "PORTFOLIO", href: "#clients" },
-  { label: "TEAM", href: "#team" },
-  { label: "INSIGHTS", href: "#insights" },
-  { label: "CONTACT", href: "#contact" },
-];
-
-const legalLinks = [
-  { label: "Privacy Policy", href: "/privacy-policy" },
-  { label: "Terms and Conditions", href: "/terms-and-conditions" },
-];
-
-interface FooterProps {
-  onOpenSidebar?: () => void;
-}
-
-const FooterParticleArt = () => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const animRef = useRef<number>(0);
-
-  const initCanvas = useCallback(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const dpr = window.devicePixelRatio || 1;
-    const w = canvas.parentElement?.offsetWidth || 500;
-    const h = canvas.parentElement?.offsetHeight || 600;
-    canvas.width = w * dpr;
-    canvas.height = h * dpr;
-    canvas.style.width = `${w}px`;
-    canvas.style.height = `${h}px`;
-    ctx.scale(dpr, dpr);
-
-    const numPoints = 800;
-    let time = 0;
-
-    const render = () => {
-      ctx.clearRect(0, 0, w, h);
-      time += 0.003;
-
-      const cx = w * 0.5;
-      const cy = h * 0.5;
-
-      for (let i = 0; i < numPoints; i++) {
-        const t = i / numPoints;
-        const angle = t * Math.PI * 8 + time;
-        const r = t * Math.min(w, h) * 0.38;
-        const x = cx + Math.cos(angle) * r;
-        const y = cy + Math.sin(angle) * r * 0.7;
-        const alpha = 0.15 + t * 0.55;
-        const size = 1 + t * 2;
-
-        ctx.beginPath();
-        ctx.arc(x, y, size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
-        ctx.fill();
-      }
-
-      animRef.current = requestAnimationFrame(render);
-    };
-
-    render();
-    return () => cancelAnimationFrame(animRef.current);
-  }, []);
-
+const FooterArt = () => {
+  const ref = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
-    const cleanup = initCanvas();
-    const handleResize = () => { cleanup?.(); initCanvas(); };
-    window.addEventListener("resize", handleResize);
-    return () => { cleanup?.(); window.removeEventListener("resize", handleResize); };
-  }, [initCanvas]);
+    const canvas = ref.current;
+    if (!canvas) return;
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    const setSize = () => renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
+    setSize();
 
-  return <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none" style={{ zIndex: 0 }} />;
+    const scene = new THREE.Scene();
+    const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    const u = {
+      uTime: { value: 0 },
+      uRes: { value: new THREE.Vector2(canvas.clientWidth, canvas.clientHeight) },
+    };
+    const mat = new THREE.ShaderMaterial({
+      uniforms: u,
+      vertexShader: `void main(){gl_Position=vec4(position,1.0);}`,
+      fragmentShader: `
+        precision highp float;
+        uniform float uTime;
+        uniform vec2 uRes;
+        void main(){
+          vec2 uv=gl_FragCoord.xy/uRes;
+          vec2 p=uv*2.0-1.0;
+          p.x*=uRes.x/uRes.y;
+          float a=atan(p.y,p.x);
+          float r=length(p);
+          float lines=sin(a*16.0+uTime*0.2)*0.5+0.5;
+          lines*=smoothstep(1.4,0.0,r);
+          vec3 col=mix(vec3(0.031),vec3(0.855,1.0,0.0)*0.18,lines);
+          gl_FragColor=vec4(col,1.0);
+        }
+      `,
+    });
+    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), mat);
+    scene.add(mesh);
+
+    let raf = 0;
+    const start = performance.now();
+    const tick = () => {
+      u.uTime.value = (performance.now() - start) / 1000;
+      renderer.render(scene, camera);
+      raf = requestAnimationFrame(tick);
+    };
+    tick();
+
+    const onResize = () => {
+      setSize();
+      u.uRes.value.set(canvas.clientWidth, canvas.clientHeight);
+    };
+    window.addEventListener("resize", onResize);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", onResize);
+      mat.dispose();
+      mesh.geometry.dispose();
+      renderer.dispose();
+    };
+  }, []);
+  return <canvas ref={ref} className="absolute inset-0 h-full w-full" aria-hidden />;
 };
 
-const Footer = ({ onOpenSidebar }: FooterProps) => {
-  return (
-    <footer className="relative overflow-hidden" style={{ background: "#080808" }}>
-      <div className="grid md:grid-cols-2 min-h-[400px]">
-        {/* Left - Particle Art */}
-        <div className="relative hidden md:block">
-          <FooterParticleArt />
-        </div>
+const navLinks = [
+  { label: "Work", href: "#work" },
+  { label: "Approach", href: "#approach" },
+  { label: "Studio", href: "#studio" },
+  { label: "Contact", href: "#contact" },
+];
+const legalLinks = [
+  { label: "Privacy", href: "/privacy-policy" },
+  { label: "Terms", href: "/terms-and-conditions" },
+];
 
-        {/* Right - Accent block */}
-        <div
-          className="relative flex flex-col justify-between p-8 sm:p-10 md:p-14"
-          style={{ background: "#C8A96E", borderRadius: "16px 0 0 0" }}
-        >
-          <div>
-            <h3
-              className="text-[22px] sm:text-[24px] md:text-[32px] font-bold uppercase leading-[1.1] mb-4"
-              style={{ color: "#1a1a1a" }}
-            >
-              Own What's Next.
-            </h3>
-            <p
-              className="text-[12px] uppercase tracking-[0.04em] leading-[1.7] mb-8 max-w-[380px]"
-              style={{ color: "rgba(30,30,30,0.6)" }}
-            >
-              Breakthrough founders. Pre-market investors. Transformative partners. Reach out, and let's move.
+const Footer = () => {
+  return (
+    <footer className="relative isolate w-full overflow-hidden border-t border-bone/8 bg-ink">
+      <div className="pointer-events-none absolute inset-0 opacity-50">
+        <FooterArt />
+      </div>
+
+      <div className="relative z-10 mx-auto max-w-[1440px] px-6 py-20 md:px-12 md:py-28">
+        <div className="grid grid-cols-2 gap-y-12 md:grid-cols-12 md:gap-8">
+          <div className="col-span-2 md:col-span-5">
+            <Logo variant="full" className="h-8 w-auto text-bone" />
+            <p className="mt-6 max-w-[360px] text-sm leading-relaxed text-bone/55">
+              A two-person software studio. We design and build the tools your team actually
+              needs — then ship them.
             </p>
-            <button onClick={onOpenSidebar} className="relative inline-block px-6 py-3 hover-target group mb-12">
-              <span className="absolute top-0 left-0 w-2.5 h-2.5 border-t border-l transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(30,30,30,0.3)" }} />
-              <span className="absolute top-0 right-0 w-2.5 h-2.5 border-t border-r transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(30,30,30,0.3)" }} />
-              <span className="absolute bottom-0 left-0 w-2.5 h-2.5 border-b border-l transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(30,30,30,0.3)" }} />
-              <span className="absolute bottom-0 right-0 w-2.5 h-2.5 border-b border-r transition-all duration-300 group-hover:w-3.5 group-hover:h-3.5" style={{ borderColor: "rgba(30,30,30,0.3)" }} />
-              <span className="text-[12px] uppercase tracking-[0.12em]" style={{ color: "rgba(30,30,30,0.85)" }}>
-                <LinkText>Contact Us</LinkText>
+            <a
+              href="mailto:hello@kozai.ca"
+              className="mt-8 inline-flex items-baseline gap-3 text-2xl text-bone hover-target"
+            >
+              <span className="label-stack">
+                <span>hello@kozai.ca</span>
+                <span className="text-signal">hello@kozai.ca</span>
               </span>
-            </button>
+            </a>
           </div>
 
-          <div>
-            <div className="flex flex-wrap gap-x-5 md:gap-x-8 gap-y-2 mb-8">
-              {navLinks.map((link) => (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  className="text-[12px] md:text-[16px] font-bold uppercase hover-target"
-                  style={{ color: "#1a1a1a" }}
-                >
-                  <LinkText>{link.label}</LinkText>
-                </a>
+          <div className="col-span-1 md:col-span-3 md:col-start-7">
+            <div className="font-mono text-[11px] uppercase tracking-[0.28em] text-bone-mute">
+              Sitemap
+            </div>
+            <ul className="mt-4 space-y-2.5">
+              {navLinks.map((l) => (
+                <li key={l.label}>
+                  <a className="hover-target inline-flex text-bone/85" href={l.href}>
+                    <span className="label-stack text-base">
+                      <span>{l.label}</span>
+                      <span className="text-signal">{l.label}</span>
+                    </span>
+                  </a>
+                </li>
               ))}
-            </div>
+            </ul>
+          </div>
 
-            <div
-              className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-6"
-              style={{ borderTop: "1px solid rgba(30,30,30,0.15)" }}
-            >
-              <p className="text-[11px] uppercase tracking-[0.06em]" style={{ color: "rgba(30,30,30,0.45)" }}>
-                © 2026 Kozai. All rights reserved.
-              </p>
-              <div className="flex flex-wrap gap-4">
-                {legalLinks.map((link) => (
-                  <Link
-                    key={link.label}
-                    to={link.href}
-                    className="text-[11px] uppercase tracking-[0.06em] hover-target"
-                    style={{ color: "rgba(30,30,30,0.45)" }}
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              </div>
+          <div className="col-span-1 md:col-span-3">
+            <div className="font-mono text-[11px] uppercase tracking-[0.28em] text-bone-mute">
+              Studio
             </div>
+            <ul className="mt-4 space-y-2.5 text-sm text-bone/85">
+              <li>Toronto, ON · Canada</li>
+              <li>Mon–Fri · 09–18 ET</li>
+              <li>Available — Spring 2026</li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="mt-16 flex flex-col items-start justify-between gap-4 border-t border-bone/8 pt-6 md:flex-row md:items-center">
+          <div className="font-mono text-[11px] uppercase tracking-[0.24em] text-bone-mute">
+            © 2026 Kozai · All rights reserved
+          </div>
+          <div className="flex gap-6">
+            {legalLinks.map((l) => (
+              <Link
+                key={l.label}
+                to={l.href}
+                className="font-mono text-[11px] uppercase tracking-[0.24em] text-bone-mute hover:text-bone"
+              >
+                {l.label}
+              </Link>
+            ))}
+          </div>
+          <div className="font-mono text-[11px] uppercase tracking-[0.24em] text-signal">
+            Built in-house · No frameworks were harmed
           </div>
         </div>
       </div>
