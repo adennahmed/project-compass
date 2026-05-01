@@ -3,7 +3,6 @@ import gsap from "gsap";
 import Logo from "./Logo";
 
 interface NavigationProps {
-  ready?: boolean;
   onContactClick?: () => void;
 }
 
@@ -14,7 +13,7 @@ const navItems = [
   { label: "Contact", href: "#contact" },
 ];
 
-const Navigation = ({ ready = true, onContactClick }: NavigationProps) => {
+const Navigation = ({ onContactClick }: NavigationProps) => {
   const navRef = useRef<HTMLElement>(null);
   const [scrolled, setScrolled] = useState(false);
 
@@ -26,13 +25,13 @@ const Navigation = ({ ready = true, onContactClick }: NavigationProps) => {
   }, []);
 
   useEffect(() => {
-    if (!ready || !navRef.current) return;
+    if (!navRef.current) return;
     gsap.fromTo(
       navRef.current,
       { y: -16, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" }
+      { y: 0, opacity: 1, duration: 0.8, ease: "power3.out", delay: 1.4 }
     );
-  }, [ready]);
+  }, []);
 
   const onAnchor = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
@@ -51,7 +50,6 @@ const Navigation = ({ ready = true, onContactClick }: NavigationProps) => {
       ref={navRef}
       className="fixed inset-x-0 top-0 z-50 px-6 py-5 transition-all duration-500 md:px-12"
       style={{
-        opacity: ready ? undefined : 0,
         background: scrolled ? "rgba(8,8,9,0.72)" : "transparent",
         backdropFilter: scrolled ? "blur(14px)" : "none",
         WebkitBackdropFilter: scrolled ? "blur(14px)" : "none",
