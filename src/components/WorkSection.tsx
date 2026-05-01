@@ -243,7 +243,7 @@ const WorkSection = ({ onContactClick }: WorkSectionProps) => {
       className="relative w-full overflow-hidden bg-ink"
       aria-label="Selected work"
     >
-      <div className="px-6 pt-32 md:px-12 md:pt-40">
+      <div className="px-6 pt-20 md:px-12 md:pt-24 lg:pt-32">
         <div className="work-header mx-auto flex max-w-[1440px] items-end justify-between">
           <div>
             <span className="font-mono text-[11px] uppercase tracking-[0.32em] text-bone-mute">
@@ -262,7 +262,7 @@ const WorkSection = ({ onContactClick }: WorkSectionProps) => {
         </div>
       </div>
 
-      <div className="relative mt-10 overflow-hidden md:mt-16">
+      <div className="relative mt-6 overflow-hidden md:mt-10">
         <div
           ref={trackRef}
           className="flex flex-nowrap gap-6 px-6 will-change-transform md:gap-10 md:px-12"
@@ -270,8 +270,8 @@ const WorkSection = ({ onContactClick }: WorkSectionProps) => {
           {projects.map((p, i) => (
             <article
               key={p.n}
-              className="relative flex w-[88vw] shrink-0 flex-col border border-bone/10 bg-ink-rise/40 p-6 md:w-[64vw] md:max-w-[820px] md:p-10 lg:w-[52vw]"
-              style={{ aspectRatio: "16/11" }}
+              className="relative flex w-[88vw] shrink-0 flex-col border border-bone/10 bg-ink-rise/40 p-5 md:w-[58vw] md:max-w-[780px] md:p-8 lg:w-[48vw]"
+              style={{ aspectRatio: "16/10" }}
             >
               <div className="flex items-center justify-between">
                 <span className="font-mono text-[11px] uppercase tracking-[0.32em] text-signal">{p.n}</span>

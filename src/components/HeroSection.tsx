@@ -81,7 +81,7 @@ const HeroSection = ({ animate, onContactClick }: HeroSectionProps) => {
       <HeroScene active={animate} />
 
       {/* Top frame — eyebrow */}
-      <div className="relative z-10 flex w-full items-center justify-between px-6 pt-32 md:px-12 md:pt-36">
+      <div className="relative z-10 flex w-full items-center justify-between px-6 pt-24 md:px-12 md:pt-28 lg:pt-32">
         <div className="hero-eyebrow inline-flex overflow-hidden">
           <span className="font-mono text-[11px] uppercase tracking-[0.32em] text-bone-mute">
             <span className="text-signal">●</span>&nbsp;&nbsp;Available for new engagements — Spring 2026

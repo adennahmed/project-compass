@@ -93,11 +93,11 @@ const HeroScene = ({ active }: HeroSceneProps) => {
       mesh.position.set(def.pos[0], def.pos[1], def.pos[2]);
       mesh.rotation.set(def.rot[0], def.rot[1], def.rot[2]);
 
-      // Start invisible — will animate in
-      mesh.scale.set(0, 0, 0);
+      // Start at zero length — will draw in along the beam axis
+      mesh.scale.set(0.001, 1, 1);
 
       mesh.userData = {
-        spawnDelay: i * 0.12,
+        spawnDelay: i * 0.16,
         spawnDone: false,
         floatAmp: 0.03 + Math.random() * 0.06,
         floatSpeed: 0.3 + Math.random() * 0.3,
@@ -196,30 +196,33 @@ const HeroScene = ({ active }: HeroSceneProps) => {
       if (activeRef.current && spawnStart === 0) spawnStart = now;
       const elapsed = spawnStart > 0 ? (now - spawnStart) / 1000 : 0;
 
-      // Beams — staggered scale-in from 0 to full
+      // Beams — draw in along X-axis (length), quartic-out ease
       beams.forEach((b) => {
         const ud = b.userData;
         const spawnT = Math.max(0, elapsed - ud.spawnDelay);
         if (spawnT > 0 && !ud.spawnDone) {
-          const ease = Math.min(1, spawnT / 0.8);
-          const eased = 1 - Math.pow(1 - ease, 3);
-          b.scale.setScalar(eased);
-          if (ease >= 1) ud.spawnDone = true;
+          const progress = Math.min(1, spawnT / 1.1);
+          const eased = 1 - Math.pow(1 - progress, 4);
+          b.scale.x = Math.max(0.001, eased);
+          if (progress >= 1) ud.spawnDone = true;
         }
         // Gentle float
-        if (ud.spawnDone || spawnT > 0.2) {
+        if (ud.spawnDone || spawnT > 0.3) {
           const bp = ud.basePos as THREE.Vector3;
           b.position.y = bp.y + Math.sin(t * ud.floatSpeed + ud.floatOffset) * ud.floatAmp;
         }
       });
 
-      // Crystal spawn
+      // Crystal spawn — uniform scale-in with slight overshoot
       const cSpawn = Math.max(0, elapsed - crystal.userData.spawnDelay);
       if (cSpawn > 0 && !crystal.userData.spawnDone) {
-        const ease = Math.min(1, cSpawn / 1.0);
-        const eased = 1 - Math.pow(1 - ease, 3);
-        crystal.scale.setScalar(eased);
-        if (ease >= 1) crystal.userData.spawnDone = true;
+        const progress = Math.min(1, cSpawn / 1.2);
+        // Back-out: overshoot then settle
+        const eased = progress < 0.7
+          ? 1 - Math.pow(1 - progress / 0.7, 3)
+          : 1 + Math.sin((progress - 0.7) / 0.3 * Math.PI) * 0.06 * (1 - (progress - 0.7) / 0.3);
+        crystal.scale.setScalar(Math.max(0.001, eased));
+        if (progress >= 1) crystal.userData.spawnDone = true;
       }
       crystal.rotation.x = t * 0.1 + st.target.y * 0.3;
       crystal.rotation.y = t * 0.15 + st.target.x * 0.3;

@@ -234,11 +234,11 @@ const ServicesSection = () => {
     <section
       ref={sectionRef}
       id="services"
-      className="relative h-screen w-full bg-ink"
-      style={{ overflow: "clip" }}
+      className="relative w-full bg-ink"
+      style={{ overflow: "clip", height: "100svh", minHeight: "620px" }}
       aria-label="What we build"
     >
-      <div className="mx-auto flex h-full max-w-[1440px] flex-col px-6 pt-20 md:px-12 md:pt-28">
+      <div className="mx-auto flex h-full max-w-[1440px] flex-col px-6 pt-14 md:px-12 md:pt-16 lg:pt-20">
         <div className="flex items-end justify-between">
           <div>
             <span className="font-mono text-[11px] uppercase tracking-[0.32em] text-bone-mute">
@@ -261,7 +261,7 @@ const ServicesSection = () => {
           </div>
         </div>
 
-        <div className="relative mt-10 grid flex-1 grid-cols-1 gap-8 md:mt-14 md:grid-cols-12 md:gap-12">
+        <div className="relative mt-6 grid flex-1 grid-cols-1 gap-8 md:mt-8 md:grid-cols-12 md:gap-12">
           {/* Visual stage */}
           <div className="relative order-2 hidden h-full md:order-1 md:col-span-5 md:block">
             <div className="relative h-full w-full">
@@ -285,18 +285,18 @@ const ServicesSection = () => {
                     {s.n}
                   </div>
                   <h3
-                    className="display-headline mt-4 text-bone"
-                    style={{ fontSize: "clamp(1.75rem, 4vw, 3.6rem)", lineHeight: "1.05" }}
+                    className="display-headline mt-3 text-bone"
+                    style={{ fontSize: "clamp(1.5rem, 3.5vw, 3.2rem)", lineHeight: "1.05" }}
                   >
                     {s.title}
                   </h3>
-                  <p className="mt-6 max-w-[520px] text-base text-signal md:text-lg">
+                  <p className="mt-4 max-w-[520px] text-base text-signal">
                     {s.line}
                   </p>
-                  <p className="mt-3 max-w-[560px] text-sm leading-relaxed text-bone/65 md:text-base">
+                  <p className="mt-2 max-w-[560px] text-sm leading-relaxed text-bone/65">
                     {s.body}
                   </p>
-                  <ul className="mt-8 flex flex-wrap gap-2">
+                  <ul className="mt-5 flex flex-wrap gap-2">
                     {s.deliverables.map((d) => (
                       <li
                         key={d}
