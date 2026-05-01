@@ -76,7 +76,7 @@ const HeroSection = ({ animate, onContactClick }: HeroSectionProps) => {
       ref={sectionRef}
       id="home"
       className="relative isolate flex min-h-[100svh] w-full flex-col overflow-hidden bg-ink"
-      aria-label="Hero — Two engineers, building software that actually ships."
+      aria-label="Hero — Software that actually ships."
     >
       <HeroScene active={animate} />
 
@@ -99,16 +99,14 @@ const HeroSection = ({ animate, onContactClick }: HeroSectionProps) => {
           style={{ fontSize: "clamp(2.5rem, 9vw, 8.5rem)" }}
         >
           <span className="reveal-line block">
-            <span>Two engineers.</span>
+            <span>We don&rsquo;t sell software.</span>
+          </span>
+          <span className="reveal-line block">
+            <span>We solve the problem</span>
           </span>
           <span className="reveal-line block">
             <span>
-              One <em className="not-italic font-extralight italic" style={{ fontFamily: "'Space Grotesk', serif" }}>obsession</em> —
-            </span>
-          </span>
-          <span className="reveal-line block">
-            <span>
-              software that <span className="text-signal">actually ships</span>.
+              <span className="text-signal">behind</span> the problem.
             </span>
           </span>
         </h1>
@@ -119,22 +117,20 @@ const HeroSection = ({ animate, onContactClick }: HeroSectionProps) => {
         <div className="md:col-span-7">
           <div className="hero-rule mb-6 h-px w-[120px] bg-bone/30" />
           <p className="hero-sub max-w-[640px] text-base leading-relaxed text-bone/70 md:text-lg">
-            Kozai is a two-person studio that designs and builds the internal tools, dashboards,
-            and platforms that small teams and enterprise operators rely on every day.
-            We don&rsquo;t sell software — we solve the problem behind the problem.
+            Kozai is a software studio that designs and builds the internal tools, dashboards,
+            and platforms that operators rely on every day. Small surfaces. Sharp edges. Things that ship.
           </p>
         </div>
-        <div className="hero-foot flex items-end justify-end md:col-span-5">
+        <div className="hero-foot flex items-end justify-start md:col-span-5 md:justify-end">
           <button
             type="button"
             onClick={onContactClick}
-            className="group relative inline-flex items-center gap-3 px-2 py-2 text-bone hover-target"
+            className="group relative inline-flex items-center gap-3 py-2 text-bone hover-target"
             data-cursor-label="Talk to us"
           >
-            <span className="font-mono text-[11px] uppercase tracking-[0.32em] text-bone-mute">[ 01 ]</span>
-            <span className="label-stack text-base md:text-lg">
-              <span>Have a project? Let&rsquo;s talk.</span>
-              <span className="text-signal">Tell us what&rsquo;s broken.</span>
+            <span className="hidden font-mono text-[11px] uppercase tracking-[0.32em] text-bone-mute sm:inline">[ 01 ]</span>
+            <span className="text-base md:text-lg">
+              Have a project? <span className="text-signal">Let&rsquo;s talk.</span>
             </span>
             <span className="ml-1 inline-block h-px w-12 bg-bone transition-all duration-500 group-hover:w-20 group-hover:bg-signal" />
           </button>

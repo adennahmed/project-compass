@@ -83,19 +83,12 @@ const ProjectMockup = ({ idx }: { idx: number }) => {
     sig.position.set(-3, 2, 2);
     scene.add(sig);
 
-    // Floating device — laptop/tablet-like silhouette
     const group = new THREE.Group();
 
-    // Body slab
-    const slabMat = new THREE.MeshStandardMaterial({
-      color: 0x141416,
-      metalness: 0.7,
-      roughness: 0.3,
-    });
+    const slabMat = new THREE.MeshStandardMaterial({ color: 0x141416, metalness: 0.7, roughness: 0.3 });
     const slab = new THREE.Mesh(new THREE.BoxGeometry(3.6, 2.4, 0.12), slabMat);
     group.add(slab);
 
-    // Frame
     const frame = new THREE.Mesh(
       new THREE.BoxGeometry(3.62, 2.42, 0.10),
       new THREE.MeshStandardMaterial({ color: 0xeae8e2, metalness: 0.4, roughness: 0.5 })
@@ -103,17 +96,14 @@ const ProjectMockup = ({ idx }: { idx: number }) => {
     frame.position.z = -0.02;
     group.add(frame);
 
-    // Screen
     const screenMat = new THREE.MeshBasicMaterial({ color: 0xeae8e2, transparent: true, opacity: 0.06 });
     const screen = new THREE.Mesh(new THREE.PlaneGeometry(3.4, 2.2), screenMat);
     screen.position.z = 0.07;
     group.add(screen);
 
-    // UI elements drawn as planes — different per project
     const uiGroup = new THREE.Group();
     uiGroup.position.z = 0.075;
     if (idx === 0) {
-      // dashboard — bars + line
       for (let i = 0; i < 8; i++) {
         const h = 0.2 + Math.random() * 0.7;
         const m = new THREE.Mesh(
@@ -123,14 +113,10 @@ const ProjectMockup = ({ idx }: { idx: number }) => {
         m.position.set(-1.3 + i * 0.2, -0.55 + h / 2, 0);
         uiGroup.add(m);
       }
-      const stripe = new THREE.Mesh(
-        new THREE.PlaneGeometry(2.8, 0.04),
-        new THREE.MeshBasicMaterial({ color: 0xdaff00 })
-      );
+      const stripe = new THREE.Mesh(new THREE.PlaneGeometry(2.8, 0.04), new THREE.MeshBasicMaterial({ color: 0xdaff00 }));
       stripe.position.set(0, 0.55, 0);
       uiGroup.add(stripe);
     } else if (idx === 1) {
-      // text/document feel
       for (let i = 0; i < 12; i++) {
         const m = new THREE.Mesh(
           new THREE.PlaneGeometry(2 + Math.random() * 0.8, 0.05),
@@ -139,14 +125,10 @@ const ProjectMockup = ({ idx }: { idx: number }) => {
         m.position.set(0, 0.85 - i * 0.13, 0);
         uiGroup.add(m);
       }
-      const accent = new THREE.Mesh(
-        new THREE.PlaneGeometry(1.4, 0.04),
-        new THREE.MeshBasicMaterial({ color: 0xdaff00 })
-      );
+      const accent = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 0.04), new THREE.MeshBasicMaterial({ color: 0xdaff00 }));
       accent.position.set(-0.7, 0.85, 0);
       uiGroup.add(accent);
     } else if (idx === 2) {
-      // pipeline columns
       for (let c = 0; c < 4; c++) {
         const col = new THREE.Mesh(
           new THREE.PlaneGeometry(0.7, 1.7),
@@ -164,7 +146,6 @@ const ProjectMockup = ({ idx }: { idx: number }) => {
         }
       }
     } else {
-      // grid of tiles
       for (let i = 0; i < 5; i++) {
         for (let j = 0; j < 3; j++) {
           const tile = new THREE.Mesh(
@@ -177,25 +158,15 @@ const ProjectMockup = ({ idx }: { idx: number }) => {
       }
     }
     group.add(uiGroup);
-
     group.rotation.set(-0.18, 0.32, 0);
     scene.add(group);
 
     let raf = 0;
-    let mouseX = 0;
-    let mouseY = 0;
-    const onMove = (e: PointerEvent) => {
-      const r = el.getBoundingClientRect();
-      mouseX = ((e.clientX - r.left) / r.width) * 2 - 1;
-      mouseY = -(((e.clientY - r.top) / r.height) * 2 - 1);
-    };
-    el.addEventListener("pointermove", onMove);
-
     const start = performance.now();
     const tick = () => {
       const t = (performance.now() - start) / 1000;
-      group.rotation.y = 0.32 + Math.sin(t * 0.4) * 0.08 + mouseX * 0.18;
-      group.rotation.x = -0.18 + Math.sin(t * 0.3) * 0.04 + mouseY * 0.12;
+      group.rotation.y = 0.32 + Math.sin(t * 0.4) * 0.08;
+      group.rotation.x = -0.18 + Math.sin(t * 0.3) * 0.04;
       group.position.y = Math.sin(t * 0.5) * 0.05;
       renderer.render(scene, camera);
       raf = requestAnimationFrame(tick);
@@ -212,7 +183,6 @@ const ProjectMockup = ({ idx }: { idx: number }) => {
 
     return () => {
       cancelAnimationFrame(raf);
-      el.removeEventListener("pointermove", onMove);
       window.removeEventListener("resize", onResize);
       renderer.dispose();
       if (renderer.domElement.parentNode === el) el.removeChild(renderer.domElement);
@@ -222,13 +192,18 @@ const ProjectMockup = ({ idx }: { idx: number }) => {
   return <div ref={ref} className="absolute inset-0" />;
 };
 
-const WorkSection = () => {
+interface WorkSectionProps {
+  onContactClick?: () => void;
+}
+
+const WorkSection = ({ onContactClick }: WorkSectionProps) => {
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!sectionRef.current || !trackRef.current) return;
     const track = trackRef.current;
+
     const ctx = gsap.context(() => {
       gsap.to(track, {
         x: () => -(track.scrollWidth - window.innerWidth + 64),
@@ -282,7 +257,7 @@ const WorkSection = () => {
             </h2>
           </div>
           <p className="hidden max-w-[360px] text-sm leading-relaxed text-bone/55 md:block">
-            A small set, picked for what they say about how we work. Drag, scroll, or arrow through.
+            A selection of recent work, picked for what they say about how we operate. Scroll to explore.
           </p>
         </div>
       </div>
@@ -291,7 +266,6 @@ const WorkSection = () => {
         <div
           ref={trackRef}
           className="flex flex-nowrap gap-6 px-6 will-change-transform md:gap-10 md:px-12"
-          data-cursor="drag"
         >
           {projects.map((p, i) => (
             <article
@@ -338,18 +312,18 @@ const WorkSection = () => {
             </article>
           ))}
           <div className="flex w-[40vw] shrink-0 items-center justify-start pr-12">
-            <a
-              href="#contact"
+            <button
+              type="button"
+              onClick={onContactClick}
               className="group inline-flex items-center gap-3 text-bone hover-target"
             >
               <span className="font-mono text-[11px] uppercase tracking-[0.32em] text-bone-mute">
                 Have a similar problem?
               </span>
-              <span className="label-stack text-2xl">
-                <span>Bring it to us →</span>
-                <span className="text-signal">Let&rsquo;s talk →</span>
+              <span className="text-2xl">
+                Bring it to us <span className="text-signal transition-transform duration-300 inline-block group-hover:translate-x-2">→</span>
               </span>
-            </a>
+            </button>
           </div>
         </div>
       </div>

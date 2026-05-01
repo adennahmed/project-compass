@@ -24,13 +24,27 @@ const ContactDrawer = ({ open, onClose }: ContactDrawerProps) => {
     const overlay = overlayRef.current;
     const panel = panelRef.current;
     if (open) {
-      document.body.classList.add("is-locked");
+      // Prevent scroll position reset by using fixed positioning instead of body lock
+      const scrollY = window.scrollY;
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.left = "0";
+      document.body.style.right = "0";
+      document.body.dataset.scrollY = String(scrollY);
+
       gsap.set(overlay, { display: "block", autoAlpha: 0 });
       gsap.set(panel, { xPercent: 100 });
       gsap.to(overlay, { autoAlpha: 1, duration: 0.4, ease: "power3.out" });
       gsap.to(panel, { xPercent: 0, duration: 0.7, ease: "power4.inOut" });
     } else {
-      document.body.classList.remove("is-locked");
+      // Restore scroll position
+      const savedY = parseInt(document.body.dataset.scrollY || "0", 10);
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.left = "";
+      document.body.style.right = "";
+      window.scrollTo(0, savedY);
+
       gsap.to(panel, { xPercent: 100, duration: 0.55, ease: "power4.inOut" });
       gsap.to(overlay, {
         autoAlpha: 0,
@@ -215,7 +229,7 @@ const TextareaField = ({
       placeholder={placeholder}
       rows={rows}
       required={required}
-      className="mt-2 block w-full resize-none border-b border-bone/15 bg-transparent py-2.5 text-bone placeholder:text-bone/30 focus:border-signal focus:outline-none"
+      className="mt-2 block w-full resize-none border border-bone/15 bg-bone/[0.03] px-3 py-2.5 text-bone placeholder:text-bone/30 focus:border-signal focus:outline-none"
     />
   </label>
 );

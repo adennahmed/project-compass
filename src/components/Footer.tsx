@@ -91,7 +91,7 @@ const Footer = () => {
           <div className="col-span-2 md:col-span-5">
             <Logo variant="full" className="h-8 w-auto text-bone" />
             <p className="mt-6 max-w-[360px] text-sm leading-relaxed text-bone/55">
-              A two-person software studio. We design and build the tools your team actually
+              A focused software studio. We design and build the tools your team actually
               needs — then ship them.
             </p>
             <a
@@ -130,7 +130,7 @@ const Footer = () => {
             <ul className="mt-4 space-y-2.5 text-sm text-bone/85">
               <li>Toronto, ON · Canada</li>
               <li>Mon–Fri · 09–18 ET</li>
-              <li>Available — Spring 2026</li>
+              <li>Accepting new projects</li>
             </ul>
           </div>
         </div>

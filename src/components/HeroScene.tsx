@@ -5,18 +5,14 @@ interface HeroSceneProps {
   active: boolean;
 }
 
-/**
- * Architectural fragments scene — floating beams + a refractive central
- * crystal that responds to mouse movement and scroll. The composition is
- * intentionally sparse: 7 timber-like beams orbiting a central glass core.
- */
 const HeroScene = ({ active }: HeroSceneProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const sceneRef = useRef<THREE.Scene | null>(null);
+  const activeRef = useRef(false);
   const stateRef = useRef({
     mouse: new THREE.Vector2(0, 0),
     target: new THREE.Vector2(0, 0),
     scroll: 0,
+    spawnProgress: 0,
   });
 
   useEffect(() => {
@@ -27,7 +23,6 @@ const HeroScene = ({ active }: HeroSceneProps) => {
     const mobile = window.matchMedia("(max-width: 768px)").matches;
 
     const scene = new THREE.Scene();
-    sceneRef.current = scene;
 
     const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
     camera.position.set(0, 0, 8);
@@ -37,107 +32,136 @@ const HeroScene = ({ active }: HeroSceneProps) => {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, mobile ? 1.25 : 2));
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setClearColor(0x080809, 0);
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.1;
     container.appendChild(renderer.domElement);
 
-    // Lighting — moody key + signal rim
-    const ambient = new THREE.AmbientLight(0xffffff, 0.18);
-    const key = new THREE.DirectionalLight(0xfff7e0, 0.9);
-    key.position.set(4, 5, 4);
-    const rim = new THREE.PointLight(0xdaff00, 1.2, 18);
-    rim.position.set(-3, -1, 3);
-    const fill = new THREE.PointLight(0xeae8e2, 0.4, 22);
-    fill.position.set(0, 4, -2);
-    scene.add(ambient, key, rim, fill);
+    // Lighting — warm key, cool fill, signal rim
+    const ambient = new THREE.AmbientLight(0xffffff, 0.12);
+    const key = new THREE.DirectionalLight(0xfff0d4, 1.1);
+    key.position.set(5, 6, 4);
+    const fill = new THREE.DirectionalLight(0xc8d4ff, 0.3);
+    fill.position.set(-4, 3, -3);
+    const rim = new THREE.PointLight(0xdaff00, 1.6, 16);
+    rim.position.set(-3, -2, 4);
+    const topGlow = new THREE.PointLight(0xeae8e2, 0.5, 20);
+    topGlow.position.set(0, 5, 2);
+    scene.add(ambient, key, fill, rim, topGlow);
 
-    // Beams — long thin boxes with bone-coloured matte material
+    // Structural beams — arranged as a deconstructed lattice/frame
     const beams: THREE.Mesh[] = [];
     const beamMat = new THREE.MeshStandardMaterial({
-      color: 0xeae8e2,
-      roughness: 0.45,
-      metalness: 0.05,
-      flatShading: true,
+      color: 0xd8d4cc,
+      roughness: 0.55,
+      metalness: 0.08,
     });
-    const beamCount = mobile ? 5 : 8;
-    for (let i = 0; i < beamCount; i++) {
-      const len = 2.6 + Math.random() * 2.2;
-      const w = 0.06 + Math.random() * 0.06;
-      const geo = new THREE.BoxGeometry(len, w, w);
-      const mesh = new THREE.Mesh(geo, beamMat);
-      const angle = (i / beamCount) * Math.PI * 2;
-      const radius = 2.4 + Math.random() * 0.9;
-      mesh.position.set(
-        Math.cos(angle) * radius,
-        (Math.random() - 0.5) * 2.4,
-        (Math.random() - 0.5) * 2.6
-      );
-      mesh.rotation.set(
-        Math.random() * Math.PI,
-        Math.random() * Math.PI,
-        Math.random() * Math.PI
-      );
-      mesh.userData.spin = {
-        x: (Math.random() - 0.5) * 0.0025,
-        y: (Math.random() - 0.5) * 0.0025,
-        z: (Math.random() - 0.5) * 0.0025,
+    const signalMat = new THREE.MeshStandardMaterial({
+      color: 0xdaff00,
+      roughness: 0.3,
+      metalness: 0.15,
+      emissive: 0xdaff00,
+      emissiveIntensity: 0.08,
+    });
+
+    const beamDefs = mobile ? [
+      { len: 3.8, w: 0.055, pos: [-1.4, 1.2, -0.3], rot: [0, 0, 0.15], signal: false },
+      { len: 2.6, w: 0.055, pos: [1.2, 0.8, 0.2], rot: [0, 0.3, -0.4], signal: false },
+      { len: 3.2, w: 0.055, pos: [-0.6, -0.4, -0.8], rot: [0.2, 0, 0.7], signal: true },
+      { len: 2.0, w: 0.055, pos: [1.8, -0.9, 0.1], rot: [0, 0, Math.PI / 2], signal: false },
+      { len: 2.8, w: 0.04, pos: [0.3, -1.5, 0.5], rot: [0.1, 0.5, 0.2], signal: false },
+    ] : [
+      // Horizontal structural bars
+      { len: 4.2, w: 0.055, pos: [-1.6, 1.4, -0.5], rot: [0, 0, 0.12], signal: false },
+      { len: 3.4, w: 0.055, pos: [1.0, 1.0, 0.3], rot: [0, 0.2, -0.3], signal: false },
+      // Cross beams
+      { len: 3.6, w: 0.06, pos: [-0.8, -0.2, -0.6], rot: [0.15, 0, 0.65], signal: true },
+      { len: 2.8, w: 0.05, pos: [1.6, -0.5, 0.4], rot: [0, 0.1, -0.55], signal: false },
+      // Vertical posts
+      { len: 2.2, w: 0.055, pos: [-2.2, 0, -0.2], rot: [0, 0, Math.PI / 2 + 0.1], signal: false },
+      { len: 2.6, w: 0.055, pos: [2.4, 0.3, 0.1], rot: [0, 0.15, Math.PI / 2 - 0.08], signal: false },
+      // Accent diagonals
+      { len: 1.8, w: 0.04, pos: [0.2, -1.6, 0.6], rot: [0.1, 0.4, 0.3], signal: false },
+      { len: 2.2, w: 0.04, pos: [-1.0, -1.2, 0.2], rot: [0, 0.2, -0.45], signal: true },
+      // Deeper background struts
+      { len: 3.0, w: 0.035, pos: [0, 0.6, -2.0], rot: [0.3, 0, 0.2], signal: false },
+      { len: 2.4, w: 0.035, pos: [-0.5, -0.8, -1.8], rot: [0.2, 0.5, 0.6], signal: false },
+    ];
+
+    beamDefs.forEach((def, i) => {
+      const geo = new THREE.BoxGeometry(def.len, def.w, def.w);
+      const mesh = new THREE.Mesh(geo, def.signal ? signalMat : beamMat);
+      mesh.position.set(def.pos[0], def.pos[1], def.pos[2]);
+      mesh.rotation.set(def.rot[0], def.rot[1], def.rot[2]);
+
+      // Start invisible — will animate in
+      mesh.scale.set(0, 0, 0);
+
+      mesh.userData = {
+        spawnDelay: i * 0.12,
+        spawnDone: false,
+        floatAmp: 0.03 + Math.random() * 0.06,
+        floatSpeed: 0.3 + Math.random() * 0.3,
+        floatOffset: Math.random() * Math.PI * 2,
+        basePos: mesh.position.clone(),
       };
-      mesh.userData.float = {
-        amp: 0.05 + Math.random() * 0.12,
-        speed: 0.4 + Math.random() * 0.5,
-        offset: Math.random() * Math.PI * 2,
-        baseY: mesh.position.y,
-      };
+
       scene.add(mesh);
       beams.push(mesh);
-    }
+    });
 
-    // Central refractive crystal — octahedron with translucent material
-    const crystalGeo = new THREE.OctahedronGeometry(0.95, 0);
+    // Central crystal — icosahedron for more facets and visual interest
+    const crystalGeo = new THREE.IcosahedronGeometry(0.85, 0);
     const crystalMat = new THREE.MeshPhysicalMaterial({
       color: 0xeae8e2,
-      transmission: 0.85,
-      thickness: 0.6,
-      roughness: 0.06,
+      transmission: 0.88,
+      thickness: 0.8,
+      roughness: 0.04,
       metalness: 0,
-      ior: 1.35,
+      ior: 1.45,
       transparent: true,
-      opacity: 0.92,
+      opacity: 0.9,
       clearcoat: 1,
-      clearcoatRoughness: 0.05,
+      clearcoatRoughness: 0.03,
+      envMapIntensity: 1.2,
     });
     const crystal = new THREE.Mesh(crystalGeo, crystalMat);
+    crystal.scale.set(0, 0, 0);
+    crystal.userData = { spawnDelay: 0.3, spawnDone: false };
     scene.add(crystal);
 
-    // Crystal wireframe overlay — emphasises construction language
+    // Wireframe accent on crystal
     const wireMat = new THREE.LineBasicMaterial({
       color: 0xdaff00,
       transparent: true,
-      opacity: 0.55,
+      opacity: 0.45,
     });
     const wire = new THREE.LineSegments(new THREE.EdgesGeometry(crystalGeo), wireMat);
-    wire.scale.setScalar(1.001);
+    wire.scale.setScalar(1.002);
     crystal.add(wire);
 
-    // Particle field — depth haze
-    const particleCount = mobile ? 280 : 700;
+    // Particle field — fine dust for depth
+    const particleCount = mobile ? 220 : 600;
     const positions = new Float32Array(particleCount * 3);
+    const opacities = new Float32Array(particleCount);
     for (let i = 0; i < particleCount; i++) {
-      positions[i * 3 + 0] = (Math.random() - 0.5) * 14;
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 8;
+      positions[i * 3 + 0] = (Math.random() - 0.5) * 16;
+      positions[i * 3 + 1] = (Math.random() - 0.5) * 9;
       positions[i * 3 + 2] = (Math.random() - 0.5) * 12;
+      opacities[i] = 0;
     }
     const partGeo = new THREE.BufferGeometry();
     partGeo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
     const partMat = new THREE.PointsMaterial({
       color: 0xeae8e2,
-      size: 0.018,
+      size: 0.016,
       transparent: true,
-      opacity: 0.55,
+      opacity: 0.45,
       sizeAttenuation: true,
     });
     const particles = new THREE.Points(partGeo, partMat);
     scene.add(particles);
 
-    // Pointer + scroll handlers
+    // Input handlers
     const onPointer = (e: PointerEvent) => {
       const rect = container.getBoundingClientRect();
       stateRef.current.mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
@@ -151,45 +175,66 @@ const HeroScene = ({ active }: HeroSceneProps) => {
 
     let raf = 0;
     const start = performance.now();
+    let spawnStart = 0;
+
     const tick = () => {
-      const t = (performance.now() - start) / 1000;
+      const now = performance.now();
+      const t = (now - start) / 1000;
+      const st = stateRef.current;
 
       // Smooth mouse follow
-      stateRef.current.target.x += (stateRef.current.mouse.x - stateRef.current.target.x) * 0.05;
-      stateRef.current.target.y += (stateRef.current.mouse.y - stateRef.current.target.y) * 0.05;
+      st.target.x += (st.mouse.x - st.target.x) * 0.04;
+      st.target.y += (st.mouse.y - st.target.y) * 0.04;
 
       // Camera parallax + scroll dolly
-      camera.position.x = stateRef.current.target.x * 0.6;
-      camera.position.y = stateRef.current.target.y * 0.4;
-      camera.position.z = 8 - stateRef.current.scroll * 1.2;
+      camera.position.x = st.target.x * 0.5;
+      camera.position.y = st.target.y * 0.35;
+      camera.position.z = 8 - st.scroll * 1.2;
       camera.lookAt(0, 0, 0);
 
-      // Beams orbit + float
-      beams.forEach((b, i) => {
-        const s = b.userData.spin;
-        const f = b.userData.float;
-        b.rotation.x += s.x;
-        b.rotation.y += s.y;
-        b.rotation.z += s.z;
-        b.position.y = f.baseY + Math.sin(t * f.speed + f.offset) * f.amp;
-        // group orbit
-        const angle = (i / beams.length) * Math.PI * 2 + t * 0.04;
-        const radius = 2.4 + Math.sin(t * 0.3 + i) * 0.18;
-        b.position.x = Math.cos(angle) * radius;
-        b.position.z = Math.sin(angle) * radius;
+      // Spawn animation — triggered when active
+      if (activeRef.current && spawnStart === 0) spawnStart = now;
+      const elapsed = spawnStart > 0 ? (now - spawnStart) / 1000 : 0;
+
+      // Beams — staggered scale-in from 0 to full
+      beams.forEach((b) => {
+        const ud = b.userData;
+        const spawnT = Math.max(0, elapsed - ud.spawnDelay);
+        if (spawnT > 0 && !ud.spawnDone) {
+          const ease = Math.min(1, spawnT / 0.8);
+          const eased = 1 - Math.pow(1 - ease, 3);
+          b.scale.setScalar(eased);
+          if (ease >= 1) ud.spawnDone = true;
+        }
+        // Gentle float
+        if (ud.spawnDone || spawnT > 0.2) {
+          const bp = ud.basePos as THREE.Vector3;
+          b.position.y = bp.y + Math.sin(t * ud.floatSpeed + ud.floatOffset) * ud.floatAmp;
+        }
       });
 
-      // Crystal — gentle rotation + reactive scale
-      crystal.rotation.x = t * 0.12 + stateRef.current.target.y * 0.4;
-      crystal.rotation.y = t * 0.18 + stateRef.current.target.x * 0.4;
-      crystal.scale.setScalar(1 + Math.sin(t * 0.6) * 0.04);
+      // Crystal spawn
+      const cSpawn = Math.max(0, elapsed - crystal.userData.spawnDelay);
+      if (cSpawn > 0 && !crystal.userData.spawnDone) {
+        const ease = Math.min(1, cSpawn / 1.0);
+        const eased = 1 - Math.pow(1 - ease, 3);
+        crystal.scale.setScalar(eased);
+        if (ease >= 1) crystal.userData.spawnDone = true;
+      }
+      crystal.rotation.x = t * 0.1 + st.target.y * 0.3;
+      crystal.rotation.y = t * 0.15 + st.target.x * 0.3;
 
-      // Particles drift
-      particles.rotation.y = t * 0.01;
+      // Particle fade-in
+      if (elapsed > 0.5) {
+        const pFade = Math.min(1, (elapsed - 0.5) / 1.5);
+        partMat.opacity = 0.45 * pFade;
+      }
+      particles.rotation.y = t * 0.008;
 
       renderer.render(scene, camera);
       raf = requestAnimationFrame(tick);
     };
+
     if (!reduced) tick();
     else renderer.render(scene, camera);
 
@@ -215,6 +260,7 @@ const HeroScene = ({ active }: HeroSceneProps) => {
       partGeo.dispose();
       partMat.dispose();
       beamMat.dispose();
+      signalMat.dispose();
       renderer.dispose();
       if (renderer.domElement.parentNode === container) {
         container.removeChild(renderer.domElement);
@@ -222,8 +268,9 @@ const HeroScene = ({ active }: HeroSceneProps) => {
     };
   }, []);
 
-  // Fade in once preloader hands off
+  // Trigger spawn + fade-in when preloader hands off
   useEffect(() => {
+    activeRef.current = active;
     const c = containerRef.current;
     if (!c) return;
     c.style.opacity = active ? "1" : "0";

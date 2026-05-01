@@ -201,8 +201,8 @@ const ContactSection = ({ onContactClick }: ContactSectionProps) => {
                     <div className="mt-1.5 text-sm text-bone/85">Mon–Fri · 09–18 ET</div>
                   </div>
                   <div>
-                    <div className="font-mono text-[11px] uppercase tracking-[0.28em] text-bone-mute">Slot</div>
-                    <div className="mt-1.5 text-sm text-bone/85">One project · May 2026</div>
+                    <div className="font-mono text-[11px] uppercase tracking-[0.28em] text-bone-mute">Availability</div>
+                    <div className="mt-1.5 text-sm text-bone/85">Accepting new projects</div>
                   </div>
                   <div>
                     <div className="font-mono text-[11px] uppercase tracking-[0.28em] text-bone-mute">Reply</div>
@@ -211,10 +211,11 @@ const ContactSection = ({ onContactClick }: ContactSectionProps) => {
                 </div>
 
                 <div className="mt-12 border-t border-bone/10 pt-6">
-                  <div className="font-mono text-[11px] uppercase tracking-[0.28em] text-bone-mute">Not for us</div>
+                  <div className="font-mono text-[11px] uppercase tracking-[0.28em] text-bone-mute">We politely pass on</div>
                   <p className="mt-2 max-w-[420px] text-sm leading-relaxed text-bone/55">
-                    Marketing sites, low-code rebuilds, generic CRM rollouts. We&rsquo;re built for harder problems —
-                    if that&rsquo;s yours, we&rsquo;ll happily refer you to people who do this well.
+                    Marketing sites, off-the-shelf CRM rollouts, and low-code rebuilds.
+                    These are important — they&rsquo;re just not where we add the most value.
+                    We can refer you to teams who specialise in them.
                   </p>
                 </div>
               </div>

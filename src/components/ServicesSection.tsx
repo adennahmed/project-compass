@@ -234,10 +234,11 @@ const ServicesSection = () => {
     <section
       ref={sectionRef}
       id="services"
-      className="relative h-screen w-full overflow-hidden bg-ink"
+      className="relative h-screen w-full bg-ink"
+      style={{ overflow: "clip" }}
       aria-label="What we build"
     >
-      <div className="mx-auto flex h-full max-w-[1440px] flex-col px-6 pt-28 md:px-12 md:pt-32">
+      <div className="mx-auto flex h-full max-w-[1440px] flex-col px-6 pt-20 md:px-12 md:pt-28">
         <div className="flex items-end justify-between">
           <div>
             <span className="font-mono text-[11px] uppercase tracking-[0.32em] text-bone-mute">
@@ -273,8 +274,8 @@ const ServicesSection = () => {
           </div>
 
           {/* Content rows — stacked, only one visible at a time */}
-          <div ref={trackRef} className="relative order-1 md:order-2 md:col-span-7">
-            <div className="relative h-full">
+          <div ref={trackRef} className="relative order-1 overflow-hidden md:order-2 md:col-span-7">
+            <div className="relative h-full pr-4 md:pr-0">
               {services.map((s) => (
                 <div
                   key={s.n}

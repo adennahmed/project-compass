@@ -28,8 +28,8 @@ const Index = () => {
   return (
     <>
       <SEOHead
-        title="Kozai — Two engineers, building software that ships."
-        description="Kozai is a two-person software studio that designs and builds the internal tools, dashboards, and platforms small teams and enterprise operators rely on every day."
+        title="Kozai — Software studio. Tools that ship."
+        description="Kozai is a software studio that designs and builds the internal tools, dashboards, and platforms operators rely on every day."
         path="/"
       />
       <SmoothScroll />
@@ -42,7 +42,7 @@ const Index = () => {
         <HeroSection animate={heroAnimate} onContactClick={openDrawer} />
         <ManifestoSection />
         <ServicesSection />
-        <WorkSection />
+        <WorkSection onContactClick={openDrawer} />
         <StackMarquee />
         <StudioSection />
         <ContactSection onContactClick={openDrawer} />
