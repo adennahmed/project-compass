@@ -37,7 +37,7 @@ const Index = () => {
       {showPreloader && (
         <Preloader onComplete={onPreloaderComplete} onTransitionStart={onPreloaderHandoff} />
       )}
-      <Navigation onContactClick={openDrawer} />
+      <Navigation ready={!showPreloader} onContactClick={openDrawer} />
       <main>
         <HeroSection animate={heroAnimate} onContactClick={openDrawer} />
         <ManifestoSection />
