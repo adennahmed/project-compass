@@ -256,29 +256,16 @@ const ServicesSection = () => {
           </div>
         </div>
 
-        <div className="relative mt-6 grid min-h-0 flex-1 grid-cols-1 gap-8 md:mt-8 md:grid-cols-12 md:items-center md:gap-8">
-          {/* Visual stage — locked to the left of the active description */}
-          <div className="relative order-2 hidden min-h-0 md:order-1 md:col-span-5 md:flex md:h-[420px] md:items-center md:justify-end lg:col-span-6">
+        <div ref={trackRef} className="relative mt-6 min-h-0 flex-1 overflow-hidden md:mt-8">
+          {services.map((s, i) => (
             <div
-              className="relative shrink-0"
-              style={{ width: "min(30vw, 360px)", height: "min(30vw, 360px)" }}
+              key={s.n}
+              className="service-panel absolute inset-0 grid grid-cols-1 items-center md:grid-cols-[minmax(220px,340px)_minmax(0,560px)] md:justify-center md:gap-10 lg:grid-cols-[minmax(260px,380px)_minmax(0,560px)] lg:gap-12"
             >
-              {services.map((_, i) => (
-                <div key={i} className="service-visual absolute inset-0">
-                  <ServiceVisual index={i} active={i} />
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Content rows — stacked, only one visible at a time */}
-          <div ref={trackRef} className="relative order-1 min-h-0 overflow-hidden md:order-2 md:col-span-7 md:h-[420px] lg:col-span-6">
-            <div className="relative h-full pr-4 md:pr-0">
-              {services.map((s) => (
-                <div
-                  key={s.n}
-                  className="service-row absolute inset-0 flex flex-col justify-center overflow-y-auto pb-4"
-                >
+              <div className="relative hidden aspect-square w-full max-w-[340px] justify-self-end md:block lg:max-w-[380px]">
+                <ServiceVisual index={i} />
+              </div>
+              <div className="flex max-h-full flex-col justify-center overflow-y-auto pb-4 pr-4 md:pr-0">
                   <div className="font-mono text-[11px] uppercase tracking-[0.32em] text-signal">
                     {s.n}
                   </div>
@@ -305,9 +292,8 @@ const ServicesSection = () => {
                     ))}
                   </ul>
                 </div>
-              ))}
             </div>
-          </div>
+          ))}
         </div>
       </div>
     </section>
