@@ -190,35 +190,31 @@ const ServicesSection = () => {
     if (!sectionRef.current || !trackRef.current) return;
     const track = trackRef.current;
     const panels = track.querySelectorAll<HTMLElement>(".service-panel");
+    let activeIndex = 0;
 
     const ctx = gsap.context(() => {
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top top",
-          end: () => `+=${panels.length * 80}%`,
-          pin: true,
-          scrub: 0.6,
+      const showPanel = (nextIndex: number) => {
+        if (nextIndex === activeIndex) return;
+        panels.forEach((panel, i) => {
+          gsap.set(panel, { autoAlpha: i === nextIndex ? 1 : 0 });
+        });
+        activeIndex = nextIndex;
+        const indicator = sectionRef.current?.querySelector(".service-progress-fill") as HTMLElement;
+        if (indicator) indicator.style.width = `${((nextIndex + 1) / panels.length) * 100}%`;
+      };
+
+      panels.forEach((panel, i) => gsap.set(panel, { autoAlpha: i === 0 ? 1 : 0 }));
+
+      ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: "top top",
+        end: () => `+=${panels.length * 80}%`,
+        pin: true,
+        scrub: false,
+        onUpdate: (self) => {
+          const nextIndex = Math.min(panels.length - 1, Math.floor(self.progress * panels.length));
+          showPanel(nextIndex);
         },
-      });
-
-      panels.forEach((panel, i) => {
-        if (i === 0) {
-          gsap.set(panel, { autoAlpha: 1 });
-        } else {
-          gsap.set(panel, { autoAlpha: 0 });
-        }
-      });
-
-      panels.forEach((panel, i) => {
-        if (i === 0) return;
-        tl
-          .to(panels[i - 1], { autoAlpha: 0, duration: 0.5 }, "+=0.4")
-          .fromTo(panel, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.6 }, "<")
-          .call(() => {
-            const indicator = sectionRef.current?.querySelector(".service-progress-fill") as HTMLElement;
-            if (indicator) indicator.style.width = `${((i + 1) / panels.length) * 100}%`;
-          });
       });
     }, sectionRef);
 
