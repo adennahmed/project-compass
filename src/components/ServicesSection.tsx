@@ -36,7 +36,7 @@ const services = [
   },
 ];
 
-const ServiceVisual = ({ index, active }: { index: number; active: number }) => {
+const ServiceVisual = ({ index }: { index: number }) => {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -179,57 +179,45 @@ const ServiceVisual = ({ index, active }: { index: number; active: number }) => 
     };
   }, [index]);
 
-  return (
-    <div
-      ref={ref}
-      className="absolute inset-0 transition-opacity duration-700"
-      style={{ opacity: active === index ? 1 : 0 }}
-    />
-  );
+  return <div ref={ref} className="absolute inset-0" aria-hidden />;
 };
 
 const ServicesSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
-  const activeRef = useRef(0);
   const trackRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!sectionRef.current || !trackRef.current) return;
     const track = trackRef.current;
-    const items = track.querySelectorAll<HTMLElement>(".service-row");
-    const visuals = sectionRef.current.querySelectorAll<HTMLElement>(".service-visual");
+    const panels = track.querySelectorAll<HTMLElement>(".service-panel");
 
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top top",
-          end: () => `+=${items.length * 80}%`,
+          end: () => `+=${panels.length * 80}%`,
           pin: true,
           scrub: 0.6,
         },
       });
 
-      items.forEach((row, i) => {
+      panels.forEach((panel, i) => {
         if (i === 0) {
-          gsap.set(row, { autoAlpha: 1, y: 0 });
+          gsap.set(panel, { autoAlpha: 1 });
         } else {
-          gsap.set(row, { autoAlpha: 0, y: 0 });
+          gsap.set(panel, { autoAlpha: 0 });
         }
       });
-      visuals.forEach((v, i) => gsap.set(v, { autoAlpha: i === 0 ? 1 : 0 }));
 
-      items.forEach((row, i) => {
+      panels.forEach((panel, i) => {
         if (i === 0) return;
         tl
-          .to(items[i - 1], { autoAlpha: 0, duration: 0.5 }, "+=0.4")
-          .to(visuals[i - 1], { autoAlpha: 0, duration: 0.4 }, "<")
-          .fromTo(row, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.6 }, "<")
-          .fromTo(visuals[i], { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.6 }, "<")
+          .to(panels[i - 1], { autoAlpha: 0, duration: 0.5 }, "+=0.4")
+          .fromTo(panel, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.6 }, "<")
           .call(() => {
-            activeRef.current = i;
             const indicator = sectionRef.current?.querySelector(".service-progress-fill") as HTMLElement;
-            if (indicator) indicator.style.width = `${((i + 1) / items.length) * 100}%`;
+            if (indicator) indicator.style.width = `${((i + 1) / panels.length) * 100}%`;
           });
       });
     }, sectionRef);
@@ -268,29 +256,16 @@ const ServicesSection = () => {
           </div>
         </div>
 
-        <div className="relative mt-6 grid min-h-0 flex-1 grid-cols-1 gap-8 md:mt-8 md:grid-cols-12 md:items-center md:gap-8">
-          {/* Visual stage — locked to the left of the active description */}
-          <div className="relative order-2 hidden min-h-0 md:order-1 md:col-span-5 md:flex md:h-[420px] md:items-center md:justify-end lg:col-span-6">
+        <div ref={trackRef} className="relative mt-6 min-h-0 flex-1 overflow-hidden md:mt-8">
+          {services.map((s, i) => (
             <div
-              className="relative shrink-0"
-              style={{ width: "min(30vw, 360px)", height: "min(30vw, 360px)" }}
+              key={s.n}
+              className="service-panel absolute inset-0 grid grid-cols-1 items-center md:grid-cols-[minmax(220px,340px)_minmax(0,560px)] md:justify-center md:gap-10 lg:grid-cols-[minmax(260px,380px)_minmax(0,560px)] lg:gap-12"
             >
-              {services.map((_, i) => (
-                <div key={i} className="service-visual absolute inset-0">
-                  <ServiceVisual index={i} active={i} />
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Content rows — stacked, only one visible at a time */}
-          <div ref={trackRef} className="relative order-1 min-h-0 overflow-hidden md:order-2 md:col-span-7 md:h-[420px] lg:col-span-6">
-            <div className="relative h-full pr-4 md:pr-0">
-              {services.map((s) => (
-                <div
-                  key={s.n}
-                  className="service-row absolute inset-0 flex flex-col justify-center overflow-y-auto pb-4"
-                >
+              <div className="relative hidden aspect-square w-full max-w-[340px] justify-self-end md:block lg:max-w-[380px]">
+                <ServiceVisual index={i} />
+              </div>
+              <div className="flex max-h-full flex-col justify-center overflow-y-auto pb-4 pr-4 md:pr-0">
                   <div className="font-mono text-[11px] uppercase tracking-[0.32em] text-signal">
                     {s.n}
                   </div>
@@ -317,9 +292,8 @@ const ServicesSection = () => {
                     ))}
                   </ul>
                 </div>
-              ))}
             </div>
-          </div>
+          ))}
         </div>
       </div>
     </section>
