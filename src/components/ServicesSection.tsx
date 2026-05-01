@@ -256,16 +256,16 @@ const ServicesSection = () => {
           </div>
         </div>
 
-        <div ref={trackRef} className="relative mt-6 min-h-0 flex-1 overflow-hidden md:mt-8">
+        <div ref={trackRef} className="relative mt-4 min-h-0 flex-1 overflow-hidden md:mt-6">
           {services.map((s, i) => (
             <div
               key={s.n}
-              className="service-panel absolute inset-0 grid grid-cols-1 items-center md:grid-cols-[minmax(220px,340px)_minmax(0,560px)] md:justify-center md:gap-10 lg:grid-cols-[minmax(260px,380px)_minmax(0,560px)] lg:gap-12"
+              className="service-panel absolute inset-0 grid grid-cols-1 items-start md:grid-cols-[minmax(220px,320px)_minmax(0,560px)] md:justify-center md:gap-8 lg:grid-cols-[minmax(260px,360px)_minmax(0,560px)] lg:gap-12"
             >
-              <div className="relative hidden aspect-square w-full max-w-[340px] justify-self-end md:block lg:max-w-[380px]">
+              <div className="relative hidden aspect-square w-full max-w-[320px] justify-self-end md:mt-[clamp(5.5rem,13vh,9.5rem)] md:block lg:max-w-[360px]">
                 <ServiceVisual index={i} />
               </div>
-              <div className="flex max-h-full flex-col justify-center overflow-y-auto pb-4 pr-4 md:pr-0">
+              <div className="flex max-h-full flex-col overflow-y-auto pb-4 pr-4 md:mt-[clamp(5.5rem,13vh,9.5rem)] md:pr-0">
                   <div className="font-mono text-[11px] uppercase tracking-[0.32em] text-signal">
                     {s.n}
                   </div>
