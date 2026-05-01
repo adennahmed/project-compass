@@ -18,51 +18,52 @@ const HeroSection = ({ animate, onContactClick }: HeroSectionProps) => {
     if (!animate || introDone.current || !sectionRef.current) return;
     introDone.current = true;
 
-    // animate=true fires at preloader transition start (~2.85s).
-    // The shutters take ~1.2s to peel. Adding base = 1.2s pushes all
-    // visible animation onset to ~4.05s — the moment shutters fully clear.
-    const base = 1.2;
+    // animate=true fires at preloader transition start (~2.85s), the moment
+    // the shutters begin peeling. Run all hero intro animations in parallel
+    // with the ~1.2s shutter peel so every element is fully settled the
+    // instant the shutters fully clear — no "pop-in" after the loader.
+    const base = 0;
 
     const ctx = gsap.context(() => {
       gsap.fromTo(
         ".hero-eyebrow",
         { yPercent: 110, opacity: 0 },
-        { yPercent: 0, opacity: 1, duration: 0.9, ease: "power3.out", delay: base, stagger: 0.08 }
+        { yPercent: 0, opacity: 1, duration: 0.7, ease: "power3.out", delay: base, stagger: 0.05 }
       );
       gsap.fromTo(
         ".hero-tag",
         { y: 18, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.7, ease: "power3.out", delay: base + 0.2 }
+        { y: 0, opacity: 1, duration: 0.6, ease: "power3.out", delay: base + 0.05 }
       );
       gsap.fromTo(
         ".hero-headline .reveal-line > span",
         { yPercent: 105 },
-        { yPercent: 0, duration: 1.05, ease: "power3.out", stagger: 0.1, delay: base + 0.4 }
+        { yPercent: 0, duration: 0.85, ease: "power3.out", stagger: 0.06, delay: base + 0.1 }
       );
       gsap.fromTo(
         ".hero-rule",
         { scaleX: 0, transformOrigin: "0 50%" },
-        { scaleX: 1, duration: 1.2, ease: "power3.out", delay: base + 0.95 }
+        { scaleX: 1, duration: 0.8, ease: "power3.out", delay: base + 0.3 }
       );
       gsap.fromTo(
         ".hero-sub",
         { y: 22, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.8, ease: "power3.out", delay: base + 1.2 }
+        { y: 0, opacity: 1, duration: 0.6, ease: "power3.out", delay: base + 0.4 }
       );
       gsap.fromTo(
         ".hero-meta-item",
         { y: 18, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.65, ease: "power3.out", stagger: 0.09, delay: base + 1.45 }
+        { y: 0, opacity: 1, duration: 0.55, ease: "power3.out", stagger: 0.05, delay: base + 0.5 }
       );
       gsap.fromTo(
         ".hero-foot",
         { y: 16, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.7, ease: "power3.out", delay: base + 1.75 }
+        { y: 0, opacity: 1, duration: 0.55, ease: "power3.out", delay: base + 0.6 }
       );
       gsap.fromTo(
         ".hero-scroll-cue",
         { opacity: 0 },
-        { opacity: 1, duration: 0.6, ease: "power2.out", delay: base + 2.0 }
+        { opacity: 1, duration: 0.5, ease: "power2.out", delay: base + 0.7 }
       );
 
       // Subtle parallax on the headline as the user scrolls past hero
