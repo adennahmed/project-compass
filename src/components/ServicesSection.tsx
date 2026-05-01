@@ -83,12 +83,12 @@ const ServiceVisual = ({ index, active }: { index: number; active: number }) => 
       // Connected nodes — automation
       const group = new THREE.Group();
       const positions = [
-        [-1.6, 0.7, 0],
-        [0, 1.1, 0],
-        [1.5, 0.4, 0],
-        [-1.2, -0.7, 0],
-        [0.6, -0.9, 0],
-        [1.8, -0.4, 0],
+        [-1.5, 0.85, 0],
+        [0, 1.0, 0],
+        [1.5, 0.55, 0],
+        [-1.4, -0.7, 0],
+        [0, -1.0, 0],
+        [1.5, -0.7, 0],
       ];
       const nodes: THREE.Mesh[] = [];
       const nm = new THREE.MeshStandardMaterial({ color: 0xeae8e2, roughness: 0.3, metalness: 0.1 });
