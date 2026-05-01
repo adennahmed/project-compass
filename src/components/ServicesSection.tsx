@@ -46,7 +46,7 @@ const ServiceVisual = ({ index, active }: { index: number; active: number }) => 
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setSize(Math.max(container.clientWidth, 1), Math.max(container.clientHeight, 1), false);
     container.appendChild(renderer.domElement);
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(35, container.clientWidth / container.clientHeight, 0.1, 100);
@@ -156,17 +156,20 @@ const ServiceVisual = ({ index, active }: { index: number; active: number }) => 
     if (!reduced) tick();
     else renderer.render(scene, camera);
 
-    const onResize = () => {
-      if (!container) return;
-      camera.aspect = container.clientWidth / container.clientHeight;
+    // ResizeObserver handles both initial sizing and any later reflows
+    const ro = new ResizeObserver(() => {
+      const w = container.clientWidth;
+      const h = container.clientHeight;
+      if (w === 0 || h === 0) return;
+      camera.aspect = w / h;
       camera.updateProjectionMatrix();
-      renderer.setSize(container.clientWidth, container.clientHeight);
-    };
-    window.addEventListener("resize", onResize);
+      renderer.setSize(w, h, false);
+    });
+    ro.observe(container);
 
     return () => {
       cancelAnimationFrame(raf);
-      window.removeEventListener("resize", onResize);
+      ro.disconnect();
       renderer.dispose();
       if (renderer.domElement.parentNode === container) container.removeChild(renderer.domElement);
     };
@@ -261,9 +264,9 @@ const ServicesSection = () => {
           </div>
         </div>
 
-        <div className="relative mt-6 grid flex-1 grid-cols-1 gap-8 md:mt-8 md:grid-cols-12 md:gap-12">
+        <div className="relative mt-6 grid min-h-0 flex-1 grid-cols-1 gap-8 md:mt-8 md:grid-cols-12 md:gap-12">
           {/* Visual stage */}
-          <div className="relative order-2 hidden h-full md:order-1 md:col-span-5 md:block">
+          <div className="relative order-2 hidden min-h-0 h-full md:order-1 md:col-span-5 md:block">
             <div className="relative h-full w-full">
               {services.map((_, i) => (
                 <div key={i} className="service-visual absolute inset-0">
@@ -274,12 +277,12 @@ const ServicesSection = () => {
           </div>
 
           {/* Content rows — stacked, only one visible at a time */}
-          <div ref={trackRef} className="relative order-1 overflow-hidden md:order-2 md:col-span-7">
+          <div ref={trackRef} className="relative order-1 min-h-0 overflow-hidden md:order-2 md:col-span-7">
             <div className="relative h-full pr-4 md:pr-0">
               {services.map((s) => (
                 <div
                   key={s.n}
-                  className="service-row absolute inset-0 flex flex-col justify-center"
+                  className="service-row absolute inset-0 flex flex-col justify-center overflow-y-auto pb-4"
                 >
                   <div className="font-mono text-[11px] uppercase tracking-[0.32em] text-signal">
                     {s.n}

@@ -7,7 +7,6 @@ interface HeroSceneProps {
 
 const HeroScene = ({ active }: HeroSceneProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const activeRef = useRef(false);
   const stateRef = useRef({
     mouse: new THREE.Vector2(0, 0),
     target: new THREE.Vector2(0, 0),
@@ -175,7 +174,8 @@ const HeroScene = ({ active }: HeroSceneProps) => {
 
     let raf = 0;
     const start = performance.now();
-    let spawnStart = 0;
+    // Spawn begins immediately so shapes build during the preloader
+    const spawnStart = start;
 
     const tick = () => {
       const now = performance.now();
@@ -192,9 +192,7 @@ const HeroScene = ({ active }: HeroSceneProps) => {
       camera.position.z = 8 - st.scroll * 1.2;
       camera.lookAt(0, 0, 0);
 
-      // Spawn animation — triggered when active
-      if (activeRef.current && spawnStart === 0) spawnStart = now;
-      const elapsed = spawnStart > 0 ? (now - spawnStart) / 1000 : 0;
+      const elapsed = (now - spawnStart) / 1000;
 
       // Beams — draw in along X-axis (length), quartic-out ease
       beams.forEach((b) => {
@@ -271,9 +269,8 @@ const HeroScene = ({ active }: HeroSceneProps) => {
     };
   }, []);
 
-  // Trigger spawn + fade-in when preloader hands off
+  // Fade the scene in when the preloader hands off — shapes already built by then
   useEffect(() => {
-    activeRef.current = active;
     const c = containerRef.current;
     if (!c) return;
     c.style.opacity = active ? "1" : "0";
