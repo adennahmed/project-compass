@@ -97,8 +97,8 @@ const HeroScene = ({ active }: HeroSceneProps) => {
       mesh.scale.set(0.001, 1, 1);
 
       mesh.userData = {
-        // Leading delay so the spawn animation lands AFTER the preloader peels
-        spawnDelay: 1.0 + i * 0.18,
+        // Draw behind the preloader so the scene is already composed when it opens.
+        spawnDelay: 0.05 + i * 0.08,
         spawnDone: false,
         floatAmp: 0.03 + Math.random() * 0.06,
         floatSpeed: 0.3 + Math.random() * 0.3,
@@ -127,7 +127,7 @@ const HeroScene = ({ active }: HeroSceneProps) => {
     });
     const crystal = new THREE.Mesh(crystalGeo, crystalMat);
     crystal.scale.set(0, 0, 0);
-    crystal.userData = { spawnDelay: 2.0, spawnDone: false };
+    crystal.userData = { spawnDelay: 0.55, spawnDone: false };
     scene.add(crystal);
 
     // Wireframe accent on crystal
@@ -203,13 +203,12 @@ const HeroScene = ({ active }: HeroSceneProps) => {
       if (activeRef.current && spawnStart === 0) spawnStart = now;
       const elapsed = spawnStart > 0 ? (now - spawnStart) / 1000 : 0;
 
-      // Beams — draw in along X-axis (length), slow enough to remain
-      // animating after the preloader's shutters peel back (~1.2s in)
+      // Beams — draw in along X-axis behind the full-screen preloader.
       beams.forEach((b) => {
         const ud = b.userData;
         const spawnT = Math.max(0, elapsed - ud.spawnDelay);
         if (spawnT > 0 && !ud.spawnDone) {
-          const progress = Math.min(1, spawnT / 1.6);
+          const progress = Math.min(1, spawnT / 0.9);
           const eased = 1 - Math.pow(1 - progress, 4);
           b.scale.x = Math.max(0.001, eased);
           if (progress >= 1) ud.spawnDone = true;
@@ -224,7 +223,7 @@ const HeroScene = ({ active }: HeroSceneProps) => {
       // Crystal spawn — uniform scale-in with slight overshoot
       const cSpawn = Math.max(0, elapsed - crystal.userData.spawnDelay);
       if (cSpawn > 0 && !crystal.userData.spawnDone) {
-        const progress = Math.min(1, cSpawn / 1.4);
+        const progress = Math.min(1, cSpawn / 0.85);
         // Back-out: overshoot then settle
         const eased = progress < 0.7
           ? 1 - Math.pow(1 - progress / 0.7, 3)
@@ -235,9 +234,9 @@ const HeroScene = ({ active }: HeroSceneProps) => {
       crystal.rotation.x = t * 0.1 + st.target.y * 0.3;
       crystal.rotation.y = t * 0.15 + st.target.x * 0.3;
 
-      // Particle fade-in — starts after preloader peels
-      if (elapsed > 1.2) {
-        const pFade = Math.min(1, (elapsed - 1.2) / 1.5);
+      // Particle fade-in completes before the preloader peels.
+      if (elapsed > 0.2) {
+        const pFade = Math.min(1, (elapsed - 0.2) / 0.9);
         partMat.opacity = 0.45 * pFade;
       }
       particles.rotation.y = t * 0.008;
@@ -279,14 +278,12 @@ const HeroScene = ({ active }: HeroSceneProps) => {
     };
   }, []);
 
-  // Latch active so the spawn animation starts when the preloader peels.
-  // Container snaps to opacity 1 — the preloader's shutters handle the reveal,
-  // and the user sees the actual beam draw-in animation as they peel back.
+  // Keep the scene mounted and rendering behind the preloader so nothing pops in after reveal.
   useEffect(() => {
     activeRef.current = active;
     const c = containerRef.current;
     if (!c) return;
-    c.style.opacity = active ? "1" : "0";
+    c.style.opacity = "1";
     c.style.transition = "none";
   }, [active]);
 
@@ -294,7 +291,7 @@ const HeroScene = ({ active }: HeroSceneProps) => {
     <div
       ref={containerRef}
       className="absolute inset-0 -z-10"
-      style={{ opacity: 0 }}
+      style={{ opacity: 1 }}
       aria-hidden
     />
   );

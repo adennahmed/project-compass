@@ -15,7 +15,7 @@ import Footer from "@/components/Footer";
 import ContactDrawer from "@/components/ContactDrawer";
 
 const Index = () => {
-  const [heroAnimate, setHeroAnimate] = useState(false);
+  const [heroAnimate, setHeroAnimate] = useState(true);
   const [showPreloader, setShowPreloader] = useState(true);
   const [drawerOpen, setDrawerOpen] = useState(false);
 

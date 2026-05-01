@@ -268,12 +268,12 @@ const ServicesSection = () => {
           </div>
         </div>
 
-        <div className="relative mt-6 grid min-h-0 flex-1 grid-cols-1 gap-8 md:mt-8 md:grid-cols-12 md:gap-12">
-          {/* Visual stage — fixed-size square, centered in the column */}
-          <div className="relative order-2 hidden min-h-0 h-full md:order-1 md:col-span-5 md:flex md:items-center md:justify-center">
+        <div className="relative mt-6 grid min-h-0 flex-1 grid-cols-1 gap-8 md:mt-8 md:grid-cols-12 md:items-center md:gap-8">
+          {/* Visual stage — locked to the left of the active description */}
+          <div className="relative order-2 hidden min-h-0 md:order-1 md:col-span-5 md:flex md:h-[420px] md:items-center md:justify-end lg:col-span-6">
             <div
               className="relative shrink-0"
-              style={{ width: "340px", height: "340px" }}
+              style={{ width: "min(30vw, 360px)", height: "min(30vw, 360px)" }}
             >
               {services.map((_, i) => (
                 <div key={i} className="service-visual absolute inset-0">
@@ -284,7 +284,7 @@ const ServicesSection = () => {
           </div>
 
           {/* Content rows — stacked, only one visible at a time */}
-          <div ref={trackRef} className="relative order-1 min-h-0 overflow-hidden md:order-2 md:col-span-7">
+          <div ref={trackRef} className="relative order-1 min-h-0 overflow-hidden md:order-2 md:col-span-7 md:h-[420px] lg:col-span-6">
             <div className="relative h-full pr-4 md:pr-0">
               {services.map((s) => (
                 <div

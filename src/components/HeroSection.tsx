@@ -18,10 +18,8 @@ const HeroSection = ({ animate, onContactClick }: HeroSectionProps) => {
     if (!animate || introDone.current || !sectionRef.current) return;
     introDone.current = true;
 
-    // animate=true fires at preloader transition start (~2.85s), the moment
-    // the shutters begin peeling. Run all hero intro animations in parallel
-    // with the ~1.2s shutter peel so every element is fully settled the
-    // instant the shutters fully clear — no "pop-in" after the loader.
+    // animate starts immediately, while the preloader is still fully covering the page,
+    // so the first screen is already composed before the shutter reveal begins.
     const base = 0;
 
     const ctx = gsap.context(() => {
