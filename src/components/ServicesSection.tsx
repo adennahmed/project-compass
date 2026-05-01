@@ -36,7 +36,7 @@ const services = [
   },
 ];
 
-const ServiceVisual = ({ index, active }: { index: number; active: number }) => {
+const ServiceVisual = ({ index }: { index: number }) => {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -179,57 +179,45 @@ const ServiceVisual = ({ index, active }: { index: number; active: number }) => 
     };
   }, [index]);
 
-  return (
-    <div
-      ref={ref}
-      className="absolute inset-0 transition-opacity duration-700"
-      style={{ opacity: active === index ? 1 : 0 }}
-    />
-  );
+  return <div ref={ref} className="absolute inset-0" aria-hidden />;
 };
 
 const ServicesSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
-  const activeRef = useRef(0);
   const trackRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!sectionRef.current || !trackRef.current) return;
     const track = trackRef.current;
-    const items = track.querySelectorAll<HTMLElement>(".service-row");
-    const visuals = sectionRef.current.querySelectorAll<HTMLElement>(".service-visual");
+    const panels = track.querySelectorAll<HTMLElement>(".service-panel");
 
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top top",
-          end: () => `+=${items.length * 80}%`,
+          end: () => `+=${panels.length * 80}%`,
           pin: true,
           scrub: 0.6,
         },
       });
 
-      items.forEach((row, i) => {
+      panels.forEach((panel, i) => {
         if (i === 0) {
-          gsap.set(row, { autoAlpha: 1, y: 0 });
+          gsap.set(panel, { autoAlpha: 1 });
         } else {
-          gsap.set(row, { autoAlpha: 0, y: 0 });
+          gsap.set(panel, { autoAlpha: 0 });
         }
       });
-      visuals.forEach((v, i) => gsap.set(v, { autoAlpha: i === 0 ? 1 : 0 }));
 
-      items.forEach((row, i) => {
+      panels.forEach((panel, i) => {
         if (i === 0) return;
         tl
-          .to(items[i - 1], { autoAlpha: 0, duration: 0.5 }, "+=0.4")
-          .to(visuals[i - 1], { autoAlpha: 0, duration: 0.4 }, "<")
-          .fromTo(row, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.6 }, "<")
-          .fromTo(visuals[i], { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.6 }, "<")
+          .to(panels[i - 1], { autoAlpha: 0, duration: 0.5 }, "+=0.4")
+          .fromTo(panel, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.6 }, "<")
           .call(() => {
-            activeRef.current = i;
             const indicator = sectionRef.current?.querySelector(".service-progress-fill") as HTMLElement;
-            if (indicator) indicator.style.width = `${((i + 1) / items.length) * 100}%`;
+            if (indicator) indicator.style.width = `${((i + 1) / panels.length) * 100}%`;
           });
       });
     }, sectionRef);
