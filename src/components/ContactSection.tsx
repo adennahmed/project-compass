@@ -72,6 +72,11 @@ const FluidBackground = () => {
     let raf = 0;
     const start = performance.now();
     const tick = () => {
+      // Pause expensive fragment shader while the contact drawer is open
+      if (document.body.dataset.drawerOpen === "1") {
+        raf = requestAnimationFrame(tick);
+        return;
+      }
       uniforms.uTime.value = (performance.now() - start) / 1000;
       renderer.render(scene, camera);
       raf = requestAnimationFrame(tick);

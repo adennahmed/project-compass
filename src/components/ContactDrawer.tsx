@@ -31,6 +31,10 @@ const ContactDrawer = ({ open, onClose }: ContactDrawerProps) => {
       document.body.style.left = "0";
       document.body.style.right = "0";
       document.body.dataset.scrollY = String(scrollY);
+      // Tell background WebGL scenes to pause — backdrop compositing is the
+      // hot path that makes the drawer feel laggy on desktop
+      document.body.dataset.drawerOpen = "1";
+      window.dispatchEvent(new Event("kz:drawer-open"));
 
       gsap.set(overlay, { display: "block", autoAlpha: 0 });
       gsap.set(panel, { xPercent: 100 });
@@ -44,6 +48,8 @@ const ContactDrawer = ({ open, onClose }: ContactDrawerProps) => {
       document.body.style.left = "";
       document.body.style.right = "";
       window.scrollTo(0, savedY);
+      delete document.body.dataset.drawerOpen;
+      window.dispatchEvent(new Event("kz:drawer-close"));
 
       gsap.to(panel, { xPercent: 100, duration: 0.55, ease: "power4.inOut" });
       gsap.to(overlay, {
@@ -79,7 +85,7 @@ const ContactDrawer = ({ open, onClose }: ContactDrawerProps) => {
         type="button"
         aria-label="Close"
         onClick={onClose}
-        className="absolute inset-0 bg-ink/70 backdrop-blur-sm"
+        className="absolute inset-0 bg-ink/85"
       />
       <div
         ref={panelRef}

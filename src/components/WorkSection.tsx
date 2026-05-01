@@ -164,6 +164,10 @@ const ProjectMockup = ({ idx }: { idx: number }) => {
     let raf = 0;
     const start = performance.now();
     const tick = () => {
+      if (document.body.dataset.drawerOpen === "1") {
+        raf = requestAnimationFrame(tick);
+        return;
+      }
       const t = (performance.now() - start) / 1000;
       group.rotation.y = 0.32 + Math.sin(t * 0.4) * 0.08;
       group.rotation.x = -0.18 + Math.sin(t * 0.3) * 0.04;

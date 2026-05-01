@@ -7,6 +7,7 @@ interface HeroSceneProps {
 
 const HeroScene = ({ active }: HeroSceneProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const activeRef = useRef(false);
   const stateRef = useRef({
     mouse: new THREE.Vector2(0, 0),
     target: new THREE.Vector2(0, 0),
@@ -96,7 +97,7 @@ const HeroScene = ({ active }: HeroSceneProps) => {
       mesh.scale.set(0.001, 1, 1);
 
       mesh.userData = {
-        spawnDelay: i * 0.16,
+        spawnDelay: 0.2 + i * 0.18,
         spawnDone: false,
         floatAmp: 0.03 + Math.random() * 0.06,
         floatSpeed: 0.3 + Math.random() * 0.3,
@@ -125,7 +126,7 @@ const HeroScene = ({ active }: HeroSceneProps) => {
     });
     const crystal = new THREE.Mesh(crystalGeo, crystalMat);
     crystal.scale.set(0, 0, 0);
-    crystal.userData = { spawnDelay: 0.3, spawnDone: false };
+    crystal.userData = { spawnDelay: 1.4, spawnDone: false };
     scene.add(crystal);
 
     // Wireframe accent on crystal
@@ -174,10 +175,15 @@ const HeroScene = ({ active }: HeroSceneProps) => {
 
     let raf = 0;
     const start = performance.now();
-    // Spawn begins immediately so shapes build during the preloader
-    const spawnStart = start;
+    // Spawn waits until activeRef flips true (preloader transition start)
+    let spawnStart = 0;
 
     const tick = () => {
+      // Pause rendering while the contact drawer is open
+      if (document.body.dataset.drawerOpen === "1") {
+        raf = requestAnimationFrame(tick);
+        return;
+      }
       const now = performance.now();
       const t = (now - start) / 1000;
       const st = stateRef.current;
@@ -192,14 +198,17 @@ const HeroScene = ({ active }: HeroSceneProps) => {
       camera.position.z = 8 - st.scroll * 1.2;
       camera.lookAt(0, 0, 0);
 
-      const elapsed = (now - spawnStart) / 1000;
+      // Latch spawn start to the moment active flips true
+      if (activeRef.current && spawnStart === 0) spawnStart = now;
+      const elapsed = spawnStart > 0 ? (now - spawnStart) / 1000 : 0;
 
-      // Beams — draw in along X-axis (length), quartic-out ease
+      // Beams — draw in along X-axis (length), slow enough to remain
+      // animating after the preloader's shutters peel back (~1.2s in)
       beams.forEach((b) => {
         const ud = b.userData;
         const spawnT = Math.max(0, elapsed - ud.spawnDelay);
         if (spawnT > 0 && !ud.spawnDone) {
-          const progress = Math.min(1, spawnT / 1.1);
+          const progress = Math.min(1, spawnT / 1.6);
           const eased = 1 - Math.pow(1 - progress, 4);
           b.scale.x = Math.max(0.001, eased);
           if (progress >= 1) ud.spawnDone = true;
@@ -214,7 +223,7 @@ const HeroScene = ({ active }: HeroSceneProps) => {
       // Crystal spawn — uniform scale-in with slight overshoot
       const cSpawn = Math.max(0, elapsed - crystal.userData.spawnDelay);
       if (cSpawn > 0 && !crystal.userData.spawnDone) {
-        const progress = Math.min(1, cSpawn / 1.2);
+        const progress = Math.min(1, cSpawn / 1.4);
         // Back-out: overshoot then settle
         const eased = progress < 0.7
           ? 1 - Math.pow(1 - progress / 0.7, 3)
@@ -269,12 +278,15 @@ const HeroScene = ({ active }: HeroSceneProps) => {
     };
   }, []);
 
-  // Fade the scene in when the preloader hands off — shapes already built by then
+  // Latch active so the spawn animation starts when the preloader peels.
+  // Container snaps to opacity 1 — the preloader's shutters handle the reveal,
+  // and the user sees the actual beam draw-in animation as they peel back.
   useEffect(() => {
+    activeRef.current = active;
     const c = containerRef.current;
     if (!c) return;
     c.style.opacity = active ? "1" : "0";
-    c.style.transition = "opacity 1.4s cubic-bezier(0.16, 1, 0.3, 1)";
+    c.style.transition = "none";
   }, [active]);
 
   return (

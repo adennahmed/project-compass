@@ -147,6 +147,10 @@ const ServiceVisual = ({ index, active }: { index: number; active: number }) => 
     let raf = 0;
     const start = performance.now();
     const tick = () => {
+      if (document.body.dataset.drawerOpen === "1") {
+        raf = requestAnimationFrame(tick);
+        return;
+      }
       const t = (performance.now() - start) / 1000;
       object.rotation.y = Math.sin(t * 0.4) * 0.3;
       object.rotation.x = Math.sin(t * 0.2) * 0.12;
@@ -265,9 +269,12 @@ const ServicesSection = () => {
         </div>
 
         <div className="relative mt-6 grid min-h-0 flex-1 grid-cols-1 gap-8 md:mt-8 md:grid-cols-12 md:gap-12">
-          {/* Visual stage */}
-          <div className="relative order-2 hidden min-h-0 h-full md:order-1 md:col-span-5 md:block">
-            <div className="relative h-full w-full">
+          {/* Visual stage — capped square, centered in the column */}
+          <div className="relative order-2 hidden min-h-0 h-full md:order-1 md:col-span-5 md:flex md:items-center md:justify-center">
+            <div
+              className="relative w-full"
+              style={{ maxWidth: "440px", maxHeight: "440px", aspectRatio: "1 / 1" }}
+            >
               {services.map((_, i) => (
                 <div key={i} className="service-visual absolute inset-0">
                   <ServiceVisual index={i} active={i} />
