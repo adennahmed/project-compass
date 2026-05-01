@@ -214,7 +214,7 @@ const ServicesSection = () => {
         if (i === 0) {
           gsap.set(row, { autoAlpha: 1, y: 0 });
         } else {
-          gsap.set(row, { autoAlpha: 0, y: 60 });
+          gsap.set(row, { autoAlpha: 0, y: 0 });
         }
       });
       visuals.forEach((v, i) => gsap.set(v, { autoAlpha: i === 0 ? 1 : 0 }));
@@ -222,9 +222,9 @@ const ServicesSection = () => {
       items.forEach((row, i) => {
         if (i === 0) return;
         tl
-          .to(items[i - 1], { autoAlpha: 0, y: -60, duration: 0.6 }, "+=0.4")
+          .to(items[i - 1], { autoAlpha: 0, duration: 0.5 }, "+=0.4")
           .to(visuals[i - 1], { autoAlpha: 0, duration: 0.4 }, "<")
-          .fromTo(row, { autoAlpha: 0, y: 60 }, { autoAlpha: 1, y: 0, duration: 0.6 }, "<")
+          .fromTo(row, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.6 }, "<")
           .fromTo(visuals[i], { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.6 }, "<")
           .call(() => {
             activeRef.current = i;
