@@ -50,7 +50,7 @@ const ServiceVisual = ({ index, active }: { index: number; active: number }) => 
     container.appendChild(renderer.domElement);
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(35, container.clientWidth / container.clientHeight, 0.1, 100);
-    camera.position.set(0, 0, 6);
+    camera.position.set(0, 0, 10);
     scene.add(new THREE.AmbientLight(0xffffff, 0.4));
     const dl = new THREE.DirectionalLight(0xeae8e2, 0.6);
     dl.position.set(2, 3, 4);
@@ -269,11 +269,11 @@ const ServicesSection = () => {
         </div>
 
         <div className="relative mt-6 grid min-h-0 flex-1 grid-cols-1 gap-8 md:mt-8 md:grid-cols-12 md:gap-12">
-          {/* Visual stage — capped square, centered in the column */}
+          {/* Visual stage — fixed-size square, centered in the column */}
           <div className="relative order-2 hidden min-h-0 h-full md:order-1 md:col-span-5 md:flex md:items-center md:justify-center">
             <div
-              className="relative w-full"
-              style={{ maxWidth: "440px", maxHeight: "440px", aspectRatio: "1 / 1" }}
+              className="relative shrink-0"
+              style={{ width: "340px", height: "340px" }}
             >
               {services.map((_, i) => (
                 <div key={i} className="service-visual absolute inset-0">

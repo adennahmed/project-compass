@@ -97,7 +97,8 @@ const HeroScene = ({ active }: HeroSceneProps) => {
       mesh.scale.set(0.001, 1, 1);
 
       mesh.userData = {
-        spawnDelay: 0.2 + i * 0.18,
+        // Leading delay so the spawn animation lands AFTER the preloader peels
+        spawnDelay: 1.0 + i * 0.18,
         spawnDone: false,
         floatAmp: 0.03 + Math.random() * 0.06,
         floatSpeed: 0.3 + Math.random() * 0.3,
@@ -126,7 +127,7 @@ const HeroScene = ({ active }: HeroSceneProps) => {
     });
     const crystal = new THREE.Mesh(crystalGeo, crystalMat);
     crystal.scale.set(0, 0, 0);
-    crystal.userData = { spawnDelay: 1.4, spawnDone: false };
+    crystal.userData = { spawnDelay: 2.0, spawnDone: false };
     scene.add(crystal);
 
     // Wireframe accent on crystal
@@ -234,9 +235,9 @@ const HeroScene = ({ active }: HeroSceneProps) => {
       crystal.rotation.x = t * 0.1 + st.target.y * 0.3;
       crystal.rotation.y = t * 0.15 + st.target.x * 0.3;
 
-      // Particle fade-in
-      if (elapsed > 0.5) {
-        const pFade = Math.min(1, (elapsed - 0.5) / 1.5);
+      // Particle fade-in — starts after preloader peels
+      if (elapsed > 1.2) {
+        const pFade = Math.min(1, (elapsed - 1.2) / 1.5);
         partMat.opacity = 0.45 * pFade;
       }
       particles.rotation.y = t * 0.008;
