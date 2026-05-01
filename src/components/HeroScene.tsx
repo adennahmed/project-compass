@@ -278,14 +278,12 @@ const HeroScene = ({ active }: HeroSceneProps) => {
     };
   }, []);
 
-  // Latch active so the spawn animation starts when the preloader peels.
-  // Container snaps to opacity 1 — the preloader's shutters handle the reveal,
-  // and the user sees the actual beam draw-in animation as they peel back.
+  // Keep the scene mounted and rendering behind the preloader so nothing pops in after reveal.
   useEffect(() => {
     activeRef.current = active;
     const c = containerRef.current;
     if (!c) return;
-    c.style.opacity = active ? "1" : "0";
+    c.style.opacity = "1";
     c.style.transition = "none";
   }, [active]);
 
@@ -293,7 +291,7 @@ const HeroScene = ({ active }: HeroSceneProps) => {
     <div
       ref={containerRef}
       className="absolute inset-0 -z-10"
-      style={{ opacity: 0 }}
+      style={{ opacity: 1 }}
       aria-hidden
     />
   );
