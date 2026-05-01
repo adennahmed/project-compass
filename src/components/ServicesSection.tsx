@@ -190,35 +190,31 @@ const ServicesSection = () => {
     if (!sectionRef.current || !trackRef.current) return;
     const track = trackRef.current;
     const panels = track.querySelectorAll<HTMLElement>(".service-panel");
+    let activeIndex = 0;
 
     const ctx = gsap.context(() => {
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top top",
-          end: () => `+=${panels.length * 80}%`,
-          pin: true,
-          scrub: 0.6,
+      const showPanel = (nextIndex: number) => {
+        if (nextIndex === activeIndex) return;
+        panels.forEach((panel, i) => {
+          gsap.set(panel, { autoAlpha: i === nextIndex ? 1 : 0 });
+        });
+        activeIndex = nextIndex;
+        const indicator = sectionRef.current?.querySelector(".service-progress-fill") as HTMLElement;
+        if (indicator) indicator.style.width = `${((nextIndex + 1) / panels.length) * 100}%`;
+      };
+
+      panels.forEach((panel, i) => gsap.set(panel, { autoAlpha: i === 0 ? 1 : 0 }));
+
+      ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: "top top",
+        end: () => `+=${panels.length * 80}%`,
+        pin: true,
+        scrub: false,
+        onUpdate: (self) => {
+          const nextIndex = Math.min(panels.length - 1, Math.floor(self.progress * panels.length));
+          showPanel(nextIndex);
         },
-      });
-
-      panels.forEach((panel, i) => {
-        if (i === 0) {
-          gsap.set(panel, { autoAlpha: 1 });
-        } else {
-          gsap.set(panel, { autoAlpha: 0 });
-        }
-      });
-
-      panels.forEach((panel, i) => {
-        if (i === 0) return;
-        tl
-          .to(panels[i - 1], { autoAlpha: 0, duration: 0.5 }, "+=0.4")
-          .fromTo(panel, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.6 }, "<")
-          .call(() => {
-            const indicator = sectionRef.current?.querySelector(".service-progress-fill") as HTMLElement;
-            if (indicator) indicator.style.width = `${((i + 1) / panels.length) * 100}%`;
-          });
       });
     }, sectionRef);
 
@@ -256,16 +252,16 @@ const ServicesSection = () => {
           </div>
         </div>
 
-        <div ref={trackRef} className="relative mt-6 min-h-0 flex-1 overflow-hidden md:mt-8">
+        <div ref={trackRef} className="relative mt-4 min-h-0 flex-1 overflow-hidden md:mt-6">
           {services.map((s, i) => (
             <div
               key={s.n}
-              className="service-panel absolute inset-0 grid grid-cols-1 items-center md:grid-cols-[minmax(220px,340px)_minmax(0,560px)] md:justify-center md:gap-10 lg:grid-cols-[minmax(260px,380px)_minmax(0,560px)] lg:gap-12"
+              className="service-panel absolute inset-0 grid grid-cols-1 items-start md:grid-cols-[minmax(220px,320px)_minmax(0,560px)] md:justify-center md:gap-8 lg:grid-cols-[minmax(260px,360px)_minmax(0,560px)] lg:gap-12"
             >
-              <div className="relative hidden aspect-square w-full max-w-[340px] justify-self-end md:block lg:max-w-[380px]">
+              <div className="relative hidden aspect-square w-full max-w-[320px] justify-self-end md:mt-[clamp(5.5rem,13vh,9.5rem)] md:block lg:max-w-[360px]">
                 <ServiceVisual index={i} />
               </div>
-              <div className="flex max-h-full flex-col justify-center overflow-y-auto pb-4 pr-4 md:pr-0">
+              <div className="flex max-h-full flex-col overflow-y-auto pb-4 pr-4 md:mt-[clamp(5.5rem,13vh,9.5rem)] md:pr-0">
                   <div className="font-mono text-[11px] uppercase tracking-[0.32em] text-signal">
                     {s.n}
                   </div>
