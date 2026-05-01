@@ -161,13 +161,17 @@ const Preloader = ({ onComplete, onTransitionStart }: PreloaderProps) => {
       gsap
         .timeline({
           delay: 2.85,
-          onStart: onTransitionStart,
+          onStart: () => {
+            onTransitionStart();
+            if (rootRef.current) rootRef.current.style.backgroundColor = "transparent";
+          },
           onComplete: () => {
             document.documentElement.classList.remove("is-loading");
             onComplete();
           },
         })
-        .to(".kz-pre__content", { opacity: 0, y: -12, duration: 0.6, ease: "power2.in" }, 0)
+        .to(".kz-pre__content", { opacity: 0, y: -12, duration: 0.45, ease: "power2.in" }, 0)
+        .to(".kz-pre__canvas", { opacity: 0, duration: 0.18, ease: "power1.out" }, 0)
         .to(".kz-pre__shutter--top", { yPercent: -100, duration: 1.05, ease: "power4.inOut" }, 0.15)
         .to(".kz-pre__shutter--bottom", { yPercent: 100, duration: 1.05, ease: "power4.inOut" }, 0.15);
     }, rootRef);
@@ -180,7 +184,7 @@ const Preloader = ({ onComplete, onTransitionStart }: PreloaderProps) => {
 
   return (
     <div ref={rootRef} className="fixed inset-0 z-[999999] overflow-hidden bg-ink">
-      <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
+      <canvas ref={canvasRef} className="kz-pre__canvas absolute inset-0 h-full w-full" />
 
       {/* Shutter panels that drop away */}
       <div className="kz-pre__shutter kz-pre__shutter--top absolute inset-x-0 top-0 z-10 h-1/2 bg-ink" />
