@@ -58,9 +58,10 @@ const noiseShader = {
 
       // Energy band that scans with progress
       float band = smoothstep(0.018, 0.0, abs(uv.y - (0.05 + uProgress * 0.9)));
-      vec3 ink = vec3(0.031, 0.031, 0.035);
-      vec3 mid = mix(ink, vec3(0.085, 0.09, 0.10), n * v);
-      vec3 col = mix(mid, vec3(0.855, 1.0, 0.0), band * 0.18);
+      // Light paper bg with darker grain + a precision cobalt scan-band
+      vec3 paper = vec3(0.945, 0.933, 0.898);
+      vec3 mid = mix(paper, vec3(0.86, 0.84, 0.79), n * v * 0.85);
+      vec3 col = mix(mid, vec3(0.106, 0.247, 0.878), band * 0.55);
 
       gl_FragColor = vec4(col, 1.0);
     }

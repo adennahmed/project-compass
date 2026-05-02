@@ -50,10 +50,10 @@ const Navigation = ({ onContactClick }: NavigationProps) => {
       ref={navRef}
       className="fixed inset-x-0 top-0 z-50 px-6 py-5 transition-all duration-500 md:px-12"
       style={{
-        background: scrolled ? "rgba(8,8,9,0.72)" : "transparent",
+        background: scrolled ? "rgba(241,238,229,0.78)" : "transparent",
         backdropFilter: scrolled ? "blur(14px)" : "none",
         WebkitBackdropFilter: scrolled ? "blur(14px)" : "none",
-        borderBottom: scrolled ? "1px solid rgba(234,232,226,0.06)" : "1px solid transparent",
+        borderBottom: scrolled ? "1px solid rgba(15,15,18,0.08)" : "1px solid transparent",
       }}
     >
       <div className="mx-auto flex max-w-[1440px] items-center justify-between">

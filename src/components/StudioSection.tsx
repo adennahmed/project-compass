@@ -18,19 +18,19 @@ interface Member {
 const members: Member[] = [
   {
     name: "Aden Ahmed",
-    role: "Founding Engineer",
+    role: "Principal Engineer & Founder",
     src: adenImg,
     initials: "AA",
-    bio: "Ten years building the kind of internal tools that operations teams quietly depend on. Comfortable from Postgres up to the React the dispatcher actually clicks.",
-    detail: "Lives in the trade-off between elegance and shipping. Ships.",
+    bio: "Builds the operational platforms mid-market and enterprise teams depend on. Background spans data infrastructure, distributed services, and the interfaces operators rely on every day.",
+    detail: "Specializes in turning ambiguous requirements into systems that hold up under production load.",
   },
-   {
-     name: "Muhammad Khan",
-     role: "Systems Engineering",
-     src: muhammadImg,
-     initials: "MK",
-    bio: "Distributed systems specialist who finds the weird race condition in production at 2am, fixes it, and writes the post-mortem before anyone notices. Patient with messy data.",
-    detail: "Reads compiler papers for fun. Drinks too much green tea.",
+  {
+    name: "Muhammad Khan",
+    role: "Senior Systems Engineer",
+    src: muhammadImg,
+    initials: "MK",
+    bio: "Distributed systems and reliability engineering. Deep experience with high-availability architectures, observability, and the edge cases that determine whether a system can be trusted under load.",
+    detail: "Focuses on resilience engineering — building systems that fail gracefully and recover predictably.",
   },
 ];
 
@@ -77,9 +77,9 @@ const StudioSection = () => {
               <span className="text-bone/55">Direct access.</span>
             </h2>
             <p className="mt-8 max-w-[360px] text-sm leading-relaxed text-bone/65">
-              Kozai is a focused studio built on senior talent. You talk to the people writing the
-              code — on every call, every commit, and every release. No account managers, no ticket
-              queues, no handoff theatre.
+              Kozai is a software studio working at the intersection of engineering and operations.
+              You work directly with the engineers building your system — every call, every commit,
+              every release. No intermediaries between you and the people writing the code.
             </p>
             <div className="mt-12 grid grid-cols-2 gap-6">
               <div>
@@ -91,8 +91,8 @@ const StudioSection = () => {
                 <div className="mt-1 text-xl text-bone">Toronto, CA</div>
               </div>
               <div>
-                <div className="font-mono text-[11px] uppercase tracking-[0.28em] text-bone-mute">Structure</div>
-                <div className="mt-1 text-xl text-bone">Boutique</div>
+                <div className="font-mono text-[11px] uppercase tracking-[0.28em] text-bone-mute">Practice</div>
+                <div className="mt-1 text-xl text-bone">Independent</div>
               </div>
               <div>
                 <div className="font-mono text-[11px] uppercase tracking-[0.28em] text-bone-mute">Stack</div>

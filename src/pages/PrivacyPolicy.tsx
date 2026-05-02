@@ -8,7 +8,7 @@ const PrivacyPolicy = () => {
   }, []);
 
   return (
-    <div style={{ background: "#080808", minHeight: "100vh", color: "#ffffff" }}>
+    <div style={{ background: "#F1EEE5", minHeight: "100vh", color: "#0F0F12" }}>
       <SEOHead
         title="Privacy Policy — Kozai"
         description="Kozai's privacy policy outlines how we collect, use, and protect your personal information."
@@ -22,7 +22,7 @@ const PrivacyPolicy = () => {
         <Link
           to="/"
           className="text-[11px] uppercase tracking-[0.12em] hover-target"
-          style={{ color: "rgba(255,255,255,0.5)" }}
+          style={{ color: "rgba(15,15,18,0.5)" }}
         >
           ← Back
         </Link>
@@ -32,23 +32,23 @@ const PrivacyPolicy = () => {
       <main className="px-6 md:px-12 lg:px-24 max-w-[800px] pb-24">
         <div
           className="text-[11px] uppercase tracking-[0.18em] mb-6 mt-8"
-          style={{ color: "#C8A96E" }}
+          style={{ color: "#1B3FE0" }}
         >
           Legal
         </div>
         <h1
           className="text-[32px] md:text-[48px] font-bold uppercase leading-[1.1] mb-4"
-          style={{ color: "#ffffff" }}
+          style={{ color: "#0F0F12" }}
         >
           Privacy Policy
         </h1>
-        <p className="text-[13px] uppercase tracking-[0.08em] mb-12" style={{ color: "rgba(255,255,255,0.35)" }}>
+        <p className="text-[13px] uppercase tracking-[0.08em] mb-12" style={{ color: "rgba(15,15,18,0.35)" }}>
           Last Updated — April 6, 2026
         </p>
 
-        <div className="space-y-10" style={{ color: "rgba(255,255,255,0.7)" }}>
+        <div className="space-y-10" style={{ color: "rgba(15,15,18,0.7)" }}>
           <section>
-            <h2 className="text-[14px] uppercase tracking-[0.1em] font-semibold mb-4" style={{ color: "#C8A96E" }}>
+            <h2 className="text-[14px] uppercase tracking-[0.1em] font-semibold mb-4" style={{ color: "#1B3FE0" }}>
               1. Information We Collect
             </h2>
             <p className="text-[14px] leading-[1.8] mb-3">
@@ -57,7 +57,7 @@ const PrivacyPolicy = () => {
             <ul className="list-none space-y-2 ml-4">
               {["First and last name", "Email address", "Phone number (optional)", "Business name and type (optional)", "Your role", "Message content (optional)"].map((item) => (
                 <li key={item} className="text-[14px] leading-[1.8] flex items-start gap-3">
-                  <span style={{ color: "#C8A96E", fontSize: "8px", marginTop: "8px" }}>■</span>
+                  <span style={{ color: "#1B3FE0", fontSize: "8px", marginTop: "8px" }}>■</span>
                   {item}
                 </li>
               ))}
@@ -65,7 +65,7 @@ const PrivacyPolicy = () => {
           </section>
 
           <section>
-            <h2 className="text-[14px] uppercase tracking-[0.1em] font-semibold mb-4" style={{ color: "#C8A96E" }}>
+            <h2 className="text-[14px] uppercase tracking-[0.1em] font-semibold mb-4" style={{ color: "#1B3FE0" }}>
               2. How We Use Your Information
             </h2>
             <p className="text-[14px] leading-[1.8]">
@@ -74,7 +74,7 @@ const PrivacyPolicy = () => {
           </section>
 
           <section>
-            <h2 className="text-[14px] uppercase tracking-[0.1em] font-semibold mb-4" style={{ color: "#C8A96E" }}>
+            <h2 className="text-[14px] uppercase tracking-[0.1em] font-semibold mb-4" style={{ color: "#1B3FE0" }}>
               3. Data Storage & Security
             </h2>
             <p className="text-[14px] leading-[1.8]">
@@ -83,7 +83,7 @@ const PrivacyPolicy = () => {
           </section>
 
           <section>
-            <h2 className="text-[14px] uppercase tracking-[0.1em] font-semibold mb-4" style={{ color: "#C8A96E" }}>
+            <h2 className="text-[14px] uppercase tracking-[0.1em] font-semibold mb-4" style={{ color: "#1B3FE0" }}>
               4. Data Sharing
             </h2>
             <p className="text-[14px] leading-[1.8]">
@@ -92,7 +92,7 @@ const PrivacyPolicy = () => {
           </section>
 
           <section>
-            <h2 className="text-[14px] uppercase tracking-[0.1em] font-semibold mb-4" style={{ color: "#C8A96E" }}>
+            <h2 className="text-[14px] uppercase tracking-[0.1em] font-semibold mb-4" style={{ color: "#1B3FE0" }}>
               5. Your Rights
             </h2>
             <p className="text-[14px] leading-[1.8]">
@@ -101,7 +101,7 @@ const PrivacyPolicy = () => {
           </section>
 
           <section>
-            <h2 className="text-[14px] uppercase tracking-[0.1em] font-semibold mb-4" style={{ color: "#C8A96E" }}>
+            <h2 className="text-[14px] uppercase tracking-[0.1em] font-semibold mb-4" style={{ color: "#1B3FE0" }}>
               6. Cookies
             </h2>
             <p className="text-[14px] leading-[1.8]">
@@ -110,7 +110,7 @@ const PrivacyPolicy = () => {
           </section>
 
           <section>
-            <h2 className="text-[14px] uppercase tracking-[0.1em] font-semibold mb-4" style={{ color: "#C8A96E" }}>
+            <h2 className="text-[14px] uppercase tracking-[0.1em] font-semibold mb-4" style={{ color: "#1B3FE0" }}>
               7. Changes to This Policy
             </h2>
             <p className="text-[14px] leading-[1.8]">
@@ -119,7 +119,7 @@ const PrivacyPolicy = () => {
           </section>
 
           <section>
-            <h2 className="text-[14px] uppercase tracking-[0.1em] font-semibold mb-4" style={{ color: "#C8A96E" }}>
+            <h2 className="text-[14px] uppercase tracking-[0.1em] font-semibold mb-4" style={{ color: "#1B3FE0" }}>
               8. Contact
             </h2>
             <p className="text-[14px] leading-[1.8]">
@@ -130,8 +130,8 @@ const PrivacyPolicy = () => {
       </main>
 
       {/* Footer */}
-      <footer className="px-6 md:px-12 py-8" style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}>
-        <p className="text-[11px] uppercase tracking-[0.06em]" style={{ color: "rgba(255,255,255,0.3)" }}>
+      <footer className="px-6 md:px-12 py-8" style={{ borderTop: "1px solid rgba(15,15,18,0.07)" }}>
+        <p className="text-[11px] uppercase tracking-[0.06em]" style={{ color: "rgba(15,15,18,0.3)" }}>
           © 2026 Kozai. All rights reserved.
         </p>
       </footer>

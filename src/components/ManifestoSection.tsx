@@ -95,7 +95,7 @@ const ManifestoSection = () => {
                 {
                   k: "02",
                   title: "Engineers, not vendors.",
-                  body: "You talk to the people writing the code. No project managers as middlemen, no ticket triage, no handoff theatre.",
+                  body: "You communicate directly with the engineers building your system. Clear technical discussion in place of account managers and project intermediaries.",
                 },
                 {
                   k: "03",

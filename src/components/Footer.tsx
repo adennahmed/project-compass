@@ -17,7 +17,7 @@ const Footer = () => {
     <footer className="relative isolate w-full overflow-hidden border-t border-bone/8 bg-ink">
       <div
         className="pointer-events-none absolute inset-0"
-        style={{ background: "radial-gradient(ellipse 80% 60% at 50% 100%, rgba(218,255,0,0.04) 0%, transparent 70%)" }}
+        style={{ background: "radial-gradient(ellipse 80% 60% at 50% 100%, rgba(27,63,224,0.05) 0%, transparent 70%)" }}
         aria-hidden
       />
 

@@ -8,7 +8,7 @@ const TermsAndConditions = () => {
   }, []);
 
   return (
-    <div style={{ background: "#080808", minHeight: "100vh", color: "#ffffff" }}>
+    <div style={{ background: "#F1EEE5", minHeight: "100vh", color: "#0F0F12" }}>
       <SEOHead
         title="Terms and Conditions — Kozai"
         description="Read Kozai's terms and conditions governing the use of our services and website."
@@ -22,7 +22,7 @@ const TermsAndConditions = () => {
         <Link
           to="/"
           className="text-[11px] uppercase tracking-[0.12em] hover-target"
-          style={{ color: "rgba(255,255,255,0.5)" }}
+          style={{ color: "rgba(15,15,18,0.5)" }}
         >
           ← Back
         </Link>
@@ -32,23 +32,23 @@ const TermsAndConditions = () => {
       <main className="px-6 md:px-12 lg:px-24 max-w-[800px] pb-24">
         <div
           className="text-[11px] uppercase tracking-[0.18em] mb-6 mt-8"
-          style={{ color: "#C8A96E" }}
+          style={{ color: "#1B3FE0" }}
         >
           Legal
         </div>
         <h1
           className="text-[32px] md:text-[48px] font-bold uppercase leading-[1.1] mb-4"
-          style={{ color: "#ffffff" }}
+          style={{ color: "#0F0F12" }}
         >
           Terms &amp; Conditions
         </h1>
-        <p className="text-[13px] uppercase tracking-[0.08em] mb-12" style={{ color: "rgba(255,255,255,0.35)" }}>
+        <p className="text-[13px] uppercase tracking-[0.08em] mb-12" style={{ color: "rgba(15,15,18,0.35)" }}>
           Last Updated — April 6, 2026
         </p>
 
-        <div className="space-y-10" style={{ color: "rgba(255,255,255,0.7)" }}>
+        <div className="space-y-10" style={{ color: "rgba(15,15,18,0.7)" }}>
           <section>
-            <h2 className="text-[14px] uppercase tracking-[0.1em] font-semibold mb-4" style={{ color: "#C8A96E" }}>
+            <h2 className="text-[14px] uppercase tracking-[0.1em] font-semibold mb-4" style={{ color: "#1B3FE0" }}>
               1. Acceptance of Terms
             </h2>
             <p className="text-[14px] leading-[1.8]">
@@ -57,7 +57,7 @@ const TermsAndConditions = () => {
           </section>
 
           <section>
-            <h2 className="text-[14px] uppercase tracking-[0.1em] font-semibold mb-4" style={{ color: "#C8A96E" }}>
+            <h2 className="text-[14px] uppercase tracking-[0.1em] font-semibold mb-4" style={{ color: "#1B3FE0" }}>
               2. Use of the Website
             </h2>
             <p className="text-[14px] leading-[1.8]">
@@ -66,7 +66,7 @@ const TermsAndConditions = () => {
           </section>
 
           <section>
-            <h2 className="text-[14px] uppercase tracking-[0.1em] font-semibold mb-4" style={{ color: "#C8A96E" }}>
+            <h2 className="text-[14px] uppercase tracking-[0.1em] font-semibold mb-4" style={{ color: "#1B3FE0" }}>
               3. Intellectual Property
             </h2>
             <p className="text-[14px] leading-[1.8]">
@@ -75,7 +75,7 @@ const TermsAndConditions = () => {
           </section>
 
           <section>
-            <h2 className="text-[14px] uppercase tracking-[0.1em] font-semibold mb-4" style={{ color: "#C8A96E" }}>
+            <h2 className="text-[14px] uppercase tracking-[0.1em] font-semibold mb-4" style={{ color: "#1B3FE0" }}>
               4. Contact Form Submissions
             </h2>
             <p className="text-[14px] leading-[1.8]">
@@ -84,7 +84,7 @@ const TermsAndConditions = () => {
           </section>
 
           <section>
-            <h2 className="text-[14px] uppercase tracking-[0.1em] font-semibold mb-4" style={{ color: "#C8A96E" }}>
+            <h2 className="text-[14px] uppercase tracking-[0.1em] font-semibold mb-4" style={{ color: "#1B3FE0" }}>
               5. Limitation of Liability
             </h2>
             <p className="text-[14px] leading-[1.8]">
@@ -93,7 +93,7 @@ const TermsAndConditions = () => {
           </section>
 
           <section>
-            <h2 className="text-[14px] uppercase tracking-[0.1em] font-semibold mb-4" style={{ color: "#C8A96E" }}>
+            <h2 className="text-[14px] uppercase tracking-[0.1em] font-semibold mb-4" style={{ color: "#1B3FE0" }}>
               6. Changes to Terms
             </h2>
             <p className="text-[14px] leading-[1.8]">
@@ -102,7 +102,7 @@ const TermsAndConditions = () => {
           </section>
 
           <section>
-            <h2 className="text-[14px] uppercase tracking-[0.1em] font-semibold mb-4" style={{ color: "#C8A96E" }}>
+            <h2 className="text-[14px] uppercase tracking-[0.1em] font-semibold mb-4" style={{ color: "#1B3FE0" }}>
               7. Contact
             </h2>
             <p className="text-[14px] leading-[1.8]">
@@ -113,8 +113,8 @@ const TermsAndConditions = () => {
       </main>
 
       {/* Footer */}
-      <footer className="px-6 md:px-12 py-8" style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}>
-        <p className="text-[11px] uppercase tracking-[0.06em]" style={{ color: "rgba(255,255,255,0.3)" }}>
+      <footer className="px-6 md:px-12 py-8" style={{ borderTop: "1px solid rgba(15,15,18,0.07)" }}>
+        <p className="text-[11px] uppercase tracking-[0.06em]" style={{ color: "rgba(15,15,18,0.3)" }}>
           © 2026 Kozai. All rights reserved.
         </p>
       </footer>

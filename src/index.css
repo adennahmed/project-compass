@@ -4,38 +4,42 @@
 
 @layer base {
   :root {
-    /* Two-color palette: ink (near-black) + signal (electric cyan-green) */
-    --ink: 8 8 9;            /* #080809 */
-    --ink-rise: 14 14 16;    /* #0E0E10 surface elevation */
-    --ink-edge: 22 22 25;    /* #161619 borders */
-    --bone: 234 232 226;     /* #EAE8E2 warm off-white */
-    --bone-mute: 156 154 148;
-    --bone-faint: 86 84 80;
-    --signal: 218 255 0;     /* #DAFF00 electric lime — sharp accent */
-    --signal-warm: 255 92 22;/* fallback warm accent if needed */
+    /* "Blueprint" — light editorial.
+       Token names kept (--ink / --bone / --signal) so existing Tailwind
+       classes flip the whole site to light mode without a global rename.
+       Semantically: --ink is now the *background* paper, --bone is the
+       *text* deep-ink, --signal is a saturated cobalt used sparingly. */
+    --ink: 241 238 229;       /* #F1EEE5 warm paper background */
+    --ink-rise: 248 245 236;  /* #F8F5EC elevated paper / cards */
+    --ink-edge: 224 220 208;  /* #E0DCD0 hairline borders */
+    --bone: 15 15 18;         /* #0F0F12 deep ink — primary text */
+    --bone-mute: 91 91 98;    /* #5B5B62 muted text */
+    --bone-faint: 154 154 159;/* #9A9A9F faintest text */
+    --signal: 27 63 224;      /* #1B3FE0 saturated cobalt — accent */
+    --signal-warm: 233 75 26; /* #E94B1A reserved warm accent */
     --transition-curve: cubic-bezier(0.76, 0, 0.24, 1);
     --transition-soft: cubic-bezier(0.16, 1, 0.3, 1);
 
-    /* Shadcn HSL bridge (kept so /ui primitives still compile) */
-    --background: 240 6% 4%;
-    --foreground: 36 18% 90%;
-    --card: 240 7% 6%;
-    --card-foreground: 36 18% 90%;
-    --popover: 240 7% 6%;
-    --popover-foreground: 36 18% 90%;
-    --primary: 70 100% 50%;
-    --primary-foreground: 240 6% 4%;
-    --secondary: 240 6% 10%;
-    --secondary-foreground: 36 18% 90%;
-    --muted: 240 6% 10%;
-    --muted-foreground: 36 6% 60%;
-    --accent: 70 100% 50%;
-    --accent-foreground: 240 6% 4%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 240 6% 12%;
-    --input: 240 6% 12%;
-    --ring: 70 100% 50%;
+    /* Shadcn HSL bridge — light mode */
+    --background: 41 30% 92%;
+    --foreground: 240 9% 6%;
+    --card: 41 32% 95%;
+    --card-foreground: 240 9% 6%;
+    --popover: 41 32% 95%;
+    --popover-foreground: 240 9% 6%;
+    --primary: 226 78% 49%;
+    --primary-foreground: 41 30% 96%;
+    --secondary: 41 14% 86%;
+    --secondary-foreground: 240 9% 6%;
+    --muted: 41 14% 86%;
+    --muted-foreground: 240 4% 38%;
+    --accent: 226 78% 49%;
+    --accent-foreground: 41 30% 96%;
+    --destructive: 0 65% 52%;
+    --destructive-foreground: 41 30% 96%;
+    --border: 38 18% 82%;
+    --input: 38 18% 82%;
+    --ring: 226 78% 49%;
     --radius: 0px;
   }
 }
@@ -67,15 +71,15 @@ body.is-locked {
   color: rgb(var(--ink));
 }
 
-/* Subtle film grain overlay */
+/* Subtle paper-grain overlay — gives the light bg some texture */
 body::after {
   content: '';
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 99996;
-  opacity: 0.035;
-  mix-blend-mode: overlay;
+  opacity: 0.06;
+  mix-blend-mode: multiply;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.92' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size: 220px 220px;
 }
@@ -112,7 +116,7 @@ body::after {
   left: 0;
   width: 36px;
   height: 36px;
-  border: 1px solid rgba(234, 232, 226, 0.5);
+  border: 1px solid rgba(15, 15, 18, 0.5);
   border-radius: 50%;
   transform: translate(-50%, -50%) scale(0.85);
   opacity: 0;

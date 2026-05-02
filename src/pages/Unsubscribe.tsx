@@ -50,27 +50,27 @@ const Unsubscribe = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center" style={{ background: "#080808" }}>
+    <div className="min-h-screen flex items-center justify-center" style={{ background: "#F1EEE5" }}>
       <div className="max-w-md w-full px-8 py-12 text-center">
         <h1
           className="text-[16px] font-bold tracking-[0.12em] uppercase mb-12"
-          style={{ color: "#ffffff" }}
+          style={{ color: "#0F0F12" }}
         >
           KOZAI
         </h1>
 
         {status === "loading" && (
-          <p className="text-[14px]" style={{ color: "rgba(255,255,255,0.5)" }}>
+          <p className="text-[14px]" style={{ color: "rgba(15,15,18,0.5)" }}>
             Validating your request...
           </p>
         )}
 
         {status === "valid" && (
           <>
-            <h2 className="text-[22px] font-bold uppercase mb-4" style={{ color: "#ffffff" }}>
+            <h2 className="text-[22px] font-bold uppercase mb-4" style={{ color: "#0F0F12" }}>
               Unsubscribe
             </h2>
-            <p className="text-[14px] mb-8" style={{ color: "rgba(255,255,255,0.55)", lineHeight: "1.8" }}>
+            <p className="text-[14px] mb-8" style={{ color: "rgba(15,15,18,0.55)", lineHeight: "1.8" }}>
               Are you sure you want to unsubscribe from Kozai emails?
             </p>
             <button
@@ -78,7 +78,7 @@ const Unsubscribe = () => {
               className="inline-block px-8 py-3 text-[11px] uppercase tracking-[0.14em] transition-colors"
               style={{
                 border: "1px solid rgba(200,169,110,0.3)",
-                color: "#C8A96E",
+                color: "#1B3FE0",
                 background: "transparent",
               }}
             >
@@ -89,10 +89,10 @@ const Unsubscribe = () => {
 
         {status === "already" && (
           <>
-            <h2 className="text-[22px] font-bold uppercase mb-4" style={{ color: "#ffffff" }}>
+            <h2 className="text-[22px] font-bold uppercase mb-4" style={{ color: "#0F0F12" }}>
               Already Unsubscribed
             </h2>
-            <p className="text-[14px]" style={{ color: "rgba(255,255,255,0.55)", lineHeight: "1.8" }}>
+            <p className="text-[14px]" style={{ color: "rgba(15,15,18,0.55)", lineHeight: "1.8" }}>
               You've already been unsubscribed from Kozai emails.
             </p>
           </>
@@ -100,10 +100,10 @@ const Unsubscribe = () => {
 
         {status === "success" && (
           <>
-            <h2 className="text-[22px] font-bold uppercase mb-4" style={{ color: "#ffffff" }}>
+            <h2 className="text-[22px] font-bold uppercase mb-4" style={{ color: "#0F0F12" }}>
               Unsubscribed
             </h2>
-            <p className="text-[14px]" style={{ color: "rgba(255,255,255,0.55)", lineHeight: "1.8" }}>
+            <p className="text-[14px]" style={{ color: "rgba(15,15,18,0.55)", lineHeight: "1.8" }}>
               You've been successfully unsubscribed. You will no longer receive emails from Kozai.
             </p>
           </>
@@ -111,10 +111,10 @@ const Unsubscribe = () => {
 
         {status === "invalid" && (
           <>
-            <h2 className="text-[22px] font-bold uppercase mb-4" style={{ color: "#ffffff" }}>
+            <h2 className="text-[22px] font-bold uppercase mb-4" style={{ color: "#0F0F12" }}>
               Invalid Link
             </h2>
-            <p className="text-[14px]" style={{ color: "rgba(255,255,255,0.55)", lineHeight: "1.8" }}>
+            <p className="text-[14px]" style={{ color: "rgba(15,15,18,0.55)", lineHeight: "1.8" }}>
               This unsubscribe link is invalid or has expired.
             </p>
           </>
@@ -122,10 +122,10 @@ const Unsubscribe = () => {
 
         {status === "error" && (
           <>
-            <h2 className="text-[22px] font-bold uppercase mb-4" style={{ color: "#ffffff" }}>
+            <h2 className="text-[22px] font-bold uppercase mb-4" style={{ color: "#0F0F12" }}>
               Something Went Wrong
             </h2>
-            <p className="text-[14px]" style={{ color: "rgba(255,255,255,0.55)", lineHeight: "1.8" }}>
+            <p className="text-[14px]" style={{ color: "rgba(15,15,18,0.55)", lineHeight: "1.8" }}>
               We couldn't process your request. Please try again later.
             </p>
           </>

@@ -5,9 +5,11 @@ interface LogoProps {
 }
 
 /**
- * Kozai mark — a constructed glyph: a rotated square (the "kozai timber" beam)
- * intersected by a horizontal stroke. Reads as a building/joinery element and
- * scales cleanly between mark and wordmark forms.
+ * Kozai wordmark — lowercase "kozai" with a precision horizontal strike through
+ * the z (the signature element, evoking ƶ / a struck reference mark on a gauge).
+ * The strike is the only ornament — everything else is restrained typography.
+ *
+ * Mark variant uses just a stylized "k" for favicon and tight contexts.
  */
 const Logo = ({ className = "", variant = "full", color = "currentColor" }: LogoProps) => {
   if (variant === "mark") {
@@ -19,42 +21,48 @@ const Logo = ({ className = "", variant = "full", color = "currentColor" }: Logo
         xmlns="http://www.w3.org/2000/svg"
         aria-hidden
       >
-        <rect x="6" y="6" width="28" height="28" stroke={color} strokeWidth="1.4" transform="rotate(45 20 20)" />
-        <line x1="2" y1="20" x2="38" y2="20" stroke={color} strokeWidth="1.4" />
-        <circle cx="20" cy="20" r="2.4" fill={color} />
+        {/* Stylized "k" — vertical bar + two thin diagonals */}
+        <line x1="9" y1="7" x2="9" y2="33" stroke={color} strokeWidth="2.4" strokeLinecap="round" />
+        <line x1="9" y1="20" x2="22" y2="8" stroke={color} strokeWidth="2.4" strokeLinecap="round" />
+        <line x1="9" y1="20" x2="24" y2="33" stroke={color} strokeWidth="2.4" strokeLinecap="round" />
+        {/* Precision strike — calls back to the strike through the wordmark "z" */}
+        <line x1="28" y1="20" x2="33" y2="20" stroke={color} strokeWidth="2.4" strokeLinecap="round" />
       </svg>
     );
   }
 
+  // Full wordmark — set in Space Grotesk with a custom strike through the z.
+  // Position constants tuned to Space Grotesk Medium at fontSize 34.
   return (
     <svg
       className={className}
-      viewBox="0 0 200 40"
+      viewBox="0 0 130 40"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       role="img"
       aria-label="Kozai"
     >
-      {/* Mark */}
-      <g>
-        <rect x="6" y="6" width="28" height="28" stroke={color} strokeWidth="1.4" transform="rotate(45 20 20)" />
-        <line x1="2" y1="20" x2="38" y2="20" stroke={color} strokeWidth="1.4" />
-        <circle cx="20" cy="20" r="2.4" fill={color} />
-      </g>
-      {/* Wordmark — geometric, condensed */}
-      <g fill={color} transform="translate(54 0)">
-        <text
-          x="0"
-          y="27"
-          fontFamily="'Space Grotesk', sans-serif"
-          fontWeight="600"
-          fontSize="22"
-          letterSpacing="0.04em"
-          fill={color}
-        >
-          KOZAI
-        </text>
-      </g>
+      <text
+        x="0"
+        y="30"
+        fontFamily="'Space Grotesk', system-ui, sans-serif"
+        fontWeight="500"
+        fontSize="34"
+        letterSpacing="-1.2"
+        fill={color}
+      >
+        kozai
+      </text>
+      {/* Strike through the z — the wordmark's only ornament */}
+      <line
+        x1="55"
+        y1="20.5"
+        x2="69"
+        y2="20.5"
+        stroke={color}
+        strokeWidth="2.2"
+        strokeLinecap="round"
+      />
     </svg>
   );
 };

@@ -52,7 +52,7 @@ const projects: Project[] = [
     client: "Lumen Studios",
     name: "Render pipeline & client portal",
     one: "From file dropbox to a portal that knows what shot is in revision and why.",
-    body: "A production-tracking platform for a boutique animation studio: brief intake, shot status, version comments, and an automated render queue that bills back to the project. Built so the studio's producer could ship a project without opening a single spreadsheet.",
+    body: "A production-tracking platform for an independent animation studio: brief intake, shot status, version comments, and an automated render queue that bills back to the project. Built so the studio's producer could ship a project without opening a single spreadsheet.",
     stack: ["Go", "Postgres", "S3", "Svelte"],
     year: "2025",
     metric: "−6 days / project",
@@ -76,27 +76,27 @@ const ProjectMockup = ({ idx }: { idx: number }) => {
     const camera = new THREE.PerspectiveCamera(36, el.clientWidth / el.clientHeight, 0.1, 100);
     camera.position.set(0, 0, 7);
     scene.add(new THREE.AmbientLight(0xffffff, 0.35));
-    const dl = new THREE.DirectionalLight(0xeae8e2, 0.7);
+    const dl = new THREE.DirectionalLight(0xe9dfc9, 0.7);
     dl.position.set(2, 4, 5);
     scene.add(dl);
-    const sig = new THREE.PointLight(0xdaff00, 0.8, 12);
+    const sig = new THREE.PointLight(0xc57346, 0.8, 12);
     sig.position.set(-3, 2, 2);
     scene.add(sig);
 
     const group = new THREE.Group();
 
-    const slabMat = new THREE.MeshStandardMaterial({ color: 0x141416, metalness: 0.7, roughness: 0.3 });
+    const slabMat = new THREE.MeshStandardMaterial({ color: 0x1e1a14, metalness: 0.7, roughness: 0.3 });
     const slab = new THREE.Mesh(new THREE.BoxGeometry(3.6, 2.4, 0.12), slabMat);
     group.add(slab);
 
     const frame = new THREE.Mesh(
       new THREE.BoxGeometry(3.62, 2.42, 0.10),
-      new THREE.MeshStandardMaterial({ color: 0xeae8e2, metalness: 0.4, roughness: 0.5 })
+      new THREE.MeshStandardMaterial({ color: 0xe9dfc9, metalness: 0.4, roughness: 0.5 })
     );
     frame.position.z = -0.02;
     group.add(frame);
 
-    const screenMat = new THREE.MeshBasicMaterial({ color: 0xeae8e2, transparent: true, opacity: 0.06 });
+    const screenMat = new THREE.MeshBasicMaterial({ color: 0xe9dfc9, transparent: true, opacity: 0.06 });
     const screen = new THREE.Mesh(new THREE.PlaneGeometry(3.4, 2.2), screenMat);
     screen.position.z = 0.07;
     group.add(screen);
@@ -108,38 +108,38 @@ const ProjectMockup = ({ idx }: { idx: number }) => {
         const h = 0.2 + Math.random() * 0.7;
         const m = new THREE.Mesh(
           new THREE.PlaneGeometry(0.15, h),
-          new THREE.MeshBasicMaterial({ color: 0xeae8e2, transparent: true, opacity: 0.28 })
+          new THREE.MeshBasicMaterial({ color: 0xe9dfc9, transparent: true, opacity: 0.28 })
         );
         m.position.set(-1.3 + i * 0.2, -0.55 + h / 2, 0);
         uiGroup.add(m);
       }
-      const stripe = new THREE.Mesh(new THREE.PlaneGeometry(2.8, 0.04), new THREE.MeshBasicMaterial({ color: 0xdaff00 }));
+      const stripe = new THREE.Mesh(new THREE.PlaneGeometry(2.8, 0.04), new THREE.MeshBasicMaterial({ color: 0xc57346 }));
       stripe.position.set(0, 0.55, 0);
       uiGroup.add(stripe);
     } else if (idx === 1) {
       for (let i = 0; i < 12; i++) {
         const m = new THREE.Mesh(
           new THREE.PlaneGeometry(2 + Math.random() * 0.8, 0.05),
-          new THREE.MeshBasicMaterial({ color: 0xeae8e2, transparent: true, opacity: 0.22 + Math.random() * 0.2 })
+          new THREE.MeshBasicMaterial({ color: 0xe9dfc9, transparent: true, opacity: 0.22 + Math.random() * 0.2 })
         );
         m.position.set(0, 0.85 - i * 0.13, 0);
         uiGroup.add(m);
       }
-      const accent = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 0.04), new THREE.MeshBasicMaterial({ color: 0xdaff00 }));
+      const accent = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 0.04), new THREE.MeshBasicMaterial({ color: 0xc57346 }));
       accent.position.set(-0.7, 0.85, 0);
       uiGroup.add(accent);
     } else if (idx === 2) {
       for (let c = 0; c < 4; c++) {
         const col = new THREE.Mesh(
           new THREE.PlaneGeometry(0.7, 1.7),
-          new THREE.MeshBasicMaterial({ color: 0xeae8e2, transparent: true, opacity: 0.06 })
+          new THREE.MeshBasicMaterial({ color: 0xe9dfc9, transparent: true, opacity: 0.06 })
         );
         col.position.set(-1.2 + c * 0.8, 0, 0);
         uiGroup.add(col);
         for (let r = 0; r < 3; r++) {
           const card = new THREE.Mesh(
             new THREE.PlaneGeometry(0.6, 0.32),
-            new THREE.MeshBasicMaterial({ color: r === 0 && c === 1 ? 0xdaff00 : 0xeae8e2, transparent: true, opacity: r === 0 && c === 1 ? 0.95 : 0.22 })
+            new THREE.MeshBasicMaterial({ color: r === 0 && c === 1 ? 0xc57346 : 0xe9dfc9, transparent: true, opacity: r === 0 && c === 1 ? 0.95 : 0.22 })
           );
           card.position.set(-1.2 + c * 0.8, 0.55 - r * 0.42, 0.001);
           uiGroup.add(card);
@@ -150,7 +150,7 @@ const ProjectMockup = ({ idx }: { idx: number }) => {
         for (let j = 0; j < 3; j++) {
           const tile = new THREE.Mesh(
             new THREE.PlaneGeometry(0.55, 0.45),
-            new THREE.MeshBasicMaterial({ color: i === 2 && j === 1 ? 0xdaff00 : 0xeae8e2, transparent: true, opacity: i === 2 && j === 1 ? 0.95 : 0.16 })
+            new THREE.MeshBasicMaterial({ color: i === 2 && j === 1 ? 0xc57346 : 0xe9dfc9, transparent: true, opacity: i === 2 && j === 1 ? 0.95 : 0.16 })
           );
           tile.position.set(-1.4 + i * 0.62, 0.55 - j * 0.55, 0);
           uiGroup.add(tile);
