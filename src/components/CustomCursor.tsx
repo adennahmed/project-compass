@@ -1,6 +1,13 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 
+/**
+ * Minimal custom cursor — vermilion 4px dot, 32px outline ring on hover,
+ * `+` crosshair when over a panel. No labels. (Per brief §4.8.)
+ *
+ * Interactive elements pick up the .hover state via standard selectors.
+ * Panel registration: any element with [data-cursor="panel"] flips to crosshair.
+ */
 const CustomCursor = () => {
   const cursorRef = useRef<HTMLDivElement>(null);
 
@@ -10,26 +17,22 @@ const CustomCursor = () => {
 
     const dot = cursor.querySelector("#cursor-dot") as HTMLElement;
     const ring = cursor.querySelector("#cursor-ring") as HTMLElement;
-    const label = cursor.querySelector("#cursor-label") as HTMLElement;
+    const cross = cursor.querySelector("#cursor-cross") as HTMLElement;
 
-    const dotX = gsap.quickTo(dot, "x", { duration: 0.18, ease: "power3" });
-    const dotY = gsap.quickTo(dot, "y", { duration: 0.18, ease: "power3" });
-    const ringX = gsap.quickTo(ring, "x", { duration: 0.42, ease: "power3" });
-    const ringY = gsap.quickTo(ring, "y", { duration: 0.42, ease: "power3" });
-    const labelX = gsap.quickTo(label, "x", { duration: 0.42, ease: "power3" });
-    const labelY = gsap.quickTo(label, "y", { duration: 0.42, ease: "power3" });
+    const dotX = gsap.quickTo(dot, "x", { duration: 0.16, ease: "power3" });
+    const dotY = gsap.quickTo(dot, "y", { duration: 0.16, ease: "power3" });
+    const ringX = gsap.quickTo(ring, "x", { duration: 0.36, ease: "power3" });
+    const ringY = gsap.quickTo(ring, "y", { duration: 0.36, ease: "power3" });
+    const crossX = gsap.quickTo(cross, "x", { duration: 0.18, ease: "power3" });
+    const crossY = gsap.quickTo(cross, "y", { duration: 0.18, ease: "power3" });
 
     const onMove = (e: MouseEvent) => {
       dotX(e.clientX);
       dotY(e.clientY);
       ringX(e.clientX);
       ringY(e.clientY);
-      labelX(e.clientX);
-      labelY(e.clientY);
-    };
-
-    const setLabel = (text: string) => {
-      if (label) label.textContent = text;
+      crossX(e.clientX);
+      crossY(e.clientY);
     };
 
     const bind = () => {
@@ -40,18 +43,12 @@ const CustomCursor = () => {
         if (el.dataset.cursorBound === "1") return;
         el.dataset.cursorBound = "1";
         const mode = el.dataset.cursor;
-        const labelText = el.dataset.cursorLabel;
         el.addEventListener("mouseenter", () => {
-          if (mode === "view") cursor.classList.add("view");
-          else if (mode === "drag") cursor.classList.add("drag");
+          if (mode === "panel") cursor.classList.add("panel");
           else cursor.classList.add("hover");
-          if (labelText) setLabel(labelText);
-          else if (mode === "view") setLabel("View");
-          else if (mode === "drag") setLabel("Drag");
         });
         el.addEventListener("mouseleave", () => {
-          cursor.classList.remove("hover", "view", "drag");
-          setLabel("");
+          cursor.classList.remove("hover", "panel");
         });
       });
     };
@@ -72,7 +69,7 @@ const CustomCursor = () => {
     <div id="cursor" ref={cursorRef} aria-hidden>
       <div id="cursor-ring" />
       <div id="cursor-dot" />
-      <div id="cursor-label" />
+      <div id="cursor-cross" />
     </div>
   );
 };

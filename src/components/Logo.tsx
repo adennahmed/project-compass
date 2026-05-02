@@ -5,11 +5,15 @@ interface LogoProps {
 }
 
 /**
- * Kozai wordmark — lowercase "kozai" with a precision horizontal strike through
- * the z (the signature element, evoking ƶ / a struck reference mark on a gauge).
- * The strike is the only ornament — everything else is restrained typography.
+ * Kozai wordmark — "KOZAI" full caps, display weight, with a single
+ * horizontal hairline crossing the entire wordmark below the baseline.
+ * Like a strikethrough that *under*lines instead. The hairline extends
+ * a few units past the wordmark on each side, suggesting a measurement
+ * bar or a spec sheet. (Per brief §4.3.)
  *
- * Mark variant uses just a stylized "k" for favicon and tight contexts.
+ * Mark variant — for favicon and tight contexts — is just two horizontal
+ * hairlines stacked: the wordmark's bottom edge + the underline rule.
+ * Abstract enough to read at 16×16, recognizable enough to be the mark.
  */
 const Logo = ({ className = "", variant = "full", color = "currentColor" }: LogoProps) => {
   if (variant === "mark") {
@@ -21,22 +25,35 @@ const Logo = ({ className = "", variant = "full", color = "currentColor" }: Logo
         xmlns="http://www.w3.org/2000/svg"
         aria-hidden
       >
-        {/* Stylized "k" — vertical bar + two thin diagonals */}
-        <line x1="9" y1="7" x2="9" y2="33" stroke={color} strokeWidth="2.4" strokeLinecap="round" />
-        <line x1="9" y1="20" x2="22" y2="8" stroke={color} strokeWidth="2.4" strokeLinecap="round" />
-        <line x1="9" y1="20" x2="24" y2="33" stroke={color} strokeWidth="2.4" strokeLinecap="round" />
-        {/* Precision strike — calls back to the strike through the wordmark "z" */}
-        <line x1="28" y1="20" x2="33" y2="20" stroke={color} strokeWidth="2.4" strokeLinecap="round" />
+        {/* Two horizontal hairlines stacked — abstract reduction of the wordmark */}
+        <line
+          x1="4"
+          y1="20"
+          x2="36"
+          y2="20"
+          stroke={color}
+          strokeWidth="1.6"
+          strokeLinecap="square"
+        />
+        <line
+          x1="2"
+          y1="26"
+          x2="38"
+          y2="26"
+          stroke={color}
+          strokeWidth="1.6"
+          strokeLinecap="square"
+        />
       </svg>
     );
   }
 
-  // Full wordmark — set in Space Grotesk with a custom strike through the z.
-  // Position constants tuned to Space Grotesk Medium at fontSize 34.
+  // Full wordmark — KOZAI in display weight + hairline underline that extends
+  // past the wordmark on both sides.
   return (
     <svg
       className={className}
-      viewBox="0 0 130 40"
+      viewBox="0 0 160 40"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       role="img"
@@ -44,24 +61,25 @@ const Logo = ({ className = "", variant = "full", color = "currentColor" }: Logo
     >
       <text
         x="0"
-        y="30"
+        y="26"
         fontFamily="'Space Grotesk', system-ui, sans-serif"
         fontWeight="500"
-        fontSize="34"
-        letterSpacing="-1.2"
+        fontSize="22"
+        letterSpacing="0.06em"
         fill={color}
       >
-        kozai
+        KOZAI
       </text>
-      {/* Strike through the z — the wordmark's only ornament */}
+      {/* Hairline underline — extends past the wordmark on both sides
+          (~4 units left, ~12 units right), suggesting a measurement rule. */}
       <line
-        x1="55"
-        y1="20.5"
-        x2="69"
-        y2="20.5"
+        x1="-4"
+        y1="34"
+        x2="98"
+        y2="34"
         stroke={color}
-        strokeWidth="2.2"
-        strokeLinecap="round"
+        strokeWidth="1.4"
+        strokeLinecap="square"
       />
     </svg>
   );

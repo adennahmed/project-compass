@@ -4,42 +4,40 @@
 
 @layer base {
   :root {
-    /* "Blueprint" — light editorial.
-       Token names kept (--ink / --bone / --signal) so existing Tailwind
-       classes flip the whole site to light mode without a global rename.
-       Semantically: --ink is now the *background* paper, --bone is the
-       *text* deep-ink, --signal is a saturated cobalt used sparingly. */
-    --ink: 241 238 229;       /* #F1EEE5 warm paper background */
-    --ink-rise: 248 245 236;  /* #F8F5EC elevated paper / cards */
-    --ink-edge: 224 220 208;  /* #E0DCD0 hairline borders */
-    --bone: 15 15 18;         /* #0F0F12 deep ink — primary text */
-    --bone-mute: 91 91 98;    /* #5B5B62 muted text */
-    --bone-faint: 154 154 159;/* #9A9A9F faintest text */
-    --signal: 27 63 224;      /* #1B3FE0 saturated cobalt — accent */
-    --signal-warm: 233 75 26; /* #E94B1A reserved warm accent */
+    /* "NIGHT TRADING FLOOR" — deep saturated blue-black + warm off-white +
+       two cooperating accents. Reads as mission-control / trading-floor:
+       exactly what Kozai sells (tools operators rely on). */
+    --ink: 6 8 15;            /* #06080F deep navy-black, slight blue cast */
+    --ink-rise: 12 17 27;     /* #0C111B elevated surface — cards, drawers */
+    --ink-edge: 27 34 48;     /* #1B2230 hairline borders */
+    --bone: 232 228 215;      /* #E8E4D7 warm off-white */
+    --bone-mute: 122 126 138; /* #7A7E8A cool grey labels */
+    --bone-faint: 60 64 75;   /* #3C404B deep muted grey */
+    --signal: 255 91 42;      /* #FF5B2A saturated vermilion — primary accent (rare) */
+    --signal-2: 61 234 210;   /* #3DEAD2 electric jade — "live / online" indicators only */
     --transition-curve: cubic-bezier(0.76, 0, 0.24, 1);
     --transition-soft: cubic-bezier(0.16, 1, 0.3, 1);
 
-    /* Shadcn HSL bridge — light mode */
-    --background: 41 30% 92%;
-    --foreground: 240 9% 6%;
-    --card: 41 32% 95%;
-    --card-foreground: 240 9% 6%;
-    --popover: 41 32% 95%;
-    --popover-foreground: 240 9% 6%;
-    --primary: 226 78% 49%;
-    --primary-foreground: 41 30% 96%;
-    --secondary: 41 14% 86%;
-    --secondary-foreground: 240 9% 6%;
-    --muted: 41 14% 86%;
-    --muted-foreground: 240 4% 38%;
-    --accent: 226 78% 49%;
-    --accent-foreground: 41 30% 96%;
+    /* Shadcn HSL bridge — dark, mapped to Night Trading Floor */
+    --background: 226 43% 4%;
+    --foreground: 41 26% 88%;
+    --card: 222 39% 8%;
+    --card-foreground: 41 26% 88%;
+    --popover: 222 39% 8%;
+    --popover-foreground: 41 26% 88%;
+    --primary: 13 100% 58%;
+    --primary-foreground: 226 43% 4%;
+    --secondary: 222 30% 12%;
+    --secondary-foreground: 41 26% 88%;
+    --muted: 222 30% 12%;
+    --muted-foreground: 226 7% 51%;
+    --accent: 13 100% 58%;
+    --accent-foreground: 226 43% 4%;
     --destructive: 0 65% 52%;
-    --destructive-foreground: 41 30% 96%;
-    --border: 38 18% 82%;
-    --input: 38 18% 82%;
-    --ring: 226 78% 49%;
+    --destructive-foreground: 41 26% 95%;
+    --border: 222 28% 15%;
+    --input: 222 28% 15%;
+    --ring: 13 100% 58%;
     --radius: 0px;
   }
 }
@@ -53,7 +51,7 @@
 html, body {
   background: rgb(var(--ink));
   color: rgb(var(--bone));
-  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-family: 'Inter', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
@@ -68,30 +66,17 @@ body.is-locked {
 
 ::selection {
   background: rgb(var(--signal));
-  color: rgb(var(--ink));
+  color: rgb(var(--bone));
 }
 
-/* Subtle paper-grain overlay — gives the light bg some texture */
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 99996;
-  opacity: 0.06;
-  mix-blend-mode: multiply;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.92' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 220px 220px;
-}
-
-/* Custom cursor — minimal dot + ring system */
+/* Custom cursor — minimal. Vermilion 4px dot. 32px outline ring on hover.
+   `+` crosshair on panels. No labels. (Per brief §4.8.) */
 #cursor {
   position: fixed;
   top: 0;
   left: 0;
   pointer-events: none;
   z-index: 99999;
-  mix-blend-mode: difference;
   will-change: transform;
 }
 
@@ -99,33 +84,28 @@ body::after {
   position: absolute;
   top: 0;
   left: 0;
-  width: 6px;
-  height: 6px;
-  background: rgb(var(--bone));
+  width: 4px;
+  height: 4px;
+  background: rgb(var(--signal));
   border-radius: 50%;
   transform: translate(-50%, -50%);
-  transition: width 0.32s var(--transition-curve),
-              height 0.32s var(--transition-curve),
-              background 0.3s ease,
-              opacity 0.3s ease;
+  transition: width 0.28s var(--transition-curve),
+              height 0.28s var(--transition-curve),
+              opacity 0.2s ease;
 }
 
 #cursor-ring {
   position: absolute;
   top: 0;
   left: 0;
-  width: 36px;
-  height: 36px;
-  border: 1px solid rgba(15, 15, 18, 0.5);
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgb(var(--signal));
   border-radius: 50%;
-  transform: translate(-50%, -50%) scale(0.85);
+  transform: translate(-50%, -50%) scale(0.5);
   opacity: 0;
-  transition: width 0.4s var(--transition-curve),
-              height 0.4s var(--transition-curve),
-              opacity 0.3s ease,
-              transform 0.3s var(--transition-curve),
-              background 0.3s ease,
-              border-color 0.3s ease;
+  transition: opacity 0.24s ease,
+              transform 0.28s var(--transition-curve);
 }
 
 #cursor.hover #cursor-ring {
@@ -133,42 +113,48 @@ body::after {
   transform: translate(-50%, -50%) scale(1);
 }
 #cursor.hover #cursor-dot {
-  width: 0;
-  height: 0;
-}
-
-#cursor.view #cursor-ring,
-#cursor.drag #cursor-ring {
-  width: 80px;
-  height: 80px;
-  background: rgb(var(--signal));
-  border-color: rgb(var(--signal));
-  opacity: 1;
-  transform: translate(-50%, -50%) scale(1);
-}
-#cursor.view #cursor-dot,
-#cursor.drag #cursor-dot {
   opacity: 0;
 }
 
-#cursor-label {
+/* Panel state — `+` crosshair (two thin lines). Use #cursor.panel on element
+   that's a registered dolly panel. */
+#cursor.panel #cursor-dot {
+  opacity: 0;
+}
+#cursor.panel #cursor-ring {
+  opacity: 0;
+}
+#cursor-cross {
   position: absolute;
   top: 0;
   left: 0;
+  width: 14px;
+  height: 14px;
   transform: translate(-50%, -50%);
-  font-size: 11px;
-  font-family: 'JetBrains Mono', monospace;
-  letter-spacing: 0.16em;
-  color: rgb(var(--ink));
   opacity: 0;
-  pointer-events: none;
-  text-transform: uppercase;
-  transition: opacity 0.3s ease;
-  white-space: nowrap;
+  transition: opacity 0.24s ease;
 }
-
-#cursor.view #cursor-label,
-#cursor.drag #cursor-label {
+#cursor-cross::before,
+#cursor-cross::after {
+  content: '';
+  position: absolute;
+  background: rgb(var(--signal));
+}
+#cursor-cross::before {
+  left: 50%;
+  top: 0;
+  width: 1px;
+  height: 100%;
+  transform: translateX(-50%);
+}
+#cursor-cross::after {
+  top: 50%;
+  left: 0;
+  height: 1px;
+  width: 100%;
+  transform: translateY(-50%);
+}
+#cursor.panel #cursor-cross {
   opacity: 1;
 }
 
@@ -194,60 +180,31 @@ body::after {
   will-change: transform;
 }
 
-/* Magnetic hover label primitive */
-.label-stack {
-  display: inline-flex;
-  flex-direction: column;
-  overflow: hidden;
-  height: 1.05em;
-  line-height: 1.05;
-  position: relative;
-  vertical-align: top;
-}
-.label-stack span {
-  display: block;
-  transition: transform 0.32s var(--transition-curve);
-}
-.label-stack span:last-child {
-  position: absolute;
-  inset: 0;
-  transform: translateY(105%);
-}
-a:hover .label-stack span:first-child,
-button:hover .label-stack span:first-child,
-.hover-target:hover .label-stack span:first-child {
-  transform: translateY(-105%);
-}
-a:hover .label-stack span:last-child,
-button:hover .label-stack span:last-child,
-.hover-target:hover .label-stack span:last-child {
-  transform: translateY(0);
-}
-
-/* Display typography utility */
+/* Display typography utility — display headlines on the few places that
+   still take display weight (most of the new site uses mono, per brief). */
 .display-headline {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', system-ui, sans-serif;
   font-weight: 500;
-  letter-spacing: -0.035em;
+  letter-spacing: -0.04em;
   line-height: 0.92;
   text-transform: none;
 }
-.display-headline strong { font-weight: 700; }
 
 .eyebrow {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
   font-size: 11px;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.32em;
   text-transform: uppercase;
   color: rgb(var(--bone-mute));
 }
 
-.mono { font-family: 'JetBrains Mono', monospace; }
+.mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+.serif-italic { font-family: 'Times New Roman', Georgia, serif; font-style: italic; }
 
-/* No-scroll utility for preloader */
+/* Loader overflow lock */
 html.is-loading, html.is-loading body { overflow: hidden; }
 
-/* Accessibility — reduced motion overrides */
+/* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.001ms !important;
