@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import adenImg from "@/assets/aden-ahmed.png";
-import mohammedImg from "@/assets/mohammed-khan.jpg";
+ import muhammadImg from "@/assets/mohammed-khan.jpg";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -24,11 +24,11 @@ const members: Member[] = [
     bio: "Ten years building the kind of internal tools that operations teams quietly depend on. Comfortable from Postgres up to the React the dispatcher actually clicks.",
     detail: "Lives in the trade-off between elegance and shipping. Ships.",
   },
-  {
-    name: "Mohammed Khan",
-    role: "Systems Engineering",
-    src: mohammedImg,
-    initials: "MK",
+   {
+     name: "Muhammad Khan",
+     role: "Systems Engineering",
+     src: muhammadImg,
+     initials: "MK",
     bio: "Distributed systems specialist who finds the weird race condition in production at 2am, fixes it, and writes the post-mortem before anyone notices. Patient with messy data.",
     detail: "Reads compiler papers for fun. Drinks too much green tea.",
   },
