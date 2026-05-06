@@ -6,6 +6,7 @@ import OperationsRoom from "./rooms/OperationsRoom";
 import ApproachRoom from "./rooms/ApproachRoom";
 import BuildRoom from "./rooms/BuildRoom";
 import WorkRoom from "./rooms/WorkRoom";
+import StudioRoom from "./rooms/StudioRoom";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -85,6 +86,9 @@ const RoomScene = ({ onContactClick }: RoomSceneProps) => {
               }
               if (p.id === "work") {
                 return <WorkRoom active={active} />;
+              }
+              if (p.id === "studio") {
+                return <StudioRoom active={active} />;
               }
               const placeholder = ROOM_PLACEHOLDER_LABELS[p.id];
               return placeholder ? <PlaceholderRoom {...placeholder} /> : null;

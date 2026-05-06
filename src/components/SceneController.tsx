@@ -7,6 +7,10 @@ import {
   PANEL_VERTEX_SHADER,
 } from "./rooms/buildShaders";
 import { WORK_PANEL_SHADERS } from "./rooms/workShaders";
+import { STUDIO_PORTRAIT_FRAG } from "./rooms/studioShader";
+import { studioHoverTargets } from "./rooms/studioState";
+import adenImg from "@/assets/aden-ahmed.png";
+import mohammedImg from "@/assets/mohammed-khan.jpg";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -104,7 +108,7 @@ const SceneController = ({ pinSelector }: SceneControllerProps) => {
     const panelMeshes: THREE.Mesh[] = [];
     const panelEdges: THREE.LineSegments[] = [];
     ROOM_PANELS.forEach((p) => {
-      if (p.id === "build" || p.id === "work") return; // handled below
+      if (p.id === "build" || p.id === "work" || p.id === "studio") return; // handled below
       const geo = new THREE.PlaneGeometry(p.width, p.height);
       const mat = new THREE.MeshBasicMaterial({
         color: 0x0c111b,
@@ -211,6 +215,62 @@ const SceneController = ({ pinSelector }: SceneControllerProps) => {
       edges.position.copy(mesh.position);
       scene.add(edges);
       workSubEdges.push(edges);
+    });
+
+    // ---- Studio sub-panels — 2 portrait panels with pixel-quantize shader ----
+    const studioRoom = ROOM_PANELS.find((p) => p.id === "studio")!;
+    const PORTRAIT_W = 1.3;
+    const PORTRAIT_H = 1.6;
+    const PORTRAIT_GAP = 0.35;
+    const portraitGeo = new THREE.PlaneGeometry(PORTRAIT_W, PORTRAIT_H);
+    const studioImages = [adenImg, mohammedImg];
+    const studioOffsets: Array<[number, number]> = [
+      [-(PORTRAIT_W + PORTRAIT_GAP) / 2, 0],
+      [(PORTRAIT_W + PORTRAIT_GAP) / 2, 0],
+    ];
+    const studioMaterials: THREE.ShaderMaterial[] = [];
+    const studioMeshes: THREE.Mesh[] = [];
+    const studioEdges: THREE.LineSegments[] = [];
+    const texLoader = new THREE.TextureLoader();
+    studioImages.forEach((src, i) => {
+      const mat = new THREE.ShaderMaterial({
+        vertexShader: PANEL_VERTEX_SHADER,
+        fragmentShader: STUDIO_PORTRAIT_FRAG,
+        uniforms: {
+          uTime: { value: 0 },
+          uHover: { value: 0 },
+          uTex: { value: null as unknown as THREE.Texture },
+        },
+      });
+      texLoader.load(src, (tex) => {
+        tex.colorSpace = THREE.SRGBColorSpace;
+        tex.minFilter = THREE.LinearFilter;
+        tex.magFilter = THREE.LinearFilter;
+        mat.uniforms.uTex.value = tex;
+        mat.needsUpdate = true;
+      });
+      const mesh = new THREE.Mesh(portraitGeo, mat);
+      mesh.position.set(
+        studioRoom.x + studioOffsets[i][0],
+        studioRoom.y + studioOffsets[i][1],
+        studioRoom.z,
+      );
+      mesh.userData = { id: `studio-portrait-${i}` };
+      scene.add(mesh);
+      studioMeshes.push(mesh);
+      studioMaterials.push(mat);
+
+      // Outline
+      const edgeGeo = new THREE.EdgesGeometry(portraitGeo);
+      const edgeMat = new THREE.LineBasicMaterial({
+        color: 0x2a3142,
+        transparent: true,
+        opacity: 0.7,
+      });
+      const edges = new THREE.LineSegments(edgeGeo, edgeMat);
+      edges.position.copy(mesh.position);
+      scene.add(edges);
+      studioEdges.push(edges);
     });
 
     // ---- Light dust particles for atmosphere ----
@@ -340,6 +400,14 @@ const SceneController = ({ pinSelector }: SceneControllerProps) => {
         }
       });
 
+      // ---- Studio portrait shaders — lerp uHover toward overlay's hover state ----
+      studioMaterials.forEach((mat, i) => {
+        mat.uniforms.uTime.value = elapsed;
+        const target = studioHoverTargets[i] ?? 0;
+        const cur = mat.uniforms.uHover.value as number;
+        mat.uniforms.uHover.value = cur + (target - cur) * 0.12;
+      });
+
       renderer.render(scene, camera);
       raf = requestAnimationFrame(tick);
     };
@@ -383,6 +451,17 @@ const SceneController = ({ pinSelector }: SceneControllerProps) => {
         e.geometry.dispose();
         (e.material as THREE.Material).dispose();
       });
+      studioMeshes.forEach((m) => {
+        const mat = m.material as THREE.ShaderMaterial;
+        const tex = mat.uniforms.uTex.value as THREE.Texture | null;
+        if (tex) tex.dispose();
+        mat.dispose();
+      });
+      studioEdges.forEach((e) => {
+        e.geometry.dispose();
+        (e.material as THREE.Material).dispose();
+      });
+      portraitGeo.dispose();
       subGeo.dispose();
       floorGeo.dispose();
       floorMat.dispose();
