@@ -1,45 +1,42 @@
 import { useCallback, useState } from "react";
 import SEOHead from "@/components/SEOHead";
-import SmoothScroll from "@/components/SmoothScroll";
-import CustomCursor from "@/components/CustomCursor";
-import Preloader from "@/components/Preloader";
-import RoomScene from "@/components/RoomScene";
-import MobileScene from "@/components/MobileScene";
+import Loader from "@/components/Loader";
+import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
 import ContactDrawer from "@/components/ContactDrawer";
-import { useIsMobile } from "@/hooks/useIsMobile";
+import Hero from "@/sections/Hero";
+import Services from "@/sections/Services";
+import Approach from "@/sections/Approach";
+import Work from "@/sections/Work";
+import Studio from "@/sections/Studio";
+import Contact from "@/sections/Contact";
 
 const Index = () => {
-  const [showPreloader, setShowPreloader] = useState(true);
+  const [showLoader, setShowLoader] = useState(true);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const isMobile = useIsMobile(768);
 
   const openDrawer = useCallback(() => setDrawerOpen(true), []);
   const closeDrawer = useCallback(() => setDrawerOpen(false), []);
-
-  // Preloader handoff is unused for now — retained for the future
-  // step-10 glitch transition between loader-exit and room-engine reveal.
-  const onPreloaderHandoff = useCallback(() => {}, []);
-  const onPreloaderComplete = useCallback(() => setShowPreloader(false), []);
+  const onLoaderComplete = useCallback(() => setShowLoader(false), []);
 
   return (
     <>
       <SEOHead
-        title="Kozai — Software studio. Tools that ship."
-        description="Kozai is a software studio designing and building the internal tools, dashboards, and platforms that small teams and enterprise operators rely on every day."
+        title="Kozai — Software studio building the tools serious teams depend on."
+        description="Kozai is a software studio designing and building the internal tools, dashboards, and platforms that operations teams use every day. Toronto, Canada."
         path="/"
       />
-      <SmoothScroll />
-      <CustomCursor />
-      {showPreloader && (
-        <Preloader onComplete={onPreloaderComplete} onTransitionStart={onPreloaderHandoff} />
-      )}
-      <main>
-        {isMobile ? (
-          <MobileScene onContactClick={openDrawer} />
-        ) : (
-          <RoomScene onContactClick={openDrawer} />
-        )}
+      {showLoader && <Loader onComplete={onLoaderComplete} />}
+      <Navigation onContactClick={openDrawer} />
+      <main className="bg-paper text-ink">
+        <Hero onContactClick={openDrawer} />
+        <Services />
+        <Approach />
+        <Work />
+        <Studio />
+        <Contact onContactClick={openDrawer} />
       </main>
+      <Footer />
       <ContactDrawer open={drawerOpen} onClose={closeDrawer} />
     </>
   );

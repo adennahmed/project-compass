@@ -2,42 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Geist is loaded via index.html for proper @import order. */
+
+/* ─── Design tokens — "Quiet Operator" light theme ──────────────────── */
 @layer base {
   :root {
-    /* "NIGHT TRADING FLOOR" — deep saturated blue-black + warm off-white +
-       two cooperating accents. Reads as mission-control / trading-floor:
-       exactly what Kozai sells (tools operators rely on). */
-    --ink: 6 8 15;            /* #06080F deep navy-black, slight blue cast */
-    --ink-rise: 12 17 27;     /* #0C111B elevated surface — cards, drawers */
-    --ink-edge: 27 34 48;     /* #1B2230 hairline borders */
-    --bone: 232 228 215;      /* #E8E4D7 warm off-white */
-    --bone-mute: 122 126 138; /* #7A7E8A cool grey labels */
-    --bone-faint: 60 64 75;   /* #3C404B deep muted grey */
-    --signal: 255 91 42;      /* #FF5B2A saturated vermilion — primary accent (rare) */
-    --signal-2: 61 234 210;   /* #3DEAD2 electric jade — "live / online" indicators only */
-    --transition-curve: cubic-bezier(0.76, 0, 0.24, 1);
-    --transition-soft: cubic-bezier(0.16, 1, 0.3, 1);
+    /* Surfaces */
+    --paper:     245 242 236;  /* #F5F2EC warm off-white background */
+    --paper-2:   239 235 226;  /* #EFEBE2 a step deeper, for cards/wells */
+    --ink:        14  14  16;  /* #0E0E10 near-black for type */
+    --mute:      107 107 112;  /* #6B6B70 secondary copy */
+    --hairline:   26  26  28;  /* #1A1A1C — used at 10–15% as borders */
+    --signal:    232  79  27;  /* #E84F1B vermilion — single accent */
 
-    /* Shadcn HSL bridge — dark, mapped to Night Trading Floor */
-    --background: 226 43% 4%;
-    --foreground: 41 26% 88%;
-    --card: 222 39% 8%;
-    --card-foreground: 41 26% 88%;
-    --popover: 222 39% 8%;
-    --popover-foreground: 41 26% 88%;
-    --primary: 13 100% 58%;
-    --primary-foreground: 226 43% 4%;
-    --secondary: 222 30% 12%;
-    --secondary-foreground: 41 26% 88%;
-    --muted: 222 30% 12%;
-    --muted-foreground: 226 7% 51%;
-    --accent: 13 100% 58%;
-    --accent-foreground: 226 43% 4%;
+    /* Shadcn HSL bridge — light, mapped to Quiet Operator */
+    --background: 41 32% 94%;
+    --foreground: 240 7% 6%;
+    --card: 41 25% 91%;
+    --card-foreground: 240 7% 6%;
+    --popover: 41 25% 91%;
+    --popover-foreground: 240 7% 6%;
+    --primary: 14 81% 51%;
+    --primary-foreground: 41 32% 94%;
+    --secondary: 41 14% 86%;
+    --secondary-foreground: 240 7% 6%;
+    --muted: 41 14% 86%;
+    --muted-foreground: 240 2% 43%;
+    --accent: 14 81% 51%;
+    --accent-foreground: 41 32% 94%;
     --destructive: 0 65% 52%;
     --destructive-foreground: 41 26% 95%;
-    --border: 222 28% 15%;
-    --input: 222 28% 15%;
-    --ring: 13 100% 58%;
+    --border: 240 4% 11%;
+    --input: 41 14% 86%;
+    --ring: 14 81% 51%;
     --radius: 0px;
   }
 }
@@ -49,217 +46,104 @@
 }
 
 html, body {
-  background: rgb(var(--ink));
-  color: rgb(var(--bone));
-  font-family: 'Inter', system-ui, sans-serif;
+  background: rgb(var(--paper));
+  color: rgb(var(--ink));
+  font-family: 'Geist', system-ui, sans-serif;
+  font-feature-settings: 'ss01', 'cv11';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
-  cursor: none;
   text-rendering: optimizeLegibility;
-}
-
-body.is-locked {
-  overflow: hidden;
-  height: 100vh;
+  overflow-x: hidden;
 }
 
 ::selection {
   background: rgb(var(--signal));
-  color: rgb(var(--bone));
+  color: rgb(var(--paper));
 }
 
-/* Custom cursor — minimal. Vermilion 4px dot. 32px outline ring on hover.
-   `+` crosshair on panels. No labels. (Per brief §4.8.) */
-#cursor {
-  position: fixed;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-  z-index: 99999;
-  will-change: transform;
+/* Native focus ring — accessible */
+:focus-visible {
+  outline: 2px solid rgb(var(--signal));
+  outline-offset: 3px;
 }
 
-#cursor-dot {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 4px;
-  height: 4px;
-  background: rgb(var(--signal));
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  transition: width 0.28s var(--transition-curve),
-              height 0.28s var(--transition-curve),
-              opacity 0.2s ease;
-}
+/* ─── Typography utilities ──────────────────────────────────────────── */
+.font-mono { font-family: 'Geist Mono', ui-monospace, monospace; }
 
-#cursor-ring {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 32px;
-  height: 32px;
-  border: 1px solid rgb(var(--signal));
-  border-radius: 50%;
-  transform: translate(-50%, -50%) scale(0.5);
-  opacity: 0;
-  transition: opacity 0.24s ease,
-              transform 0.28s var(--transition-curve);
-}
-
-#cursor.hover #cursor-ring {
-  opacity: 1;
-  transform: translate(-50%, -50%) scale(1);
-}
-#cursor.hover #cursor-dot {
-  opacity: 0;
-}
-
-/* Panel state — `+` crosshair (two thin lines). Use #cursor.panel on element
-   that's a registered dolly panel. */
-#cursor.panel #cursor-dot {
-  opacity: 0;
-}
-#cursor.panel #cursor-ring {
-  opacity: 0;
-}
-#cursor-cross {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 14px;
-  height: 14px;
-  transform: translate(-50%, -50%);
-  opacity: 0;
-  transition: opacity 0.24s ease;
-}
-#cursor-cross::before,
-#cursor-cross::after {
-  content: '';
-  position: absolute;
-  background: rgb(var(--signal));
-}
-#cursor-cross::before {
-  left: 50%;
-  top: 0;
-  width: 1px;
-  height: 100%;
-  transform: translateX(-50%);
-}
-#cursor-cross::after {
-  top: 50%;
-  left: 0;
-  height: 1px;
-  width: 100%;
-  transform: translateY(-50%);
-}
-#cursor.panel #cursor-cross {
-  opacity: 1;
-}
-
-*, *::before, *::after {
-  cursor: none !important;
-}
-
-@media (hover: none), (max-width: 900px) {
-  #cursor { display: none; }
-  *, *::before, *::after { cursor: auto !important; }
-  html, body { cursor: auto; }
-}
-
-/* Reveal — split character / word reveal helper */
-.reveal-line {
-  display: inline-block;
-  overflow: hidden;
-  vertical-align: top;
-}
-.reveal-line > span {
-  display: inline-block;
-  transform: translateY(105%);
-  will-change: transform;
-}
-
-/* Display typography utility — display headlines on the few places that
-   still take display weight (most of the new site uses mono, per brief). */
-.display-headline {
-  font-family: 'Space Grotesk', system-ui, sans-serif;
-  font-weight: 500;
-  letter-spacing: -0.04em;
-  line-height: 0.92;
-  text-transform: none;
-}
-
-.eyebrow {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+.label {
+  font-family: 'Geist Mono', ui-monospace, monospace;
   font-size: 11px;
-  letter-spacing: 0.32em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgb(var(--bone-mute));
+  color: rgb(var(--mute));
+  font-weight: 500;
 }
 
-.mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
-.serif-italic { font-family: 'Times New Roman', Georgia, serif; font-style: italic; }
-
-/* Loader overflow lock */
-html.is-loading, html.is-loading body { overflow: hidden; }
-
-/* Terminal-style blinking cursor — monospace `_` after typeout text */
-@keyframes kz-blink {
-  0%, 49% { opacity: 1; }
-  50%, 100% { opacity: 0; }
-}
-.kz-cursor {
-  display: inline-block;
-  margin-left: 0.05em;
-  animation: kz-blink 1s steps(1, end) infinite;
-  color: rgb(var(--signal));
+.display {
+  font-family: 'Geist', system-ui, sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 0.96;
 }
 
-/* Room-transition glitch — 1-frame hard cut + 200ms decaying veil.
-   Three layered effects, each on its own timeline:
-     · the root briefly shifts (chromatic aberration feel)
-     · ::bands renders a hot-stripe interference pattern
-     · ::sweep is a single horizontal tear running top→bottom */
-.kz-glitch {
+/* ─── Layout primitives ─────────────────────────────────────────────── */
+.container-wide {
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+@media (min-width: 768px) {
+  .container-wide { padding-inline: 2.5rem; }
+}
+@media (min-width: 1280px) {
+  .container-wide { padding-inline: 3rem; }
+}
+
+.hairline {
+  background: rgb(var(--hairline) / 0.12);
+}
+
+/* ─── Loader overflow lock ──────────────────────────────────────────── */
+html.is-loading,
+html.is-loading body {
+  overflow: hidden;
+}
+
+/* ─── Section reveal — first-paint fade-up ──────────────────────────── */
+.reveal {
   opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.kz-glitch__bands {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
+.reveal.is-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─── Hero hairline draw — runs once on mount ───────────────────────── */
+@keyframes draw-hairline {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+.draw-hairline {
+  transform-origin: left center;
+  animation: draw-hairline 900ms cubic-bezier(0.5, 0, 0.2, 1) 200ms both;
+}
+
+/* ─── Logo loader assembly — three pills + dot, staggered ──────────── */
+@keyframes logo-pill-in {
+  from { opacity: 0; transform: translate(var(--from-x, -8px), var(--from-y, 0)); }
+  to   { opacity: 1; transform: translate(0, 0); }
+}
+.logo-pill {
   opacity: 0;
-  background-image: repeating-linear-gradient(
-    0deg,
-    rgba(255, 91, 42, 0.14) 0px,
-    rgba(255, 91, 42, 0.14) 1px,
-    transparent 1px,
-    transparent 5px
-  );
-  mix-blend-mode: screen;
+  animation: logo-pill-in 600ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-@keyframes kz-glitch-root {
-  0%   { opacity: 0; }
-  10%  { opacity: 0.55; }
-  35%  { opacity: 0.25; }
-  100% { opacity: 0; }
-}
-@keyframes kz-glitch-bands {
-  0%   { opacity: 0; }
-  10%  { opacity: 0.5; }
-  60%  { opacity: 0.15; }
-  100% { opacity: 0; }
-}
-
-.kz-glitch.is-cut {
-  animation: kz-glitch-root 180ms ease-out 1;
-}
-.kz-glitch.is-cut .kz-glitch__bands {
-  animation: kz-glitch-bands 180ms ease-out 1;
-}
-
-/* Reduced motion */
+/* ─── Reduced motion ────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.001ms !important;
@@ -267,13 +151,10 @@ html.is-loading, html.is-loading body { overflow: hidden; }
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
   }
+  .reveal { opacity: 1; transform: none; }
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
+  * { @apply border-border; }
+  body { @apply bg-background text-foreground; }
 }

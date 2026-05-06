@@ -1,241 +1,178 @@
-import { FormEvent, useEffect, useRef, useState } from "react";
-import gsap from "gsap";
+import { useEffect, useState } from "react";
 
 interface ContactDrawerProps {
   open: boolean;
   onClose: () => void;
 }
 
+/**
+ * Contact drawer — slides in from the right with a single short note form.
+ * Pure CSS transitions, no GSAP. Body scroll is locked while open.
+ */
 const ContactDrawer = ({ open, onClose }: ContactDrawerProps) => {
-  const overlayRef = useRef<HTMLDivElement>(null);
-  const panelRef = useRef<HTMLDivElement>(null);
   const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+      // tiny defer so the success flash isn't visible during exit
+      const t = window.setTimeout(() => setSubmitted(false), 400);
+      return () => window.clearTimeout(t);
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
+  // Esc to close
+  useEffect(() => {
+    if (!open) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && open) onClose();
+      if (e.key === "Escape") onClose();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [open, onClose]);
 
-  useEffect(() => {
-    if (!overlayRef.current || !panelRef.current) return;
-    const overlay = overlayRef.current;
-    const panel = panelRef.current;
-    if (open) {
-      // Prevent scroll position reset by using fixed positioning instead of body lock
-      const scrollY = window.scrollY;
-      document.body.style.position = "fixed";
-      document.body.style.top = `-${scrollY}px`;
-      document.body.style.left = "0";
-      document.body.style.right = "0";
-      document.body.dataset.scrollY = String(scrollY);
-      // Tell background WebGL scenes to pause — backdrop compositing is the
-      // hot path that makes the drawer feel laggy on desktop
-      document.body.dataset.drawerOpen = "1";
-      window.dispatchEvent(new Event("kz:drawer-open"));
-
-      gsap.set(overlay, { display: "block", autoAlpha: 0 });
-      gsap.set(panel, { xPercent: 100 });
-      gsap.to(overlay, { autoAlpha: 1, duration: 0.4, ease: "power3.out" });
-      gsap.to(panel, { xPercent: 0, duration: 0.7, ease: "power4.inOut" });
-    } else {
-      // Restore scroll position
-      const savedY = parseInt(document.body.dataset.scrollY || "0", 10);
-      document.body.style.position = "";
-      document.body.style.top = "";
-      document.body.style.left = "";
-      document.body.style.right = "";
-      window.scrollTo(0, savedY);
-      delete document.body.dataset.drawerOpen;
-      window.dispatchEvent(new Event("kz:drawer-close"));
-
-      gsap.to(panel, { xPercent: 100, duration: 0.55, ease: "power4.inOut" });
-      gsap.to(overlay, {
-        autoAlpha: 0,
-        duration: 0.35,
-        ease: "power2.out",
-        delay: 0.1,
-        onComplete: () => {
-          if (overlay) overlay.style.display = "none";
-        },
-      });
-    }
-  }, [open]);
-
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    // Placeholder — wire to backend / form provider when ready.
     setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
-      onClose();
-    }, 1800);
   };
 
   return (
-    <div
-      ref={overlayRef}
-      className="fixed inset-0 z-[200] hidden"
-      role="dialog"
-      aria-modal="true"
-      aria-label="Project intake"
-    >
-      <button
-        type="button"
-        aria-label="Close"
-        onClick={onClose}
-        className="absolute inset-0 bg-ink/85"
-      />
+    <>
+      {/* Overlay */}
       <div
-        ref={panelRef}
-        className="absolute right-0 top-0 h-full w-full max-w-[640px] overflow-y-auto bg-ink-rise p-8 md:p-12"
-        style={{ borderLeft: "1px solid rgb(var(--ink-edge))" }}
+        onClick={onClose}
+        aria-hidden
+        className="fixed inset-0 z-[1000] bg-ink/40 transition-opacity duration-500"
+        style={{
+          opacity: open ? 1 : 0,
+          pointerEvents: open ? "auto" : "none",
+        }}
+      />
+
+      {/* Panel */}
+      <aside
+        role="dialog"
+        aria-modal="true"
+        aria-label="Project intake"
+        className="fixed inset-y-0 right-0 z-[1001] flex w-full max-w-[480px] flex-col bg-paper shadow-2xl transition-transform duration-500 ease-out"
+        style={{
+          transform: open ? "translateX(0)" : "translateX(100%)",
+        }}
       >
-        <div className="flex items-start justify-between">
-          <div>
-            <span className="font-mono text-[11px] uppercase tracking-[0.32em] text-bone-mute">
-              Project intake
-            </span>
-            <h3
-              className="display-headline mt-3 text-bone"
-              style={{ fontSize: "clamp(1.5rem, 3vw, 2.5rem)" }}
-            >
-              Tell us what&rsquo;s broken.
-            </h3>
-            <p className="mt-3 max-w-[380px] text-sm leading-relaxed text-bone/65">
-              No formal RFP, no pitch deck. A few sentences is enough — we&rsquo;ll come back with
-              an honest answer about whether we can help.
-            </p>
+        <div className="flex items-center justify-between border-b border-hairline/15 px-7 py-5">
+          <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-mute">
+            Project intake
           </div>
           <button
             type="button"
             onClick={onClose}
+            className="text-[20px] leading-none text-mute transition-colors hover:text-ink"
             aria-label="Close"
-            className="group inline-flex h-10 w-10 items-center justify-center border border-bone/15 text-bone hover-target"
           >
-            <svg width="14" height="14" viewBox="0 0 14 14" className="transition-transform duration-300 group-hover:rotate-90">
-              <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" strokeWidth="1.4" />
-            </svg>
+            ✕
           </button>
         </div>
 
-        <form onSubmit={onSubmit} className="mt-10 space-y-6">
-          <Field label="Name" name="name" placeholder="Who are we talking to?" required />
-          <Field label="Email" name="email" type="email" placeholder="you@company.com" required />
-          <Field label="Company" name="company" placeholder="Optional — but useful" />
-          <SelectField
-            label="Stage"
-            name="stage"
-            options={[
-              "Idea — exploring",
-              "Spec'd — looking for a build partner",
-              "Live — needs a rebuild or extension",
-              "Internal tooling backlog",
-            ]}
-          />
-          <SelectField
-            label="Budget"
-            name="budget"
-            options={[
-              "Under $25k",
-              "$25k – $75k",
-              "$75k – $200k",
-              "$200k+",
-              "Unsure — let's talk",
-            ]}
-          />
-          <TextareaField
-            label="What you'd like built"
-            name="message"
-            placeholder="The thing that's broken, the workaround you're using, what would make a difference."
-            rows={5}
-            required
-          />
+        {!submitted ? (
+          <form onSubmit={handleSubmit} className="flex flex-1 flex-col gap-6 overflow-y-auto px-7 py-8">
+            <div>
+              <h2
+                className="display text-ink"
+                style={{ fontSize: "clamp(1.65rem, 3vw, 2.1rem)", letterSpacing: "-0.03em" }}
+              >
+                Tell us what you're trying to build.
+              </h2>
+              <p className="mt-3 text-[14px] leading-[1.55] text-mute">
+                A short note is enough. We reply within 48 hours.
+              </p>
+            </div>
 
-          <div className="pt-2">
+            <Field label="Your name" name="name" type="text" required />
+            <Field label="Email" name="email" type="email" required />
+            <Field label="Company / team" name="company" type="text" />
+
+            <label className="flex flex-col gap-2">
+              <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-mute">
+                What you're trying to build
+              </span>
+              <textarea
+                name="brief"
+                rows={5}
+                required
+                className="resize-none border border-hairline/20 bg-paper-2/40 px-3 py-3 text-[15px] text-ink outline-none transition-colors focus:border-signal"
+              />
+            </label>
+
             <button
               type="submit"
-              disabled={submitted}
-              className="group inline-flex w-full items-center justify-between border border-signal bg-signal px-6 py-4 text-ink transition-colors hover-target disabled:opacity-60"
+              className="group mt-2 inline-flex items-center justify-center gap-3 bg-ink px-6 py-4 text-[14px] font-medium text-paper transition-colors hover:bg-signal"
             >
-              <span className="font-mono text-[12px] uppercase tracking-[0.24em]">
-                {submitted ? "Sent — we'll be in touch" : "Send intake"}
+              <span>Send brief</span>
+              <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-1">
+                ↘
               </span>
-              <span className="font-mono text-[12px] uppercase tracking-[0.24em]">→</span>
             </button>
-            <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.22em] text-bone-mute">
-              Or email <a className="text-bone underline-offset-2 hover:underline" href="mailto:hello@kozai.ca">hello@kozai.ca</a> directly.
+
+            <p className="mt-2 text-[12px] leading-[1.55] text-mute">
+              Or email us directly at{" "}
+              <a
+                href="mailto:hello@kozai.ca"
+                className="text-ink underline-offset-4 hover:underline"
+              >
+                hello@kozai.ca
+              </a>
+              .
             </p>
+          </form>
+        ) : (
+          <div className="flex flex-1 flex-col items-start justify-center gap-5 px-7 py-8">
+            <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-signal">
+              Sent
+            </div>
+            <h3 className="display text-ink" style={{ fontSize: "clamp(1.5rem, 3vw, 2rem)" }}>
+              Thanks — we'll be in touch within 48 h.
+            </h3>
+            <p className="text-[15px] text-mute">
+              In the meantime, if it's urgent, email us at hello@kozai.ca.
+            </p>
+            <button
+              type="button"
+              onClick={onClose}
+              className="mt-4 border border-hairline/20 px-5 py-3 text-[13px] font-medium text-ink transition-colors hover:border-ink"
+            >
+              Close
+            </button>
           </div>
-        </form>
-      </div>
-    </div>
+        )}
+      </aside>
+    </>
   );
 };
 
-const Field = ({
-  label,
-  name,
-  type = "text",
-  placeholder,
-  required,
-}: {
+interface FieldProps {
   label: string;
   name: string;
-  type?: string;
-  placeholder?: string;
+  type: string;
   required?: boolean;
-}) => (
-  <label className="block">
-    <span className="font-mono text-[11px] uppercase tracking-[0.24em] text-bone-mute">{label}</span>
+}
+
+const Field = ({ label, name, type, required }: FieldProps) => (
+  <label className="flex flex-col gap-2">
+    <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-mute">
+      {label}
+      {required && <span className="ml-1 text-signal">*</span>}
+    </span>
     <input
+      name={name}
       type={type}
-      name={name}
-      placeholder={placeholder}
       required={required}
-      className="mt-2 block w-full border-b border-bone/15 bg-transparent py-2.5 text-bone placeholder:text-bone/30 focus:border-signal focus:outline-none"
-    />
-  </label>
-);
-
-const SelectField = ({ label, name, options }: { label: string; name: string; options: string[] }) => (
-  <label className="block">
-    <span className="font-mono text-[11px] uppercase tracking-[0.24em] text-bone-mute">{label}</span>
-    <select
-      name={name}
-      defaultValue=""
-      className="mt-2 block w-full border-b border-bone/15 bg-transparent py-2.5 text-bone focus:border-signal focus:outline-none"
-    >
-      <option value="" disabled>Choose one</option>
-      {options.map((o) => (
-        <option key={o} value={o} className="bg-ink-rise text-bone">{o}</option>
-      ))}
-    </select>
-  </label>
-);
-
-const TextareaField = ({
-  label,
-  name,
-  placeholder,
-  rows = 4,
-  required,
-}: {
-  label: string;
-  name: string;
-  placeholder?: string;
-  rows?: number;
-  required?: boolean;
-}) => (
-  <label className="block">
-    <span className="font-mono text-[11px] uppercase tracking-[0.24em] text-bone-mute">{label}</span>
-    <textarea
-      name={name}
-      placeholder={placeholder}
-      rows={rows}
-      required={required}
-      className="mt-2 block w-full resize-none border border-bone/15 bg-bone/[0.03] px-3 py-2.5 text-bone placeholder:text-bone/30 focus:border-signal focus:outline-none"
+      className="border border-hairline/20 bg-paper-2/40 px-3 py-3 text-[15px] text-ink outline-none transition-colors focus:border-signal"
     />
   </label>
 );

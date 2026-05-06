@@ -8,15 +8,15 @@ export default {
     container: {
       center: true,
       padding: "1.5rem",
-      screens: { "2xl": "1440px" },
+      screens: { "2xl": "1280px" },
     },
     extend: {
       fontFamily: {
-        display: ["'Space Grotesk'", "system-ui", "sans-serif"],
-        mono: ["'JetBrains Mono'", "monospace"],
+        sans: ["'Geist'", "system-ui", "sans-serif"],
+        mono: ["'Geist Mono'", "ui-monospace", "monospace"],
       },
       colors: {
-        // bridge (so /ui still works)
+        // shadcn bridge
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -30,21 +30,13 @@ export default {
         popover: { DEFAULT: "hsl(var(--popover))", foreground: "hsl(var(--popover-foreground))" },
         card: { DEFAULT: "hsl(var(--card))", foreground: "hsl(var(--card-foreground))" },
 
-        // brand — using the new palette
-        ink: {
-          DEFAULT: "rgb(var(--ink) / <alpha-value>)",
-          rise: "rgb(var(--ink-rise) / <alpha-value>)",
-          edge: "rgb(var(--ink-edge) / <alpha-value>)",
-        },
-        bone: {
-          DEFAULT: "rgb(var(--bone) / <alpha-value>)",
-          mute: "rgb(var(--bone-mute) / <alpha-value>)",
-          faint: "rgb(var(--bone-faint) / <alpha-value>)",
-        },
-        signal: {
-          DEFAULT: "rgb(var(--signal) / <alpha-value>)",
-          warm: "rgb(var(--signal-warm) / <alpha-value>)",
-        },
+        // brand — Quiet Operator
+        paper:    "rgb(var(--paper) / <alpha-value>)",
+        "paper-2":"rgb(var(--paper-2) / <alpha-value>)",
+        ink:      "rgb(var(--ink) / <alpha-value>)",
+        mute:     "rgb(var(--mute) / <alpha-value>)",
+        hairline: "rgb(var(--hairline) / <alpha-value>)",
+        signal:   "rgb(var(--signal) / <alpha-value>)",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -54,14 +46,10 @@ export default {
       keyframes: {
         "accordion-down": { from: { height: "0" }, to: { height: "var(--radix-accordion-content-height)" } },
         "accordion-up": { from: { height: "var(--radix-accordion-content-height)" }, to: { height: "0" } },
-        "marquee": { "0%": { transform: "translate3d(0,0,0)" }, "100%": { transform: "translate3d(-50%,0,0)" } },
-        "ticker": { "0%": { transform: "translateY(0)" }, "100%": { transform: "translateY(-50%)" } },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "marquee": "marquee 30s linear infinite",
-        "ticker": "ticker 20s linear infinite",
       },
     },
   },
