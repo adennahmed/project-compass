@@ -50,7 +50,6 @@ const RoomTransitionGlitch = () => {
       aria-hidden
     >
       <div className="kz-glitch__bands" />
-      <div className="kz-glitch__sweep" />
     </div>
   );
 };

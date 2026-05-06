@@ -51,7 +51,10 @@ const Preloader = ({ onComplete, onTransitionStart }: PreloaderProps) => {
         },
       });
 
-      // Tail timeline — at +2.5s, snap counter off-screen left, then exit.
+      // Tail timeline — at +2.5s, gently lift the counter & service rotator,
+      // then cross-fade the whole field out. No hard sideways snap; the
+      // motion now reads as a graceful handoff into the scene rather than
+      // a brittle cut.
       gsap
         .timeline({
           delay: 2.5,
@@ -62,23 +65,31 @@ const Preloader = ({ onComplete, onTransitionStart }: PreloaderProps) => {
             onComplete();
           },
         })
-        // Counter snaps off-screen left — single hard motion, not a fade
         .to(".kz-loader__counter", {
-          xPercent: -120,
-          duration: 0.5,
-          ease: "power4.in",
-        })
-        .to(".kz-loader__service", {
-          xPercent: -120,
-          duration: 0.45,
-          ease: "power4.in",
-        }, "<0.05")
-        // Then the whole loader fades the field — quick, no shutters.
-        .to(".kz-loader__field", {
+          y: -16,
           opacity: 0,
-          duration: 0.3,
-          ease: "power2.out",
-        }, "+=0.05");
+          duration: 0.55,
+          ease: "power3.inOut",
+        })
+        .to(
+          ".kz-loader__service",
+          {
+            y: -10,
+            opacity: 0,
+            duration: 0.5,
+            ease: "power3.inOut",
+          },
+          "<0.04",
+        )
+        .to(
+          ".kz-loader__field",
+          {
+            opacity: 0,
+            duration: 0.7,
+            ease: "power2.inOut",
+          },
+          "<0.1",
+        );
     }, rootRef);
 
     return () => {
