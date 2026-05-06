@@ -244,15 +244,20 @@ interface RoomSlotProps {
 
 const RoomSlot = ({ panelId, slice, total, children }: RoomSlotProps) => {
   const overlayRef = useRef<HTMLDivElement>(null);
-  const [active, setActive] = useState(false);
+  // First slot is active from mount so its typeout begins immediately —
+  // the rest latch on once they scroll into view.
+  const [active, setActive] = useState(slice === 0);
 
   useEffect(() => {
     const el = overlayRef.current;
     if (!el) return;
     const start = slice / total;
     const end = (slice + 1) / total;
-    const fadeIn = start + 0.04;
-    const fadeOut = end - 0.04;
+    // Crossfade band — narrower than before so each room sits at full
+    // opacity for the bulk of its slice and only blends right at the seam.
+    const fade = 0.018;
+    const isFirst = slice === 0;
+    const isLast = slice === total - 1;
     const ctx = gsap.context(() => {
       ScrollTrigger.create({
         trigger: ".kz-pinned",
@@ -262,9 +267,11 @@ const RoomSlot = ({ panelId, slice, total, children }: RoomSlotProps) => {
         onUpdate: (self) => {
           const p = self.progress;
           let opacity = 0;
-          if (p > start && p < fadeIn) opacity = (p - start) / (fadeIn - start);
-          else if (p >= fadeIn && p <= fadeOut) opacity = 1;
-          else if (p > fadeOut && p < end) opacity = 1 - (p - fadeOut) / (end - fadeOut);
+          if (p < start - fade) opacity = isFirst ? 1 : 0;
+          else if (p < start) opacity = isFirst ? 1 : (p - (start - fade)) / fade;
+          else if (p <= end - fade) opacity = 1;
+          else if (p <= end) opacity = isLast ? 1 : 1 - (p - (end - fade)) / fade;
+          else opacity = isLast ? 1 : 0;
           el.style.opacity = String(opacity);
           el.style.pointerEvents = opacity > 0.5 ? "auto" : "none";
           // active ⇄ once the room becomes meaningfully visible.
@@ -279,12 +286,15 @@ const RoomSlot = ({ panelId, slice, total, children }: RoomSlotProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slice, total]);
 
+  // First slot starts visible so the hero never appears blank on initial load.
+  const initialOpacity = slice === 0 ? 1 : 0;
+
   return (
     <div
       ref={overlayRef}
       id={panelId}
       className="kz-room-overlay absolute inset-0 z-10"
-      style={{ opacity: 0 }}
+      style={{ opacity: initialOpacity }}
     >
       {children(active)}
     </div>

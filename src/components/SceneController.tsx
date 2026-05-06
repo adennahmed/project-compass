@@ -102,32 +102,32 @@ const SceneController = ({ pinSelector }: SceneControllerProps) => {
     const grid = new THREE.LineSegments(gridGeo, gridMat);
     scene.add(grid);
 
-    // ---- Placeholder panels for non-build rooms ----
-    // The build room (id "build") gets its own 4-panel shader wall instead;
-    // its main panel slot is skipped in this loop.
+    // ---- Atmospheric "marker" frames for text-overlay rooms ----
+    // The build / work / studio rooms get shader-backed monitors below.
+    // The other rooms (operations / approach / contact) live in HTML overlays —
+    // we render only a thin glowing frame at the panel position so the camera
+    // dolly has something to register, without the heavy black rectangle that
+    // used to block the view.
     const panelMeshes: THREE.Mesh[] = [];
     const panelEdges: THREE.LineSegments[] = [];
     ROOM_PANELS.forEach((p) => {
       if (p.id === "build" || p.id === "work" || p.id === "studio") return; // handled below
-      const geo = new THREE.PlaneGeometry(p.width, p.height);
+      // Wide, low frame — far enough below the headline that it reads as
+      // a horizon detail rather than an empty screen.
+      const frameW = p.width * 1.4;
+      const frameH = 0.04;
+      const geo = new THREE.PlaneGeometry(frameW, frameH);
       const mat = new THREE.MeshBasicMaterial({
-        color: 0x0c111b,
+        color: 0xff5b2a,
         transparent: true,
-        opacity: 0.94,
+        opacity: 0.55,
         side: THREE.DoubleSide,
       });
       const mesh = new THREE.Mesh(geo, mat);
-      mesh.position.set(p.x, p.y, p.z);
+      mesh.position.set(p.x, -0.6, p.z);
       mesh.userData = { id: p.id };
       scene.add(mesh);
       panelMeshes.push(mesh);
-
-      const edgeGeo = new THREE.EdgesGeometry(geo);
-      const edgeMat = new THREE.LineBasicMaterial({ color: 0x2a3142, transparent: true, opacity: 0.75 });
-      const edges = new THREE.LineSegments(edgeGeo, edgeMat);
-      edges.position.set(p.x, p.y, p.z);
-      scene.add(edges);
-      panelEdges.push(edges);
     });
 
     // ---- Build sub-panels — 4 shader-backed monitors arranged 2x2 ----
@@ -437,6 +437,7 @@ const SceneController = ({ pinSelector }: SceneControllerProps) => {
         e.geometry.dispose();
         (e.material as THREE.Material).dispose();
       });
+      void panelEdges;
       buildSubMeshes.forEach((m) => {
         (m.material as THREE.Material).dispose();
       });
