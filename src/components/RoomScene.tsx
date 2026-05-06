@@ -3,6 +3,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SceneController, { ROOM_PANELS } from "./SceneController";
 import OperationsRoom from "./rooms/OperationsRoom";
+import ApproachRoom from "./rooms/ApproachRoom";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -25,7 +26,6 @@ interface RoomSceneProps {
 }
 
 const ROOM_PLACEHOLDER_LABELS: Record<string, { eyebrow: string; label: string }> = {
-  approach: { eyebrow: "[ 02 / APPROACH ]",       label: "Approach" },
   build:    { eyebrow: "[ 03 / WHAT WE BUILD ]",  label: "What we build" },
   work:     { eyebrow: "[ 04 / SELECTED WORK ]",  label: "Selected work" },
   studio:   { eyebrow: "[ 05 / THE STUDIO ]",     label: "The studio" },
@@ -75,6 +75,9 @@ const RoomScene = ({ onContactClick }: RoomSceneProps) => {
             {(active) => {
               if (p.id === "operations") {
                 return <OperationsRoom active={active} onContactClick={onContactClick} />;
+              }
+              if (p.id === "approach") {
+                return <ApproachRoom active={active} />;
               }
               const placeholder = ROOM_PLACEHOLDER_LABELS[p.id];
               return placeholder ? <PlaceholderRoom {...placeholder} /> : null;
