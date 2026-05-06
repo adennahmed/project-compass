@@ -6,6 +6,7 @@ import {
   BUILD_PANEL_SHADERS,
   PANEL_VERTEX_SHADER,
 } from "./rooms/buildShaders";
+import { WORK_PANEL_SHADERS } from "./rooms/workShaders";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -103,7 +104,7 @@ const SceneController = ({ pinSelector }: SceneControllerProps) => {
     const panelMeshes: THREE.Mesh[] = [];
     const panelEdges: THREE.LineSegments[] = [];
     ROOM_PANELS.forEach((p) => {
-      if (p.id === "build") return; // handled below
+      if (p.id === "build" || p.id === "work") return; // handled below
       const geo = new THREE.PlaneGeometry(p.width, p.height);
       const mat = new THREE.MeshBasicMaterial({
         color: 0x0c111b,
@@ -175,6 +176,43 @@ const SceneController = ({ pinSelector }: SceneControllerProps) => {
       buildSubEdges.push(edges);
     });
 
+    // ---- Work sub-panels — 4 project-themed shader panels (2x2) ----
+    const workRoom = ROOM_PANELS.find((p) => p.id === "work")!;
+    const workSubMaterials: THREE.ShaderMaterial[] = [];
+    const workSubMeshes: THREE.Mesh[] = [];
+    const workSubEdges: THREE.LineSegments[] = [];
+    WORK_PANEL_SHADERS.forEach((frag, i) => {
+      const mat = new THREE.ShaderMaterial({
+        vertexShader: PANEL_VERTEX_SHADER,
+        fragmentShader: frag,
+        uniforms: {
+          uTime: { value: 0 },
+          uActive: { value: 0.0 },
+        },
+      });
+      const mesh = new THREE.Mesh(subGeo, mat);
+      mesh.position.set(
+        workRoom.x + subOffsets[i][0],
+        workRoom.y + subOffsets[i][1],
+        workRoom.z,
+      );
+      mesh.userData = { id: `work-sub-${i}` };
+      scene.add(mesh);
+      workSubMeshes.push(mesh);
+      workSubMaterials.push(mat);
+
+      const edgeGeo = new THREE.EdgesGeometry(subGeo);
+      const edgeMat = new THREE.LineBasicMaterial({
+        color: 0x2a3142,
+        transparent: true,
+        opacity: 0.7,
+      });
+      const edges = new THREE.LineSegments(edgeGeo, edgeMat);
+      edges.position.copy(mesh.position);
+      scene.add(edges);
+      workSubEdges.push(edges);
+    });
+
     // ---- Light dust particles for atmosphere ----
     const particleCount = 350;
     const partPositions = new Float32Array(particleCount * 3);
@@ -237,12 +275,16 @@ const SceneController = ({ pinSelector }: SceneControllerProps) => {
     };
     initScroll();
 
-    // ---- Build slice bounds — used to drive uActive on the 4 sub-panel shaders ----
-    const buildIdx = ROOM_PANELS.findIndex((p) => p.id === "build");
+    // ---- Slice bounds for shader-backed rooms ----
     const total = ROOM_PANELS.length;
+    const buildIdx = ROOM_PANELS.findIndex((p) => p.id === "build");
     const buildStart = buildIdx / total;
     const buildEnd = (buildIdx + 1) / total;
     const buildSpan = buildEnd - buildStart;
+    const workIdx = ROOM_PANELS.findIndex((p) => p.id === "work");
+    const workStart = workIdx / total;
+    const workEnd = (workIdx + 1) / total;
+    const workSpan = workEnd - workStart;
 
     // ---- Render loop ----
     let raf = 0;
@@ -265,18 +307,34 @@ const SceneController = ({ pinSelector }: SceneControllerProps) => {
       if (t >= buildStart - 0.04 && t <= buildEnd + 0.04) {
         buildSliceP = (t - buildStart) / buildSpan;
       }
-      const subCount = buildSubMaterials.length;
+      const buildSubCount = buildSubMaterials.length;
       buildSubMaterials.forEach((mat, i) => {
         mat.uniforms.uTime.value = elapsed;
         if (buildSliceP < 0) {
           mat.uniforms.uActive.value = 0.25;
         } else {
-          // Active sub-panel index based on slice progress
-          const idx = Math.min(subCount - 1, Math.max(0, Math.floor(buildSliceP * subCount)));
-          // Smooth ramp so neighbours partially light too
+          const idx = Math.min(buildSubCount - 1, Math.max(0, Math.floor(buildSliceP * buildSubCount)));
           const dist = Math.abs(idx - i);
           const target = i === idx ? 1.0 : Math.max(0.25, 1.0 - dist * 0.5);
-          // Lerp toward target for smoothness
+          const cur = mat.uniforms.uActive.value as number;
+          mat.uniforms.uActive.value = cur + (target - cur) * 0.08;
+        }
+      });
+
+      // ---- Work sub-panel uniforms ----
+      let workSliceP = -1;
+      if (t >= workStart - 0.04 && t <= workEnd + 0.04) {
+        workSliceP = (t - workStart) / workSpan;
+      }
+      const workSubCount = workSubMaterials.length;
+      workSubMaterials.forEach((mat, i) => {
+        mat.uniforms.uTime.value = elapsed;
+        if (workSliceP < 0) {
+          mat.uniforms.uActive.value = 0.25;
+        } else {
+          const idx = Math.min(workSubCount - 1, Math.max(0, Math.floor(workSliceP * workSubCount)));
+          const dist = Math.abs(idx - i);
+          const target = i === idx ? 1.0 : Math.max(0.25, 1.0 - dist * 0.5);
           const cur = mat.uniforms.uActive.value as number;
           mat.uniforms.uActive.value = cur + (target - cur) * 0.08;
         }
@@ -312,10 +370,16 @@ const SceneController = ({ pinSelector }: SceneControllerProps) => {
         (e.material as THREE.Material).dispose();
       });
       buildSubMeshes.forEach((m) => {
-        // shared geo (subGeo) disposed once below
         (m.material as THREE.Material).dispose();
       });
       buildSubEdges.forEach((e) => {
+        e.geometry.dispose();
+        (e.material as THREE.Material).dispose();
+      });
+      workSubMeshes.forEach((m) => {
+        (m.material as THREE.Material).dispose();
+      });
+      workSubEdges.forEach((e) => {
         e.geometry.dispose();
         (e.material as THREE.Material).dispose();
       });
