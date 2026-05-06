@@ -2,6 +2,10 @@ import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import {
+  BUILD_PANEL_SHADERS,
+  PANEL_VERTEX_SHADER,
+} from "./rooms/buildShaders";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -93,12 +97,13 @@ const SceneController = ({ pinSelector }: SceneControllerProps) => {
     const grid = new THREE.LineSegments(gridGeo, gridMat);
     scene.add(grid);
 
-    // ---- Placeholder panels ----
-    // Each panel is a thin 3D rectangle floating above the floor. Subsequent
-    // steps will replace the placeholder material with shader content per panel.
+    // ---- Placeholder panels for non-build rooms ----
+    // The build room (id "build") gets its own 4-panel shader wall instead;
+    // its main panel slot is skipped in this loop.
     const panelMeshes: THREE.Mesh[] = [];
     const panelEdges: THREE.LineSegments[] = [];
     ROOM_PANELS.forEach((p) => {
+      if (p.id === "build") return; // handled below
       const geo = new THREE.PlaneGeometry(p.width, p.height);
       const mat = new THREE.MeshBasicMaterial({
         color: 0x0c111b,
@@ -112,13 +117,62 @@ const SceneController = ({ pinSelector }: SceneControllerProps) => {
       scene.add(mesh);
       panelMeshes.push(mesh);
 
-      // Crisp outline for each panel — the room's identity edge
       const edgeGeo = new THREE.EdgesGeometry(geo);
       const edgeMat = new THREE.LineBasicMaterial({ color: 0x2a3142, transparent: true, opacity: 0.75 });
       const edges = new THREE.LineSegments(edgeGeo, edgeMat);
       edges.position.set(p.x, p.y, p.z);
       scene.add(edges);
       panelEdges.push(edges);
+    });
+
+    // ---- Build sub-panels — 4 shader-backed monitors arranged 2x2 ----
+    const buildRoom = ROOM_PANELS.find((p) => p.id === "build")!;
+    const SUB_W = 1.7;
+    const SUB_H = 1.0;
+    const SUB_GAP_X = 0.18;
+    const SUB_GAP_Y = 0.16;
+    // Position offsets from buildRoom center:
+    const subOffsets: Array<[number, number]> = [
+      [-(SUB_W + SUB_GAP_X) / 2, (SUB_H + SUB_GAP_Y) / 2],
+      [(SUB_W + SUB_GAP_X) / 2, (SUB_H + SUB_GAP_Y) / 2],
+      [-(SUB_W + SUB_GAP_X) / 2, -(SUB_H + SUB_GAP_Y) / 2],
+      [(SUB_W + SUB_GAP_X) / 2, -(SUB_H + SUB_GAP_Y) / 2],
+    ];
+    const buildSubMaterials: THREE.ShaderMaterial[] = [];
+    const buildSubMeshes: THREE.Mesh[] = [];
+    const buildSubEdges: THREE.LineSegments[] = [];
+    const subGeo = new THREE.PlaneGeometry(SUB_W, SUB_H);
+    BUILD_PANEL_SHADERS.forEach((frag, i) => {
+      const mat = new THREE.ShaderMaterial({
+        vertexShader: PANEL_VERTEX_SHADER,
+        fragmentShader: frag,
+        uniforms: {
+          uTime: { value: 0 },
+          uActive: { value: 0.0 }, // 0..1 — driven by scroll within the build slice
+        },
+      });
+      const mesh = new THREE.Mesh(subGeo, mat);
+      mesh.position.set(
+        buildRoom.x + subOffsets[i][0],
+        buildRoom.y + subOffsets[i][1],
+        buildRoom.z,
+      );
+      mesh.userData = { id: `build-sub-${i}` };
+      scene.add(mesh);
+      buildSubMeshes.push(mesh);
+      buildSubMaterials.push(mat);
+
+      // Subtle outline per sub-panel
+      const edgeGeo = new THREE.EdgesGeometry(subGeo);
+      const edgeMat = new THREE.LineBasicMaterial({
+        color: 0x2a3142,
+        transparent: true,
+        opacity: 0.7,
+      });
+      const edges = new THREE.LineSegments(edgeGeo, edgeMat);
+      edges.position.copy(mesh.position);
+      scene.add(edges);
+      buildSubEdges.push(edges);
     });
 
     // ---- Light dust particles for atmosphere ----
@@ -183,6 +237,13 @@ const SceneController = ({ pinSelector }: SceneControllerProps) => {
     };
     initScroll();
 
+    // ---- Build slice bounds — used to drive uActive on the 4 sub-panel shaders ----
+    const buildIdx = ROOM_PANELS.findIndex((p) => p.id === "build");
+    const total = ROOM_PANELS.length;
+    const buildStart = buildIdx / total;
+    const buildEnd = (buildIdx + 1) / total;
+    const buildSpan = buildEnd - buildStart;
+
     // ---- Render loop ----
     let raf = 0;
     const start = performance.now();
@@ -196,6 +257,30 @@ const SceneController = ({ pinSelector }: SceneControllerProps) => {
       // Drift the dust slightly so the scene breathes
       const elapsed = (performance.now() - start) / 1000;
       particles.position.y = Math.sin(elapsed * 0.18) * 0.06;
+
+      // Drive build sub-panel uniforms
+      // - uTime: continuous, even when off-screen (so panels are alive when revealed)
+      // - uActive: peaks for the active sub-panel within the build slice; muted otherwise
+      let buildSliceP = -1;
+      if (t >= buildStart - 0.04 && t <= buildEnd + 0.04) {
+        buildSliceP = (t - buildStart) / buildSpan;
+      }
+      const subCount = buildSubMaterials.length;
+      buildSubMaterials.forEach((mat, i) => {
+        mat.uniforms.uTime.value = elapsed;
+        if (buildSliceP < 0) {
+          mat.uniforms.uActive.value = 0.25;
+        } else {
+          // Active sub-panel index based on slice progress
+          const idx = Math.min(subCount - 1, Math.max(0, Math.floor(buildSliceP * subCount)));
+          // Smooth ramp so neighbours partially light too
+          const dist = Math.abs(idx - i);
+          const target = i === idx ? 1.0 : Math.max(0.25, 1.0 - dist * 0.5);
+          // Lerp toward target for smoothness
+          const cur = mat.uniforms.uActive.value as number;
+          mat.uniforms.uActive.value = cur + (target - cur) * 0.08;
+        }
+      });
 
       renderer.render(scene, camera);
       raf = requestAnimationFrame(tick);
@@ -226,6 +311,15 @@ const SceneController = ({ pinSelector }: SceneControllerProps) => {
         e.geometry.dispose();
         (e.material as THREE.Material).dispose();
       });
+      buildSubMeshes.forEach((m) => {
+        // shared geo (subGeo) disposed once below
+        (m.material as THREE.Material).dispose();
+      });
+      buildSubEdges.forEach((e) => {
+        e.geometry.dispose();
+        (e.material as THREE.Material).dispose();
+      });
+      subGeo.dispose();
       floorGeo.dispose();
       floorMat.dispose();
       gridGeo.dispose();
