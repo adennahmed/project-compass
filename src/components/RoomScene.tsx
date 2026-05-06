@@ -7,6 +7,7 @@ import ApproachRoom from "./rooms/ApproachRoom";
 import BuildRoom from "./rooms/BuildRoom";
 import WorkRoom from "./rooms/WorkRoom";
 import StudioRoom from "./rooms/StudioRoom";
+import ContactRoom from "./rooms/ContactRoom";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -28,11 +29,10 @@ interface RoomSceneProps {
   onContactClick?: () => void;
 }
 
-const ROOM_PLACEHOLDER_LABELS: Record<string, { eyebrow: string; label: string }> = {
-  work:     { eyebrow: "[ 04 / SELECTED WORK ]",  label: "Selected work" },
-  studio:   { eyebrow: "[ 05 / THE STUDIO ]",     label: "The studio" },
-  contact:  { eyebrow: "[ 06 / CONTACT ]",        label: "Contact" },
-};
+// All six rooms now have their own overlay components. The placeholder
+// fallback below renders only if a panel id is ever added without a
+// matching overlay — defensive scaffolding.
+const ROOM_PLACEHOLDER_LABELS: Record<string, { eyebrow: string; label: string }> = {};
 
 const RoomScene = ({ onContactClick }: RoomSceneProps) => {
   const pinnedRef = useRef<HTMLElement>(null);
@@ -89,6 +89,9 @@ const RoomScene = ({ onContactClick }: RoomSceneProps) => {
               }
               if (p.id === "studio") {
                 return <StudioRoom active={active} />;
+              }
+              if (p.id === "contact") {
+                return <ContactRoom active={active} onContactClick={onContactClick} />;
               }
               const placeholder = ROOM_PLACEHOLDER_LABELS[p.id];
               return placeholder ? <PlaceholderRoom {...placeholder} /> : null;
