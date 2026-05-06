@@ -125,8 +125,18 @@ const Frame = () => (
   </>
 );
 
+const ROOM_LABELS: Record<string, string> = {
+  operations: "OPERATIONS",
+  approach: "APPROACH",
+  build: "BUILD",
+  work: "WORK",
+  studio: "STUDIO",
+  contact: "CONTACT",
+};
+
 const ProgressBar = ({ total }: { total: number }) => {
   const ref = useRef<HTMLDivElement>(null);
+  const [activeIdx, setActiveIdx] = useState(0);
 
   useEffect(() => {
     if (!ref.current) return;
@@ -140,6 +150,7 @@ const ProgressBar = ({ total }: { total: number }) => {
           const fill = ref.current?.querySelector<HTMLDivElement>(".kz-progress__fill");
           if (fill) fill.style.width = `${self.progress * 100}%`;
           const idx = Math.min(total - 1, Math.floor(self.progress * total));
+          setActiveIdx(idx);
           const idxLabel = ref.current?.querySelector<HTMLSpanElement>(".kz-progress__idx");
           if (idxLabel) idxLabel.textContent = `${String(idx + 1).padStart(2, "0")} / ${String(total).padStart(2, "0")}`;
         },
@@ -148,26 +159,78 @@ const ProgressBar = ({ total }: { total: number }) => {
     return () => ctx.revert();
   }, [total]);
 
+  // Jump to room by scrolling the page to the panel's slice.
+  const jumpTo = (i: number) => {
+    const pinned = document.querySelector<HTMLElement>(".kz-pinned");
+    if (!pinned) return;
+    const rect = pinned.getBoundingClientRect();
+    const docTop = window.scrollY + rect.top;
+    const sectionH = pinned.offsetHeight;
+    const target = docTop + (sectionH * i) / total + 4;
+    const lenis = (window as unknown as { __lenis?: { scrollTo: (v: number, o?: object) => void } }).__lenis;
+    if (lenis) {
+      lenis.scrollTo(target, { duration: 1.2 });
+    } else {
+      window.scrollTo({ top: target, behavior: "smooth" });
+    }
+  };
+
   return (
     <div
       ref={ref}
-      className="absolute bottom-6 left-1/2 z-20 flex w-[min(92vw,520px)] -translate-x-1/2 items-center gap-4 md:bottom-10"
+      className="absolute bottom-6 left-1/2 z-20 flex w-[min(92vw,720px)] -translate-x-1/2 flex-col items-stretch gap-3 md:bottom-10"
     >
-      <span
-        className="kz-progress__idx font-mono text-[10px] uppercase tracking-[0.32em] text-bone-mute"
-        style={{ fontVariantNumeric: "tabular-nums" }}
-      >
-        01 / {String(total).padStart(2, "0")}
-      </span>
-      <div className="relative h-px flex-1 bg-bone/15">
-        <div
-          className="kz-progress__fill absolute left-0 top-0 h-full"
-          style={{ width: "0%", backgroundColor: "rgb(var(--signal))" }}
-        />
+      {/* Room dots — click to jump */}
+      <div className="flex items-center justify-between">
+        {ROOM_PANELS.map((p, i) => (
+          <button
+            key={p.id}
+            type="button"
+            onClick={() => jumpTo(i)}
+            className="hover-target group relative flex flex-1 cursor-none items-center justify-center py-2"
+            aria-label={`Jump to ${ROOM_LABELS[p.id] ?? p.id}`}
+          >
+            <span
+              className="font-mono text-[9px] uppercase tracking-[0.32em] transition-colors duration-300"
+              style={{
+                color:
+                  activeIdx === i
+                    ? "rgb(var(--bone))"
+                    : "rgb(var(--bone-mute) / 0.55)",
+                opacity: activeIdx === i ? 1 : 0.7,
+              }}
+            >
+              {ROOM_LABELS[p.id] ?? p.id}
+            </span>
+            <span
+              className="pointer-events-none absolute inset-x-2 -bottom-0.5 h-px transition-colors duration-300 group-hover:bg-bone/60"
+              style={{
+                backgroundColor:
+                  activeIdx === i
+                    ? "rgb(var(--signal))"
+                    : "rgb(var(--bone) / 0.0)",
+              }}
+            />
+          </button>
+        ))}
       </div>
-      <span className="font-mono text-[10px] uppercase tracking-[0.32em] text-bone-mute">
-        scroll →
-      </span>
+      <div className="flex items-center gap-4">
+        <span
+          className="kz-progress__idx font-mono text-[10px] uppercase tracking-[0.32em] text-bone-mute"
+          style={{ fontVariantNumeric: "tabular-nums" }}
+        >
+          01 / {String(total).padStart(2, "0")}
+        </span>
+        <div className="relative h-px flex-1 bg-bone/15">
+          <div
+            className="kz-progress__fill absolute left-0 top-0 h-full"
+            style={{ width: "0%", backgroundColor: "rgb(var(--signal))" }}
+          />
+        </div>
+        <span className="font-mono text-[10px] uppercase tracking-[0.32em] text-bone-mute">
+          scroll →
+        </span>
+      </div>
     </div>
   );
 };

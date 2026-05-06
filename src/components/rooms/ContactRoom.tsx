@@ -103,7 +103,7 @@ const ContactRoom = ({ active, onContactClick }: ContactRoomProps) => {
             {doneLines.map((line, i) => (
               <RenderLine key={`done-${i}`} line={line} />
             ))}
-            {activeIdx < SCRIPT.length && SCRIPT[activeIdx].kind !== "blank" && (
+            {activeIdx >= 0 && activeIdx < SCRIPT.length && SCRIPT[activeIdx].kind !== "blank" && (
               <RenderLine line={SCRIPT[activeIdx]} chars={activeChars} active />
             )}
             {allDone && (

@@ -4,11 +4,14 @@ import SmoothScroll from "@/components/SmoothScroll";
 import CustomCursor from "@/components/CustomCursor";
 import Preloader from "@/components/Preloader";
 import RoomScene from "@/components/RoomScene";
+import MobileScene from "@/components/MobileScene";
 import ContactDrawer from "@/components/ContactDrawer";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 const Index = () => {
   const [showPreloader, setShowPreloader] = useState(true);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const isMobile = useIsMobile(768);
 
   const openDrawer = useCallback(() => setDrawerOpen(true), []);
   const closeDrawer = useCallback(() => setDrawerOpen(false), []);
@@ -31,7 +34,11 @@ const Index = () => {
         <Preloader onComplete={onPreloaderComplete} onTransitionStart={onPreloaderHandoff} />
       )}
       <main>
-        <RoomScene onContactClick={openDrawer} />
+        {isMobile ? (
+          <MobileScene onContactClick={openDrawer} />
+        ) : (
+          <RoomScene onContactClick={openDrawer} />
+        )}
       </main>
       <ContactDrawer open={drawerOpen} onClose={closeDrawer} />
     </>
