@@ -1,152 +1,94 @@
 import { CSSProperties } from "react";
 
 /**
- * Kozai mark — abstract K composed of three rounded pills + a single dot accent.
+ * Kozai wordmark.
  *
- *   ▌    ╲     ← upper arm (angled up-right)
- *   ▌  •
- *   ▌    ╱     ← lower arm (angled down-right)
+ * Reproduces the supplied logo: the word "Kozai" set in a clean geometric
+ * sans, with a horizontal hairline crossing through the top of the letter
+ * forms — replacing the K's upper arm and crossing the i's dot. The
+ * hairline extends a few units past the wordmark on each side, suggesting
+ * a measurement bar.
  *
- * Inspired by the WorldQuant Foundry mark — geometric, single-color, calm.
- *
- * The pills carry the `.logo-pill` class so the loader can stagger their
- * entrance via a single CSS keyframe with per-element delays.
+ * Built from primitive shapes (no font dependency) so it renders identically
+ * across systems and animates cleanly. The hairline can draw-in on mount.
  */
 
-interface LogoMarkProps {
+interface LogoProps {
+  /** Pixel height of the wordmark cap-line. The full SVG scales accordingly. */
   size?: number;
-  /** Override fill colour. Defaults to currentColor — inherits ink. */
-  color?: string;
-  /** When true, the pills enter with a stagger animation. */
-  animate?: boolean;
+  /** Tailwind text color class (e.g. "text-ink"). Defaults to currentColor. */
   className?: string;
+  /** When true, the hairline draws from left to right on mount. */
+  animate?: boolean;
+  style?: CSSProperties;
 }
 
-export const LogoMark = ({
-  size = 40,
-  color = "currentColor",
-  animate = false,
-  className,
-}: LogoMarkProps) => {
-  // viewBox 100×100. Geometry chosen so the K reads at 24px and below.
-  // Pill widths are uniform (14 units). Spine is full height; arms are short
-  // diagonals meeting just below the visual midpoint.
-  const pill = (key: string, d: string, delay: number, fromX: number, fromY: number): JSX.Element => (
-    <path
-      key={key}
-      d={d}
-      fill={color}
-      className={animate ? "logo-pill" : undefined}
-      style={animate ? ({
-        animationDelay: `${delay}ms`,
-        ["--from-x"]: `${fromX}px`,
-        ["--from-y"]: `${fromY}px`,
-      } as CSSProperties) : undefined}
-    />
-  );
+const Logo = ({ size = 28, className = "", animate = false, style }: LogoProps) => {
+  // Source viewBox: 200 wide × 56 tall. Cap height ~44 (top 12 left for hairline overhang).
+  const aspect = 200 / 56;
+  const width = size * aspect;
 
   return (
     <svg
-      width={size}
+      width={width}
       height={size}
-      viewBox="0 0 100 100"
+      viewBox="0 0 200 56"
       xmlns="http://www.w3.org/2000/svg"
+      fill="currentColor"
       className={className}
+      style={style}
       aria-label="Kozai"
       role="img"
     >
-      {/* Spine — vertical pill, x:18-32, y:8-92, fully rounded */}
-      {pill(
-        "spine",
-        "M 18 15 a 7 7 0 0 1 14 0 V 85 a 7 7 0 0 1 -14 0 Z",
-        0,
-        -10,
-        0,
-      )}
+      {/* Letter forms — built from rect/path primitives. Cap line at y=12,
+          baseline at y=52. Stroke widths ~3.5 for crisp rendering. */}
+      <g>
+        {/* K — vertical spine + lower diagonal. Upper diagonal is replaced
+            by the hairline overlay below. */}
+        <rect x="6" y="12" width="3.6" height="40" />
+        <path d="M 9.2 32.5 L 26 52 L 30.5 52 L 13 32 Z" />
 
-      {/* Upper arm — diagonal pill, leans up-right from near spine top
-          Bounding line from (40,52) to (82,18), 14 wide. */}
-      {pill(
-        "upper",
-        "M 41.7 47.6 L 75.7 13.6 a 7 7 0 0 1 9.9 9.9 L 51.6 57.5 a 7 7 0 0 1 -9.9 -9.9 Z",
-        220,
-        12,
-        -10,
-      )}
+        {/* o — circle (rounded) */}
+        <path
+          d="M 47 26
+             a 12 12 0 0 1 0 24
+             a 12 12 0 0 1 0 -24 Z
+             M 47 29
+             a 9 9 0 0 0 0 18
+             a 9 9 0 0 0 0 -18 Z"
+          fillRule="evenodd"
+        />
 
-      {/* Lower arm — diagonal pill, leans down-right symmetrically.
-          Bounding line from (40,48) to (82,82). */}
-      {pill(
-        "lower",
-        "M 51.6 42.5 L 85.6 76.5 a 7 7 0 0 1 -9.9 9.9 L 41.7 52.4 a 7 7 0 0 1 9.9 -9.9 Z",
-        320,
-        12,
-        10,
-      )}
+        {/* z — top bar, diagonal, bottom bar */}
+        <path d="M 75 26 L 95 26 L 95 29 L 79 49 L 95 49 L 95 52 L 73 52 L 73 49 L 89 29 L 75 29 Z" />
 
-      {/* Dot accent — small circle floating top-right, the rhythm note */}
-      {pill(
-        "dot",
-        "M 84 36 m -5 0 a 5 5 0 1 0 10 0 a 5 5 0 1 0 -10 0 Z",
-        500,
-        0,
-        -8,
-      )}
+        {/* a — circle with right vertical stem */}
+        <path
+          d="M 113 26
+             a 12 12 0 0 1 0 24
+             a 12 12 0 0 1 0 -24 Z
+             M 113 29
+             a 9 9 0 0 0 0 18
+             a 9 9 0 0 0 0 -18 Z"
+          fillRule="evenodd"
+        />
+        <rect x="121.5" y="26" width="3.5" height="26" />
+
+        {/* i — vertical stem only (the dot is replaced by the hairline). */}
+        <rect x="135" y="26" width="3.6" height="26" />
+      </g>
+
+      {/* The hairline — runs through the top of the letterforms.
+          Extends ~10 units past the wordmark on each side. */}
+      <rect
+        x="0"
+        y="14.5"
+        width="155"
+        height="2.4"
+        rx="1.2"
+        className={animate ? "hairline-draw" : undefined}
+      />
     </svg>
-  );
-};
-
-interface WordmarkProps {
-  /** "compact" = mark + KOZAI inline. "stack" = mark above KOZAI. "mark" = mark only. */
-  variant?: "compact" | "stack" | "mark";
-  size?: number;
-  className?: string;
-  color?: string;
-  animate?: boolean;
-}
-
-export const Logo = ({
-  variant = "compact",
-  size = 28,
-  className = "",
-  color = "currentColor",
-  animate = false,
-}: WordmarkProps) => {
-  if (variant === "mark") {
-    return <LogoMark size={size} color={color} animate={animate} className={className} />;
-  }
-
-  const wordmarkSize = size * 0.62;
-  const wordSpacing = size * 0.42;
-
-  if (variant === "stack") {
-    return (
-      <span className={`inline-flex flex-col items-center gap-2 ${className}`} style={{ color }}>
-        <LogoMark size={size} color={color} animate={animate} />
-        <span
-          className="font-sans font-semibold tracking-[0.22em]"
-          style={{ fontSize: wordmarkSize, color }}
-        >
-          KOZAI
-        </span>
-      </span>
-    );
-  }
-
-  // compact
-  return (
-    <span
-      className={`inline-flex items-center ${className}`}
-      style={{ color, gap: wordSpacing }}
-    >
-      <LogoMark size={size} color={color} animate={animate} />
-      <span
-        className="font-sans font-semibold tracking-[0.18em]"
-        style={{ fontSize: wordmarkSize }}
-      >
-        KOZAI
-      </span>
-    </span>
   );
 };
 

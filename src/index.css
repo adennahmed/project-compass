@@ -2,20 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Geist is loaded via index.html for proper @import order. */
+/* Geist loaded via index.html */
 
 /* ─── Design tokens — "Quiet Operator" light theme ──────────────────── */
 @layer base {
   :root {
-    /* Surfaces */
     --paper:     245 242 236;  /* #F5F2EC warm off-white background */
-    --paper-2:   239 235 226;  /* #EFEBE2 a step deeper, for cards/wells */
+    --paper-2:   239 235 226;  /* #EFEBE2 a step deeper */
+    --paper-3:   233 229 219;  /* #E9E5DB deeper still — for pulled-forward sections */
     --ink:        14  14  16;  /* #0E0E10 near-black for type */
+    --ink-soft:   38  38  42;  /* #26262A used for body text on paper-2 */
     --mute:      107 107 112;  /* #6B6B70 secondary copy */
-    --hairline:   26  26  28;  /* #1A1A1C — used at 10–15% as borders */
-    --signal:    232  79  27;  /* #E84F1B vermilion — single accent */
+    --hairline:   26  26  28;  /* #1A1A1C — used at 10–18% as borders */
+    --signal:    232  79  27;  /* #E84F1B vermilion */
+    --signal-2:  166 213 180;  /* #A6D5B4 muted jade — used once */
 
-    /* Shadcn HSL bridge — light, mapped to Quiet Operator */
+    /* Shadcn HSL bridge */
     --background: 41 32% 94%;
     --foreground: 240 7% 6%;
     --card: 41 25% 91%;
@@ -57,11 +59,10 @@ html, body {
 }
 
 ::selection {
-  background: rgb(var(--signal));
+  background: rgb(var(--ink));
   color: rgb(var(--paper));
 }
 
-/* Native focus ring — accessible */
 :focus-visible {
   outline: 2px solid rgb(var(--signal));
   outline-offset: 3px;
@@ -86,62 +87,144 @@ html, body {
   line-height: 0.96;
 }
 
+.italic-editorial {
+  font-family: 'Geist', system-ui, sans-serif;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
 /* ─── Layout primitives ─────────────────────────────────────────────── */
 .container-wide {
   width: 100%;
-  max-width: 1280px;
+  max-width: 1320px;
   margin-inline: auto;
   padding-inline: 1.5rem;
 }
-@media (min-width: 768px) {
-  .container-wide { padding-inline: 2.5rem; }
-}
-@media (min-width: 1280px) {
-  .container-wide { padding-inline: 3rem; }
-}
+@media (min-width: 768px) { .container-wide { padding-inline: 2.5rem; } }
+@media (min-width: 1280px) { .container-wide { padding-inline: 3rem; } }
 
-.hairline {
-  background: rgb(var(--hairline) / 0.12);
+.hairline { background: rgb(var(--hairline) / 0.12); }
+
+/* ─── Lenis smooth-scroll bridge ────────────────────────────────────── */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+.lenis.lenis-scrolling iframe { pointer-events: none; }
+
+/* ─── Magnetic cursor — drift-toward dot ────────────────────────────── */
+.kz-cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgb(var(--ink));
+  pointer-events: none;
+  z-index: 99999;
+  transform: translate3d(-50%, -50%, 0);
+  transition: width 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              height 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 0.24s ease,
+              opacity 0.24s ease;
+  mix-blend-mode: difference;
+  will-change: transform;
 }
+.kz-cursor-dot.is-hover {
+  width: 38px;
+  height: 38px;
+  background: rgb(var(--signal));
+}
+.kz-cursor-dot.is-hidden { opacity: 0; }
+@media (hover: none), (pointer: coarse) { .kz-cursor-dot { display: none; } }
 
 /* ─── Loader overflow lock ──────────────────────────────────────────── */
-html.is-loading,
-html.is-loading body {
-  overflow: hidden;
-}
+html.is-loading, html.is-loading body { overflow: hidden; }
 
-/* ─── Section reveal — first-paint fade-up ──────────────────────────── */
+/* ─── Section reveal ────────────────────────────────────────────────── */
 .reveal {
   opacity: 0;
-  transform: translateY(14px);
+  transform: translateY(18px);
   transition:
-    opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity 0.95s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.95s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.reveal.is-in {
-  opacity: 1;
-  transform: translateY(0);
-}
+.reveal.is-in { opacity: 1; transform: translateY(0); }
 
-/* ─── Hero hairline draw — runs once on mount ───────────────────────── */
-@keyframes draw-hairline {
+.char-reveal {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+.char-reveal > span {
+  display: inline-block;
+  transform: translateY(110%);
+  transition: transform 0.85s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.char-reveal.is-in > span { transform: translateY(0); }
+
+/* ─── Marquee — infinite mono ticker between sections ────────────── */
+@keyframes marquee {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+.kz-marquee-track {
+  display: inline-flex;
+  gap: 3rem;
+  white-space: nowrap;
+  animation: marquee 40s linear infinite;
+  will-change: transform;
+}
+.kz-marquee:hover .kz-marquee-track { animation-play-state: paused; }
+
+/* ─── Logo hairline draw ────────────────────────────────────────────── */
+@keyframes hairline-draw {
   from { transform: scaleX(0); }
   to   { transform: scaleX(1); }
 }
-.draw-hairline {
+.hairline-draw {
   transform-origin: left center;
-  animation: draw-hairline 900ms cubic-bezier(0.5, 0, 0.2, 1) 200ms both;
+  animation: hairline-draw 1100ms cubic-bezier(0.5, 0, 0.2, 1) both;
 }
 
-/* ─── Logo loader assembly — three pills + dot, staggered ──────────── */
-@keyframes logo-pill-in {
-  from { opacity: 0; transform: translate(var(--from-x, -8px), var(--from-y, 0)); }
-  to   { opacity: 1; transform: translate(0, 0); }
+/* ─── Hero kinetic parallax ─────────────────────────────────────────── */
+.kinetic-line {
+  display: block;
+  will-change: transform;
 }
-.logo-pill {
-  opacity: 0;
-  animation: logo-pill-in 600ms cubic-bezier(0.16, 1, 0.3, 1) both;
+
+/* ─── Loader counter → wordmark cross-fade ──────────────────────────── */
+@keyframes counter-out {
+  from { opacity: 1; transform: translateY(0); filter: blur(0); }
+  to   { opacity: 0; transform: translateY(-12px); filter: blur(4px); }
 }
+@keyframes wordmark-in {
+  from { opacity: 0; transform: translateY(12px); filter: blur(6px); }
+  to   { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+.loader-counter-exit { animation: counter-out 600ms cubic-bezier(0.6, 0, 0.2, 1) forwards; }
+.loader-wordmark-enter { animation: wordmark-in 800ms cubic-bezier(0.16, 1, 0.3, 1) 200ms backwards; }
+
+/* ─── OperatorPanel canvas frame ────────────────────────────────────── */
+.kz-panel {
+  position: relative;
+  background: rgb(var(--paper-2));
+  border: 1px solid rgb(var(--hairline) / 0.10);
+  overflow: hidden;
+}
+.kz-panel::before,
+.kz-panel::after {
+  content: "";
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border: 1px solid rgb(var(--ink) / 0.6);
+  pointer-events: none;
+}
+.kz-panel::before { top: -1px; left: -1px; border-right: none; border-bottom: none; }
+.kz-panel::after { bottom: -1px; right: -1px; border-left: none; border-top: none; }
 
 /* ─── Reduced motion ────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
@@ -151,7 +234,8 @@ html.is-loading body {
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
   }
-  .reveal { opacity: 1; transform: none; }
+  .reveal, .char-reveal > span { opacity: 1 !important; transform: none !important; }
+  .kz-marquee-track { animation: none; }
 }
 
 @layer base {

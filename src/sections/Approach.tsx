@@ -1,33 +1,30 @@
+import CharReveal from "@/components/CharReveal";
 import Reveal from "@/components/Reveal";
 
-interface Step {
+interface Triad {
   n: string;
-  title: string;
+  words: [string, string, string];
   body: string;
-  signals: string[];
 }
 
-const STEPS: Step[] = [
+const TRIADS: Triad[] = [
   {
     n: "01",
-    title: "Scope",
+    words: ["SCOPED.", "OPINIONATED.", "SHIPPED."],
     body:
-      "We start by understanding the actual problem — not the feature list. One or two short sessions with the people whose work the software will change. We leave with an opinion and a written proposal.",
-    signals: ["Discovery sessions", "Written proposal", "Fixed scope"],
+      "We start by understanding the actual problem — not the feature list. Two short sessions and we leave with an opinion, a written proposal, and a timeline.",
   },
   {
     n: "02",
-    title: "Build",
+    words: ["ENGINEERS.", "NOT", "VENDORS."],
     body:
-      "Short cycles, weekly working software in your hands. No agency theatre — you talk directly to the engineer doing the work. Decisions are documented, code is reviewed, infrastructure is reproducible.",
-    signals: ["Weekly demos", "Direct access", "Reproducible infra"],
+      "You talk directly to the engineer doing the work. Every call, every commit, every release. No project managers parsing what you said.",
   },
   {
     n: "03",
-    title: "Hand-off",
+    words: ["BUILT.", "TO", "OWN."],
     body:
-      "We ship to your environment, train your team, and document everything a future engineer will need. We stay on retainer for as long as it's useful — and not a day longer.",
-    signals: ["Owned by you", "Documented", "Optional retainer"],
+      "We ship to your environment, train your team, document everything. We stay on retainer for as long as it's useful — and not a day longer.",
   },
 ];
 
@@ -35,58 +32,69 @@ const Approach = () => {
   return (
     <section
       id="approach"
-      className="relative bg-paper-2/60 px-6 py-32 md:px-10 md:py-40"
+      className="relative bg-paper-2/70 px-6 py-32 md:px-10 md:py-40"
     >
       <div className="container-wide">
         <Reveal>
-          <div className="mb-16 grid grid-cols-1 gap-8 md:grid-cols-12 md:items-end md:gap-12">
+          <div className="mb-20 grid grid-cols-1 gap-8 md:grid-cols-12 md:items-end md:gap-12">
             <div className="md:col-span-3">
               <div className="label">[ 02 — Approach ]</div>
             </div>
             <div className="md:col-span-9">
-              <h2
-                className="display max-w-[22ch] text-ink"
-                style={{ fontSize: "clamp(2rem, 5vw, 3.75rem)" }}
-              >
-                Three steps.
-                <span className="text-mute"> No agency theatre.</span>
-              </h2>
+              <p className="max-w-[36ch] text-[15px] uppercase tracking-[0.18em] text-mute">
+                Three things we say to every prospective client. They are the entire engagement model.
+              </p>
             </div>
           </div>
         </Reveal>
 
-        <div className="grid grid-cols-1 gap-px bg-hairline/15 md:grid-cols-3">
-          {STEPS.map((step, i) => (
-            <Reveal key={step.n} delay={i * 100}>
-              <div className="flex h-full flex-col bg-paper-2/0 p-8 md:p-10">
-                <div className="mb-8 flex items-baseline gap-4">
-                  <span className="font-mono text-[12px] tracking-[0.18em] text-signal">
-                    {step.n}
-                  </span>
-                  <span className="h-px flex-1 bg-hairline/15" />
-                </div>
-                <h3
-                  className="display mb-5 text-ink"
-                  style={{ fontSize: "clamp(1.75rem, 2.4vw, 2.25rem)" }}
-                >
-                  {step.title}
-                </h3>
-                <p className="mb-8 text-[16px] leading-[1.55] text-mute">
-                  {step.body}
-                </p>
-                <ul className="mt-auto flex flex-col gap-2.5 border-t border-hairline/15 pt-6">
-                  {step.signals.map((s) => (
-                    <li
-                      key={s}
-                      className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.18em] text-mute"
-                    >
-                      <span aria-hidden className="h-px w-3 bg-mute/60" />
-                      {s}
-                    </li>
-                  ))}
-                </ul>
+        <div className="flex flex-col">
+          {TRIADS.map((t, i) => (
+            <article
+              key={t.n}
+              className={`grid grid-cols-1 gap-8 py-14 md:grid-cols-12 md:gap-12 md:py-20 ${
+                i > 0 ? "border-t border-hairline/15" : ""
+              }`}
+            >
+              {/* Left rail — number + body */}
+              <div className="md:col-span-4">
+                <Reveal delay={i * 60}>
+                  <div className="mb-8 flex items-center gap-3 font-mono text-[12px] uppercase tracking-[0.22em] text-mute">
+                    {t.n}
+                    <span aria-hidden className="h-px w-12 bg-ink/30" />
+                  </div>
+                  <p className="max-w-[40ch] text-[16px] leading-[1.6] text-ink/80">
+                    {t.body}
+                  </p>
+                </Reveal>
               </div>
-            </Reveal>
+
+              {/* Right — the triad, monstrously large */}
+              <div className="md:col-span-8">
+                <h3
+                  className="display text-ink"
+                  style={{
+                    fontSize: "clamp(2.25rem, 6.4vw, 5.75rem)",
+                    fontWeight: 600,
+                    letterSpacing: "-0.045em",
+                    lineHeight: "0.96",
+                  }}
+                >
+                  {t.words.map((w, wi) => (
+                    <span key={wi} className="mr-3 inline-block">
+                      <CharReveal
+                        stagger={22}
+                        delay={wi * 130}
+                        splitBy="char"
+                        className={wi === 1 && t.n === "02" ? "italic-editorial text-mute" : ""}
+                      >
+                        {w}
+                      </CharReveal>
+                    </span>
+                  ))}
+                </h3>
+              </div>
+            </article>
           ))}
         </div>
       </div>

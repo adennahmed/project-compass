@@ -8,6 +8,7 @@ interface Member {
   bio: string;
   detail: string;
   image: string;
+  signature: string;
 }
 
 const MEMBERS: Member[] = [
@@ -19,6 +20,7 @@ const MEMBERS: Member[] = [
     detail:
       "Specialises in turning ambiguous requirements into systems that hold up under production load.",
     image: adenImg,
+    signature: "AA — 2026",
   },
   {
     name: "Muhammad Khan",
@@ -28,6 +30,7 @@ const MEMBERS: Member[] = [
     detail:
       "Focuses on resilience engineering — building systems that fail gracefully and recover predictably.",
     image: muhammadImg,
+    signature: "MK — 2026",
   },
 ];
 
@@ -35,21 +38,21 @@ const Studio = () => {
   return (
     <section
       id="studio"
-      className="relative bg-paper-2/60 px-6 py-32 md:px-10 md:py-40"
+      className="relative bg-paper-2/70 px-6 py-32 md:px-10 md:py-40"
     >
       <div className="container-wide">
         <Reveal>
-          <div className="mb-16 grid grid-cols-1 gap-8 md:grid-cols-12 md:items-end md:gap-12">
+          <div className="mb-20 grid grid-cols-1 gap-8 md:grid-cols-12 md:items-end md:gap-12">
             <div className="md:col-span-3">
               <div className="label">[ 04 — Studio ]</div>
             </div>
             <div className="md:col-span-9">
               <h2
-                className="display max-w-[24ch] text-ink"
-                style={{ fontSize: "clamp(2rem, 5vw, 3.75rem)" }}
+                className="display max-w-[26ch] text-ink"
+                style={{ fontSize: "clamp(2rem, 5.2vw, 4rem)" }}
               >
-                Two engineers.
-                <span className="text-mute"> The work, not a sales pitch.</span>
+                The work — not a sales pitch.
+                <span className="text-mute"> You talk to the engineers building it.</span>
               </h2>
             </div>
           </div>
@@ -58,81 +61,104 @@ const Studio = () => {
         <div className="grid grid-cols-1 gap-12 md:grid-cols-2 md:gap-16">
           {MEMBERS.map((m, i) => (
             <Reveal key={m.name} delay={i * 100}>
-              <article className="flex flex-col gap-6">
-                <div className="relative aspect-[4/5] w-full overflow-hidden bg-paper-2">
+              <article data-magnetic className="group flex flex-col gap-6">
+                <div className="relative aspect-[4/5] w-full overflow-hidden bg-paper-3">
+                  {/* Image — desaturated by default, restores to color on hover */}
                   <img
                     src={m.image}
                     alt={`${m.name} — ${m.role}`}
-                    className="h-full w-full object-cover transition-transform duration-700 ease-out hover:scale-[1.02]"
+                    className="absolute inset-0 h-full w-full object-cover transition-all duration-700 ease-out"
+                    style={{
+                      filter: "grayscale(100%) contrast(1.05)",
+                    }}
                     loading="lazy"
                   />
-                  <div className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-gradient-to-t from-paper/90 via-paper/40 to-transparent px-4 py-4">
-                    <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-ink/70">
-                      {`0${i + 1}`}
-                    </span>
-                    <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-ink/70">
-                      Toronto, CA
-                    </span>
+                  <img
+                    src={m.image}
+                    alt=""
+                    aria-hidden
+                    className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-700 ease-out group-hover:opacity-100"
+                    loading="lazy"
+                  />
+                  {/* Frame corner notation */}
+                  <div className="absolute left-3 top-3 font-mono text-[10px] uppercase tracking-[0.22em] text-paper mix-blend-difference">
+                    {`0${i + 1}`}
+                  </div>
+                  <div className="absolute right-3 top-3 font-mono text-[10px] uppercase tracking-[0.22em] text-paper mix-blend-difference">
+                    Toronto, CA
+                  </div>
+                  <div className="absolute bottom-3 left-3 font-mono text-[10px] uppercase tracking-[0.22em] text-paper mix-blend-difference">
+                    {m.signature}
                   </div>
                 </div>
                 <div>
                   <h3
                     className="display text-ink"
-                    style={{ fontSize: "clamp(1.5rem, 2.4vw, 2rem)" }}
+                    style={{ fontSize: "clamp(1.5rem, 2.6vw, 2.25rem)" }}
                   >
                     {m.name}
                   </h3>
-                  <div className="mt-1 font-mono text-[12px] uppercase tracking-[0.18em] text-mute">
+                  <div className="mt-1.5 font-mono text-[12px] uppercase tracking-[0.22em] text-mute">
                     {m.role}
                   </div>
-                  <p className="mt-5 max-w-[44ch] text-[16px] leading-[1.55] text-mute">{m.bio}</p>
-                  <p className="mt-4 max-w-[44ch] text-[15px] leading-[1.55] text-ink/70">{m.detail}</p>
+                  <p className="mt-5 max-w-[44ch] text-[16px] leading-[1.55] text-ink/75">{m.bio}</p>
+                  <p className="mt-4 max-w-[44ch] text-[15px] italic-editorial leading-[1.55] text-ink/55">
+                    {m.detail}
+                  </p>
                 </div>
               </article>
             </Reveal>
           ))}
         </div>
 
-        {/* Selection criteria — what we say yes/no to */}
+        {/* Selection — what we say yes/no to */}
         <Reveal>
-          <div className="mt-24 grid grid-cols-1 gap-8 border-t border-hairline/15 pt-10 md:grid-cols-12 md:gap-12">
+          <div className="mt-28 grid grid-cols-1 gap-8 border-t border-hairline/15 pt-12 md:grid-cols-12 md:gap-12">
             <div className="md:col-span-3">
               <div className="label">Selection</div>
             </div>
             <div className="md:col-span-9">
-              <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+              <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
                 <div>
                   <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-mute">
                     We accept
                   </div>
-                  <ul className="mt-4 flex flex-col gap-3">
-                    {["Operational software", "Internal platforms", "Long-horizon systems"].map(
-                      (item) => (
-                        <li
-                          key={item}
-                          className="flex items-center gap-3 text-[15px] text-ink"
-                        >
-                          <span aria-hidden className="inline-block h-1.5 w-1.5 rounded-full bg-signal" />
-                          {item}
-                        </li>
-                      ),
-                    )}
+                  <ul className="mt-5 flex flex-col gap-3">
+                    {[
+                      "Operational software",
+                      "Internal platforms",
+                      "Long-horizon systems",
+                      "Data infrastructure",
+                    ].map((item) => (
+                      <li
+                        key={item}
+                        className="flex items-center gap-3 text-[15px] text-ink"
+                      >
+                        <span aria-hidden className="inline-block h-1.5 w-1.5 rounded-full bg-signal" />
+                        {item}
+                      </li>
+                    ))}
                   </ul>
                 </div>
                 <div>
                   <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-mute">
                     We decline
                   </div>
-                  <ul className="mt-4 flex flex-col gap-3">
-                    {["Marketing sites", "Low-code rebuilds", "CRM rollouts"].map((item) => (
-                      <li
-                        key={item}
-                        className="flex items-center gap-3 text-[15px] text-mute line-through decoration-mute/40"
-                      >
-                        <span aria-hidden className="inline-block h-1.5 w-1.5 rounded-full bg-mute/40" />
-                        {item}
-                      </li>
-                    ))}
+                  <ul className="mt-5 flex flex-col gap-3">
+                    {["Marketing sites", "Low-code rebuilds", "CRM rollouts", "AI demo wrappers"].map(
+                      (item) => (
+                        <li
+                          key={item}
+                          className="flex items-center gap-3 text-[15px] text-mute line-through decoration-mute/40"
+                        >
+                          <span
+                            aria-hidden
+                            className="inline-block h-1.5 w-1.5 rounded-full bg-mute/40"
+                          />
+                          {item}
+                        </li>
+                      ),
+                    )}
                   </ul>
                 </div>
               </div>

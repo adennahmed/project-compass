@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { LogoMark } from "./Logo";
+import Logo from "./Logo";
 
 interface LoaderProps {
   onComplete: () => void;
@@ -13,41 +13,42 @@ const SERVICE_STRINGS = [
   "mvp_engineering",
 ];
 
-const TICK_DURATION = 2200; // counter run from 000.0 → 100.0
-const HOLD_BEFORE_EXIT = 350; // hold at 100.0
-const EXIT_DURATION = 700; // fade out
+const TICK_DURATION = 2400;
+const HOLD_BEFORE_MORPH = 280;
+const MORPH_DURATION = 800;
+const HOLD_BEFORE_EXIT = 600;
+const EXIT_DURATION = 700;
 
 /**
- * Loader — quiet operator edition.
+ * Loader — the brand reveal.
  *
- *   · bottom-left: rotating service-string + 3-digit decimal counter
- *   · centre: animated logo mark — three pills assemble in sequence
- *   · bottom-right: studio coordinates
+ *   Phase 1 (running):  bottom-left counter ticks 000.0 → 100.0 with the
+ *                       service-string rotator above it.
+ *   Phase 2 (morphing): the counter cross-fades & blurs out; the Kozai
+ *                       wordmark — same position, same scale — fades & blurs
+ *                       in, hairline drawing left-to-right.
+ *   Phase 3 (exiting):  the entire field fades to reveal the page below.
  *
- * The exit is a single soft cross-fade — no snap, no flash. When complete,
- * the loader unmounts and the page underneath takes over.
+ * The loader IS the brand reveal. The wordmark is born from the counter.
  */
 const Loader = ({ onComplete }: LoaderProps) => {
   const [pct, setPct] = useState("000.0");
   const [serviceIdx, setServiceIdx] = useState(0);
-  const [phase, setPhase] = useState<"running" | "exiting">("running");
+  const [phase, setPhase] = useState<"running" | "morphing" | "exiting">("running");
   const startedAt = useRef<number | null>(null);
 
   useEffect(() => {
     document.documentElement.classList.add("is-loading");
 
-    // Rotating service string — cycles every 220ms while counter ticks
     const rotate = window.setInterval(() => {
       setServiceIdx((i) => (i + 1) % SERVICE_STRINGS.length);
     }, 220);
 
-    // Counter tick via rAF for buttery-smooth update
     let raf = 0;
     const tick = (now: number) => {
       if (startedAt.current == null) startedAt.current = now;
       const elapsed = now - startedAt.current;
       const t = Math.min(1, elapsed / TICK_DURATION);
-      // ease-in-out cubic
       const eased = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
       const v = eased * 100;
       const integer = Math.floor(v).toString().padStart(3, "0");
@@ -57,20 +58,24 @@ const Loader = ({ onComplete }: LoaderProps) => {
     };
     raf = requestAnimationFrame(tick);
 
-    // After the counter finishes + hold, trigger exit fade then unmount
-    const exitTimer = window.setTimeout(() => {
+    const morphTimer = window.setTimeout(() => {
       window.clearInterval(rotate);
+      setPhase("morphing");
+    }, TICK_DURATION + HOLD_BEFORE_MORPH);
+
+    const exitTimer = window.setTimeout(() => {
       setPhase("exiting");
-    }, TICK_DURATION + HOLD_BEFORE_EXIT);
+    }, TICK_DURATION + HOLD_BEFORE_MORPH + MORPH_DURATION + HOLD_BEFORE_EXIT);
 
     const unmountTimer = window.setTimeout(() => {
       document.documentElement.classList.remove("is-loading");
       onComplete();
-    }, TICK_DURATION + HOLD_BEFORE_EXIT + EXIT_DURATION);
+    }, TICK_DURATION + HOLD_BEFORE_MORPH + MORPH_DURATION + HOLD_BEFORE_EXIT + EXIT_DURATION);
 
     return () => {
       cancelAnimationFrame(raf);
       window.clearInterval(rotate);
+      window.clearTimeout(morphTimer);
       window.clearTimeout(exitTimer);
       window.clearTimeout(unmountTimer);
       document.documentElement.classList.remove("is-loading");
@@ -87,43 +92,67 @@ const Loader = ({ onComplete }: LoaderProps) => {
       }}
       aria-hidden={phase === "exiting"}
     >
-      {/* Top-left wordmark — system identifier */}
+      {/* Top-left: system identifier */}
       <div className="absolute left-6 top-6 font-mono text-[11px] uppercase tracking-[0.22em] text-mute md:left-10 md:top-8">
-        kozai · studio
+        kozai · studio · est. 2026
       </div>
 
-      {/* Top-right marker — year */}
+      {/* Top-right: year */}
       <div className="absolute right-6 top-6 font-mono text-[11px] uppercase tracking-[0.22em] text-mute md:right-10 md:top-8">
-        © 2026
+        © 2026 — toronto, ca
       </div>
 
-      {/* Centred logo mark — pills assemble in stagger */}
-      <div className="text-signal" style={{ transform: "translateY(-2vh)" }}>
-        <LogoMark size={88} animate />
-      </div>
+      {/* Centred stage — counter morphs into wordmark, both occupy the same space */}
+      <div
+        className="absolute left-6 bottom-6 md:bottom-12 md:left-10"
+        style={{ minHeight: "clamp(3.25rem, 8.5vw, 7rem)" }}
+      >
+        {/* Service rotator — only visible in running phase */}
+        {phase === "running" && (
+          <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.22em] text-mute">
+            {`> ${SERVICE_STRINGS[serviceIdx]}`}
+          </div>
+        )}
 
-      {/* Bottom-left: service rotator + counter */}
-      <div className="absolute bottom-6 left-6 md:bottom-10 md:left-10">
-        <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.22em] text-mute">
-          {`> ${SERVICE_STRINGS[serviceIdx]}`}
-        </div>
-        <div
-          className="font-mono font-medium text-ink"
-          style={{
-            fontSize: "clamp(3.25rem, 8.5vw, 7rem)",
-            lineHeight: "0.9",
-            letterSpacing: "-0.04em",
-            fontVariantNumeric: "tabular-nums",
-          }}
-        >
-          {pct}
+        {/* Counter or wordmark — same anchor, the morph happens via cross-fade */}
+        <div className="relative">
+          {phase === "running" && (
+            <div
+              className="font-mono font-medium text-ink"
+              style={{
+                fontSize: "clamp(3.25rem, 8.5vw, 7rem)",
+                lineHeight: "0.9",
+                letterSpacing: "-0.04em",
+                fontVariantNumeric: "tabular-nums",
+              }}
+            >
+              {pct}
+            </div>
+          )}
+          {phase === "morphing" && (
+            <div className="loader-counter-exit absolute inset-0 font-mono font-medium text-ink"
+              style={{
+                fontSize: "clamp(3.25rem, 8.5vw, 7rem)",
+                lineHeight: "0.9",
+                letterSpacing: "-0.04em",
+                fontVariantNumeric: "tabular-nums",
+              }}
+            >
+              100.0
+            </div>
+          )}
+          {(phase === "morphing" || phase === "exiting") && (
+            <div className="loader-wordmark-enter text-ink">
+              <Logo size={64} animate />
+            </div>
+          )}
         </div>
       </div>
 
       {/* Bottom-right: studio coordinates */}
-      <div className="absolute bottom-10 right-6 text-right font-mono text-[11px] uppercase tracking-[0.22em] text-mute md:bottom-12 md:right-10">
+      <div className="absolute bottom-12 right-6 text-right font-mono text-[11px] uppercase tracking-[0.22em] text-mute md:bottom-14 md:right-10">
         43.6532° N · 79.3832° W
-        <div className="mt-1 text-ink/40">toronto · ca</div>
+        <div className="mt-1 text-ink/40">building tools serious teams depend on</div>
       </div>
     </div>
   );

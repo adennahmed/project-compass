@@ -1,3 +1,6 @@
+import { useEffect, useRef } from "react";
+import CharReveal from "@/components/CharReveal";
+import OperatorPanel from "@/components/OperatorPanel";
 import Reveal from "@/components/Reveal";
 
 interface HeroProps {
@@ -5,72 +8,127 @@ interface HeroProps {
 }
 
 const Hero = ({ onContactClick }: HeroProps) => {
+  const linesRef = useRef<HTMLDivElement>(null);
+
+  // Subtle counter-parallax — hero text drifts upward as the user scrolls past.
+  useEffect(() => {
+    const el = linesRef.current;
+    if (!el) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let raf = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const y = window.scrollY;
+        // Slow lift — 0.18 of scroll
+        el.style.transform = `translate3d(0, ${-y * 0.18}px, 0)`;
+      });
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
+
   return (
     <section
       id="top"
-      className="relative flex min-h-[100svh] items-center px-6 pt-32 pb-20 md:px-10 md:pt-40 md:pb-32"
+      className="relative flex min-h-[100svh] items-end px-6 pt-32 pb-16 md:px-10 md:pt-40 md:pb-20"
     >
       <div className="container-wide">
-        {/* Eyebrow */}
-        <Reveal immediate delay={100}>
-          <div className="label flex items-center gap-3">
-            <span className="inline-block h-1.5 w-1.5 rounded-full bg-signal" aria-hidden />
-            Software studio · Toronto · est. 2026
+        {/* Eyebrow row */}
+        <Reveal immediate delay={140}>
+          <div className="flex items-center justify-between gap-6">
+            <div className="label flex items-center gap-3">
+              <span className="inline-block h-1.5 w-1.5 rounded-full bg-signal" aria-hidden />
+              Software studio · Toronto · est. 2026
+            </div>
+            <div className="hidden font-mono text-[11px] uppercase tracking-[0.22em] text-mute md:block">
+              [ index — 01 / 06 ]
+            </div>
           </div>
         </Reveal>
 
-        {/* Hero headline */}
-        <Reveal immediate delay={250}>
+        {/* Kinetic headline — three lines, italic word in the middle */}
+        <div ref={linesRef} className="mt-8 will-change-transform">
           <h1
-            className="display mt-7 max-w-[18ch] text-ink"
+            className="display max-w-[18ch] text-ink"
             style={{
-              fontSize: "clamp(2.75rem, 7.5vw, 6.75rem)",
+              fontSize: "clamp(2.6rem, 7.4vw, 7rem)",
               fontWeight: 600,
-              letterSpacing: "-0.04em",
+              letterSpacing: "-0.045em",
               lineHeight: "0.96",
             }}
           >
-            We build the tools serious teams actually depend on.
+            <span className="block kinetic-line">
+              <CharReveal stagger={20} delay={300} immediate splitBy="word">
+                We build
+              </CharReveal>
+            </span>
+            <span className="block kinetic-line">
+              <CharReveal stagger={22} delay={520} immediate splitBy="word">
+                the operational
+              </CharReveal>
+            </span>
+            <span className="block kinetic-line">
+              <span className="italic-editorial mr-3 text-signal">
+                <CharReveal stagger={24} delay={760} immediate splitBy="char">
+                  software
+                </CharReveal>
+              </span>
+              <CharReveal stagger={22} delay={1080} immediate splitBy="word">
+                serious teams depend on.
+              </CharReveal>
+            </span>
           </h1>
-        </Reveal>
+        </div>
 
-        {/* Hairline */}
-        <Reveal immediate delay={500}>
-          <div className="mt-12 h-px w-full origin-left">
-            <div className="draw-hairline h-px w-full bg-ink/20" />
+        {/* Hairline + sub + CTA + operator panel */}
+        <div className="mt-12 grid grid-cols-1 gap-12 md:grid-cols-12 md:gap-10">
+          {/* Left: copy + actions */}
+          <div className="md:col-span-5">
+            <Reveal immediate delay={1300}>
+              <div className="hairline-draw mb-7 h-px w-full bg-ink/25" />
+              <p className="max-w-[40ch] text-[16px] leading-[1.55] text-ink/75 md:text-[17px]">
+                Kozai designs and builds the internal tools, dashboards, and platforms that
+                operations teams actually rely on. We don't sell software — we solve the problem
+                behind the problem.
+              </p>
+              <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
+                <button
+                  data-magnetic
+                  type="button"
+                  onClick={onContactClick}
+                  className="group inline-flex items-center gap-3 bg-ink px-6 py-4 text-[14px] font-medium text-paper transition-colors hover:bg-signal"
+                >
+                  <span>Start a project</span>
+                  <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-1">
+                    ↘
+                  </span>
+                </button>
+                <a
+                  data-magnetic
+                  href="#work"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById("work")?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                  className="text-[14px] font-medium text-mute underline-offset-4 transition-colors hover:text-ink hover:underline"
+                >
+                  See selected work →
+                </a>
+              </div>
+            </Reveal>
           </div>
-        </Reveal>
 
-        {/* Sub + CTA row */}
-        <div className="mt-12 grid grid-cols-1 gap-10 md:grid-cols-12">
-          <Reveal immediate delay={650} className="md:col-span-7">
-            <p className="max-w-[52ch] text-[18px] leading-[1.55] text-mute md:text-[19px]">
-              Kozai is a small software studio designing and building the internal tools,
-              dashboards, and platforms that operations teams use every day. We don't sell
-              software — we solve the problem behind the problem.
-            </p>
-          </Reveal>
-
-          <Reveal immediate delay={800} className="md:col-span-5">
-            <div className="flex flex-col items-start gap-4 md:items-end md:text-right">
-              <button
-                type="button"
-                onClick={onContactClick}
-                className="group inline-flex items-center gap-3 bg-ink px-6 py-4 text-[14px] font-medium text-paper transition-all hover:bg-signal"
-              >
-                <span>Start a project</span>
-                <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-1">↘</span>
-              </button>
-              <a
-                href="#work"
-                onClick={(e) => {
-                  e.preventDefault();
-                  document.getElementById("work")?.scrollIntoView({ behavior: "smooth" });
-                }}
-                className="text-[13px] font-medium text-mute underline-offset-4 transition-colors hover:text-ink hover:underline"
-              >
-                or — see what we've shipped
-              </a>
+          {/* Right: Operator Panel — the signature visual */}
+          <Reveal immediate delay={1500} className="md:col-span-7">
+            <OperatorPanel />
+            <div className="mt-3 flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.22em] text-mute">
+              <span>fig.01 — what we make</span>
+              <span>↘ live data</span>
             </div>
           </Reveal>
         </div>
