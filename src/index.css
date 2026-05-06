@@ -216,6 +216,77 @@ html.is-loading, html.is-loading body { overflow: hidden; }
   color: rgb(var(--signal));
 }
 
+/* Room-transition glitch — 1-frame hard cut + 200ms decaying veil.
+   Three layered effects, each on its own timeline:
+     · the root briefly shifts (chromatic aberration feel)
+     · ::bands renders a hot-stripe interference pattern
+     · ::sweep is a single horizontal tear running top→bottom */
+.kz-glitch {
+  opacity: 0;
+}
+.kz-glitch__bands,
+.kz-glitch__sweep {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+}
+.kz-glitch__bands {
+  background-image: repeating-linear-gradient(
+    0deg,
+    rgba(255, 91, 42, 0.18) 0px,
+    rgba(255, 91, 42, 0.18) 1px,
+    transparent 1px,
+    transparent 4px
+  );
+  mix-blend-mode: screen;
+}
+.kz-glitch__sweep {
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(255, 91, 42, 0.65) 48%,
+    rgba(232, 228, 215, 0.55) 50%,
+    rgba(255, 91, 42, 0.65) 52%,
+    transparent 100%
+  );
+  height: 16px;
+  inset: auto 0 100% 0;
+  mix-blend-mode: screen;
+}
+
+@keyframes kz-glitch-root {
+  0%   { opacity: 0; transform: translate3d(0, 0, 0); }
+  3%   { opacity: 1; transform: translate3d(-3px, 0, 0); }
+  9%   { opacity: 1; transform: translate3d(2px, 0, 0); }
+  18%  { opacity: 0.8; transform: translate3d(-1px, 0, 0); }
+  35%  { opacity: 0.45; }
+  100% { opacity: 0; transform: translate3d(0, 0, 0); }
+}
+@keyframes kz-glitch-bands {
+  0%   { opacity: 0; }
+  3%   { opacity: 0.95; }
+  20%  { opacity: 0.55; }
+  60%  { opacity: 0.18; }
+  100% { opacity: 0; }
+}
+@keyframes kz-glitch-sweep {
+  0%   { top: -4%; opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 0.85; }
+  100% { top: 104%; opacity: 0; }
+}
+
+.kz-glitch.is-cut {
+  animation: kz-glitch-root 240ms steps(8, end) 1;
+}
+.kz-glitch.is-cut .kz-glitch__bands {
+  animation: kz-glitch-bands 240ms ease-out 1;
+}
+.kz-glitch.is-cut .kz-glitch__sweep {
+  animation: kz-glitch-sweep 220ms cubic-bezier(0.5, 0, 0.5, 1) 1;
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

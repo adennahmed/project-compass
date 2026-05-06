@@ -8,6 +8,7 @@ import BuildRoom from "./rooms/BuildRoom";
 import WorkRoom from "./rooms/WorkRoom";
 import StudioRoom from "./rooms/StudioRoom";
 import ContactRoom from "./rooms/ContactRoom";
+import RoomTransitionGlitch from "./RoomTransitionGlitch";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -101,6 +102,9 @@ const RoomScene = ({ onContactClick }: RoomSceneProps) => {
 
         {/* Progress marker */}
         <ProgressBar total={roomCount} />
+
+        {/* Glitch overlay — fires on every room boundary crossing */}
+        <RoomTransitionGlitch />
       </div>
     </section>
   );
