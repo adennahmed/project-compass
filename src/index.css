@@ -532,47 +532,56 @@ section[data-snap] {
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  grid-template-areas:
-    "portrait"
-    "meta"
-    "body";
-  column-gap: 1.75rem;
-  row-gap: 1.25rem;
+  row-gap: 0;
+  min-height: 316px;
   cursor: pointer;
-  transition: opacity 0.5s ease, grid-template-columns 0.7s cubic-bezier(0.65, 0, 0.35, 1);
-  align-items: start;
+  transition: opacity 0.5s ease;
 }
 .studio-card.is-dimmed { opacity: 0.42; }
 
-/* Place children into named areas in DOM order: portrait, meta, body */
-.studio-card > :nth-child(1) { grid-area: portrait; }
-.studio-card > :nth-child(2) { grid-area: meta; }
-.studio-card > :nth-child(3) { grid-area: body; }
+.studio-profile-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0fr);
+  column-gap: 0;
+  align-items: start;
+  height: 220px;
+  overflow: hidden;
+  transition: grid-template-columns 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+              column-gap 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.studio-card.is-active .studio-profile-panel {
+  grid-template-columns: minmax(116px, 0.46fr) minmax(0, 1fr);
+  column-gap: 1.35rem;
+}
 
-/* When active, split into two columns: tall portrait left, meta + bio right */
-@media (min-width: 768px) {
-  .studio-card.is-active {
-    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr);
-    grid-template-areas:
-      "portrait meta"
-      "portrait body";
-    align-items: stretch;
-  }
+.studio-profile-copy {
+  min-width: 0;
+  opacity: 0;
+  transform: translateX(-18px);
+  padding-top: 0.2rem;
+  transition: opacity 0.45s ease 0.16s,
+              transform 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.04s;
+}
+.studio-card.is-active .studio-profile-copy {
+  opacity: 1;
+  transform: translateX(0);
 }
 
 /* Slit + open container — same element, aspect-ratio animates */
 .studio-portrait {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 4;
+  min-height: 0;
+  height: 120px;
   overflow: hidden;
   background: rgb(var(--ink) / 0.6);
   border: 1px solid rgb(var(--paper) / 0.08);
-  transition: aspect-ratio 0.85s cubic-bezier(0.65, 0, 0.35, 1),
+  transition: height 0.9s cubic-bezier(0.22, 1, 0.36, 1),
               border-color 0.5s ease;
+  transform: translateZ(0);
 }
 .studio-card.is-active .studio-portrait {
-  aspect-ratio: 4 / 5;
+  height: 220px;
   border-color: rgb(var(--signal) / 0.55);
 }
 
@@ -584,14 +593,19 @@ section[data-snap] {
   height: 100%;
   display: block;
   object-fit: cover;
-  object-position: 50% 25%;
+  object-position: 50% 24%;
   filter: grayscale(100%) contrast(1.05);
-  transition: object-position 0.85s cubic-bezier(0.65, 0, 0.35, 1),
+  transform: scale(1.18);
+  transform-origin: 50% 24%;
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+              object-position 0.9s cubic-bezier(0.22, 1, 0.36, 1),
               filter 0.7s ease;
+  will-change: transform, object-position;
 }
 .studio-card:hover .studio-portrait__img { filter: grayscale(55%) contrast(1.08); }
 .studio-card.is-active .studio-portrait__img {
-  object-position: 50% 28%;
+  object-position: 50% 32%;
+  transform: scale(1.02);
   filter: grayscale(0%) contrast(1.05);
 }
 
@@ -619,26 +633,27 @@ section[data-snap] {
 
 /* Bio swap — replaces the triad inside the active card */
 .studio-bio {
-  display: grid;
-  grid-template-rows: 0fr;
+  display: block;
   opacity: 0;
-  transition: grid-template-rows 0.7s cubic-bezier(0.65, 0, 0.35, 1),
-              opacity 0.5s ease 0.1s;
+  transform: translateY(8px);
+  transition: opacity 0.45s ease 0.22s,
+              transform 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.12s;
 }
 .studio-card.is-active .studio-bio {
-  grid-template-rows: 1fr;
   opacity: 1;
+  transform: translateY(0);
 }
-.studio-bio > div { overflow: hidden; }
+
+.studio-triad-wrap {
+  position: relative;
+  height: 4.9rem;
+  margin-top: 1.1rem;
+}
 
 .studio-triad {
-  transition: opacity 0.45s ease, transform 0.55s cubic-bezier(0.65, 0, 0.35, 1);
-}
-.studio-card.is-active .studio-triad {
-  opacity: 0;
-  transform: translateY(-8px);
-  pointer-events: none;
   position: absolute;
+  inset: 0 auto auto 0;
+  max-width: 18ch;
 }
 
 /* ─── Deploy pipeline (Operator Panel) — stages fill in sequence ──── */
