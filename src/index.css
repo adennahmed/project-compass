@@ -530,13 +530,35 @@ section[data-snap] {
 /* ─── Studio: eye-strip → in-place open. No separate detail panel. ── */
 .studio-card {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "portrait"
+    "meta"
+    "body";
+  column-gap: 1.75rem;
+  row-gap: 1.25rem;
   cursor: pointer;
-  transition: opacity 0.5s ease;
+  transition: opacity 0.5s ease, grid-template-columns 0.7s cubic-bezier(0.65, 0, 0.35, 1);
+  align-items: start;
 }
 .studio-card.is-dimmed { opacity: 0.42; }
+
+/* Place children into named areas in DOM order: portrait, meta, body */
+.studio-card > :nth-child(1) { grid-area: portrait; }
+.studio-card > :nth-child(2) { grid-area: meta; }
+.studio-card > :nth-child(3) { grid-area: body; }
+
+/* When active, split into two columns: tall portrait left, meta + bio right */
+@media (min-width: 768px) {
+  .studio-card.is-active {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr);
+    grid-template-areas:
+      "portrait meta"
+      "portrait body";
+    align-items: stretch;
+  }
+}
 
 /* Slit + open container — same element, aspect-ratio animates */
 .studio-portrait {
@@ -550,7 +572,7 @@ section[data-snap] {
               border-color 0.5s ease;
 }
 .studio-card.is-active .studio-portrait {
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 4 / 5;
   border-color: rgb(var(--signal) / 0.55);
 }
 
@@ -569,7 +591,7 @@ section[data-snap] {
 }
 .studio-card:hover .studio-portrait__img { filter: grayscale(55%) contrast(1.08); }
 .studio-card.is-active .studio-portrait__img {
-  object-position: 50% 42%;
+  object-position: 50% 28%;
   filter: grayscale(0%) contrast(1.05);
 }
 
