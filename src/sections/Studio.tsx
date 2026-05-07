@@ -167,51 +167,89 @@ const MemberCard = ({
           }
         }}
       >
-        {/* Portrait — slit by default, opens to head-and-shoulders on active */}
-        <div ref={portraitRef} className="studio-portrait">
-          <img
-            src={member.image}
-            alt={`${member.name} — ${member.role}`}
-            className="studio-portrait__img"
-            loading="lazy"
-          />
-          <div className="pointer-events-none absolute left-3 top-3 font-mono text-[10px] uppercase tracking-[0.22em] text-paper/65">
-            {String(index + 1).padStart(2, "0")} / 02
+        <div className="studio-profile-panel">
+          {/* Portrait — morphs into a smaller left rectangle when active */}
+          <div ref={portraitRef} className="studio-portrait">
+            <img
+              src={member.image}
+              alt={`${member.name} — ${member.role}`}
+              className="studio-portrait__img"
+              loading="lazy"
+            />
+            <div className="pointer-events-none absolute left-3 top-3 font-mono text-[10px] uppercase tracking-[0.22em] text-paper/65">
+              {String(index + 1).padStart(2, "0")} / 02
+            </div>
+            <div className="pointer-events-none absolute right-3 top-3 font-mono text-[10px] uppercase tracking-[0.22em] text-paper/65">
+              {member.initials}
+            </div>
+            <div
+              className="studio-portrait__pill"
+              style={{
+                left: pillPos.x,
+                top: pillPos.y,
+                opacity: pillPos.visible ? 1 : 0,
+                transform: `translate(-50%, -50%) scale(${pillPos.visible ? 1 : 0.85})`,
+              }}
+            >
+              {isActive ? "Hide ↗" : "View ↘"}
+            </div>
           </div>
-          <div className="pointer-events-none absolute right-3 top-3 font-mono text-[10px] uppercase tracking-[0.22em] text-paper/65">
-            {member.initials}
-          </div>
-          <div
-            className="studio-portrait__pill"
-            style={{
-              left: pillPos.x,
-              top: pillPos.y,
-              opacity: pillPos.visible ? 1 : 0,
-              transform: `translate(-50%, -50%) scale(${pillPos.visible ? 1 : 0.85})`,
-            }}
-          >
-            {isActive ? "Hide ↗" : "View ↘"}
+
+          <div className="studio-profile-copy">
+            <div className="studio-profile-meta flex items-baseline justify-between border-b border-paper/12 pb-3">
+              <div>
+                <div className="text-[18px] font-semibold text-paper md:text-[20px]">
+                  {member.name}
+                </div>
+                <div className="mt-0.5 font-mono text-[11px] uppercase tracking-[0.22em] text-paper/55">
+                  {member.role}
+                </div>
+              </div>
+              <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-paper/55">
+                {String(index + 1).padStart(2, "0")} / 02
+              </div>
+            </div>
+
+            <div className="studio-bio">
+              <div>
+                <p className="max-w-[58ch] text-[14px] leading-[1.6] text-paper/80 md:text-[15px]">
+                  {member.bio}
+                </p>
+                <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2">
+                  <a
+                    href={member.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="group inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-paper/85 transition-colors hover:text-paper"
+                    aria-label={`Connect with ${member.name} on LinkedIn`}
+                  >
+                    <span
+                      aria-hidden
+                      className="inline-flex h-6 w-6 items-center justify-center border border-paper/25 text-paper/85 transition-colors group-hover:border-signal group-hover:bg-signal group-hover:text-paper"
+                    >
+                      <LinkedInGlyph />
+                    </span>
+                    <span className="link-wipe">Connect ↘</span>
+                  </a>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onClick();
+                    }}
+                    className="link-wipe font-mono text-[11px] uppercase tracking-[0.22em] text-paper/55 hover:text-paper"
+                  >
+                    Hide ↗
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Name + role row */}
-        <div className="flex items-baseline justify-between border-b border-paper/12 pb-3">
-          <div>
-            <div className="text-[18px] font-semibold text-paper md:text-[20px]">
-              {member.name}
-            </div>
-            <div className="mt-0.5 font-mono text-[11px] uppercase tracking-[0.22em] text-paper/55">
-              {member.role}
-            </div>
-          </div>
-          <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-paper/55">
-            {String(index + 1).padStart(2, "0")} / 02
-          </div>
-        </div>
-
-        {/* Bottom slot — triad by default, swaps to bio when active.
-            Both occupy the same DOM region so the card height settles. */}
-        <div className="relative">
+        {/* Bottom descriptor stays pinned while portrait and bio animate above it. */}
+        <div className="studio-triad-wrap">
           {/* Triad (visible when inactive) */}
           <h3
             className="studio-triad text-paper"
@@ -239,42 +277,6 @@ const MemberCard = ({
             })}
           </h3>
 
-          {/* Bio (visible when active) */}
-          <div className="studio-bio">
-            <div>
-              <p className="max-w-[58ch] text-[14px] leading-[1.6] text-paper/80 md:text-[15px]">
-                {member.bio}
-              </p>
-              <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2">
-                <a
-                  href={member.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={(e) => e.stopPropagation()}
-                  className="group inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-paper/85 transition-colors hover:text-paper"
-                  aria-label={`Connect with ${member.name} on LinkedIn`}
-                >
-                  <span
-                    aria-hidden
-                    className="inline-flex h-6 w-6 items-center justify-center border border-paper/25 text-paper/85 transition-colors group-hover:border-signal group-hover:bg-signal group-hover:text-paper"
-                  >
-                    <LinkedInGlyph />
-                  </span>
-                  <span className="link-wipe">Connect ↘</span>
-                </a>
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onClick();
-                  }}
-                  className="link-wipe font-mono text-[11px] uppercase tracking-[0.22em] text-paper/55 hover:text-paper"
-                >
-                  Hide ↗
-                </button>
-              </div>
-            </div>
-          </div>
         </div>
       </article>
     </Reveal>
