@@ -543,7 +543,7 @@ section[data-snap] {
   grid-template-columns: minmax(0, 1fr) minmax(0, 0fr);
   column-gap: 0;
   align-items: start;
-  min-height: 252px;
+  min-height: 220px;
   overflow: hidden;
   transition: grid-template-columns 0.9s cubic-bezier(0.22, 1, 0.36, 1),
               column-gap 0.9s cubic-bezier(0.22, 1, 0.36, 1);
@@ -580,7 +580,7 @@ section[data-snap] {
   transform: translateZ(0);
 }
 .studio-card.is-active .studio-portrait {
-  height: 250px;
+  height: 220px;
   border-color: rgb(var(--signal) / 0.55);
 }
 
@@ -645,8 +645,8 @@ section[data-snap] {
 
 .studio-triad-wrap {
   position: relative;
-  min-height: 4.6rem;
-  margin-top: 0.2rem;
+  min-height: 4.9rem;
+  margin-top: -0.1rem;
 }
 
 .studio-triad {
