@@ -509,7 +509,7 @@ section[data-snap] {
   background-image: url("data:image/svg+xml;utf8,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='1' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-/* ─── Studio: eye-strip card with click-to-expand detail panel ──── */
+/* ─── Studio: eye-strip → in-place open. No separate detail panel. ── */
 .studio-card {
   position: relative;
   display: flex;
@@ -518,36 +518,44 @@ section[data-snap] {
   cursor: pointer;
   transition: opacity 0.5s ease;
 }
-.studio-card.is-dimmed { opacity: 0.4; }
+.studio-card.is-dimmed { opacity: 0.42; }
 
+/* Slit + open container — same element, aspect-ratio animates */
 .studio-portrait {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 6;
+  aspect-ratio: 16 / 4;
   overflow: hidden;
   background: rgb(var(--ink) / 0.6);
   border: 1px solid rgb(var(--paper) / 0.08);
-  transition: aspect-ratio 0.7s cubic-bezier(0.65, 0, 0.35, 1),
+  transition: aspect-ratio 0.85s cubic-bezier(0.65, 0, 0.35, 1),
               border-color 0.5s ease;
 }
-.studio-card.is-active .studio-portrait { border-color: rgb(var(--signal) / 0.5); }
+.studio-card.is-active .studio-portrait {
+  aspect-ratio: 16 / 9;
+  border-color: rgb(var(--signal) / 0.55);
+}
 
+/* The image fills the slit using object-fit: cover. object-position
+   parks the visible region on the eye band by default; when the card
+   opens, the position relaxes toward the lower face for chin balance. */
 .studio-portrait__img {
-  position: absolute;
-  inset: 0;
   width: 100%;
-  height: auto;
-  /* Position the eye-band: image's eyes sit ~32% from the top.
-     Negative top + scale aligns the eye-strip in the visible region. */
-  top: -110%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: 50% 25%;
   filter: grayscale(100%) contrast(1.05);
-  transition: top 0.7s cubic-bezier(0.65, 0, 0.35, 1),
+  transition: object-position 0.85s cubic-bezier(0.65, 0, 0.35, 1),
               filter 0.7s ease;
 }
-.studio-card:hover .studio-portrait__img { filter: grayscale(60%) contrast(1.08); }
-.studio-card.is-active .studio-portrait__img { filter: grayscale(0%) contrast(1.05); }
+.studio-card:hover .studio-portrait__img { filter: grayscale(55%) contrast(1.08); }
+.studio-card.is-active .studio-portrait__img {
+  object-position: 50% 35%;
+  filter: grayscale(0%) contrast(1.05);
+}
 
-/* Hover pill — follows cursor position over the portrait */
+/* Cursor-tracking pill */
 .studio-portrait__pill {
   position: absolute;
   pointer-events: none;
@@ -569,40 +577,28 @@ section[data-snap] {
   transform: translate(-50%, -50%) scale(1);
 }
 
-/* Detail panel — full portrait + bio. Slides down when a card is active. */
-.studio-detail {
+/* Bio swap — replaces the triad inside the active card */
+.studio-bio {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 2.5rem;
-  padding: 2rem 0 0;
-  border-top: 1px solid rgb(var(--paper) / 0.12);
-  margin-top: 2rem;
-  max-height: 0;
+  grid-template-rows: 0fr;
   opacity: 0;
-  overflow: hidden;
-  transition: max-height 0.7s cubic-bezier(0.65, 0, 0.35, 1),
-              opacity 0.5s ease 0.1s,
-              margin-top 0.5s ease;
+  transition: grid-template-rows 0.7s cubic-bezier(0.65, 0, 0.35, 1),
+              opacity 0.5s ease 0.1s;
 }
-.studio-detail.is-open {
-  max-height: 600px;
+.studio-card.is-active .studio-bio {
+  grid-template-rows: 1fr;
   opacity: 1;
 }
-@media (min-width: 768px) {
-  .studio-detail { grid-template-columns: 320px 1fr; gap: 3rem; }
+.studio-bio > div { overflow: hidden; }
+
+.studio-triad {
+  transition: opacity 0.45s ease, transform 0.55s cubic-bezier(0.65, 0, 0.35, 1);
 }
-.studio-detail__portrait {
-  width: 100%;
-  aspect-ratio: 4 / 5;
-  background: rgb(var(--ink) / 0.6);
-  overflow: hidden;
-  border: 1px solid rgb(var(--paper) / 0.1);
-}
-.studio-detail__portrait img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: grayscale(0%) contrast(1.05);
+.studio-card.is-active .studio-triad {
+  opacity: 0;
+  transform: translateY(-8px);
+  pointer-events: none;
+  position: absolute;
 }
 
 /* ─── Deploy pipeline (Operator Panel) — stages fill in sequence ──── */

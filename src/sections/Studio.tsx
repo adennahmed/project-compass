@@ -8,7 +8,7 @@ interface Member {
   initials: string;
   name: string;
   role: string;
-  triadWords: string[]; // five words max for predictable wrap
+  triadWords: string[];
   italicAt: number;
   bio: string;
   image: string;
@@ -47,10 +47,10 @@ const Studio = () => {
     <section
       id="studio"
       data-snap
-      className="section-fit relative overflow-hidden bg-ink px-6 py-24 text-paper md:px-10 md:py-28"
+      className="section-fit relative overflow-hidden bg-ink px-6 py-20 text-paper md:px-10 md:py-24"
     >
       <div className="container-wide flex w-full flex-col">
-        {/* Header strip — eyebrow + framed badge */}
+        {/* Header */}
         <Reveal>
           <div className="flex items-center justify-between text-paper/55">
             <div className="font-mono text-[11px] uppercase tracking-[0.32em]">
@@ -62,9 +62,8 @@ const Studio = () => {
           </div>
         </Reveal>
 
-        {/* Centred title row */}
         <Reveal delay={120}>
-          <div className="my-12 flex items-center justify-center md:my-14">
+          <div className="my-10 flex items-center justify-center md:my-12">
             <div className="relative inline-flex items-center px-6 py-3 font-mono text-[11px] uppercase tracking-[0.32em] text-paper/85">
               <span aria-hidden className="absolute -left-1 -top-1 h-2.5 w-2.5 border-l border-t border-paper/35" />
               <span aria-hidden className="absolute -right-1 -top-1 h-2.5 w-2.5 border-r border-t border-paper/35" />
@@ -75,8 +74,8 @@ const Studio = () => {
           </div>
         </Reveal>
 
-        {/* Cards — both same height regardless of state */}
-        <div className="grid grid-cols-1 gap-10 md:grid-cols-2 md:gap-12">
+        {/* Card grid */}
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-2 md:gap-10">
           {MEMBERS.map((m, i) => (
             <MemberCard
               key={m.name}
@@ -89,19 +88,12 @@ const Studio = () => {
           ))}
         </div>
 
-        {/* Detail panel — slides down beneath the cards when one is active */}
-        <div className={`studio-detail ${active !== null ? "is-open" : ""}`}>
-          {active !== null && <DetailPanel member={MEMBERS[active]} index={active} />}
-        </div>
-
         {/* Footer hint */}
-        {active === null && (
-          <Reveal delay={300}>
-            <p className="mt-10 text-center font-mono text-[11px] uppercase tracking-[0.22em] text-paper/45">
-              ↘ Click a portrait for the full bio
-            </p>
-          </Reveal>
-        )}
+        <Reveal delay={300}>
+          <p className="mt-8 text-center font-mono text-[11px] uppercase tracking-[0.22em] text-paper/45">
+            ↘ {active === null ? "Click a portrait for the full bio" : "Click again to close"}
+          </p>
+        </Reveal>
       </div>
     </section>
   );
@@ -159,7 +151,7 @@ const MemberCard = ({
           }
         }}
       >
-        {/* Portrait eye-strip */}
+        {/* Portrait — slit by default, opens to head-and-shoulders on active */}
         <div ref={portraitRef} className="studio-portrait">
           <img
             src={member.image}
@@ -167,14 +159,12 @@ const MemberCard = ({
             className="studio-portrait__img"
             loading="lazy"
           />
-          {/* Top-corner annotations */}
           <div className="pointer-events-none absolute left-3 top-3 font-mono text-[10px] uppercase tracking-[0.22em] text-paper/65">
             {String(index + 1).padStart(2, "0")} / 02
           </div>
           <div className="pointer-events-none absolute right-3 top-3 font-mono text-[10px] uppercase tracking-[0.22em] text-paper/65">
             {member.initials}
           </div>
-          {/* Cursor-tracking pill */}
           <div
             className="studio-portrait__pill"
             style={{
@@ -188,7 +178,7 @@ const MemberCard = ({
           </div>
         </div>
 
-        {/* Name + role row — same height for both cards */}
+        {/* Name + role row */}
         <div className="flex items-baseline justify-between border-b border-paper/12 pb-3">
           <div>
             <div className="text-[18px] font-semibold text-paper md:text-[20px]">
@@ -203,70 +193,67 @@ const MemberCard = ({
           </div>
         </div>
 
-        {/* Triad — heavy uppercase, italic accent on a single key word */}
-        <h3
-          className="text-paper"
-          style={{
-            fontSize: "clamp(1.25rem, 1.95vw, 1.7rem)",
-            fontWeight: 700,
-            letterSpacing: "-0.02em",
-            lineHeight: "1.18",
-            textTransform: "uppercase",
-          }}
-        >
-          {member.triadWords.map((w, wi) => {
-            const isAccent = wi === member.italicAt;
-            return (
-              <span key={wi} className="mr-[0.28em] inline-block">
-                <CharReveal
-                  stagger={22}
-                  splitBy="word"
-                  className={isAccent ? "italic-editorial text-signal" : ""}
+        {/* Bottom slot — triad by default, swaps to bio when active.
+            Both occupy the same DOM region so the card height settles. */}
+        <div className="relative">
+          {/* Triad (visible when inactive) */}
+          <h3
+            className="studio-triad text-paper"
+            style={{
+              fontSize: "clamp(1.2rem, 1.85vw, 1.6rem)",
+              fontWeight: 700,
+              letterSpacing: "-0.02em",
+              lineHeight: "1.18",
+              textTransform: "uppercase",
+            }}
+          >
+            {member.triadWords.map((w, wi) => {
+              const isAccent = wi === member.italicAt;
+              return (
+                <span key={wi} className="mr-[0.28em] inline-block">
+                  <CharReveal
+                    stagger={22}
+                    splitBy="word"
+                    className={isAccent ? "italic-editorial text-signal" : ""}
+                  >
+                    {w}
+                  </CharReveal>
+                </span>
+              );
+            })}
+          </h3>
+
+          {/* Bio (visible when active) */}
+          <div className="studio-bio">
+            <div>
+              <p className="max-w-[58ch] text-[14px] leading-[1.6] text-paper/80 md:text-[15px]">
+                {member.bio}
+              </p>
+              <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2">
+                <a
+                  href={`mailto:hello@kozai.ca?subject=${encodeURIComponent(`For ${member.name}`)}`}
+                  onClick={(e) => e.stopPropagation()}
+                  className="link-wipe font-mono text-[11px] uppercase tracking-[0.22em] text-paper/85 hover:text-paper"
                 >
-                  {w}
-                </CharReveal>
-              </span>
-            );
-          })}
-        </h3>
+                  Connect ↘
+                </a>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onClick();
+                  }}
+                  className="link-wipe font-mono text-[11px] uppercase tracking-[0.22em] text-paper/55 hover:text-paper"
+                >
+                  Hide ↗
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </article>
     </Reveal>
   );
 };
-
-const DetailPanel = ({ member, index }: { member: Member; index: number }) => (
-  <>
-    <div className="studio-detail__portrait">
-      <img src={member.image} alt={`${member.name} — full portrait`} />
-    </div>
-    <div className="flex flex-col justify-center">
-      <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-paper/55">
-        {String(index + 1).padStart(2, "0")} / 02 · {member.role}
-      </div>
-      <div className="mt-2 text-[28px] font-semibold leading-tight text-paper md:text-[34px]">
-        {member.name}
-      </div>
-      <p className="mt-5 max-w-[60ch] text-[15px] leading-[1.65] text-paper/75 md:text-[16px]">
-        {member.bio}
-      </p>
-      <div className="mt-7 flex flex-wrap gap-x-6 gap-y-3">
-        <a
-          href={`mailto:hello@kozai.ca?subject=${encodeURIComponent(`For ${member.name}`)}`}
-          onClick={(e) => e.stopPropagation()}
-          className="link-wipe font-mono text-[11px] uppercase tracking-[0.22em] text-paper/85 hover:text-paper"
-        >
-          Connect ↘
-        </a>
-        <button
-          type="button"
-          onClick={(e) => e.stopPropagation()}
-          className="link-wipe font-mono text-[11px] uppercase tracking-[0.22em] text-paper/55 hover:text-paper"
-        >
-          Full bio →
-        </button>
-      </div>
-    </div>
-  </>
-);
 
 export default Studio;
