@@ -36,7 +36,6 @@ const Navigation = ({ onContactClick }: NavigationProps) => {
     // accumulator logic. Polling scrollY on every animation frame is
     // simpler, always accurate, and works regardless of scroll library.
     let prevY = window.scrollY;
-    let accumDown = 0;
     let lastMode: NavMode = window.scrollY < 80 ? "integrated" : "pill";
     let rafId: number;
 
@@ -50,23 +49,17 @@ const Navigation = ({ onContactClick }: NavigationProps) => {
     const tick = () => {
       const y = window.scrollY;
       const dy = y - prevY;
-      prevY = y;
-
       if (y < 80) {
-        // Hero zone — integrated header flush with page top.
         set("integrated");
-        accumDown = 0;
-      } else if (dy > 0) {
-        // Actively scrolling down — accumulate and hide after 80 px.
-        accumDown += dy;
-        if (accumDown > 80) set("hidden");
-      } else {
-        // Stopped OR scrolling up — always show the pill immediately.
-        // This fires when a snap settles (dy === 0 for N frames) so the
-        // nav reappears the moment the page comes to rest between sections.
-        accumDown = 0;
+      } else if (dy > 0.5) {
+        // Scrolling down past hero — slide up out of view immediately.
+        set("hidden");
+      } else if (dy < -0.5) {
+        // Scrolling up — bring the pill back immediately.
         set("pill");
       }
+      // |dy| <= 0.5: idle/settling — keep current mode (no flicker).
+      prevY = y;
 
       rafId = requestAnimationFrame(tick);
     };
