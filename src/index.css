@@ -568,15 +568,17 @@ section[data-snap] {
 .studio-portrait {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 4;
+  min-height: 0;
+  height: 120px;
   overflow: hidden;
   background: rgb(var(--ink) / 0.6);
   border: 1px solid rgb(var(--paper) / 0.08);
-  transition: aspect-ratio 0.85s cubic-bezier(0.65, 0, 0.35, 1),
+  transition: height 0.9s cubic-bezier(0.22, 1, 0.36, 1),
               border-color 0.5s ease;
+  transform: translateZ(0);
 }
 .studio-card.is-active .studio-portrait {
-  aspect-ratio: 4 / 5;
+  height: 252px;
   border-color: rgb(var(--signal) / 0.55);
 }
 
@@ -588,14 +590,19 @@ section[data-snap] {
   height: 100%;
   display: block;
   object-fit: cover;
-  object-position: 50% 25%;
+  object-position: 50% 24%;
   filter: grayscale(100%) contrast(1.05);
-  transition: object-position 0.85s cubic-bezier(0.65, 0, 0.35, 1),
+  transform: scale(1.18);
+  transform-origin: 50% 24%;
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+              object-position 0.9s cubic-bezier(0.22, 1, 0.36, 1),
               filter 0.7s ease;
+  will-change: transform, object-position;
 }
 .studio-card:hover .studio-portrait__img { filter: grayscale(55%) contrast(1.08); }
 .studio-card.is-active .studio-portrait__img {
-  object-position: 50% 28%;
+  object-position: 50% 32%;
+  transform: scale(1.02);
   filter: grayscale(0%) contrast(1.05);
 }
 
