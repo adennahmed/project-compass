@@ -125,38 +125,35 @@ const Loader = ({ onExitStart, onComplete }: LoaderProps) => {
           </div>
         )}
 
-        {/* Fixed-height morph zone — height never changes so no layout jump.
-            Counter and logo both sit at the bottom of this box and crossfade. */}
+        {/* Fixed-height morph zone — height is locked to counter size so the
+            container never reflows when the logo swaps in.
+            Counter stays in normal flow (sizes the container width).
+            Logo is absolute bottom-left so it shares the exact same anchor. */}
         <div
-          className="relative overflow-hidden"
+          className="relative"
           style={{ height: "clamp(3.25rem, 8.5vw, 7rem)" }}
         >
-          {/* Counter — always mounted, fades out on morph */}
-          <div
-            className="absolute inset-0 flex items-end"
+          {/* Counter — in-flow so it sets container width; fades out on morph */}
+          <span
+            className="font-mono font-medium text-ink"
             style={{
+              display: "block",
+              fontSize: "clamp(3.25rem, 8.5vw, 7rem)",
+              lineHeight: "0.9",
+              letterSpacing: "-0.04em",
+              fontVariantNumeric: "tabular-nums",
               opacity:   phase === "running" ? 1 : 0,
               transform: phase === "running" ? "translateY(0)" : "translateY(-10px)",
               transition: "opacity 0.45s cubic-bezier(0.6,0,0.2,1), transform 0.45s cubic-bezier(0.6,0,0.2,1)",
               pointerEvents: "none",
             }}
           >
-            <span
-              className="font-mono font-medium text-ink"
-              style={{
-                fontSize: "clamp(3.25rem, 8.5vw, 7rem)",
-                lineHeight: "0.9",
-                letterSpacing: "-0.04em",
-                fontVariantNumeric: "tabular-nums",
-              }}
-            >
-              {pct}
-            </span>
-          </div>
+            {pct}
+          </span>
 
-          {/* Logo — always mounted, fades in on morph, same bottom anchor */}
+          {/* Logo — absolute, pinned to same bottom-left corner; fades in on morph */}
           <div
-            className="absolute inset-0 flex items-end"
+            className="absolute bottom-0 left-0"
             style={{
               opacity:   phase === "running" ? 0 : 1,
               transform: phase === "running" ? "translateY(10px)" : "translateY(0)",
