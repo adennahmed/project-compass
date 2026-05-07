@@ -279,16 +279,10 @@ html.is-loading, html.is-loading body { overflow: hidden; }
 }
 
 /* ─── Loader counter → wordmark cross-fade ──────────────────────────── */
-@keyframes counter-out {
-  from { opacity: 1; transform: translateY(0); filter: blur(0); }
-  to   { opacity: 0; transform: translateY(-12px); filter: blur(4px); }
-}
-@keyframes wordmark-in {
-  from { opacity: 0; transform: translateY(12px); filter: blur(6px); }
-  to   { opacity: 1; transform: translateY(0); filter: blur(0); }
-}
-.loader-counter-exit { animation: counter-out 600ms cubic-bezier(0.6, 0, 0.2, 1) forwards; }
-.loader-wordmark-enter { animation: wordmark-in 800ms cubic-bezier(0.16, 1, 0.3, 1) 200ms backwards; }
+/* Crossfade is handled entirely via inline transitions in Loader.tsx.
+   Both elements share a fixed-height container and are always mounted;
+   opacity + translateY transitions are set directly on the elements so
+   there are no layout changes (and therefore no twitch) during the morph. */
 
 /* Loader curtain — the field translates UP off-screen, page revealed
    underneath. Uses a stiff cubic-bezier so it feels purposeful, not soft. */

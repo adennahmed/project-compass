@@ -118,15 +118,30 @@ const Loader = ({ onExitStart, onComplete }: LoaderProps) => {
 
       {/* Bottom-left stage — counter morphs into wordmark */}
       <div className="absolute left-6 bottom-6 md:bottom-12 md:left-10">
+        {/* Service string — only shown while counting */}
         {phase === "running" && (
           <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.22em] text-mute">
             {`> ${SERVICE_STRINGS[serviceIdx]}`}
           </div>
         )}
 
-        <div className="relative">
-          {phase === "running" && (
-            <div
+        {/* Fixed-height morph zone — height never changes so no layout jump.
+            Counter and logo both sit at the bottom of this box and crossfade. */}
+        <div
+          className="relative overflow-hidden"
+          style={{ height: "clamp(3.25rem, 8.5vw, 7rem)" }}
+        >
+          {/* Counter — always mounted, fades out on morph */}
+          <div
+            className="absolute inset-0 flex items-end"
+            style={{
+              opacity:   phase === "running" ? 1 : 0,
+              transform: phase === "running" ? "translateY(0)" : "translateY(-10px)",
+              transition: "opacity 0.45s cubic-bezier(0.6,0,0.2,1), transform 0.45s cubic-bezier(0.6,0,0.2,1)",
+              pointerEvents: "none",
+            }}
+          >
+            <span
               className="font-mono font-medium text-ink"
               style={{
                 fontSize: "clamp(3.25rem, 8.5vw, 7rem)",
@@ -136,26 +151,21 @@ const Loader = ({ onExitStart, onComplete }: LoaderProps) => {
               }}
             >
               {pct}
-            </div>
-          )}
-          {phase === "morphing" && (
-            <div
-              className="loader-counter-exit absolute inset-0 font-mono font-medium text-ink"
-              style={{
-                fontSize: "clamp(3.25rem, 8.5vw, 7rem)",
-                lineHeight: "0.9",
-                letterSpacing: "-0.04em",
-                fontVariantNumeric: "tabular-nums",
-              }}
-            >
-              100.0
-            </div>
-          )}
-          {(phase === "morphing" || phase === "lifting") && (
-            <div className="loader-wordmark-enter text-ink">
-              <Logo size={64} animate />
-            </div>
-          )}
+            </span>
+          </div>
+
+          {/* Logo — always mounted, fades in on morph, same bottom anchor */}
+          <div
+            className="absolute inset-0 flex items-end"
+            style={{
+              opacity:   phase === "running" ? 0 : 1,
+              transform: phase === "running" ? "translateY(10px)" : "translateY(0)",
+              transition: "opacity 0.55s cubic-bezier(0.16,1,0.3,1) 0.15s, transform 0.55s cubic-bezier(0.16,1,0.3,1) 0.15s",
+              pointerEvents: phase === "running" ? "none" : "auto",
+            }}
+          >
+            <Logo size={64} />
+          </div>
         </div>
       </div>
 
