@@ -55,8 +55,11 @@ const Index = () => {
       <SmoothScroll />
       <BackgroundDrift />
       <div aria-hidden className="grain" />
+      {/* Navigation lives OUTSIDE page-settle so position:fixed is always
+          relative to the viewport. Any transform on a parent (even the
+          identity matrix left by the settle animation) breaks fixed positioning. */}
+      {pageVisible && <Navigation onContactClick={openDrawer} />}
       <div className={pageVisible ? "page-settle" : ""} style={{ opacity: pageVisible ? 1 : 0 }}>
-        <Navigation onContactClick={openDrawer} />
         <main className="relative z-10">
           <Hero onContactClick={openDrawer} />
           <ServiceMarquee items={MARQUEE_ITEMS} variant="ink" />
