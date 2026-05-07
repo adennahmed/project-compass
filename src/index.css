@@ -389,8 +389,7 @@ section[data-snap] {
   position: fixed;
   z-index: 50;
   transition:
-    transform 0.65s cubic-bezier(0.65, 0, 0.35, 1),
-    opacity 0.45s ease,
+    transform 0.55s cubic-bezier(0.65, 0, 0.35, 1),
     padding 0.45s cubic-bezier(0.65, 0, 0.35, 1),
     top 0.45s cubic-bezier(0.65, 0, 0.35, 1);
 }
@@ -469,14 +468,14 @@ section[data-snap] {
   color: rgb(var(--paper));
 }
 
-/* HIDDEN — slid up off-screen */
+/* HIDDEN — slides cleanly up and off-screen; no opacity fade */
 .nav-shell.mode-hidden {
   top: 16px;
   left: 50%;
   right: auto;
   width: auto;
-  transform: translate(-50%, -140%);
-  opacity: 0;
+  transform: translate(-50%, -160%);
+  opacity: 1;
   pointer-events: none;
 }
 

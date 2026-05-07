@@ -94,7 +94,8 @@ const Loader = ({ onExitStart, onComplete }: LoaderProps) => {
       <div className="absolute left-6 top-6 font-mono text-[11px] uppercase tracking-[0.22em] text-mute md:left-10 md:top-8">
         kozai · studio · est. 2026
       </div>
-      <div className="absolute right-6 top-6 font-mono text-[11px] uppercase tracking-[0.22em] text-mute md:right-10 md:top-8">
+      {/* Hidden on mobile — not enough room alongside left label */}
+      <div className="absolute right-6 top-6 hidden font-mono text-[11px] uppercase tracking-[0.22em] text-mute md:block md:right-10 md:top-8">
         © 2026 — toronto, ca
       </div>
 
@@ -155,14 +156,17 @@ const Loader = ({ onExitStart, onComplete }: LoaderProps) => {
           )}
           {(phase === "morphing" || phase === "lifting") && (
             <div className="loader-wordmark-enter text-ink">
-              <Logo size={64} animate />
+              {/* Smaller on mobile so the wide wordmark doesn't overflow */}
+              <Logo size={44} className="md:hidden" animate />
+              <Logo size={64} className="hidden md:block" animate />
             </div>
           )}
         </div>
       </div>
 
-      {/* Bottom-right: studio coordinates */}
-      <div className="absolute bottom-12 right-6 text-right font-mono text-[11px] uppercase tracking-[0.22em] text-mute md:bottom-14 md:right-10">
+      {/* Bottom-right: studio coordinates — hidden on mobile to avoid
+          overlapping with the wide wordmark in the bottom-left */}
+      <div className="absolute bottom-12 right-6 hidden text-right font-mono text-[11px] uppercase tracking-[0.22em] text-mute md:block md:bottom-14 md:right-10">
         43.6532° N · 79.3832° W
         <div className="mt-1 text-ink/40">building tools serious teams depend on</div>
       </div>
