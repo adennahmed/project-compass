@@ -646,7 +646,7 @@ section[data-snap] {
 .studio-triad-wrap {
   position: relative;
   min-height: 4.6rem;
-  padding-top: 0.25rem;
+  margin-top: 0.2rem;
 }
 
 .studio-triad {
