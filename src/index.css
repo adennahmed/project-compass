@@ -532,32 +532,36 @@ section[data-snap] {
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  grid-template-areas:
-    "portrait"
-    "meta"
-    "body";
-  column-gap: 1.75rem;
-  row-gap: 1.25rem;
+  row-gap: 1rem;
   cursor: pointer;
-  transition: opacity 0.5s ease, grid-template-columns 0.7s cubic-bezier(0.65, 0, 0.35, 1);
-  align-items: start;
+  transition: opacity 0.5s ease;
 }
 .studio-card.is-dimmed { opacity: 0.42; }
 
-/* Place children into named areas in DOM order: portrait, meta, body */
-.studio-card > :nth-child(1) { grid-area: portrait; }
-.studio-card > :nth-child(2) { grid-area: meta; }
-.studio-card > :nth-child(3) { grid-area: body; }
+.studio-profile-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0fr);
+  column-gap: 0;
+  align-items: stretch;
+  overflow: hidden;
+  transition: grid-template-columns 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+              column-gap 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.studio-card.is-active .studio-profile-panel {
+  grid-template-columns: minmax(116px, 0.46fr) minmax(0, 1fr);
+  column-gap: 1.35rem;
+}
 
-/* When active, split into two columns: tall portrait left, meta + bio right */
-@media (min-width: 768px) {
-  .studio-card.is-active {
-    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr);
-    grid-template-areas:
-      "portrait meta"
-      "portrait body";
-    align-items: stretch;
-  }
+.studio-profile-copy {
+  min-width: 0;
+  opacity: 0;
+  transform: translateX(-18px);
+  transition: opacity 0.45s ease 0.16s,
+              transform 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.04s;
+}
+.studio-card.is-active .studio-profile-copy {
+  opacity: 1;
+  transform: translateX(0);
 }
 
 /* Slit + open container — same element, aspect-ratio animates */
