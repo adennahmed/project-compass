@@ -74,7 +74,7 @@ const Hero = ({ onContactClick }: HeroProps) => {
             </span>
             <span className="block kinetic-line">
               <span className="italic-editorial mr-3 text-signal">
-                <CharReveal stagger={24} delay={760} immediate splitBy="char">
+                <CharReveal stagger={26} delay={760} immediate splitBy="word">
                   software
                 </CharReveal>
               </span>

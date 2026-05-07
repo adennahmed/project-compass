@@ -233,10 +233,10 @@ html.is-loading, html.is-loading body { overflow: hidden; }
   display: inline-block;
   overflow: hidden;
   vertical-align: bottom;
-  /* Pad the mask so italic ascenders/descenders are not clipped, then
-     pull back via negative margin so the line height is preserved. */
-  padding: 0.18em 0.06em 0.16em;
-  margin: -0.18em -0.06em -0.16em;
+  /* Generous padding gives italic glyphs room for slant + ascenders;
+     pulled back via negative margin so line-height is preserved. */
+  padding: 0.32em 0.18em 0.32em;
+  margin: -0.32em -0.18em -0.32em;
 }
 .char-reveal > span {
   display: inline-block;
@@ -244,6 +244,8 @@ html.is-loading, html.is-loading body { overflow: hidden; }
   transition: transform 0.85s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 .char-reveal.is-in > span { transform: translateY(0); }
+/* When the reveal is reset (off-screen), put chars back below the mask. */
+.char-reveal.is-out > span { transform: translateY(110%); }
 
 /* ─── Marquee — infinite mono ticker between sections ────────────── */
 @keyframes marquee {
@@ -361,6 +363,125 @@ html.is-loading, html.is-loading body { overflow: hidden; }
 .bg-ink-section .text-mute { color: rgb(var(--paper) / 0.6); }
 .bg-ink-section .text-ink { color: rgb(var(--paper)); }
 .bg-ink-section .border-hairline\/15 { border-color: rgb(var(--paper) / 0.15); }
+
+/* ─── Floating nav pill (hides on scroll-down, shows on scroll-up) ─── */
+.nav-shell {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  z-index: 50;
+  transform: translate(-50%, -130%);
+  transition: transform 0.7s cubic-bezier(0.65, 0, 0.35, 1),
+              opacity 0.5s ease;
+  opacity: 0;
+  pointer-events: none;
+}
+.nav-shell.is-visible {
+  transform: translate(-50%, 0);
+  opacity: 1;
+  pointer-events: auto;
+}
+.nav-shell.is-pinned-top {
+  top: 16px;
+}
+.nav-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.4rem;
+  padding: 0.55rem 0.55rem 0.55rem 1.1rem;
+  background: rgb(var(--ink));
+  color: rgb(var(--paper));
+  border-radius: 999px;
+  border: 1px solid rgb(var(--paper) / 0.08);
+  box-shadow:
+    0 12px 32px rgb(var(--ink) / 0.18),
+    0 1px 0 rgb(var(--paper) / 0.04) inset;
+  backdrop-filter: blur(12px);
+}
+.nav-pill__divider {
+  width: 1px;
+  height: 16px;
+  background: rgb(var(--paper) / 0.18);
+}
+
+/* ─── Subtle film grain — adds tactile depth across the whole site ──── */
+.grain {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0.05;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='1' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ─── Studio: eye-strip → full portrait expand transition ──────────── */
+.kz-portrait {
+  position: relative;
+  width: 100%;
+  /* The image has its own aspect — we control visible region with clip-path
+     animated between an "eye band" and full image. */
+}
+.kz-portrait__img {
+  width: 100%;
+  height: auto;
+  display: block;
+  clip-path: inset(38% 0 38% 0);
+  transition: clip-path 0.95s cubic-bezier(0.65, 0, 0.35, 1);
+  filter: grayscale(100%) contrast(1.05);
+  will-change: clip-path;
+}
+.kz-portrait.is-expanded .kz-portrait__img {
+  clip-path: inset(0% 0 0% 0);
+  filter: grayscale(0%) contrast(1.02);
+  transition: clip-path 0.95s cubic-bezier(0.65, 0, 0.35, 1),
+              filter 1.2s ease 0.2s;
+}
+.kz-portrait__hover-pill {
+  position: absolute;
+  pointer-events: none;
+  background: rgb(var(--paper));
+  color: rgb(var(--ink));
+  font-family: 'Geist Mono', ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 999px;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.85);
+  transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+  z-index: 4;
+}
+.kz-portrait:hover .kz-portrait__hover-pill {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* ─── Deploy pipeline (Operator Panel) — stages fill in sequence ──── */
+@keyframes pipeline-fill {
+  0%, 18%   { transform: scaleX(0); }
+  25%       { transform: scaleX(1); }
+  100%      { transform: scaleX(1); }
+}
+.pipeline-fill {
+  transform-origin: left center;
+  animation: pipeline-fill 9.6s linear infinite;
+}
+
+@keyframes pipeline-glow {
+  0%, 18% { opacity: 0.35; }
+  19%, 25% { opacity: 1; }
+  26%, 100% { opacity: 0.55; }
+}
+.pipeline-glow { animation: pipeline-glow 9.6s linear infinite; }
+
+/* Event log row — slides in from the left when added to the top of the list */
+@keyframes event-in {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.event-row { animation: event-in 0.45s cubic-bezier(0.16, 1, 0.3, 1); }
 
 /* ─── OperatorPanel canvas frame ────────────────────────────────────── */
 .kz-panel {

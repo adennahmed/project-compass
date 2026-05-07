@@ -2,25 +2,19 @@ import { ReactNode, useEffect, useRef, useState } from "react";
 
 interface RevealProps {
   children: ReactNode;
-  /** Stagger delay in ms before this element fades in. */
   delay?: number;
-  /** When true, skips the IntersectionObserver and reveals immediately. */
   immediate?: boolean;
+  /** When true (default), the reveal re-plays each time the element re-enters the viewport. */
+  replay?: boolean;
   className?: string;
   as?: keyof JSX.IntrinsicElements;
 }
 
-/**
- * Tiny IntersectionObserver-based reveal. Adds the `is-in` class once the
- * element scrolls into view, which triggers the CSS transition defined in
- * `index.css` (`.reveal` → `.reveal.is-in`).
- *
- * Reveal is one-shot — once visible, it stays visible.
- */
 const Reveal = ({
   children,
   delay = 0,
   immediate = false,
+  replay = true,
   className = "",
   as = "div",
 }: RevealProps) => {
@@ -39,8 +33,8 @@ const Reveal = ({
         for (const e of entries) {
           if (e.isIntersecting) {
             setShown(true);
-            obs.disconnect();
-            break;
+          } else if (replay) {
+            setShown(false);
           }
         }
       },
@@ -48,7 +42,7 @@ const Reveal = ({
     );
     obs.observe(el);
     return () => obs.disconnect();
-  }, [immediate]);
+  }, [immediate, replay]);
 
   const Tag = as as "div";
   return (
