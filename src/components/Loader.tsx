@@ -117,10 +117,7 @@ const Loader = ({ onExitStart, onComplete }: LoaderProps) => {
       />
 
       {/* Bottom-left stage — counter morphs into wordmark */}
-      <div
-        className="absolute left-6 bottom-6 md:bottom-12 md:left-10"
-        style={{ minHeight: "clamp(3.25rem, 8.5vw, 7rem)" }}
-      >
+      <div className="absolute left-6 bottom-6 md:bottom-12 md:left-10">
         {phase === "running" && (
           <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.22em] text-mute">
             {`> ${SERVICE_STRINGS[serviceIdx]}`}
