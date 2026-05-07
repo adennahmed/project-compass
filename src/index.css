@@ -542,7 +542,8 @@ section[data-snap] {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 0fr);
   column-gap: 0;
-  align-items: stretch;
+  align-items: start;
+  min-height: 252px;
   overflow: hidden;
   transition: grid-template-columns 0.9s cubic-bezier(0.22, 1, 0.36, 1),
               column-gap 0.9s cubic-bezier(0.22, 1, 0.36, 1);
@@ -556,6 +557,7 @@ section[data-snap] {
   min-width: 0;
   opacity: 0;
   transform: translateX(-18px);
+  padding-top: 0.2rem;
   transition: opacity 0.45s ease 0.16s,
               transform 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.04s;
 }
@@ -578,7 +580,7 @@ section[data-snap] {
   transform: translateZ(0);
 }
 .studio-card.is-active .studio-portrait {
-  height: 252px;
+  height: 250px;
   border-color: rgb(var(--signal) / 0.55);
 }
 
