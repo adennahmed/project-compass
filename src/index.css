@@ -231,12 +231,13 @@ html.is-loading, html.is-loading body { overflow: hidden; }
 
 .char-reveal {
   display: inline-block;
-  overflow: hidden;
   vertical-align: bottom;
-  /* Generous padding gives italic glyphs room for slant + ascenders;
-     pulled back via negative margin so line-height is preserved. */
-  padding: 0.32em 0.18em 0.32em;
-  margin: -0.32em -0.18em -0.32em;
+  /* clip-path instead of overflow:hidden — identical masking, but GPU-composited
+     so it never produces the subpixel box-boundary lines that overflow:hidden
+     can show between adjacent char spans at non-integer scroll positions.
+     Negative inset expands the clip region to give italic glyphs / ascenders
+     clearance without negative margins (which caused the overlap artifacts). */
+  clip-path: inset(-0.32em -0.18em);
 }
 .char-reveal > span {
   display: inline-block;

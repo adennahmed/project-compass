@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Lenis from "lenis";
 import Logo from "./Logo";
 
@@ -28,41 +28,53 @@ type NavMode = "integrated" | "pill" | "hidden";
  */
 const Navigation = ({ onContactClick }: NavigationProps) => {
   const [mode, setMode] = useState<NavMode>("integrated");
-  const lastY = useRef(0);
-  const accumDown = useRef(0);
-  const accumUp = useRef(0);
 
   useEffect(() => {
-    lastY.current = window.scrollY;
-    const onScroll = () => {
-      const y = window.scrollY;
-      const dy = y - lastY.current;
-      lastY.current = y;
+    // rAF-based detection instead of scroll events.
+    // Lenis animates scrollY per-frame and may not reliably fire window
+    // "scroll" events, or fires them with tiny deltas that confuse
+    // accumulator logic. Polling scrollY on every animation frame is
+    // simpler, always accurate, and works regardless of scroll library.
+    let prevY = window.scrollY;
+    let accumDown = 0;
+    let lastMode: NavMode = window.scrollY < 80 ? "integrated" : "pill";
+    let rafId: number;
 
-      // At/near top → integrated header (sits flush with hero).
-      if (y < 80) {
-        setMode("integrated");
-        accumDown.current = 0;
-        accumUp.current = 0;
-        return;
-      }
-
-      // Lenis dispatches many small-delta scroll events. Lower thresholds
-      // so the pill appears reliably on any meaningful upward intent and
-      // hides only on sustained downward scroll.
-      if (dy > 0) {
-        accumDown.current += dy;
-        accumUp.current = 0;
-        if (accumDown.current > 60) setMode("hidden");
-      } else if (dy < 0) {
-        accumUp.current += Math.abs(dy);
-        accumDown.current = 0;
-        if (accumUp.current > 4) setMode("pill");
+    const set = (m: NavMode) => {
+      if (m !== lastMode) {
+        lastMode = m;
+        setMode(m);
       }
     };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
+
+    const tick = () => {
+      const y = window.scrollY;
+      const dy = y - prevY;
+      prevY = y;
+
+      if (y < 80) {
+        // Hero zone — integrated header flush with page top.
+        set("integrated");
+        accumDown = 0;
+      } else if (dy > 0) {
+        // Actively scrolling down — accumulate and hide after 80 px.
+        accumDown += dy;
+        if (accumDown > 80) set("hidden");
+      } else {
+        // Stopped OR scrolling up — always show the pill immediately.
+        // This fires when a snap settles (dy === 0 for N frames) so the
+        // nav reappears the moment the page comes to rest between sections.
+        accumDown = 0;
+        set("pill");
+      }
+
+      rafId = requestAnimationFrame(tick);
+    };
+
+    // Initialise immediately so the correct mode shows on mount.
+    set(lastMode);
+    rafId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafId);
   }, []);
 
   const handleAnchor = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
