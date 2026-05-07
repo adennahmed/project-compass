@@ -384,25 +384,23 @@ section[data-snap] {
 .bg-ink-section .text-ink { color: rgb(var(--paper)); }
 .bg-ink-section .border-hairline\/15 { border-color: rgb(var(--paper) / 0.15); }
 
-/* ─── Nav: integrated at top → pill on scroll → hidden on scroll-down ─ */
+/* ─── Nav: integrated top bar → floating pill → slide-away on down-scroll ─ */
 .nav-shell {
   position: fixed;
   z-index: 50;
-  transition:
-    transform 0.7s cubic-bezier(0.65, 0, 0.35, 1),
-    opacity 0.5s ease 0.2s,
-    padding 0.45s cubic-bezier(0.65, 0, 0.35, 1),
-    top 0.45s cubic-bezier(0.65, 0, 0.35, 1);
-}
-
-/* INTEGRATED — full-width header, paper background, ink text. Hero. */
-.nav-shell.mode-integrated {
   top: 0;
   left: 0;
   right: 0;
   width: 100%;
+  transition:
+    transform 0.78s cubic-bezier(0.16, 1, 0.3, 1),
+    padding 0.68s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, padding;
+}
+
+/* INTEGRATED — full-width header, paper background, ink text. Hero. */
+.nav-shell.mode-integrated {
   transform: none;
-  opacity: 1;
   padding: 1.25rem 1.5rem;
   pointer-events: auto;
 }
@@ -425,6 +423,17 @@ section[data-snap] {
   box-shadow: none;
   backdrop-filter: none;
 }
+
+.nav-pill {
+  transition:
+    max-width 0.78s cubic-bezier(0.16, 1, 0.3, 1),
+    padding 0.78s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    border-radius 0.78s cubic-bezier(0.16, 1, 0.3, 1),
+    color 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: max-width, padding, border-radius;
+}
 .nav-shell.mode-integrated .nav-pill__divider { display: none; }
 .nav-shell.mode-integrated .nav-pill__cta {
   background: rgb(var(--ink));
@@ -437,27 +446,23 @@ section[data-snap] {
 
 /* PILL — centred, rounded, dark ink chip. Past hero, scrolling up. */
 .nav-shell.mode-pill {
-  top: 16px;
-  left: 50%;
-  right: auto;
-  width: auto;
-  transform: translate(-50%, 0);
-  opacity: 1;
-  padding: 0;
+  transform: translate3d(0, 16px, 0);
+  padding: 0 1rem;
   pointer-events: auto;
 }
 .nav-shell.mode-pill .nav-pill {
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  justify-content: center;
   gap: 1.4rem;
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
   padding: 0.55rem 0.55rem 0.55rem 1.1rem;
   background: rgb(var(--ink));
   color: rgb(var(--paper));
   border-radius: 999px;
   border: 1px solid rgb(var(--paper) / 0.08);
-  box-shadow:
-    0 12px 32px rgb(var(--ink) / 0.18),
-    0 1px 0 rgb(var(--paper) / 0.04) inset;
   backdrop-filter: blur(12px);
 }
 .nav-shell.mode-pill .nav-pill__cta {
@@ -471,13 +476,25 @@ section[data-snap] {
 
 /* HIDDEN — slid up off-screen */
 .nav-shell.mode-hidden {
-  top: 16px;
-  left: 50%;
-  right: auto;
-  width: auto;
-  transform: translate(-50%, -180%);
-  opacity: 0;
+  transform: translate3d(0, -120%, 0);
+  padding: 0 1rem;
   pointer-events: none;
+}
+
+.nav-shell.mode-hidden .nav-pill {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.4rem;
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0.55rem 0.55rem 0.55rem 1.1rem;
+  background: rgb(var(--ink));
+  color: rgb(var(--paper));
+  border-radius: 999px;
+  border: 1px solid rgb(var(--paper) / 0.08);
+  backdrop-filter: blur(12px);
 }
 
 .nav-pill__divider {
