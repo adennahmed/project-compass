@@ -423,6 +423,17 @@ section[data-snap] {
   box-shadow: none;
   backdrop-filter: none;
 }
+
+.nav-pill {
+  transition:
+    max-width 0.78s cubic-bezier(0.16, 1, 0.3, 1),
+    padding 0.78s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    border-radius 0.78s cubic-bezier(0.16, 1, 0.3, 1),
+    color 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: max-width, padding, border-radius;
+}
 .nav-shell.mode-integrated .nav-pill__divider { display: none; }
 .nav-shell.mode-integrated .nav-pill__cta {
   background: rgb(var(--ink));
