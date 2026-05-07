@@ -630,26 +630,27 @@ section[data-snap] {
 
 /* Bio swap — replaces the triad inside the active card */
 .studio-bio {
-  display: grid;
-  grid-template-rows: 0fr;
+  display: block;
   opacity: 0;
-  transition: grid-template-rows 0.7s cubic-bezier(0.65, 0, 0.35, 1),
-              opacity 0.5s ease 0.1s;
+  transform: translateY(8px);
+  transition: opacity 0.45s ease 0.22s,
+              transform 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.12s;
 }
 .studio-card.is-active .studio-bio {
-  grid-template-rows: 1fr;
   opacity: 1;
+  transform: translateY(0);
 }
-.studio-bio > div { overflow: hidden; }
+
+.studio-triad-wrap {
+  position: relative;
+  min-height: 4.6rem;
+  padding-top: 0.25rem;
+}
 
 .studio-triad {
-  transition: opacity 0.45s ease, transform 0.55s cubic-bezier(0.65, 0, 0.35, 1);
-}
-.studio-card.is-active .studio-triad {
-  opacity: 0;
-  transform: translateY(-8px);
-  pointer-events: none;
   position: absolute;
+  inset: 0 auto auto 0;
+  max-width: 18ch;
 }
 
 /* ─── Deploy pipeline (Operator Panel) — stages fill in sequence ──── */
