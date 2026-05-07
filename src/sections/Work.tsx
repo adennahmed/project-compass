@@ -62,7 +62,7 @@ const PROJECTS: Project[] = [
 
 const Work = () => {
   return (
-    <section id="work" className="relative px-6 py-32 md:px-10 md:py-40">
+    <section id="work" data-snap className="relative px-6 py-24 md:px-10 md:py-28">
       <div className="container-wide">
         <Reveal>
           <div className="mb-20 grid grid-cols-1 gap-8 md:grid-cols-12 md:items-end md:gap-12">
@@ -81,7 +81,7 @@ const Work = () => {
           </div>
         </Reveal>
 
-        <div className="flex flex-col gap-32 md:gap-40">
+        <div className="flex flex-col gap-20 md:gap-24">
           {PROJECTS.map((p, i) => (
             <Reveal key={p.n} delay={50}>
               <article

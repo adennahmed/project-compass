@@ -7,7 +7,7 @@ interface ContactProps {
 
 const Contact = ({ onContactClick }: ContactProps) => {
   return (
-    <section id="contact" className="relative px-6 py-32 md:px-10 md:py-40">
+    <section id="contact" data-snap className="section-fit relative px-6 py-24 md:px-10 md:py-28">
       <div className="container-wide">
         <Reveal>
           <div className="grid grid-cols-1 gap-12 md:grid-cols-12 md:gap-16">

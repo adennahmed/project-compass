@@ -13,18 +13,21 @@ const NAV_ITEMS = [
   { label: "Studio", href: "#studio" },
 ];
 
+type NavMode = "integrated" | "pill" | "hidden";
+
 /**
- * Floating nav pill.
+ * Three-mode navigation:
+ *   1. integrated — at the top of the hero, full-width, paper background,
+ *      ink text. Visually part of the page header.
+ *   2. pill — once scrolled past the hero, a centred dark pill. Appears
+ *      when the user scrolls UP (intent to navigate).
+ *   3. hidden — past hero, scrolling DOWN with intent. Slid off-screen.
  *
- * Behaviour:
- *  · Hidden by default (translateY -130%, opacity 0).
- *  · Appears as a rounded ink pill when:
- *      a) the user is at the very top of the page, OR
- *      b) the user scrolls UPWARD by any amount (intent to navigate).
- *  · Hides again when the user scrolls down with intent.
+ * Mode resolution lives entirely in this component; the visual chrome
+ * is owned by the .nav-shell.mode-* classes in index.css.
  */
 const Navigation = ({ onContactClick }: NavigationProps) => {
-  const [visible, setVisible] = useState(false);
+  const [mode, setMode] = useState<NavMode>("integrated");
   const lastY = useRef(0);
   const accumDown = useRef(0);
   const accumUp = useRef(0);
@@ -36,24 +39,22 @@ const Navigation = ({ onContactClick }: NavigationProps) => {
       const dy = y - lastY.current;
       lastY.current = y;
 
-      // At the very top — always visible.
+      // Top of page → integrated
       if (y < 80) {
-        setVisible(true);
+        setMode("integrated");
         accumDown.current = 0;
         accumUp.current = 0;
         return;
       }
 
       if (dy > 0) {
-        // Scrolling down — accumulate, hide once threshold reached.
         accumDown.current += dy;
         accumUp.current = 0;
-        if (accumDown.current > 30) setVisible(false);
+        if (accumDown.current > 40) setMode("hidden");
       } else if (dy < 0) {
-        // Scrolling up — accumulate, show once threshold reached.
         accumUp.current += Math.abs(dy);
         accumDown.current = 0;
-        if (accumUp.current > 12) setVisible(true);
+        if (accumUp.current > 12) setMode("pill");
       }
     };
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -83,17 +84,19 @@ const Navigation = ({ onContactClick }: NavigationProps) => {
 
   return (
     <header
-      className={`nav-shell ${visible ? "is-visible" : ""}`}
-      aria-hidden={!visible}
+      className={`nav-shell mode-${mode}`}
+      aria-hidden={mode === "hidden"}
     >
       <div className="nav-pill">
         <a
           href="#top"
           onClick={goTop}
-          className="flex items-center pr-2 text-paper hover:text-signal"
+          className={`flex items-center pr-2 transition-colors ${
+            mode === "integrated" ? "text-ink hover:text-signal" : "text-paper hover:text-signal"
+          }`}
           aria-label="Kozai — home"
         >
-          <Logo size={16} />
+          <Logo size={mode === "integrated" ? 22 : 16} />
         </a>
         <span className="nav-pill__divider" aria-hidden />
 
@@ -103,9 +106,21 @@ const Navigation = ({ onContactClick }: NavigationProps) => {
               key={item.href}
               href={item.href}
               onClick={(e) => handleAnchor(e, item.href)}
-              className="nav-item text-[12px] font-medium tracking-tight text-paper/85 hover:text-paper"
+              className={`nav-item text-[12px] font-medium tracking-tight ${
+                mode === "integrated"
+                  ? "text-ink/85 hover:text-ink"
+                  : "text-paper/85 hover:text-paper"
+              }`}
             >
-              <span className="nav-item__num" style={{ color: "rgb(var(--paper) / 0.45)" }}>
+              <span
+                className="nav-item__num"
+                style={{
+                  color:
+                    mode === "integrated"
+                      ? "rgb(var(--mute) / 0.7)"
+                      : "rgb(var(--paper) / 0.45)",
+                }}
+              >
                 {String(i + 1).padStart(2, "0")}
               </span>
               <span className="nav-item__label">{item.label}</span>
@@ -117,7 +132,7 @@ const Navigation = ({ onContactClick }: NavigationProps) => {
         <button
           type="button"
           onClick={onContactClick}
-          className="rounded-full bg-paper px-4 py-1.5 text-[12px] font-medium text-ink transition-colors hover:bg-signal hover:text-paper"
+          className="nav-pill__cta"
         >
           Start a project ↘
         </button>

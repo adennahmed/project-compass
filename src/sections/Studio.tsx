@@ -8,11 +8,9 @@ interface Member {
   initials: string;
   name: string;
   role: string;
-  triadA: string;
-  triadAItalic?: number; // word index to italicize
-  triadB: string;
+  triadWords: string[]; // five words max for predictable wrap
+  italicAt: number;
   bio: string;
-  detail: string;
   image: string;
 }
 
@@ -21,58 +19,52 @@ const MEMBERS: Member[] = [
     initials: "AA",
     name: "Aden Ahmed",
     role: "Principal Engineer & Founder",
-    triadA: "We architect what operators actually use.",
-    triadAItalic: 3,
-    triadB: "We turn ambiguity into shipped systems.",
+    triadWords: ["We", "architect", "what", "operators", "use."],
+    italicAt: 3,
     bio:
       "Builds the operational platforms mid-market and enterprise teams depend on. Background spans data infrastructure, distributed services, and the interfaces operators rely on every day.",
-    detail:
-      "Specialises in turning ambiguous requirements into systems that hold up under production load.",
     image: adenImg,
   },
   {
     initials: "MK",
     name: "Muhammad Khan",
     role: "Senior Systems Engineer",
-    triadA: "We see edge cases before production does.",
-    triadAItalic: 3,
-    triadB: "We build for the hardest week.",
+    triadWords: ["We", "see", "edges", "before", "production."],
+    italicAt: 2,
     bio:
       "Distributed systems and reliability engineering. Deep experience with high-availability architectures, observability, and the edge cases that determine whether a system can be trusted under load.",
-    detail:
-      "Focuses on resilience engineering — building systems that fail gracefully and recover predictably.",
     image: muhammadImg,
   },
 ];
 
 const Studio = () => {
-  const [expanded, setExpanded] = useState<number | null>(null);
+  const [active, setActive] = useState<number | null>(null);
 
   const toggle = (i: number) =>
-    setExpanded((prev) => (prev === i ? null : i));
+    setActive((prev) => (prev === i ? null : i));
 
   return (
     <section
       id="studio"
-      className="relative overflow-hidden bg-ink px-6 py-32 text-paper md:px-10 md:py-40"
+      data-snap
+      className="section-fit relative overflow-hidden bg-ink px-6 py-24 text-paper md:px-10 md:py-28"
     >
-      {/* Header */}
-      <div className="container-wide">
+      <div className="container-wide flex w-full flex-col">
+        {/* Header strip — eyebrow + framed badge */}
         <Reveal>
-          <div className="mb-6 text-center font-mono text-[11px] uppercase tracking-[0.32em] text-paper/55">
-            Our team
+          <div className="flex items-center justify-between text-paper/55">
+            <div className="font-mono text-[11px] uppercase tracking-[0.32em]">
+              [ 04 — Studio ]
+            </div>
+            <div className="hidden font-mono text-[11px] uppercase tracking-[0.32em] md:block">
+              Toronto · 2026
+            </div>
           </div>
         </Reveal>
-        <Reveal delay={120}>
-          <p className="mx-auto mb-12 max-w-[42ch] text-center text-[14px] uppercase leading-[1.7] tracking-[0.18em] text-paper/55">
-            The engineers building Kozai's work — and the only people you'll
-            ever talk to during a project.
-          </p>
-        </Reveal>
 
-        {/* "MEET THE TEAM" framed badge */}
-        <Reveal delay={220}>
-          <div className="mx-auto mb-20 inline-flex w-full justify-center">
+        {/* Centred title row */}
+        <Reveal delay={120}>
+          <div className="my-12 flex items-center justify-center md:my-14">
             <div className="relative inline-flex items-center px-6 py-3 font-mono text-[11px] uppercase tracking-[0.32em] text-paper/85">
               <span aria-hidden className="absolute -left-1 -top-1 h-2.5 w-2.5 border-l border-t border-paper/35" />
               <span aria-hidden className="absolute -right-1 -top-1 h-2.5 w-2.5 border-r border-t border-paper/35" />
@@ -83,32 +75,33 @@ const Studio = () => {
           </div>
         </Reveal>
 
-        {/* Member layout — eye-strips with triads, expand on click */}
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-12">
+        {/* Cards — both same height regardless of state */}
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-2 md:gap-12">
           {MEMBERS.map((m, i) => (
             <MemberCard
               key={m.name}
               member={m}
               index={i}
-              isExpanded={expanded === i}
-              onToggle={() => toggle(i)}
+              isActive={active === i}
+              isDimmed={active !== null && active !== i}
+              onClick={() => toggle(i)}
             />
           ))}
         </div>
 
-        {/* Bottom strip — visible only when one is expanded */}
-        <div
-          className="overflow-hidden transition-all duration-700 ease-out"
-          style={{
-            maxHeight: expanded !== null ? "320px" : "0px",
-            opacity: expanded !== null ? 1 : 0,
-            marginTop: expanded !== null ? "3.5rem" : "0",
-          }}
-        >
-          {expanded !== null && (
-            <BioPanel member={MEMBERS[expanded]} index={expanded} />
-          )}
+        {/* Detail panel — slides down beneath the cards when one is active */}
+        <div className={`studio-detail ${active !== null ? "is-open" : ""}`}>
+          {active !== null && <DetailPanel member={MEMBERS[active]} index={active} />}
         </div>
+
+        {/* Footer hint */}
+        {active === null && (
+          <Reveal delay={300}>
+            <p className="mt-10 text-center font-mono text-[11px] uppercase tracking-[0.22em] text-paper/45">
+              ↘ Click a portrait for the full bio
+            </p>
+          </Reveal>
+        )}
       </div>
     </section>
   );
@@ -117,25 +110,27 @@ const Studio = () => {
 interface MemberCardProps {
   member: Member;
   index: number;
-  isExpanded: boolean;
-  onToggle: () => void;
+  isActive: boolean;
+  isDimmed: boolean;
+  onClick: () => void;
 }
 
-const MemberCard = ({ member, index, isExpanded, onToggle }: MemberCardProps) => {
-  const ref = useRef<HTMLDivElement>(null);
+const MemberCard = ({
+  member,
+  index,
+  isActive,
+  isDimmed,
+  onClick,
+}: MemberCardProps) => {
+  const portraitRef = useRef<HTMLDivElement>(null);
   const [pillPos, setPillPos] = useState({ x: 0, y: 0, visible: false });
 
-  // Track cursor position over the portrait so the VIEW/HIDE pill follows it.
   useEffect(() => {
-    const el = ref.current;
+    const el = portraitRef.current;
     if (!el) return;
     const onMove = (e: MouseEvent) => {
       const r = el.getBoundingClientRect();
-      setPillPos({
-        x: e.clientX - r.left,
-        y: e.clientY - r.top,
-        visible: true,
-      });
+      setPillPos({ x: e.clientX - r.left, y: e.clientY - r.top, visible: true });
     };
     const onLeave = () => setPillPos((p) => ({ ...p, visible: false }));
     el.addEventListener("mousemove", onMove);
@@ -146,80 +141,42 @@ const MemberCard = ({ member, index, isExpanded, onToggle }: MemberCardProps) =>
     };
   }, []);
 
-  const triadAWords = member.triadA.split(" ");
-
   return (
-    <Reveal delay={index * 120}>
-      <article className="flex flex-col gap-6">
-        {/* Triad A — top */}
-        <h3
-          className="text-paper"
-          style={{
-            fontSize: "clamp(1.35rem, 2.2vw, 1.85rem)",
-            fontWeight: 700,
-            letterSpacing: "-0.02em",
-            lineHeight: "1.1",
-            textTransform: "uppercase",
-          }}
-        >
-          {triadAWords.map((word, wi) => {
-            const isItalic = wi === member.triadAItalic;
-            return (
-              <span key={wi} className="mr-[0.3em] inline-block">
-                <CharReveal
-                  stagger={20}
-                  splitBy="word"
-                  className={isItalic ? "italic-editorial text-signal" : ""}
-                >
-                  {word}
-                </CharReveal>
-              </span>
-            );
-          })}
-        </h3>
-
-        {/* Portrait — the click target */}
-        <div
-          ref={ref}
-          className={`kz-portrait group relative cursor-pointer ${isExpanded ? "is-expanded" : ""}`}
-          onClick={onToggle}
-          role="button"
-          tabIndex={0}
-          aria-expanded={isExpanded}
-          aria-label={`${isExpanded ? "Hide" : "View"} ${member.name}`}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              onToggle();
-            }
-          }}
-        >
-          <div className="relative w-full overflow-hidden bg-ink/60">
-            <img
-              src={member.image}
-              alt={`${member.name} — ${member.role}`}
-              className="kz-portrait__img"
-              loading="lazy"
-            />
-            {/* Frame corners */}
-            <div className="pointer-events-none absolute left-3 top-3 font-mono text-[10px] uppercase tracking-[0.22em] text-paper/60">
-              {String(index + 1).padStart(2, "0")} / 02
-            </div>
-            <div className="pointer-events-none absolute right-3 top-3 font-mono text-[10px] uppercase tracking-[0.22em] text-paper/60">
-              {member.initials}
-            </div>
-            {/* Bottom badge — role */}
-            <div className="pointer-events-none absolute bottom-3 left-3 right-3 flex items-center justify-between">
-              <span className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] text-paper/85">
-                <span aria-hidden className="inline-block h-1.5 w-1.5 rounded-full bg-signal" />
-                {member.role}
-              </span>
-            </div>
+    <Reveal delay={index * 100}>
+      <article
+        className={`studio-card ${isActive ? "is-active" : ""} ${
+          isDimmed ? "is-dimmed" : ""
+        }`}
+        onClick={onClick}
+        role="button"
+        tabIndex={0}
+        aria-pressed={isActive}
+        aria-label={`${isActive ? "Hide" : "View"} ${member.name}'s bio`}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            onClick();
+          }
+        }}
+      >
+        {/* Portrait eye-strip */}
+        <div ref={portraitRef} className="studio-portrait">
+          <img
+            src={member.image}
+            alt={`${member.name} — ${member.role}`}
+            className="studio-portrait__img"
+            loading="lazy"
+          />
+          {/* Top-corner annotations */}
+          <div className="pointer-events-none absolute left-3 top-3 font-mono text-[10px] uppercase tracking-[0.22em] text-paper/65">
+            {String(index + 1).padStart(2, "0")} / 02
           </div>
-
-          {/* Hover pill — follows cursor */}
+          <div className="pointer-events-none absolute right-3 top-3 font-mono text-[10px] uppercase tracking-[0.22em] text-paper/65">
+            {member.initials}
+          </div>
+          {/* Cursor-tracking pill */}
           <div
-            className="kz-portrait__hover-pill"
+            className="studio-portrait__pill"
             style={{
               left: pillPos.x,
               top: pillPos.y,
@@ -227,61 +184,89 @@ const MemberCard = ({ member, index, isExpanded, onToggle }: MemberCardProps) =>
               transform: `translate(-50%, -50%) scale(${pillPos.visible ? 1 : 0.85})`,
             }}
           >
-            {isExpanded ? "Hide ↗" : "View ↘"}
+            {isActive ? "Hide ↗" : "View ↘"}
           </div>
         </div>
 
-        {/* Triad B — below the portrait */}
+        {/* Name + role row — same height for both cards */}
+        <div className="flex items-baseline justify-between border-b border-paper/12 pb-3">
+          <div>
+            <div className="text-[18px] font-semibold text-paper md:text-[20px]">
+              {member.name}
+            </div>
+            <div className="mt-0.5 font-mono text-[11px] uppercase tracking-[0.22em] text-paper/55">
+              {member.role}
+            </div>
+          </div>
+          <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-paper/55">
+            {String(index + 1).padStart(2, "0")} / 02
+          </div>
+        </div>
+
+        {/* Triad — heavy uppercase, italic accent on a single key word */}
         <h3
           className="text-paper"
           style={{
-            fontSize: "clamp(1.35rem, 2.2vw, 1.85rem)",
+            fontSize: "clamp(1.25rem, 1.95vw, 1.7rem)",
             fontWeight: 700,
             letterSpacing: "-0.02em",
-            lineHeight: "1.1",
+            lineHeight: "1.18",
             textTransform: "uppercase",
           }}
         >
-          <CharReveal stagger={20} splitBy="word">
-            {member.triadB}
-          </CharReveal>
+          {member.triadWords.map((w, wi) => {
+            const isAccent = wi === member.italicAt;
+            return (
+              <span key={wi} className="mr-[0.28em] inline-block">
+                <CharReveal
+                  stagger={22}
+                  splitBy="word"
+                  className={isAccent ? "italic-editorial text-signal" : ""}
+                >
+                  {w}
+                </CharReveal>
+              </span>
+            );
+          })}
         </h3>
       </article>
     </Reveal>
   );
 };
 
-const BioPanel = ({ member, index }: { member: Member; index: number }) => (
-  <div className="grid grid-cols-1 gap-6 border-t border-paper/15 pt-7 md:grid-cols-12 md:gap-10">
-    <div className="md:col-span-3">
+const DetailPanel = ({ member, index }: { member: Member; index: number }) => (
+  <>
+    <div className="studio-detail__portrait">
+      <img src={member.image} alt={`${member.name} — full portrait`} />
+    </div>
+    <div className="flex flex-col justify-center">
       <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-paper/55">
         {String(index + 1).padStart(2, "0")} / 02 · {member.role}
       </div>
-      <div className="mt-2 text-[28px] font-semibold leading-tight text-paper md:text-[32px]">
+      <div className="mt-2 text-[28px] font-semibold leading-tight text-paper md:text-[34px]">
         {member.name}
       </div>
-    </div>
-    <div className="md:col-span-6">
-      <p className="text-[15px] leading-[1.6] text-paper/80 md:text-[16px]">{member.bio}</p>
-      <p className="mt-3 italic-editorial text-[14px] leading-[1.6] text-paper/55">
-        {member.detail}
+      <p className="mt-5 max-w-[60ch] text-[15px] leading-[1.65] text-paper/75 md:text-[16px]">
+        {member.bio}
       </p>
+      <div className="mt-7 flex flex-wrap gap-x-6 gap-y-3">
+        <a
+          href={`mailto:hello@kozai.ca?subject=${encodeURIComponent(`For ${member.name}`)}`}
+          onClick={(e) => e.stopPropagation()}
+          className="link-wipe font-mono text-[11px] uppercase tracking-[0.22em] text-paper/85 hover:text-paper"
+        >
+          Connect ↘
+        </a>
+        <button
+          type="button"
+          onClick={(e) => e.stopPropagation()}
+          className="link-wipe font-mono text-[11px] uppercase tracking-[0.22em] text-paper/55 hover:text-paper"
+        >
+          Full bio →
+        </button>
+      </div>
     </div>
-    <div className="flex gap-3 md:col-span-3 md:flex-col md:items-end md:gap-4">
-      <a
-        href={`mailto:hello@kozai.ca?subject=${encodeURIComponent(`For ${member.name}`)}`}
-        className="link-wipe font-mono text-[11px] uppercase tracking-[0.22em] text-paper/85 hover:text-paper"
-      >
-        Connect ↘
-      </a>
-      <button
-        type="button"
-        className="link-wipe font-mono text-[11px] uppercase tracking-[0.22em] text-paper/55 hover:text-paper"
-      >
-        Full bio →
-      </button>
-    </div>
-  </div>
+  </>
 );
 
 export default Studio;

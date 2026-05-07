@@ -136,7 +136,8 @@ const Services = () => {
   return (
     <section
       id="services"
-      className="relative px-6 py-32 md:px-10 md:py-40"
+      data-snap
+      className="relative px-6 py-24 md:px-10 md:py-28"
     >
       <div className="container-wide">
         <Reveal>

@@ -35,7 +35,8 @@ const Hero = ({ onContactClick }: HeroProps) => {
   return (
     <section
       id="top"
-      className="relative flex min-h-[100svh] items-end px-6 pt-32 pb-16 md:px-10 md:pt-40 md:pb-20"
+      data-snap
+      className="relative flex min-h-[100svh] items-end px-6 pt-28 pb-12 md:px-10 md:pt-32 md:pb-16"
     >
       <div className="container-wide">
         {/* Eyebrow row */}

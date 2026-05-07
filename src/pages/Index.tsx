@@ -6,7 +6,6 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import ContactDrawer from "@/components/ContactDrawer";
 import ServiceMarquee from "@/components/ServiceMarquee";
-import ScrollProgress from "@/components/ScrollProgress";
 import BackgroundDrift from "@/components/BackgroundDrift";
 import Hero from "@/sections/Hero";
 import Services from "@/sections/Services";
@@ -56,9 +55,6 @@ const Index = () => {
       <SmoothScroll />
       <BackgroundDrift />
       <div aria-hidden className="grain" />
-      <ScrollProgress
-        sections={["top", "services", "approach", "work", "studio", "contact"]}
-      />
       <div className={pageVisible ? "page-settle" : ""} style={{ opacity: pageVisible ? 1 : 0 }}>
         <Navigation onContactClick={openDrawer} />
         <main className="relative z-10">
