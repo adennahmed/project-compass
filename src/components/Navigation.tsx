@@ -32,11 +32,13 @@ const Navigation = ({ onContactClick }: NavigationProps) => {
     const HIDE_AFTER = 420;
     let prevY = window.scrollY;
     let lastMode: NavMode = prevY <= TOP_LOCK ? "integrated" : "pill";
+    let pillSettledAt = lastMode === "pill" ? performance.now() : 0;
     let rafId: number;
 
     const set = (m: NavMode) => {
       if (m !== lastMode) {
         lastMode = m;
+        if (m === "pill") pillSettledAt = performance.now();
         setMode(m);
       }
     };
@@ -50,7 +52,7 @@ const Navigation = ({ onContactClick }: NavigationProps) => {
       } else if (y < HIDE_AFTER || lastMode === "integrated") {
         // First scroll movement always morphs the top bar into the floating pill.
         set("pill");
-      } else if (dy > 0.8) {
+      } else if (dy > 0.8 && performance.now() - pillSettledAt > 900) {
         set("hidden");
       } else if (dy < -0.8) {
         set("pill");
