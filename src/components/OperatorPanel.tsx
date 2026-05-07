@@ -43,7 +43,8 @@ interface OperatorPanelProps {
 
 const OperatorPanel = ({ className = "" }: OperatorPanelProps) => {
   const startRef = useRef(performance.now());
-  const [activeIdx, setActiveIdx] = useState(0);
+  // Combine activeIdx + stageProgress into one state to avoid double renders
+  const [pipelineState, setPipelineState] = useState({ activeIdx: 0, stageProgress: 0 });
   const [events, setEvents] = useState<Event[]>(() => [
     { id: 1, ts: "11:42:18", status: "ok", text: "Health check passed · 99.98% uptime" },
     { id: 2, ts: "11:41:54", status: "ok", text: "Deploy verified · 12 regions · 247ms p95" },
@@ -58,6 +59,8 @@ const OperatorPanel = ({ className = "" }: OperatorPanelProps) => {
   });
   const lastStageRef = useRef(0);
   const eventIdRef = useRef(5);
+  // Track full cycle completions (monitor stage completing) to increment deploys every 2nd cycle
+  const cycleCountRef = useRef(0);
 
   // Tick the active stage and emit events on stage completion.
   useEffect(() => {
@@ -67,9 +70,13 @@ const OperatorPanel = ({ className = "" }: OperatorPanelProps) => {
       const elapsed = (performance.now() - startRef.current) / 1000;
       const cycleT = (elapsed % TOTAL_CYCLE) / STAGE_DURATION;
       const idx = Math.min(STAGES.length - 1, Math.floor(cycleT));
+      // stageProgress: 0→1 within the current active stage
+      const progress = cycleT - Math.floor(cycleT);
+
       if (idx !== lastStageRef.current) {
         const completedIdx = lastStageRef.current;
         lastStageRef.current = idx;
+
         // Log the completion event for the stage that just finished
         const tmpl = EVENT_TEMPLATES[completedIdx];
         const id = eventIdRef.current++;
@@ -77,17 +84,35 @@ const OperatorPanel = ({ className = "" }: OperatorPanelProps) => {
           { id, ts: formatTs(new Date()), status: tmpl.status, text: tmpl.text },
           ...prev.slice(0, 5),
         ]);
-        // Light stats update — builds counter ticks when monitor finishes
+
+        // Stats updates on stage completion
         if (completedIdx === STAGES.length - 1) {
-          setStats((s) => ({ ...s, builds: s.builds + 1 }));
+          // Monitor completed → full cycle done
+          cycleCountRef.current += 1;
+          setStats((s) => {
+            const newBuilds = s.builds + 1;
+            // Increment deploys every 2nd full cycle
+            const newDeploys = cycleCountRef.current % 2 === 0 ? s.deploys + 1 : s.deploys;
+            return { ...s, builds: newBuilds, deploys: newDeploys };
+          });
+        }
+
+        if (completedIdx === 2) {
+          // Deploy stage completed → randomize latency p95
+          const val = Math.floor(Math.random() * 40) + 128;
+          setStats((s) => ({ ...s, p95: `${val}ms` }));
         }
       }
-      setActiveIdx(idx);
+
+      // Single setState call for both activeIdx and stageProgress
+      setPipelineState({ activeIdx: idx, stageProgress: progress });
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, []);
+
+  const { activeIdx, stageProgress } = pipelineState;
 
   return (
     <div className={`kz-panel ${className}`}>
@@ -104,7 +129,7 @@ const OperatorPanel = ({ className = "" }: OperatorPanelProps) => {
         </div>
       </header>
 
-      {/* Pipeline — 4 stages with sequential fill animation */}
+      {/* Pipeline — 4 stages with JS-driven sequential fill */}
       <div className="px-5 py-6">
         <div className="mb-3 flex items-baseline justify-between">
           <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-mute">
@@ -115,27 +140,56 @@ const OperatorPanel = ({ className = "" }: OperatorPanelProps) => {
           </span>
         </div>
         <div className="grid grid-cols-4 gap-2">
-          {STAGES.map((s, i) => (
-            <div key={s.id} className="flex flex-col gap-1.5">
-              <div className="relative h-1.5 overflow-hidden bg-paper-3">
-                <div
-                  className="pipeline-fill absolute inset-y-0 left-0 w-full origin-left bg-ink"
-                  style={{ animationDelay: `${i * STAGE_DURATION}s` }}
-                />
+          {STAGES.map((s, i) => {
+            // Compute fill scale: past stages full, active stage live, future empty
+            let fillScale: number;
+            if (i < activeIdx) {
+              fillScale = 1;
+            } else if (i === activeIdx) {
+              fillScale = stageProgress;
+            } else {
+              fillScale = 0;
+            }
+
+            const isActive = i === activeIdx;
+
+            return (
+              <div key={s.id} className="flex flex-col gap-1.5">
+                <div className="relative h-1.5 overflow-hidden bg-paper-3">
+                  <div
+                    className="pipeline-fill absolute inset-y-0 left-0 w-full bg-ink"
+                    style={{
+                      transform: `scaleX(${fillScale})`,
+                      transformOrigin: "left center",
+                      transition: "transform 0.1s linear",
+                    }}
+                  />
+                </div>
+                <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.18em]">
+                  <span
+                    className={isActive ? "pipeline-glow" : ""}
+                    style={{
+                      color: isActive ? "rgb(var(--signal))" : "rgb(var(--mute))",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "0.3em",
+                    }}
+                  >
+                    {isActive && (
+                      <span
+                        aria-hidden
+                        className="stage-dot"
+                        style={{ color: "rgb(var(--signal))" }}
+                      >
+                        ●
+                      </span>
+                    )}
+                    {String(i + 1).padStart(2, "0")} {s.label}
+                  </span>
+                </div>
               </div>
-              <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.18em]">
-                <span
-                  className="pipeline-glow"
-                  style={{
-                    color: i === activeIdx ? "rgb(var(--signal))" : "rgb(var(--mute))",
-                    animationDelay: `${i * STAGE_DURATION}s`,
-                  }}
-                >
-                  {String(i + 1).padStart(2, "0")} {s.label}
-                </span>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
@@ -150,7 +204,12 @@ const OperatorPanel = ({ className = "" }: OperatorPanelProps) => {
             <li
               key={e.id}
               className="event-row flex items-baseline gap-3 py-1"
-              style={{ opacity: 1 - i * 0.18 }}
+              style={{
+                opacity: 1 - i * 0.18,
+                // Accent left-border on most recent event only
+                borderLeft: i === 0 ? "1px solid rgb(var(--signal))" : "1px solid transparent",
+                paddingLeft: "0.5rem",
+              }}
             >
               <span className="w-[68px] shrink-0 text-[10px] uppercase tracking-[0.18em] text-mute">
                 {e.ts}

@@ -75,10 +75,10 @@ const Footer = () => {
             © {year} Kozai Software Studio · Built with intent.
           </div>
           <div className="flex gap-6 text-[12px]">
-            <a href="/privacy" className="text-paper/55 transition-colors hover:text-paper">
+            <a href="/privacy-policy" className="text-paper/55 transition-colors hover:text-paper">
               Privacy
             </a>
-            <a href="/terms" className="text-paper/55 transition-colors hover:text-paper">
+            <a href="/terms-and-conditions" className="text-paper/55 transition-colors hover:text-paper">
               Terms
             </a>
           </div>

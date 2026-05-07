@@ -671,23 +671,35 @@ section[data-snap] {
   text-overflow: clip;
 }
 
-/* ─── Deploy pipeline (Operator Panel) — stages fill in sequence ──── */
-@keyframes pipeline-fill {
-  0%, 18%   { transform: scaleX(0); }
-  25%       { transform: scaleX(1); }
-  100%      { transform: scaleX(1); }
-}
+/* ─── Deploy pipeline (Operator Panel) — JS-driven fill via inline style ── */
+/* pipeline-fill: class kept for targeting; transform is set via inline style
+   in the component (scaleX driven by rAF tick), so no CSS animation here.   */
 .pipeline-fill {
   transform-origin: left center;
-  animation: pipeline-fill 9.6s linear infinite;
+  /* no animation — transform is applied via inline style */
 }
 
+/* pipeline-glow: subtle shimmer on the active stage label */
 @keyframes pipeline-glow {
-  0%, 18% { opacity: 0.35; }
-  19%, 25% { opacity: 1; }
-  26%, 100% { opacity: 0.55; }
+  0%   { opacity: 0.75; }
+  50%  { opacity: 1; }
+  100% { opacity: 0.75; }
 }
-.pipeline-glow { animation: pipeline-glow 9.6s linear infinite; }
+.pipeline-glow {
+  animation: pipeline-glow 1.6s ease-in-out infinite;
+}
+
+/* stage-dot: pulsing ● indicator next to the active stage label */
+@keyframes stage-dot-pulse {
+  0%, 100% { opacity: 1;    transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.7); }
+}
+.stage-dot {
+  display: inline-block;
+  font-size: 0.55em;
+  vertical-align: middle;
+  animation: stage-dot-pulse 1s ease-in-out infinite;
+}
 
 /* Event log row — slides in from the left when added to the top of the list */
 @keyframes event-in {
