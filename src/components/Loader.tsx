@@ -2,6 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import Logo from "./Logo";
 
 interface LoaderProps {
+  /** Called the moment the loader begins its exit animation —
+   *  the page should reveal itself underneath at this instant. */
+  onExitStart: () => void;
+  /** Called once the loader has fully unmounted. */
   onComplete: () => void;
 }
 
@@ -13,28 +17,24 @@ const SERVICE_STRINGS = [
   "mvp_engineering",
 ];
 
-const TICK_DURATION = 2400;
-const HOLD_BEFORE_MORPH = 280;
-const MORPH_DURATION = 800;
-const HOLD_BEFORE_EXIT = 600;
-const EXIT_DURATION = 700;
+const TICK_DURATION = 2200;
+const HOLD_BEFORE_MORPH = 220;
+const MORPH_DURATION = 750;
+const HOLD_BEFORE_LIFT = 480;
+const LIFT_DURATION = 1100;
 
 /**
- * Loader — the brand reveal.
+ * Loader — counter ticks → wordmark morph → curtain lift.
  *
- *   Phase 1 (running):  bottom-left counter ticks 000.0 → 100.0 with the
- *                       service-string rotator above it.
- *   Phase 2 (morphing): the counter cross-fades & blurs out; the Kozai
- *                       wordmark — same position, same scale — fades & blurs
- *                       in, hairline drawing left-to-right.
- *   Phase 3 (exiting):  the entire field fades to reveal the page below.
- *
- * The loader IS the brand reveal. The wordmark is born from the counter.
+ * The whole field translates UP off-screen with a stiff cubic-bezier when
+ * exiting, revealing the page beneath. The page is mounted and animated
+ * into place concurrently (page-settle in Index), so the two motions
+ * dovetail rather than fade through black.
  */
-const Loader = ({ onComplete }: LoaderProps) => {
+const Loader = ({ onExitStart, onComplete }: LoaderProps) => {
   const [pct, setPct] = useState("000.0");
   const [serviceIdx, setServiceIdx] = useState(0);
-  const [phase, setPhase] = useState<"running" | "morphing" | "exiting">("running");
+  const [phase, setPhase] = useState<"running" | "morphing" | "lifting">("running");
   const startedAt = useRef<number | null>(null);
 
   useEffect(() => {
@@ -63,58 +63,69 @@ const Loader = ({ onComplete }: LoaderProps) => {
       setPhase("morphing");
     }, TICK_DURATION + HOLD_BEFORE_MORPH);
 
-    const exitTimer = window.setTimeout(() => {
-      setPhase("exiting");
-    }, TICK_DURATION + HOLD_BEFORE_MORPH + MORPH_DURATION + HOLD_BEFORE_EXIT);
+    const liftTimer = window.setTimeout(() => {
+      setPhase("lifting");
+      onExitStart();
+    }, TICK_DURATION + HOLD_BEFORE_MORPH + MORPH_DURATION + HOLD_BEFORE_LIFT);
 
     const unmountTimer = window.setTimeout(() => {
       document.documentElement.classList.remove("is-loading");
       onComplete();
-    }, TICK_DURATION + HOLD_BEFORE_MORPH + MORPH_DURATION + HOLD_BEFORE_EXIT + EXIT_DURATION);
+    }, TICK_DURATION + HOLD_BEFORE_MORPH + MORPH_DURATION + HOLD_BEFORE_LIFT + LIFT_DURATION);
 
     return () => {
       cancelAnimationFrame(raf);
       window.clearInterval(rotate);
       window.clearTimeout(morphTimer);
-      window.clearTimeout(exitTimer);
+      window.clearTimeout(liftTimer);
       window.clearTimeout(unmountTimer);
       document.documentElement.classList.remove("is-loading");
     };
-  }, [onComplete]);
+  }, [onExitStart, onComplete]);
 
   return (
     <div
-      className="fixed inset-0 z-[999999] flex items-center justify-center bg-paper"
-      style={{
-        opacity: phase === "exiting" ? 0 : 1,
-        transition: `opacity ${EXIT_DURATION}ms cubic-bezier(0.16, 1, 0.3, 1)`,
-        pointerEvents: phase === "exiting" ? "none" : "auto",
-      }}
-      aria-hidden={phase === "exiting"}
+      className={`loader-curtain fixed inset-0 z-[999999] flex items-center justify-center bg-paper ${
+        phase === "lifting" ? "is-leaving" : ""
+      }`}
+      aria-hidden={phase === "lifting"}
     >
-      {/* Top-left: system identifier */}
+      {/* Top corners — system identifiers */}
       <div className="absolute left-6 top-6 font-mono text-[11px] uppercase tracking-[0.22em] text-mute md:left-10 md:top-8">
         kozai · studio · est. 2026
       </div>
-
-      {/* Top-right: year */}
       <div className="absolute right-6 top-6 font-mono text-[11px] uppercase tracking-[0.22em] text-mute md:right-10 md:top-8">
         © 2026 — toronto, ca
       </div>
 
-      {/* Centred stage — counter morphs into wordmark, both occupy the same space */}
+      {/* Vertical hairlines drawing across the screen — adds depth */}
+      <div
+        aria-hidden
+        className="absolute inset-y-0 left-1/4 w-px bg-ink/5"
+        style={{
+          transformOrigin: "top",
+          transform: phase === "running" ? "scaleY(1)" : "scaleY(1)",
+          transition: "opacity 600ms ease",
+          opacity: phase === "lifting" ? 0 : 1,
+        }}
+      />
+      <div
+        aria-hidden
+        className="absolute inset-y-0 right-1/4 w-px bg-ink/5"
+        style={{ opacity: phase === "lifting" ? 0 : 1, transition: "opacity 600ms ease" }}
+      />
+
+      {/* Bottom-left stage — counter morphs into wordmark */}
       <div
         className="absolute left-6 bottom-6 md:bottom-12 md:left-10"
         style={{ minHeight: "clamp(3.25rem, 8.5vw, 7rem)" }}
       >
-        {/* Service rotator — only visible in running phase */}
         {phase === "running" && (
           <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.22em] text-mute">
             {`> ${SERVICE_STRINGS[serviceIdx]}`}
           </div>
         )}
 
-        {/* Counter or wordmark — same anchor, the morph happens via cross-fade */}
         <div className="relative">
           {phase === "running" && (
             <div
@@ -130,7 +141,8 @@ const Loader = ({ onComplete }: LoaderProps) => {
             </div>
           )}
           {phase === "morphing" && (
-            <div className="loader-counter-exit absolute inset-0 font-mono font-medium text-ink"
+            <div
+              className="loader-counter-exit absolute inset-0 font-mono font-medium text-ink"
               style={{
                 fontSize: "clamp(3.25rem, 8.5vw, 7rem)",
                 lineHeight: "0.9",
@@ -141,7 +153,7 @@ const Loader = ({ onComplete }: LoaderProps) => {
               100.0
             </div>
           )}
-          {(phase === "morphing" || phase === "exiting") && (
+          {(phase === "morphing" || phase === "lifting") && (
             <div className="loader-wordmark-enter text-ink">
               <Logo size={64} animate />
             </div>

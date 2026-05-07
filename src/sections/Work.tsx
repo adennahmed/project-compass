@@ -85,7 +85,7 @@ const Work = () => {
           {PROJECTS.map((p, i) => (
             <Reveal key={p.n} delay={50}>
               <article
-                data-magnetic
+
                 className="group relative grid grid-cols-12 gap-6 md:gap-10"
               >
                 {/* Index column — fixed-width side label */}

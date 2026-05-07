@@ -98,24 +98,24 @@ const Hero = ({ onContactClick }: HeroProps) => {
               </p>
               <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
                 <button
-                  data-magnetic
                   type="button"
                   onClick={onContactClick}
-                  className="group inline-flex items-center gap-3 bg-ink px-6 py-4 text-[14px] font-medium text-paper transition-colors hover:bg-signal"
+                  className="btn-slot bg-ink px-6 py-4 text-[14px] font-medium text-paper"
                 >
-                  <span>Start a project</span>
-                  <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-1">
-                    ↘
+                  <span className="btn-slot__label">
+                    Start a project <span aria-hidden>↘</span>
+                  </span>
+                  <span className="btn-slot__label--hover bg-signal">
+                    Let's build <span aria-hidden>↘</span>
                   </span>
                 </button>
                 <a
-                  data-magnetic
                   href="#work"
                   onClick={(e) => {
                     e.preventDefault();
                     document.getElementById("work")?.scrollIntoView({ behavior: "smooth" });
                   }}
-                  className="text-[14px] font-medium text-mute underline-offset-4 transition-colors hover:text-ink hover:underline"
+                  className="link-wipe text-[14px] font-medium text-mute hover:text-ink"
                 >
                   See selected work →
                 </a>

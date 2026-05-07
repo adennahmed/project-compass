@@ -32,16 +32,18 @@ const Approach = () => {
   return (
     <section
       id="approach"
-      className="relative bg-paper-2/70 px-6 py-32 md:px-10 md:py-40"
+      className="relative bg-ink px-6 py-32 text-paper md:px-10 md:py-40"
     >
       <div className="container-wide">
         <Reveal>
           <div className="mb-20 grid grid-cols-1 gap-8 md:grid-cols-12 md:items-end md:gap-12">
             <div className="md:col-span-3">
-              <div className="label">[ 02 — Approach ]</div>
+              <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-paper/50">
+                [ 02 — Approach ]
+              </div>
             </div>
             <div className="md:col-span-9">
-              <p className="max-w-[36ch] text-[15px] uppercase tracking-[0.18em] text-mute">
+              <p className="max-w-[36ch] text-[15px] uppercase tracking-[0.18em] text-paper/55">
                 Three things we say to every prospective client. They are the entire engagement model.
               </p>
             </div>
@@ -53,17 +55,17 @@ const Approach = () => {
             <article
               key={t.n}
               className={`grid grid-cols-1 gap-8 py-14 md:grid-cols-12 md:gap-12 md:py-20 ${
-                i > 0 ? "border-t border-hairline/15" : ""
+                i > 0 ? "border-t border-paper/10" : ""
               }`}
             >
-              {/* Left rail — number + body */}
+              {/* Left rail */}
               <div className="md:col-span-4">
                 <Reveal delay={i * 60}>
-                  <div className="mb-8 flex items-center gap-3 font-mono text-[12px] uppercase tracking-[0.22em] text-mute">
+                  <div className="mb-8 flex items-center gap-3 font-mono text-[12px] uppercase tracking-[0.22em] text-paper/55">
                     {t.n}
-                    <span aria-hidden className="h-px w-12 bg-ink/30" />
+                    <span aria-hidden className="h-px w-12 bg-paper/30" />
                   </div>
-                  <p className="max-w-[40ch] text-[16px] leading-[1.6] text-ink/80">
+                  <p className="max-w-[40ch] text-[16px] leading-[1.6] text-paper/75">
                     {t.body}
                   </p>
                 </Reveal>
@@ -72,7 +74,7 @@ const Approach = () => {
               {/* Right — the triad, monstrously large */}
               <div className="md:col-span-8">
                 <h3
-                  className="display text-ink"
+                  className="display text-paper"
                   style={{
                     fontSize: "clamp(2.25rem, 6.4vw, 5.75rem)",
                     fontWeight: 600,
@@ -80,18 +82,22 @@ const Approach = () => {
                     lineHeight: "0.96",
                   }}
                 >
-                  {t.words.map((w, wi) => (
-                    <span key={wi} className="mr-3 inline-block">
-                      <CharReveal
-                        stagger={22}
-                        delay={wi * 130}
-                        splitBy="char"
-                        className={wi === 1 && t.n === "02" ? "italic-editorial text-mute" : ""}
-                      >
-                        {w}
-                      </CharReveal>
-                    </span>
-                  ))}
+                  {t.words.map((w, wi) => {
+                    const isAccent =
+                      (t.n === "02" && wi === 1) || (t.n === "03" && wi === 1);
+                    return (
+                      <span key={wi} className="mr-3 inline-block">
+                        <CharReveal
+                          stagger={22}
+                          delay={wi * 130}
+                          splitBy="char"
+                          className={isAccent ? "italic-editorial text-signal" : ""}
+                        >
+                          {w}
+                        </CharReveal>
+                      </span>
+                    );
+                  })}
                 </h3>
               </div>
             </article>

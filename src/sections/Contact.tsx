@@ -28,7 +28,7 @@ const Contact = ({ onContactClick }: ContactProps) => {
 
               <div className="mt-12 flex flex-col items-start gap-5">
                 <button
-                  data-magnetic
+
                   type="button"
                   onClick={onContactClick}
                   className="group inline-flex items-center gap-3 bg-ink px-7 py-5 text-[15px] font-medium text-paper transition-colors hover:bg-signal"
@@ -37,7 +37,7 @@ const Contact = ({ onContactClick }: ContactProps) => {
                   <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-1">↘</span>
                 </button>
                 <a
-                  data-magnetic
+
                   href="mailto:hello@kozai.ca"
                   className="text-[14px] font-medium text-mute underline-offset-4 transition-colors hover:text-ink hover:underline"
                 >

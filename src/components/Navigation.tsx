@@ -55,7 +55,7 @@ const Navigation = ({ onContactClick }: NavigationProps) => {
     >
       <div className="container-wide flex h-16 items-center justify-between md:h-20">
         <a
-          data-magnetic
+
           href="#top"
           onClick={goTop}
           className="flex items-center text-ink transition-colors hover:text-signal"
@@ -67,29 +67,24 @@ const Navigation = ({ onContactClick }: NavigationProps) => {
         <nav className="hidden items-center gap-9 md:flex">
           {NAV_ITEMS.map((item, i) => (
             <a
-              data-magnetic
               key={item.href}
               href={item.href}
               onClick={(e) => handleAnchor(e, item.href)}
-              className="group flex items-center gap-2 text-[13px] font-medium tracking-tight text-mute transition-colors hover:text-ink"
+              className="nav-item text-[13px] font-medium tracking-tight text-ink/80 hover:text-ink"
             >
-              <span className="font-mono text-[10px] text-mute/60 group-hover:text-signal">
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              {item.label}
+              <span className="nav-item__num">{String(i + 1).padStart(2, "0")}</span>
+              <span className="nav-item__label">{item.label}</span>
             </a>
           ))}
         </nav>
 
         <button
-          data-magnetic
           type="button"
           onClick={onContactClick}
-          className="group inline-flex items-center gap-2 border border-ink/15 bg-transparent px-4 py-2 text-[13px] font-medium text-ink transition-all hover:border-ink hover:bg-ink hover:text-paper"
+          className="btn-fill border border-ink/20 bg-transparent px-4 py-2 text-[13px] font-medium text-ink"
         >
-          <span>Start a project</span>
-          <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-0.5">
-            ↘
+          <span className="inline-flex items-center gap-2">
+            Start a project <span aria-hidden>↘</span>
           </span>
         </button>
       </div>

@@ -16,7 +16,7 @@ const Footer = () => {
               clients across North America.
             </p>
             <a
-              data-magnetic
+
               href="mailto:hello@kozai.ca"
               className="mt-7 inline-block text-[16px] text-paper underline-offset-4 transition-colors hover:text-signal hover:underline"
             >
@@ -36,7 +36,7 @@ const Footer = () => {
               ].map(([label, href]) => (
                 <li key={href}>
                   <a
-                    data-magnetic
+
                     href={href}
                     className="text-paper/85 underline-offset-4 transition-colors hover:text-signal hover:underline"
                   >
@@ -74,10 +74,10 @@ const Footer = () => {
             © {year} Kozai Software Studio · Built with intent.
           </div>
           <div className="flex gap-6 text-[12px]">
-            <a data-magnetic href="/privacy" className="text-paper/55 transition-colors hover:text-paper">
+            <a href="/privacy" className="text-paper/55 transition-colors hover:text-paper">
               Privacy
             </a>
-            <a data-magnetic href="/terms" className="text-paper/55 transition-colors hover:text-paper">
+            <a href="/terms" className="text-paper/55 transition-colors hover:text-paper">
               Terms
             </a>
           </div>

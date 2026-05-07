@@ -61,7 +61,7 @@ const Studio = () => {
         <div className="grid grid-cols-1 gap-12 md:grid-cols-2 md:gap-16">
           {MEMBERS.map((m, i) => (
             <Reveal key={m.name} delay={i * 100}>
-              <article data-magnetic className="group flex flex-col gap-6">
+              <article className="group flex flex-col gap-6">
                 <div className="relative aspect-[4/5] w-full overflow-hidden bg-paper-3">
                   {/* Image — desaturated by default, restores to color on hover */}
                   <img
