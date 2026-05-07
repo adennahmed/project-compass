@@ -12,6 +12,7 @@ interface Member {
   italicAt: number;
   bio: string;
   image: string;
+  linkedin: string;
 }
 
 const MEMBERS: Member[] = [
@@ -24,6 +25,7 @@ const MEMBERS: Member[] = [
     bio:
       "Builds the operational platforms mid-market and enterprise teams depend on. Background spans data infrastructure, distributed services, and the interfaces operators rely on every day.",
     image: adenImg,
+    linkedin: "https://www.linkedin.com/in/adenahmed/",
   },
   {
     initials: "MK",
@@ -34,8 +36,22 @@ const MEMBERS: Member[] = [
     bio:
       "Distributed systems and reliability engineering. Deep experience with high-availability architectures, observability, and the edge cases that determine whether a system can be trusted under load.",
     image: muhammadImg,
+    linkedin: "https://www.linkedin.com/in/ehabkhan/",
   },
 ];
+
+const LinkedInGlyph = ({ size = 13 }: { size?: number }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    aria-hidden
+    focusable="false"
+  >
+    <path d="M19 0h-14C2.24 0 0 2.24 0 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5V5c0-2.76-2.24-5-5-5zM8 19H5V8h3v11zM6.5 6.73c-.97 0-1.75-.79-1.75-1.76s.78-1.76 1.75-1.76 1.75.79 1.75 1.76-.78 1.76-1.75 1.76zM20 19h-3v-5.6c0-3.37-4-3.11-4 0V19h-3V8h3v1.77c1.4-2.59 7-2.78 7 2.48V19z" />
+  </svg>
+);
 
 const Studio = () => {
   const [active, setActive] = useState<number | null>(null);
@@ -231,11 +247,20 @@ const MemberCard = ({
               </p>
               <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2">
                 <a
-                  href={`mailto:hello@kozai.ca?subject=${encodeURIComponent(`For ${member.name}`)}`}
+                  href={member.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   onClick={(e) => e.stopPropagation()}
-                  className="link-wipe font-mono text-[11px] uppercase tracking-[0.22em] text-paper/85 hover:text-paper"
+                  className="group inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-paper/85 transition-colors hover:text-paper"
+                  aria-label={`Connect with ${member.name} on LinkedIn`}
                 >
-                  Connect ↘
+                  <span
+                    aria-hidden
+                    className="inline-flex h-6 w-6 items-center justify-center border border-paper/25 text-paper/85 transition-colors group-hover:border-signal group-hover:bg-signal group-hover:text-paper"
+                  >
+                    <LinkedInGlyph />
+                  </span>
+                  <span className="link-wipe">Connect ↘</span>
                 </a>
                 <button
                   type="button"

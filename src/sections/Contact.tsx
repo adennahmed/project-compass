@@ -53,8 +53,8 @@ const Contact = ({ onContactClick }: ContactProps) => {
                   ["Hours", "mon–fri · 09–18 ET"],
                   ["Studio", "toronto, ca · remote"],
                   ["Year", "est. 2026"],
-                  ["Stack", "TS · Go · Rust · SQL"],
                   ["Cycle", "weekly demos"],
+                  ["Approach", "right tool, every time"],
                 ].map(([label, value]) => (
                   <div key={label}>
                     <dt className="font-mono text-[11px] uppercase tracking-[0.22em] text-mute">
@@ -64,6 +64,36 @@ const Contact = ({ onContactClick }: ContactProps) => {
                   </div>
                 ))}
               </dl>
+
+              {/* Capabilities — broader breadth than a 4-language list.
+                  Successful studios sell capability surface, not language picks. */}
+              <div className="mt-10 border-l border-hairline/20 pl-8 md:pl-12">
+                <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-mute">
+                  Capabilities
+                </div>
+                <div className="mt-3 flex flex-wrap gap-1.5">
+                  {[
+                    "Web platforms",
+                    "Mobile",
+                    "Backend services",
+                    "Data infra",
+                    "Cloud + DevOps",
+                    "Realtime",
+                    "ML integration",
+                    "Embedded",
+                  ].map((c) => (
+                    <span
+                      key={c}
+                      className="border border-hairline/20 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-ink/85 transition-colors hover:border-ink hover:text-ink"
+                    >
+                      {c}
+                    </span>
+                  ))}
+                </div>
+                <p className="mt-4 max-w-[36ch] text-[13px] leading-[1.55] text-mute">
+                  We're not married to a stack — every project lands on the right tools, chosen against the problem.
+                </p>
+              </div>
             </div>
           </div>
         </Reveal>

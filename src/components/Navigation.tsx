@@ -39,7 +39,7 @@ const Navigation = ({ onContactClick }: NavigationProps) => {
       const dy = y - lastY.current;
       lastY.current = y;
 
-      // Top of page → integrated
+      // At/near top → integrated header (sits flush with hero).
       if (y < 80) {
         setMode("integrated");
         accumDown.current = 0;
@@ -47,14 +47,17 @@ const Navigation = ({ onContactClick }: NavigationProps) => {
         return;
       }
 
+      // Lenis dispatches many small-delta scroll events. Lower thresholds
+      // so the pill appears reliably on any meaningful upward intent and
+      // hides only on sustained downward scroll.
       if (dy > 0) {
         accumDown.current += dy;
         accumUp.current = 0;
-        if (accumDown.current > 40) setMode("hidden");
+        if (accumDown.current > 60) setMode("hidden");
       } else if (dy < 0) {
         accumUp.current += Math.abs(dy);
         accumDown.current = 0;
-        if (accumUp.current > 12) setMode("pill");
+        if (accumUp.current > 4) setMode("pill");
       }
     };
     window.addEventListener("scroll", onScroll, { passive: true });
