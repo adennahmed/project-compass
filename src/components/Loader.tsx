@@ -156,9 +156,7 @@ const Loader = ({ onExitStart, onComplete }: LoaderProps) => {
           )}
           {(phase === "morphing" || phase === "lifting") && (
             <div className="loader-wordmark-enter text-ink">
-              {/* Smaller on mobile so the wide wordmark doesn't overflow */}
-              <Logo size={44} className="md:hidden" animate />
-              <Logo size={64} className="hidden md:block" animate />
+              <Logo size={64} animate />
             </div>
           )}
         </div>

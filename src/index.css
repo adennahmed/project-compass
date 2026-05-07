@@ -387,11 +387,17 @@ section[data-snap] {
 /* ─── Nav: integrated top bar → floating pill → slide-away on down-scroll ─ */
 .nav-shell {
   position: fixed;
+  /* Always occupy the full viewport width so fixed positioning never
+     collapses to the top-left when mode classes change. Pill centering
+     is handled purely by the inner .nav-pill element. */
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
   z-index: 50;
   transition:
     transform 0.55s cubic-bezier(0.65, 0, 0.35, 1),
-    padding 0.45s cubic-bezier(0.65, 0, 0.35, 1),
-    top 0.45s cubic-bezier(0.65, 0, 0.35, 1);
+    padding 0.45s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 /* INTEGRATED — full-width header, paper background, ink text. Hero. */
@@ -482,14 +488,9 @@ section[data-snap] {
   color: rgb(var(--paper));
 }
 
-/* HIDDEN — slides cleanly up and off-screen; no opacity fade */
+/* HIDDEN — slides the full-width shell cleanly up off-screen */
 .nav-shell.mode-hidden {
-  top: 16px;
-  left: 50%;
-  right: auto;
-  width: auto;
-  transform: translate(-50%, -160%);
-  opacity: 1;
+  transform: translateY(-120%);
   pointer-events: none;
 }
 
