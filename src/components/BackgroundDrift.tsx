@@ -1,14 +1,20 @@
 import { useEffect, useState } from "react";
 
 /**
- * BackgroundDrift — scroll-driven background with a subtle technical grid.
+ * BackgroundDrift — scroll-driven background with directional color temperature.
  *
- * Layers:
- *  1. Warm paper base that drifts slightly deeper as you scroll
- *  2. A very faint dot grid (engineering paper feel) — precise and intentional
- *  3. A soft top-left signal-tinted radial for warmth
+ * No blobs. No dots. Instead, two angular color temperature washes at
+ * precise, non-obvious angles create depth without calling attention to
+ * themselves:
  *
- * Sections with their own opaque bg (Approach, Studio, Footer) paint over this.
+ *  1. Warm paper base that darkens subtly as you scroll.
+ *  2. A narrow amber/ochre wedge from the top-left corner — like morning
+ *     light raking across the page at 22°. Fades as you scroll deeper.
+ *  3. A cool blue-slate wedge from the bottom-right — architectural,
+ *     like shadow falling the opposite direction. Grows slightly with scroll.
+ *
+ * Both washes are linear (not radial) to read as directional light, not
+ * as glows. Together they give the warm paper a sense of time and place.
  */
 const BackgroundDrift = () => {
   const [tint, setTint] = useState(0);
@@ -43,13 +49,10 @@ const BackgroundDrift = () => {
   const g = Math.round(lerp(a.g, b.g, f));
   const bl = Math.round(lerp(a.b, b.b, f));
 
-  // Dot grid: 1px ink-coloured dots on a 32px grid.
-  // Opacity is kept very low (6–7%) so it's a texture, not a distraction.
-  // The dot colour is derived from the current paper tone so it scales
-  // naturally as the background darkens with scroll.
-  const dotAlpha = 0.07 + tint * 0.03; // 7% → 10% as page deepens
-  const dotColor = `rgba(${r - 40}, ${g - 40}, ${bl - 40}, ${dotAlpha})`;
-  const dotGrid = `radial-gradient(circle, ${dotColor} 1px, transparent 1px)`;
+  // Warm amber wash — top-left, 22° angle, fades as you scroll down
+  const warmOpacity = lerp(0.10, 0.04, tint);
+  // Cool slate wash — bottom-right, 202° angle, grows slightly with scroll
+  const coolOpacity = lerp(0.05, 0.09, tint);
 
   return (
     <>
@@ -60,22 +63,23 @@ const BackgroundDrift = () => {
         style={{ backgroundColor: `rgb(${r}, ${g}, ${bl})` }}
       />
 
-      {/* Dot grid overlay — subtle engineering-paper texture */}
+      {/* Warm amber wedge — top-left, rakes across at 22° like morning light */}
       <div
         aria-hidden
         className="pointer-events-none fixed inset-0 -z-19"
         style={{
-          backgroundImage: dotGrid,
-          backgroundSize: "32px 32px",
+          background: `linear-gradient(22deg, rgba(210, 130, 40, ${warmOpacity}) 0%, transparent 52%)`,
+          transition: "opacity 0.8s ease",
         }}
       />
 
-      {/* Warm accent — very soft top-left bloom, ties to the signal palette */}
+      {/* Cool slate wedge — bottom-right, 202° counter-direction */}
       <div
         aria-hidden
         className="pointer-events-none fixed inset-0 -z-18"
         style={{
-          background: `radial-gradient(120% 55% at 8% 0%, rgba(232,79,27,0.05) 0%, transparent 65%)`,
+          background: `linear-gradient(202deg, rgba(90, 110, 140, ${coolOpacity}) 0%, transparent 50%)`,
+          transition: "opacity 0.8s ease",
         }}
       />
     </>

@@ -671,12 +671,28 @@ section[data-snap] {
   text-overflow: clip;
 }
 
-/* ─── Deploy pipeline (Operator Panel) — JS-driven fill via inline style ── */
-/* pipeline-fill: class kept for targeting; transform is set via inline style
-   in the component (scaleX driven by rAF tick), so no CSS animation here.   */
+/* ─── Deploy pipeline (Operator Panel) — CSS-driven fill animation ──────── */
+/* Bars are filled purely by CSS. The component changes only the `status`
+   class (pending → filling → done) every 2.4s and bumps `key` on the fill
+   div so the CSS animation restarts cleanly from scaleX(0).                 */
+@keyframes bar-fill {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
 .pipeline-fill {
   transform-origin: left center;
-  /* no animation — transform is applied via inline style */
+  transform: scaleX(0);
+}
+.pipeline-fill.filling {
+  animation: bar-fill 2.4s linear forwards;
+}
+.pipeline-fill.done {
+  transform: scaleX(1);
+  animation: none;
+}
+.pipeline-fill.pending {
+  transform: scaleX(0);
+  animation: none;
 }
 
 /* pipeline-glow: subtle shimmer on the active stage label */
