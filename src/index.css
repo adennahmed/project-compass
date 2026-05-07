@@ -530,9 +530,9 @@ section[data-snap] {
 /* ─── Studio: eye-strip → in-place open. No separate detail panel. ── */
 .studio-card {
   position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  row-gap: 0;
+  display: flex;
+  flex-direction: column;
+  align-self: start;
   cursor: pointer;
   transition: opacity 0.5s ease;
 }
@@ -548,7 +548,7 @@ section[data-snap] {
               column-gap 0.9s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .studio-card.is-active .studio-profile-panel {
-  grid-template-columns: minmax(116px, 0.46fr) minmax(0, 1fr);
+  grid-template-columns: minmax(160px, 0.62fr) minmax(0, 1fr);
   column-gap: 1.35rem;
 }
 
