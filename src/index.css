@@ -384,7 +384,7 @@ section[data-snap] {
 .bg-ink-section .text-ink { color: rgb(var(--paper)); }
 .bg-ink-section .border-hairline\/15 { border-color: rgb(var(--paper) / 0.15); }
 
-/* ─── Nav: integrated at top → pill on scroll → hidden on scroll-down ─ */
+/* ─── Nav: integrated top bar → floating pill → slide-away on down-scroll ─ */
 .nav-shell {
   position: fixed;
   z-index: 50;
@@ -400,8 +400,15 @@ section[data-snap] {
   left: 0;
   right: 0;
   width: 100%;
+  transition:
+    transform 0.78s cubic-bezier(0.16, 1, 0.3, 1),
+    padding 0.68s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, padding;
+}
+
+/* INTEGRATED — full-width header, paper background, ink text. Hero. */
+.nav-shell.mode-integrated {
   transform: none;
-  opacity: 1;
   padding: 1.25rem 1.5rem;
   pointer-events: auto;
 }
@@ -424,6 +431,17 @@ section[data-snap] {
   box-shadow: none;
   backdrop-filter: none;
 }
+
+.nav-pill {
+  transition:
+    max-width 0.78s cubic-bezier(0.16, 1, 0.3, 1),
+    padding 0.78s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    border-radius 0.78s cubic-bezier(0.16, 1, 0.3, 1),
+    color 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: max-width, padding, border-radius;
+}
 .nav-shell.mode-integrated .nav-pill__divider { display: none; }
 .nav-shell.mode-integrated .nav-pill__cta {
   background: rgb(var(--ink));
@@ -436,27 +454,23 @@ section[data-snap] {
 
 /* PILL — centred, rounded, dark ink chip. Past hero, scrolling up. */
 .nav-shell.mode-pill {
-  top: 16px;
-  left: 50%;
-  right: auto;
-  width: auto;
-  transform: translate(-50%, 0);
-  opacity: 1;
-  padding: 0;
+  transform: translate3d(0, 16px, 0);
+  padding: 0 1rem;
   pointer-events: auto;
 }
 .nav-shell.mode-pill .nav-pill {
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  justify-content: center;
   gap: 1.4rem;
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
   padding: 0.55rem 0.55rem 0.55rem 1.1rem;
   background: rgb(var(--ink));
   color: rgb(var(--paper));
   border-radius: 999px;
   border: 1px solid rgb(var(--paper) / 0.08);
-  box-shadow:
-    0 12px 32px rgb(var(--ink) / 0.18),
-    0 1px 0 rgb(var(--paper) / 0.04) inset;
   backdrop-filter: blur(12px);
 }
 .nav-shell.mode-pill .nav-pill__cta {
@@ -477,6 +491,22 @@ section[data-snap] {
   transform: translate(-50%, -160%);
   opacity: 1;
   pointer-events: none;
+}
+
+.nav-shell.mode-hidden .nav-pill {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.4rem;
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0.55rem 0.55rem 0.55rem 1.1rem;
+  background: rgb(var(--ink));
+  color: rgb(var(--paper));
+  border-radius: 999px;
+  border: 1px solid rgb(var(--paper) / 0.08);
+  backdrop-filter: blur(12px);
 }
 
 .nav-pill__divider {
@@ -514,25 +544,58 @@ section[data-snap] {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  align-self: start;
+  min-width: 0;
   cursor: pointer;
   transition: opacity 0.5s ease;
 }
 .studio-card.is-dimmed { opacity: 0.42; }
 
+.studio-profile-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0fr);
+  column-gap: 0;
+  align-items: start;
+  height: 120px;
+  overflow: hidden;
+  transition: grid-template-columns 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+              column-gap 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+              height 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.studio-card.is-active .studio-profile-panel {
+  grid-template-columns: minmax(180px, 0.7fr) minmax(0, 1fr);
+  column-gap: 1.35rem;
+  height: 320px;
+}
+
+.studio-profile-copy {
+  min-width: 0;
+  opacity: 0;
+  transform: translateX(-18px);
+  padding-top: 0.2rem;
+  transition: opacity 0.45s ease 0.16s,
+              transform 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.04s;
+}
+.studio-card.is-active .studio-profile-copy {
+  opacity: 1;
+  transform: translateX(0);
+}
+
 /* Slit + open container — same element, aspect-ratio animates */
 .studio-portrait {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 4;
+  min-height: 0;
+  height: 120px;
   overflow: hidden;
   background: rgb(var(--ink) / 0.6);
   border: 1px solid rgb(var(--paper) / 0.08);
-  transition: aspect-ratio 0.85s cubic-bezier(0.65, 0, 0.35, 1),
+  transition: height 0.9s cubic-bezier(0.22, 1, 0.36, 1),
               border-color 0.5s ease;
+  transform: translateZ(0);
 }
 .studio-card.is-active .studio-portrait {
-  aspect-ratio: 16 / 9;
+  height: 320px;
   border-color: rgb(var(--signal) / 0.55);
 }
 
@@ -544,14 +607,19 @@ section[data-snap] {
   height: 100%;
   display: block;
   object-fit: cover;
-  object-position: 50% 25%;
+  object-position: var(--eye-pos, 50% 30%);
   filter: grayscale(100%) contrast(1.05);
-  transition: object-position 0.85s cubic-bezier(0.65, 0, 0.35, 1),
+  transform: scale(1.12);
+  transform-origin: 50% 30%;
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+              object-position 0.9s cubic-bezier(0.22, 1, 0.36, 1),
               filter 0.7s ease;
+  will-change: transform, object-position;
 }
 .studio-card:hover .studio-portrait__img { filter: grayscale(55%) contrast(1.08); }
 .studio-card.is-active .studio-portrait__img {
-  object-position: 50% 35%;
+  object-position: var(--eye-pos-open, 50% 34%);
+  transform: scale(1.02);
   filter: grayscale(0%) contrast(1.05);
 }
 
@@ -579,26 +647,27 @@ section[data-snap] {
 
 /* Bio swap — replaces the triad inside the active card */
 .studio-bio {
-  display: grid;
-  grid-template-rows: 0fr;
+  display: block;
   opacity: 0;
-  transition: grid-template-rows 0.7s cubic-bezier(0.65, 0, 0.35, 1),
-              opacity 0.5s ease 0.1s;
+  transform: translateY(8px);
+  transition: opacity 0.45s ease 0.22s,
+              transform 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.12s;
 }
 .studio-card.is-active .studio-bio {
-  grid-template-rows: 1fr;
   opacity: 1;
+  transform: translateY(0);
 }
-.studio-bio > div { overflow: hidden; }
+
+.studio-triad-wrap {
+  position: relative;
+  margin-top: 0.85rem;
+}
 
 .studio-triad {
-  transition: opacity 0.45s ease, transform 0.55s cubic-bezier(0.65, 0, 0.35, 1);
-}
-.studio-card.is-active .studio-triad {
-  opacity: 0;
-  transform: translateY(-8px);
-  pointer-events: none;
-  position: absolute;
+  font-size: clamp(1.35rem, 2vw, 1.85rem) !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
 }
 
 /* ─── Deploy pipeline (Operator Panel) — stages fill in sequence ──── */

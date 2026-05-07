@@ -17,32 +17,28 @@ type NavMode = "integrated" | "pill" | "hidden";
 
 /**
  * Three-mode navigation:
- *   1. integrated — at the top of the hero, full-width, paper background,
- *      ink text. Visually part of the page header.
- *   2. pill — once scrolled past the hero, a centred dark pill. Appears
- *      when the user scrolls UP (intent to navigate).
- *   3. hidden — past hero, scrolling DOWN with intent. Slid off-screen.
+ *   1. integrated — resting state at the top of the hero.
+ *   2. pill — appears immediately after the first scroll movement.
+ *   3. hidden — only after the pill has had room to settle, then slides away on down-scroll.
  *
- * Mode resolution lives entirely in this component; the visual chrome
- * is owned by the .nav-shell.mode-* classes in index.css.
+ * The shell stays full-width in CSS so integrated → pill is a real morph,
+ * not a layout jump between fixed positioning models.
  */
 const Navigation = ({ onContactClick }: NavigationProps) => {
   const [mode, setMode] = useState<NavMode>("integrated");
 
   useEffect(() => {
-    // rAF-based detection instead of scroll events.
-    // Lenis animates scrollY per-frame and may not reliably fire window
-    // "scroll" events, or fires them with tiny deltas that confuse
-    // accumulator logic. Polling scrollY on every animation frame is
-    // simpler, always accurate, and works regardless of scroll library.
+    const TOP_LOCK = 6;
+    const HIDE_AFTER = 420;
     let prevY = window.scrollY;
-    let accumDown = 0;
-    let lastMode: NavMode = window.scrollY < 80 ? "integrated" : "pill";
+    let lastMode: NavMode = prevY <= TOP_LOCK ? "integrated" : "pill";
+    let pillSettledAt = lastMode === "pill" ? performance.now() : 0;
     let rafId: number;
 
     const set = (m: NavMode) => {
       if (m !== lastMode) {
         lastMode = m;
+        if (m === "pill") pillSettledAt = performance.now();
         setMode(m);
       }
     };
@@ -50,28 +46,23 @@ const Navigation = ({ onContactClick }: NavigationProps) => {
     const tick = () => {
       const y = window.scrollY;
       const dy = y - prevY;
-      prevY = y;
 
-      if (y < 80) {
-        // Hero zone — integrated header flush with page top.
+      if (y <= TOP_LOCK) {
         set("integrated");
-        accumDown = 0;
-      } else if (dy > 0) {
-        // Actively scrolling down — accumulate and hide after 80 px.
-        accumDown += dy;
-        if (accumDown > 80) set("hidden");
-      } else {
-        // Stopped OR scrolling up — always show the pill immediately.
-        // This fires when a snap settles (dy === 0 for N frames) so the
-        // nav reappears the moment the page comes to rest between sections.
-        accumDown = 0;
+      } else if (y < HIDE_AFTER || lastMode === "integrated") {
+        // First scroll movement always morphs the top bar into the floating pill.
+        set("pill");
+      } else if (dy > 0.8 && performance.now() - pillSettledAt > 900) {
+        set("hidden");
+      } else if (dy < -0.8) {
         set("pill");
       }
+
+      prevY = y;
 
       rafId = requestAnimationFrame(tick);
     };
 
-    // Initialise immediately so the correct mode shows on mount.
     set(lastMode);
     rafId = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(rafId);
