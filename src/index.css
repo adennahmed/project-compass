@@ -440,11 +440,12 @@ section[data-snap] {
   pointer-events: auto;
 }
 .nav-shell.mode-pill .nav-pill {
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  justify-content: center;
   gap: 1.4rem;
-  width: max-content;
-  max-width: calc(100vw - 2rem);
+  width: 100%;
+  max-width: 640px;
   margin: 0 auto;
   padding: 0.55rem 0.55rem 0.55rem 1.1rem;
   background: rgb(var(--ink));
@@ -470,11 +471,12 @@ section[data-snap] {
 }
 
 .nav-shell.mode-hidden .nav-pill {
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  justify-content: center;
   gap: 1.4rem;
-  width: max-content;
-  max-width: calc(100vw - 2rem);
+  width: 100%;
+  max-width: 640px;
   margin: 0 auto;
   padding: 0.55rem 0.55rem 0.55rem 1.1rem;
   background: rgb(var(--ink));
