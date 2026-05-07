@@ -63,8 +63,9 @@ const Footer = () => {
         {/* Wordmark supersize — scales to container width via SVG natural width */}
         <div className="-mx-1 overflow-hidden py-12 md:py-16">
           <Logo
-            className="block w-full text-paper"
-            style={{ height: "auto" }}
+            variant="white"
+            className="block w-full"
+            style={{ height: "auto", width: "100%" }}
             size={220}
           />
         </div>

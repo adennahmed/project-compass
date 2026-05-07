@@ -96,7 +96,7 @@ const Navigation = ({ onContactClick }: NavigationProps) => {
           }`}
           aria-label="Kozai — home"
         >
-          <Logo size={mode === "integrated" ? 22 : 16} />
+          <Logo size={mode === "integrated" ? 22 : 16} variant={mode === "integrated" ? "black" : "white"} />
         </a>
         <span className="nav-pill__divider" aria-hidden />
 
