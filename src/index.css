@@ -530,9 +530,10 @@ section[data-snap] {
 /* ─── Studio: eye-strip → in-place open. No separate detail panel. ── */
 .studio-card {
   position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  row-gap: 0;
+  display: flex;
+  flex-direction: column;
+  align-self: start;
+  min-width: 0;
   cursor: pointer;
   transition: opacity 0.5s ease;
 }
@@ -543,13 +544,16 @@ section[data-snap] {
   grid-template-columns: minmax(0, 1fr) minmax(0, 0fr);
   column-gap: 0;
   align-items: start;
+  height: 120px;
   overflow: hidden;
   transition: grid-template-columns 0.9s cubic-bezier(0.22, 1, 0.36, 1),
-              column-gap 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+              column-gap 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+              height 0.9s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .studio-card.is-active .studio-profile-panel {
-  grid-template-columns: minmax(116px, 0.46fr) minmax(0, 1fr);
+  grid-template-columns: minmax(180px, 0.7fr) minmax(0, 1fr);
   column-gap: 1.35rem;
+  height: 320px;
 }
 
 .studio-profile-copy {
@@ -644,12 +648,14 @@ section[data-snap] {
 
 .studio-triad-wrap {
   position: relative;
-  margin-top: 1.25rem;
+  margin-top: 0.85rem;
 }
 
 .studio-triad {
+  font-size: clamp(1.35rem, 2vw, 1.85rem) !important;
   white-space: nowrap;
-  font-size: clamp(1.5rem, 2.4vw, 2.05rem) !important;
+  overflow: hidden;
+  text-overflow: clip;
 }
 
 /* ─── Deploy pipeline (Operator Panel) — stages fill in sequence ──── */
