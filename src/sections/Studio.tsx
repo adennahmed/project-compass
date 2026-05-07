@@ -13,6 +13,8 @@ interface Member {
   bio: string;
   image: string;
   linkedin: string;
+  eyePos: string; // object-position for the closed eye-strip
+  eyePosOpen: string; // object-position when expanded
 }
 
 const MEMBERS: Member[] = [
@@ -26,6 +28,8 @@ const MEMBERS: Member[] = [
       "Builds the operational platforms mid-market and enterprise teams depend on. Background spans data infrastructure, distributed services, and the interfaces operators rely on every day.",
     image: adenImg,
     linkedin: "https://www.linkedin.com/in/adenahmed/",
+    eyePos: "50% 30%",
+    eyePosOpen: "50% 36%",
   },
   {
     initials: "MK",
@@ -37,6 +41,8 @@ const MEMBERS: Member[] = [
       "Distributed systems and reliability engineering. Deep experience with high-availability architectures, observability, and the edge cases that determine whether a system can be trusted under load.",
     image: muhammadImg,
     linkedin: "https://www.linkedin.com/in/ehabkhan/",
+    eyePos: "50% 30%",
+    eyePosOpen: "50% 34%",
   },
 ];
 
@@ -175,6 +181,10 @@ const MemberCard = ({
               alt={`${member.name} — ${member.role}`}
               className="studio-portrait__img"
               loading="lazy"
+              style={{
+                ["--eye-pos" as any]: member.eyePos,
+                ["--eye-pos-open" as any]: member.eyePosOpen,
+              }}
             />
             <div className="pointer-events-none absolute left-3 top-3 font-mono text-[10px] uppercase tracking-[0.22em] text-paper/65">
               {String(index + 1).padStart(2, "0")} / 02
