@@ -550,7 +550,7 @@ section[data-snap] {
               border-color 0.5s ease;
 }
 .studio-card.is-active .studio-portrait {
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 4 / 5;
   border-color: rgb(var(--signal) / 0.55);
 }
 
@@ -569,8 +569,10 @@ section[data-snap] {
 }
 .studio-card:hover .studio-portrait__img { filter: grayscale(55%) contrast(1.08); }
 .studio-card.is-active .studio-portrait__img {
-  object-position: 50% 35%;
+  object-fit: contain;
+  object-position: 50% 50%;
   filter: grayscale(0%) contrast(1.05);
+  background: rgb(var(--ink));
 }
 
 /* Cursor-tracking pill */
