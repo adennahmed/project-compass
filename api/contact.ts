@@ -186,58 +186,77 @@ function confirmationEmail(f: Record<string, string>): string {
 }
 
 // ─── Handler ──────────────────────────────────────────────────────────────
+// Vercel Node.js runtime: req.body is auto-parsed when Content-Type is JSON.
+// Using a loose type signature so we don't need @vercel/node as a dep.
 
-export default async function handler(
-  req: { method: string; json: () => Promise<Record<string, string>> },
-  res: {
-    status: (code: number) => {
-      json: (body: unknown) => void;
-    };
-  }
-) {
+interface VercelReq {
+  method?: string;
+  body?: Record<string, string> | string;
+  headers?: Record<string, string | string[] | undefined>;
+}
+interface VercelRes {
+  status: (code: number) => VercelRes;
+  json: (body: unknown) => VercelRes;
+  send: (body: unknown) => VercelRes;
+  setHeader: (key: string, value: string) => VercelRes;
+}
+
+export default async function handler(req: VercelReq, res: VercelRes) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
   if (!process.env.RESEND_API_KEY) {
-    console.error("RESEND_API_KEY not set");
+    console.error("[contact] RESEND_API_KEY not set");
     return res.status(500).json({ error: "Email service not configured" });
   }
 
-  let body: Record<string, string>;
+  // Body comes in pre-parsed on Node runtime; fall back to JSON.parse if it's a string.
+  let body: Record<string, string> = {};
   try {
-    body = await req.json();
-  } catch {
+    if (typeof req.body === "string") body = JSON.parse(req.body);
+    else if (req.body && typeof req.body === "object") body = req.body as Record<string, string>;
+  } catch (err) {
+    console.error("[contact] body parse failed:", err);
     return res.status(400).json({ error: "Invalid request body" });
   }
 
   const { firstName, lastName, email } = body;
 
   if (!firstName || !lastName || !email) {
+    console.error("[contact] missing required fields", { firstName, lastName, email });
     return res.status(400).json({ error: "Missing required fields" });
   }
 
   try {
     // Send notification to Kozai
-    await resend.emails.send({
+    const adminRes = await resend.emails.send({
       from: `Kozai Inquiries <hello@kozai.ca>`,
       to: STUDIO_EMAIL,
       replyTo: email,
       subject: `New inquiry · ${firstName} ${lastName} (${body.role ?? "—"}) · ${body.businessName ?? ""}`,
       html: adminEmail(body),
     });
+    if (adminRes.error) {
+      console.error("[contact] admin send error:", adminRes.error);
+      return res.status(500).json({ error: "Failed to send admin email", detail: adminRes.error });
+    }
 
     // Send confirmation to the submitter
-    await resend.emails.send({
+    const confirmRes = await resend.emails.send({
       from: `Kozai <hello@kozai.ca>`,
       to: email,
       subject: `We received your inquiry — Kozai`,
       html: confirmationEmail(body),
     });
+    if (confirmRes.error) {
+      console.error("[contact] confirmation send error:", confirmRes.error);
+      // Admin email already sent; still treat overall as success but log it.
+    }
 
     return res.status(200).json({ ok: true });
   } catch (err) {
-    console.error("Resend error:", err);
-    return res.status(500).json({ error: "Failed to send email" });
+    console.error("[contact] Resend exception:", err);
+    return res.status(500).json({ error: "Failed to send email", detail: String(err) });
   }
 }
