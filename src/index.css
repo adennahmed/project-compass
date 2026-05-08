@@ -768,6 +768,18 @@ section[data-snap] {
   text-overflow: clip;
 }
 
+/* Mobile: triad lines are too long for a single-column card width.
+   Allow wrap, scale type to fit, lift the line-height so wrapped lines
+   breathe. Desktop (≥768px) keeps the original single-line treatment. */
+@media (max-width: 767px) {
+  .studio-triad {
+    font-size: clamp(1.1rem, 5.6vw, 1.5rem) !important;
+    white-space: normal;
+    overflow: visible;
+    line-height: 1.22;
+  }
+}
+
 /* ─── Deploy pipeline (Operator Panel) — CSS-driven fill animation ──────── */
 /* Bars are filled purely by CSS. The component changes only the `status`
    class (pending → filling → done) every 2.4s and bumps `key` on the fill
