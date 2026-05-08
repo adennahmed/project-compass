@@ -92,11 +92,11 @@ const Loader = ({ onExitStart, onComplete }: LoaderProps) => {
     >
       {/* Top corners — system identifiers */}
       <div className="absolute left-6 top-6 font-mono text-[11px] uppercase tracking-[0.22em] text-mute md:left-10 md:top-8">
-        kozai · studio · est. 2026
+        kozai · studio · est. 2025
       </div>
       {/* Hidden on mobile — not enough room alongside left label */}
       <div className="absolute right-6 top-6 hidden font-mono text-[11px] uppercase tracking-[0.22em] text-mute md:block md:right-10 md:top-8">
-        © 2026 — toronto, ca
+        © 2025 — toronto, ca
       </div>
 
       {/* Vertical hairlines drawing across the screen — adds depth */}

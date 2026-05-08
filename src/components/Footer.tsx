@@ -9,7 +9,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 gap-10 border-b border-paper/10 pb-12 md:grid-cols-12 md:gap-12">
           <div className="md:col-span-5">
             <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-paper/50">
-              Kozai · est. 2026
+              Kozai · est. 2025
             </div>
             <p className="mt-5 max-w-[36ch] text-[15px] leading-[1.55] text-paper/75">
               Software studio building the operational tools serious teams depend on. Toronto, with
@@ -52,7 +52,7 @@ const Footer = () => {
               Studio
             </div>
             <ul className="mt-5 flex flex-col gap-2.5 text-[14px] text-paper/75">
-              <li>Toronto, CA · Remote</li>
+              <li>Toronto, CA</li>
               <li>Mon–Fri · 09–18 ET</li>
               <li>Reply within 48 h</li>
               <li>43.6532° N · 79.3832° W</li>

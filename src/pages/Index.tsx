@@ -19,7 +19,7 @@ const MARQUEE_ITEMS = [
   "Workflow automation",
   "Client platforms",
   "Data infrastructure",
-  "Toronto · Remote",
+  "Toronto, CA",
   "TypeScript · Go · Rust · SQL",
   "Operational software, only",
   "Reply within 48 hours",

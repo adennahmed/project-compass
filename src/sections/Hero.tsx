@@ -44,7 +44,7 @@ const Hero = ({ onContactClick }: HeroProps) => {
           <div className="flex items-center justify-between gap-6">
             <div className="label flex items-center gap-3">
               <span className="inline-block h-1.5 w-1.5 rounded-full bg-signal" aria-hidden />
-              Software studio · Toronto · est. 2026
+              Software studio · Toronto · est. 2025
             </div>
             <div className="hidden font-mono text-[11px] uppercase tracking-[0.22em] text-mute md:block">
               [ index — 01 / 06 ]

@@ -88,9 +88,14 @@ html, body {
 }
 
 .italic-editorial {
-  font-family: 'Geist', system-ui, sans-serif;
+  /* System serif italics — render instantly, no webfont load delay.
+     Geist ships no italic, so font-style:italic on Geist forces synthesis
+     that flashes/lags during reveal animations. Pinning to platform serifs
+     guarantees the glyphs are painted on the first frame. */
+  font-family: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, 'Times New Roman', serif;
   font-style: italic;
   font-weight: 400;
+  font-synthesis: style;
   letter-spacing: -0.02em;
 }
 

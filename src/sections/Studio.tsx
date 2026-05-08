@@ -79,7 +79,7 @@ const Studio = () => {
               [ 04 — Studio ]
             </div>
             <div className="hidden font-mono text-[11px] uppercase tracking-[0.32em] md:block">
-              Toronto · 2026
+              Toronto · 2025
             </div>
           </div>
         </Reveal>

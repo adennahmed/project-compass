@@ -51,8 +51,8 @@ const Contact = ({ onContactClick }: ContactProps) => {
                 {[
                   ["Reply", "within 48 h"],
                   ["Hours", "mon–fri · 09–18 ET"],
-                  ["Studio", "toronto, ca · remote"],
-                  ["Year", "est. 2026"],
+                  ["Studio", "toronto, ca"],
+                  ["Year", "est. 2025"],
                   ["Cycle", "weekly demos"],
                   ["Approach", "right tool, every time"],
                 ].map(([label, value]) => (
