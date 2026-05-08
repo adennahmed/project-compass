@@ -19,7 +19,7 @@ const Logo = ({ size = 28, className = "", style, variant = "black" }: LogoProps
       src={src}
       alt="Kozai"
       height={size}
-      style={{ height: size, width: "auto", display: "block", ...style }}
+      style={{ height: size, width: "auto", maxWidth: "none", display: "block", ...style }}
       className={className}
     />
   );
