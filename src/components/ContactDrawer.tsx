@@ -132,66 +132,73 @@ const PhoneField = ({
   };
 
   return (
-    <div className="flex flex-col gap-1.5">
+    <label className="flex flex-col gap-1.5">
       <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-mute/60">
         Phone
       </span>
-      <span className="kz-input flex items-end">
-        <div ref={ref} className="relative shrink-0">
-          <button
-            type="button"
-            onClick={() => { setOpen(o => !o); setSearch(""); }}
-            className="flex items-center gap-1.5 pb-2.5 pr-3 font-mono text-[12px] text-mute transition-colors hover:text-ink"
-          >
-            <span className="text-base leading-none">{country.flag}</span>
-            <span>{country.dial}</span>
-            <span className="text-[9px] opacity-50">▼</span>
-          </button>
+      {/* The kz-input wrapper paints the underline; inside, picker + input share
+          one row with matching py-2.5 so the underline aligns with the email
+          field next to it. */}
+      <div className="kz-input">
+        <div className="flex items-center">
+          <div ref={ref} className="relative shrink-0">
+            <button
+              type="button"
+              onClick={() => { setOpen(o => !o); setSearch(""); }}
+              className="flex items-center gap-1.5 py-2.5 pr-3 font-mono text-[13px] text-mute transition-colors hover:text-ink"
+            >
+              <span className="text-base leading-none">{country.flag}</span>
+              <span>{country.dial}</span>
+              <span className="text-[9px] opacity-50">▼</span>
+            </button>
 
-          {open && (
-            <div className="absolute bottom-full left-0 z-50 mb-1 w-56 border border-hairline/20 bg-paper shadow-xl">
-              <div className="border-b border-hairline/15 px-3 py-2">
-                <input
-                  autoFocus
-                  placeholder="Search…"
-                  value={search}
-                  onChange={e => setSearch(e.target.value)}
-                  className="w-full bg-transparent font-mono text-[11px] text-ink outline-none placeholder:text-mute/40"
-                />
+            {open && (
+              <div className="absolute bottom-full left-0 z-50 mb-1 w-56 border border-hairline/20 bg-paper shadow-xl">
+                <div className="border-b border-hairline/15 px-3 py-2">
+                  <input
+                    autoFocus
+                    placeholder="Search…"
+                    value={search}
+                    onChange={e => setSearch(e.target.value)}
+                    className="w-full bg-transparent font-mono text-[11px] text-ink outline-none placeholder:text-mute/40"
+                  />
+                </div>
+                <ul className="max-h-48 overflow-y-auto">
+                  {filtered.map(c => (
+                    <li key={c.code}>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCountry(c);
+                          setOpen(false);
+                          onChange("");
+                        }}
+                        className={`flex w-full items-center gap-2.5 px-3 py-2 text-left font-mono text-[11px] transition-colors hover:bg-paper-2 ${
+                          c.code === country.code ? "text-signal" : "text-ink"
+                        }`}
+                      >
+                        <span>{c.flag}</span>
+                        <span className="flex-1 truncate">{c.name}</span>
+                        <span className="text-mute">{c.dial}</span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <ul className="max-h-48 overflow-y-auto">
-                {filtered.map(c => (
-                  <li key={c.code}>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setCountry(c);
-                        setOpen(false);
-                        onChange("");
-                      }}
-                      className={`flex w-full items-center gap-2.5 px-3 py-2 text-left font-mono text-[11px] transition-colors hover:bg-paper-2 ${
-                        c.code === country.code ? "text-signal" : "text-ink"
-                      }`}
-                    >
-                      <span>{c.flag}</span>
-                      <span className="flex-1 truncate">{c.name}</span>
-                      <span className="text-mute">{c.dial}</span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+            )}
+          </div>
+          {/* Thin separator between picker and input */}
+          <span aria-hidden className="mx-2 h-3.5 w-px self-center bg-hairline/30" />
+          <input
+            type="tel"
+            value={value}
+            onChange={e => handleDigits(e.target.value)}
+            placeholder="Phone number"
+            className="block w-full flex-1 bg-transparent py-2.5 text-[14px] text-ink outline-none placeholder:text-mute/40"
+          />
         </div>
-        <input
-          type="tel"
-          value={value}
-          onChange={e => handleDigits(e.target.value)}
-          placeholder="Phone number"
-          className="block flex-1 bg-transparent pb-2.5 text-[14px] text-ink outline-none placeholder:text-mute/40"
-        />
-      </span>
-    </div>
+      </div>
+    </label>
   );
 };
 
@@ -258,6 +265,118 @@ const RoleSelector = ({
             </button>
           </Fragment>
         ))}
+      </div>
+    </div>
+  );
+};
+
+/* ─── Success state ──────────────────────────────────────────────────────── */
+/**
+ * Word-by-word slide-up on the heading (each word starts below a clip mask
+ * and rises into view), staggered fade-ups on the rest, and a signal-orange
+ * rule that draws across after the heading settles.
+ */
+const Words = ({
+  text, baseDelay = 0, perWord = 70,
+}: { text: string; baseDelay?: number; perWord?: number }) => {
+  const words = text.split(" ");
+  return (
+    <>
+      {words.map((w, i) => (
+        <span key={i} className="success-word">
+          <span style={{ animationDelay: `${baseDelay + i * perWord}ms` }}>
+            {w}
+            {i < words.length - 1 ? " " : ""}
+          </span>
+        </span>
+      ))}
+    </>
+  );
+};
+
+const SuccessState = ({
+  firstName, email, onClose,
+}: { firstName: string; email: string; onClose: () => void }) => {
+  return (
+    <div className="flex flex-1 flex-col justify-center gap-7 px-9 py-12">
+      {/* Status badge */}
+      <div className="success-stagger" style={{ animationDelay: "120ms" }}>
+        <span className="inline-flex items-center gap-2 border border-signal/30 bg-signal/[0.06] px-3 py-1.5">
+          <svg className="h-3 w-3" viewBox="0 0 12 12" fill="none" aria-hidden>
+            <path
+              d="M2.5 6L5 8.5L9.5 3.5"
+              stroke="rgb(232, 79, 27)"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+          <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-signal">
+            Inquiry received
+          </span>
+        </span>
+      </div>
+
+      {/* Display heading — two lines, word-revealed */}
+      <h3
+        className="display text-ink"
+        style={{
+          fontSize: "clamp(2.1rem, 5.5vw, 3.1rem)",
+          letterSpacing: "-0.04em",
+          lineHeight: "1.02",
+        }}
+      >
+        <span className="block">
+          <Words text="Thanks," baseDelay={280} />
+        </span>
+        <span className="block">
+          <Words text={`${firstName || "friend"}.`} baseDelay={280 + 200} />
+        </span>
+      </h3>
+
+      {/* Signal rule — draws after the heading settles */}
+      <span
+        aria-hidden
+        className="success-rule w-16"
+        style={{ animationDelay: "1100ms" }}
+      />
+
+      {/* Subtext */}
+      <p
+        className="success-stagger max-w-[44ch] text-[15px] leading-[1.6] text-mute"
+        style={{ animationDelay: "1200ms" }}
+      >
+        A confirmation has been sent to{" "}
+        <span className="text-ink">{email}</span>. We'll be in touch within
+        48 hours, typically sooner. If it's urgent, reach us directly at{" "}
+        <a
+          href="mailto:hello@kozai.ca"
+          className="text-ink underline underline-offset-4 transition-colors hover:text-signal"
+        >
+          hello@kozai.ca
+        </a>
+        .
+      </p>
+
+      {/* Close — minimal line button */}
+      <div
+        className="success-stagger mt-3 flex items-center gap-5"
+        style={{ animationDelay: "1380ms" }}
+      >
+        <button
+          type="button"
+          onClick={onClose}
+          className="group inline-flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.22em] text-ink transition-colors hover:text-signal"
+        >
+          <span aria-hidden className="block h-px w-8 bg-ink transition-colors group-hover:bg-signal" />
+          <span>Close</span>
+        </button>
+        <a
+          href="https://kozai.ca"
+          className="font-mono text-[10px] uppercase tracking-[0.22em] text-mute transition-colors hover:text-ink"
+        >
+          kozai.ca ↗
+        </a>
       </div>
     </div>
   );
@@ -362,32 +481,8 @@ const ContactDrawer = ({ open, onClose }: ContactDrawerProps) => {
         </div>
 
         {status === "sent" ? (
-          /* ── Success state ── */
-          <div className="flex flex-1 flex-col items-start justify-center gap-5 px-8 py-10">
-            <div className="font-mono text-[10px] uppercase tracking-[0.28em] text-signal">
-              · Received
-            </div>
-            <h3
-              className="display text-ink"
-              style={{ fontSize: "clamp(1.6rem, 3vw, 2.2rem)", letterSpacing: "-0.035em" }}
-            >
-              Thanks — we'll be in touch within 48 h.
-            </h3>
-            <p className="text-[14px] leading-[1.6] text-mute">
-              A confirmation has been sent to <span className="text-ink">{form.email}</span>.
-              If it's urgent, reach us at{" "}
-              <a href="mailto:hello@kozai.ca" className="text-ink underline-offset-4 hover:underline">
-                hello@kozai.ca
-              </a>.
-            </p>
-            <button
-              type="button"
-              onClick={onClose}
-              className="mt-4 border border-hairline/20 px-5 py-3 font-mono text-[11px] uppercase tracking-[0.18em] text-ink transition-colors hover:border-ink"
-            >
-              Close
-            </button>
-          </div>
+          /* ── Success state ── word-by-word reveal + staggered fade-ups */
+          <SuccessState firstName={form.firstName} email={form.email} onClose={onClose} />
         ) : (
           /* ── Form ── data-lenis-prevent stops Lenis from hijacking wheel events
                        so the drawer scrolls instead of the page underneath. */

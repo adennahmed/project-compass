@@ -327,6 +327,49 @@ html.is-loading, html.is-loading body { overflow: hidden; }
     opacity 0.3s ease;
 }
 
+/* Success state — word-by-word slide-up reveal + staggered fade-up.
+   Same vocabulary as the site's char-reveal but auto-trigger on mount. */
+@keyframes success-word-up {
+  from { transform: translateY(110%); }
+  to   { transform: translateY(0); }
+}
+.success-word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  /* Slight extension so descenders/diacritics aren't clipped */
+  padding-bottom: 0.05em;
+}
+.success-word > span {
+  display: inline-block;
+  transform: translateY(110%);
+  animation: success-word-up 0.95s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes success-fade-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.success-stagger {
+  opacity: 0;
+  animation: success-fade-up 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* The signal-orange accent line that draws across under the heading after
+   the words have settled — closes the gesture with intent. */
+@keyframes success-rule-in {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+.success-rule {
+  display: block;
+  height: 1px;
+  background: rgb(var(--signal));
+  transform: scaleX(0);
+  transform-origin: left center;
+  animation: success-rule-in 0.9s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+
 /* ─── Loader counter → wordmark cross-fade ──────────────────────────── */
 /* Crossfade is handled entirely via inline transitions in Loader.tsx.
    Both elements share a fixed-height container and are always mounted;
