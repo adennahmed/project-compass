@@ -311,9 +311,11 @@ const ContactDrawer = ({ open, onClose }: ContactDrawerProps) => {
           /* ── Form ── */
           <form
             onSubmit={handleSubmit}
-            className="flex flex-1 flex-col overflow-y-auto"
+            className="flex flex-1 flex-col min-h-0"
           >
-            <div className="flex flex-1 flex-col gap-8 px-8 py-7">
+            {/* Scrollable content — footer stays pinned below */}
+            <div className="flex-1 overflow-y-auto min-h-0">
+            <div className="flex flex-col gap-8 px-8 py-7">
 
               {/* Role selector */}
               <div>
@@ -429,8 +431,9 @@ const ContactDrawer = ({ open, onClose }: ContactDrawerProps) => {
                 </span>
               </label>
             </div>
+            </div>{/* end scrollable wrapper */}
 
-            {/* Submit — sticky footer */}
+            {/* Submit — sticky footer, always visible */}
             <div className="shrink-0 border-t border-hairline/15 px-8 py-5">
               {status === "error" && (
                 <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.18em] text-signal">
