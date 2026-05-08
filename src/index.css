@@ -278,6 +278,55 @@ html.is-loading, html.is-loading body { overflow: hidden; }
   will-change: transform;
 }
 
+/* ─── Inquiry drawer — staggered reveal + animated input underline ──── */
+/*
+ * Each major section in the drawer fades up with a staggered transition-delay
+ * once `is-in` is applied (set ~250ms after the panel begins sliding in so the
+ * two motions cascade rather than collide).
+ */
+.drawer-stagger {
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.drawer-stagger.is-in { opacity: 1; transform: translateY(0); }
+
+/* Animated input underline — same vocabulary as the site's link-wipe.
+   A signal-coloured rule draws in from the left on focus. */
+.kz-input { position: relative; display: block; width: 100%; }
+.kz-input::before,
+.kz-input::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 1px;
+  pointer-events: none;
+}
+.kz-input::before { background: rgb(var(--hairline) / 0.30); }
+.kz-input::after  {
+  background: rgb(var(--signal));
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.kz-input:focus-within::after { transform: scaleX(1); }
+
+/* Role selector — sliding active indicator. The bordered box is its own
+   absolutely-positioned div whose left/width animate via React state, so
+   switching roles glides the indicator between buttons rather than popping. */
+.role-indicator {
+  position: absolute;
+  top: 0; bottom: 0;
+  border: 1px solid rgb(var(--signal) / 0.4);
+  pointer-events: none;
+  transition:
+    left  0.5s cubic-bezier(0.65, 0, 0.35, 1),
+    width 0.5s cubic-bezier(0.65, 0, 0.35, 1),
+    opacity 0.3s ease;
+}
+
 /* ─── Loader counter → wordmark cross-fade ──────────────────────────── */
 /* Crossfade is handled entirely via inline transitions in Loader.tsx.
    Both elements share a fixed-height container and are always mounted;

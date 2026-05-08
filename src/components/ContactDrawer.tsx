@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
 /* ─── Country list for phone picker ────────────────────────────────────── */
@@ -45,7 +45,6 @@ function formatPhone(digits: string, code: string): string {
     if (d.length <= 7) return `${d.slice(0, 4)} ${d.slice(4)}`;
     return `${d.slice(0, 4)} ${d.slice(4, 7)} ${d.slice(7)}`;
   }
-  // Generic: groups of 3, max 15 digits
   const d = digits.slice(0, 15);
   return d.replace(/(\d{3})(?=\d)/g, "$1 ").trim();
 }
@@ -72,7 +71,7 @@ const EMPTY: Form = {
   businessName: "", businessType: "", message: "", agreed: false,
 };
 
-/* ─── Sub-components ─────────────────────────────────────────────────────── */
+/* ─── Reusable bits ─────────────────────────────────────────────────────── */
 const SectionLabel = ({ children }: { children: React.ReactNode }) => (
   <div className="mb-5 font-mono text-[10px] uppercase tracking-[0.28em] text-mute">
     {children}
@@ -91,15 +90,17 @@ const LineInput = ({
         {label}{required && <span className="ml-0.5 text-signal">*</span>}
       </span>
     )}
-    <input
-      name={name}
-      type={type}
-      required={required}
-      value={value}
-      onChange={e => onChange(e.target.value)}
-      placeholder={placeholder ?? label}
-      className="border-b border-hairline/30 bg-transparent py-2.5 text-[14px] text-ink outline-none placeholder:text-mute/40 focus:border-ink transition-colors"
-    />
+    <span className="kz-input">
+      <input
+        name={name}
+        type={type}
+        required={required}
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        placeholder={placeholder ?? label}
+        className="block w-full bg-transparent py-2.5 text-[14px] text-ink outline-none placeholder:text-mute/40"
+      />
+    </span>
   </label>
 );
 
@@ -127,8 +128,7 @@ const PhoneField = ({
   );
 
   const handleDigits = (raw: string) => {
-    const digits = raw.replace(/\D/g, "");
-    onChange(formatPhone(digits, country.code));
+    onChange(formatPhone(raw.replace(/\D/g, ""), country.code));
   };
 
   return (
@@ -136,13 +136,12 @@ const PhoneField = ({
       <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-mute/60">
         Phone
       </span>
-      <div className="flex items-end border-b border-hairline/30 focus-within:border-ink transition-colors">
-        {/* Country picker trigger */}
+      <span className="kz-input flex items-end">
         <div ref={ref} className="relative shrink-0">
           <button
             type="button"
             onClick={() => { setOpen(o => !o); setSearch(""); }}
-            className="flex items-center gap-1.5 pb-2.5 pr-3 font-mono text-[12px] text-mute hover:text-ink transition-colors"
+            className="flex items-center gap-1.5 pb-2.5 pr-3 font-mono text-[12px] text-mute transition-colors hover:text-ink"
           >
             <span className="text-base leading-none">{country.flag}</span>
             <span>{country.dial}</span>
@@ -150,7 +149,7 @@ const PhoneField = ({
           </button>
 
           {open && (
-            <div className="absolute bottom-full left-0 z-50 mb-1 w-56 bg-paper border border-hairline/20 shadow-xl">
+            <div className="absolute bottom-full left-0 z-50 mb-1 w-56 border border-hairline/20 bg-paper shadow-xl">
               <div className="border-b border-hairline/15 px-3 py-2">
                 <input
                   autoFocus
@@ -168,7 +167,7 @@ const PhoneField = ({
                       onClick={() => {
                         setCountry(c);
                         setOpen(false);
-                        onChange(""); // reset phone on country change
+                        onChange("");
                       }}
                       className={`flex w-full items-center gap-2.5 px-3 py-2 text-left font-mono text-[11px] transition-colors hover:bg-paper-2 ${
                         c.code === country.code ? "text-signal" : "text-ink"
@@ -184,15 +183,81 @@ const PhoneField = ({
             </div>
           )}
         </div>
-
-        {/* Phone input */}
         <input
           type="tel"
           value={value}
           onChange={e => handleDigits(e.target.value)}
           placeholder="Phone number"
-          className="flex-1 bg-transparent pb-2.5 text-[14px] text-ink outline-none placeholder:text-mute/40"
+          className="block flex-1 bg-transparent pb-2.5 text-[14px] text-ink outline-none placeholder:text-mute/40"
         />
+      </span>
+    </div>
+  );
+};
+
+/* ─── Role selector with sliding active indicator ──────────────────────── */
+const RoleSelector = ({
+  value, onChange,
+}: { value: Role; onChange: (r: Role) => void }) => {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const btnRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const [pos, setPos] = useState({ left: 0, width: 0, ready: false });
+
+  // Recompute the indicator position whenever the active role changes
+  // or the layout settles in (drawer mounting/animation).
+  useLayoutEffect(() => {
+    const idx = ROLES.indexOf(value);
+    const btn = btnRefs.current[idx];
+    const wrap = wrapRef.current;
+    if (!btn || !wrap) return;
+    const update = () =>
+      setPos({ left: btn.offsetLeft, width: btn.offsetWidth, ready: true });
+    update();
+    // also recalc on resize
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, [value]);
+
+  return (
+    <div>
+      <div className="mb-4 font-mono text-[11px] text-mute">
+        <span className="font-semibold text-ink">I'M A</span>
+        {"  "}
+        <span className="uppercase tracking-[0.18em] opacity-50">[Select one]</span>
+      </div>
+      <div ref={wrapRef} className="relative inline-flex items-stretch">
+        {/* Sliding indicator */}
+        <div
+          aria-hidden
+          className="role-indicator"
+          style={{
+            left: pos.left,
+            width: pos.width,
+            opacity: pos.ready ? 1 : 0,
+          }}
+        />
+        {ROLES.map((role, i) => (
+          <Fragment key={role}>
+            {i > 0 && <div className="w-px self-stretch bg-hairline/25" />}
+            <button
+              ref={el => (btnRefs.current[i] = el)}
+              type="button"
+              onClick={() => onChange(role)}
+              className={`relative flex items-center gap-2 px-4 py-2.5 font-mono text-[10px] uppercase tracking-[0.2em] transition-colors duration-300 ${
+                value === role ? "text-signal" : "text-mute hover:text-ink"
+              }`}
+            >
+              {/* Fixed-width dot slot — text never shifts */}
+              <span className="flex h-1.5 w-1.5 items-center justify-center">
+                <span
+                  className="block h-1.5 w-1.5 rounded-full bg-signal transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)]"
+                  style={{ transform: value === role ? "scale(1)" : "scale(0)" }}
+                />
+              </span>
+              {role}
+            </button>
+          </Fragment>
+        ))}
       </div>
     </div>
   );
@@ -207,22 +272,32 @@ interface ContactDrawerProps {
 const ContactDrawer = ({ open, onClose }: ContactDrawerProps) => {
   const [form, setForm] = useState<Form>(EMPTY);
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [contentReady, setContentReady] = useState(false);
 
   const set = <K extends keyof Form>(k: K, v: Form[K]) =>
     setForm(f => ({ ...f, [k]: v }));
 
+  // Body scroll lock & content reveal sequencing
   useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "";
-    if (!open) {
-      const t = window.setTimeout(() => {
-        setForm(EMPTY);
-        setStatus("idle");
-      }, 450);
-      return () => window.clearTimeout(t);
+    if (open) {
+      document.body.style.overflow = "hidden";
+      // wait for the panel's slide-in to be in motion before staggering content
+      const t = window.setTimeout(() => setContentReady(true), 220);
+      return () => {
+        window.clearTimeout(t);
+      };
     }
-    return () => { document.body.style.overflow = ""; };
+    // closing: hide body scroll lock immediately, content fades with the slide
+    document.body.style.overflow = "";
+    setContentReady(false);
+    const t = window.setTimeout(() => {
+      setForm(EMPTY);
+      setStatus("idle");
+    }, 500);
+    return () => window.clearTimeout(t);
   }, [open]);
 
+  // Esc to close
   useEffect(() => {
     if (!open) return;
     const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
@@ -246,6 +321,12 @@ const ContactDrawer = ({ open, onClose }: ContactDrawerProps) => {
       setStatus("error");
     }
   };
+
+  // Helper for staggered section entry
+  const stagger = (i: number): React.HTMLAttributes<HTMLDivElement> => ({
+    className: `drawer-stagger ${contentReady ? "is-in" : ""}`,
+    style: { transitionDelay: `${i * 90}ms` },
+  });
 
   return (
     <>
@@ -308,18 +389,24 @@ const ContactDrawer = ({ open, onClose }: ContactDrawerProps) => {
             </button>
           </div>
         ) : (
-          /* ── Form ── */
+          /* ── Form ── data-lenis-prevent stops Lenis from hijacking wheel events
+                       so the drawer scrolls instead of the page underneath. */
           <form
             onSubmit={handleSubmit}
-            className="flex-1 overflow-y-auto"
+            data-lenis-prevent
+            className="flex-1 overflow-y-auto overscroll-contain"
           >
             <div className="flex flex-col gap-8 px-8 py-7">
 
               {/* Hero headline */}
-              <div className="border-b border-hairline/15 pb-7 pt-1">
+              <div {...stagger(0)} className={`${stagger(0).className} border-b border-hairline/15 pb-7`}>
                 <h2
                   className="display text-ink"
-                  style={{ fontSize: "clamp(2rem, 5vw, 2.75rem)", letterSpacing: "-0.04em", lineHeight: "1.05" }}
+                  style={{
+                    fontSize: "clamp(2rem, 5vw, 2.75rem)",
+                    letterSpacing: "-0.04em",
+                    lineHeight: "1.05",
+                  }}
                 >
                   Tell us what<br />you're building.
                 </h2>
@@ -329,92 +416,55 @@ const ContactDrawer = ({ open, onClose }: ContactDrawerProps) => {
               </div>
 
               {/* Role selector */}
-              <div>
-                <div className="mb-4 font-mono text-[11px] text-mute">
-                  <span className="font-semibold text-ink">I'M A</span>
-                  {"  "}
-                  <span className="tracking-[0.18em] uppercase opacity-50">[Select one]</span>
-                </div>
-                <div className="flex items-stretch">
-                  {ROLES.map((role, i) => (
-                    <div key={role} className="flex items-stretch">
-                      {i > 0 && (
-                        <div className="w-px self-stretch bg-hairline/25" />
-                      )}
-                      <button
-                        type="button"
-                        onClick={() => set("role", role)}
-                        className={`flex items-center gap-2 px-3.5 py-2 font-mono text-[10px] uppercase tracking-[0.2em] transition-colors ${
-                          form.role === role
-                            ? "border border-signal/40 text-signal"
-                            : "text-mute hover:text-ink"
-                        }`}
-                      >
-                        {form.role === role && (
-                          <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-signal" />
-                        )}
-                        {role}
-                      </button>
-                    </div>
-                  ))}
-                </div>
+              <div {...stagger(1)}>
+                <RoleSelector value={form.role} onChange={r => set("role", r)} />
               </div>
 
               {/* About you */}
-              <div>
+              <div {...stagger(2)}>
                 <SectionLabel>About you</SectionLabel>
                 <div className="grid grid-cols-2 gap-x-6 gap-y-5">
-                  <LineInput
-                    name="firstName" label="First name" required
-                    value={form.firstName} onChange={v => set("firstName", v)}
-                  />
-                  <LineInput
-                    name="lastName" label="Last name" required
-                    value={form.lastName} onChange={v => set("lastName", v)}
-                  />
-                  <LineInput
-                    name="email" type="email" label="Email" required
-                    value={form.email} onChange={v => set("email", v)}
-                  />
+                  <LineInput name="firstName" label="First name" required
+                    value={form.firstName} onChange={v => set("firstName", v)} />
+                  <LineInput name="lastName" label="Last name" required
+                    value={form.lastName} onChange={v => set("lastName", v)} />
+                  <LineInput name="email" type="email" label="Email" required
+                    value={form.email} onChange={v => set("email", v)} />
                   <PhoneField value={form.phone} onChange={v => set("phone", v)} />
                 </div>
               </div>
 
               {/* Your business */}
-              <div>
+              <div {...stagger(3)}>
                 <SectionLabel>Your business</SectionLabel>
                 <div className="flex flex-col gap-5">
-                  <LineInput
-                    name="businessName" label="Business name" required
-                    value={form.businessName} onChange={v => set("businessName", v)}
-                  />
-                  <LineInput
-                    name="businessType" label="Type of business" required
-                    value={form.businessType} onChange={v => set("businessType", v)}
-                  />
+                  <LineInput name="businessName" label="Business name" required
+                    value={form.businessName} onChange={v => set("businessName", v)} />
+                  <LineInput name="businessType" label="Type of business" required
+                    value={form.businessType} onChange={v => set("businessType", v)} />
                   <label className="flex flex-col gap-1.5">
                     <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-mute/60">
                       Message <span className="opacity-50">(Optional)</span>
                     </span>
-                    <textarea
-                      name="message"
-                      rows={3}
-                      value={form.message}
-                      onChange={e => set("message", e.target.value)}
-                      placeholder="What are you trying to build?"
-                      className="resize-none border-b border-hairline/30 bg-transparent py-2.5 text-[14px] text-ink outline-none placeholder:text-mute/40 focus:border-ink transition-colors"
-                    />
+                    <span className="kz-input">
+                      <textarea
+                        name="message"
+                        rows={3}
+                        value={form.message}
+                        onChange={e => set("message", e.target.value)}
+                        placeholder="What are you trying to build?"
+                        className="block w-full resize-none bg-transparent py-2.5 text-[14px] text-ink outline-none placeholder:text-mute/40"
+                      />
+                    </span>
                   </label>
                 </div>
               </div>
 
               {/* Privacy checkbox */}
-              <label className="flex cursor-pointer items-start gap-3">
+              <label {...stagger(4)} className={`${stagger(4).className} flex cursor-pointer items-start gap-3`}>
                 <span
                   className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center border transition-colors ${
-                    form.agreed
-                      ? "border-ink bg-ink"
-                      : "border-hairline/40 bg-transparent"
+                    form.agreed ? "border-ink bg-ink" : "border-hairline/40 bg-transparent"
                   }`}
                 >
                   {form.agreed && (
@@ -444,7 +494,7 @@ const ContactDrawer = ({ open, onClose }: ContactDrawerProps) => {
             </div>
 
             {/* Submit — sticky to the bottom of the scroll container */}
-            <div className="sticky bottom-0 bg-paper border-t border-hairline/15 px-8 py-5">
+            <div {...stagger(5)} className={`${stagger(5).className} sticky bottom-0 border-t border-hairline/15 bg-paper px-8 py-5`}>
               {status === "error" && (
                 <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.18em] text-signal">
                   Something went wrong — please try again or email us directly.
@@ -453,7 +503,7 @@ const ContactDrawer = ({ open, onClose }: ContactDrawerProps) => {
               <button
                 type="submit"
                 disabled={!form.agreed || status === "sending"}
-                className="group flex w-full items-center justify-between bg-ink px-6 py-4 text-[13px] font-medium text-paper transition-colors hover:bg-signal disabled:opacity-40 disabled:pointer-events-none"
+                className="group flex w-full items-center justify-between bg-ink px-6 py-4 text-[13px] font-medium text-paper transition-colors hover:bg-signal disabled:pointer-events-none disabled:opacity-40"
               >
                 <span>{status === "sending" ? "Sending…" : "Send inquiry"}</span>
                 <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-1">↘</span>
