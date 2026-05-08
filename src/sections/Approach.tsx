@@ -83,7 +83,9 @@ const Approach = () => {
                 >
                   {t.words.map((w, wi) => {
                     const isAccent =
-                      (t.n === "02" && wi === 1) || (t.n === "03" && wi === 1);
+                      (t.n === "01" && wi === 2) || // SHIPPED.
+                      (t.n === "02" && wi === 1) || // NOT
+                      (t.n === "03" && wi === 2);   // OWN.
                     return (
                       <span key={wi} className="mr-3 inline-block">
                         <CharReveal

@@ -98,6 +98,12 @@ html, body {
   font-synthesis: style;
   letter-spacing: -0.02em;
 }
+/* Serif italic glyphs have taller ascenders/descenders than Geist, so the
+   shared .char-reveal clip-path's negative vertical expansion lets a sliver
+   of out-of-view chars bleed through. Tighten vertically for italic chars. */
+.italic-editorial .char-reveal {
+  clip-path: inset(0.05em -0.3em);
+}
 
 /* ─── Layout primitives ─────────────────────────────────────────────── */
 .container-wide {
