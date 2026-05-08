@@ -311,11 +311,22 @@ const ContactDrawer = ({ open, onClose }: ContactDrawerProps) => {
           /* ── Form ── */
           <form
             onSubmit={handleSubmit}
-            className="flex flex-1 flex-col min-h-0"
+            className="flex-1 overflow-y-auto"
           >
-            {/* Scrollable content — footer stays pinned below */}
-            <div className="flex-1 overflow-y-auto min-h-0">
             <div className="flex flex-col gap-8 px-8 py-7">
+
+              {/* Hero headline */}
+              <div className="border-b border-hairline/15 pb-7 pt-1">
+                <h2
+                  className="display text-ink"
+                  style={{ fontSize: "clamp(2rem, 5vw, 2.75rem)", letterSpacing: "-0.04em", lineHeight: "1.05" }}
+                >
+                  Tell us what<br />you're building.
+                </h2>
+                <p className="mt-3 text-[13px] leading-[1.6] text-mute">
+                  A short note is enough. We reply within 48 hours.
+                </p>
+              </div>
 
               {/* Role selector */}
               <div>
@@ -431,10 +442,9 @@ const ContactDrawer = ({ open, onClose }: ContactDrawerProps) => {
                 </span>
               </label>
             </div>
-            </div>{/* end scrollable wrapper */}
 
-            {/* Submit — sticky footer, always visible */}
-            <div className="shrink-0 border-t border-hairline/15 px-8 py-5">
+            {/* Submit — sticky to the bottom of the scroll container */}
+            <div className="sticky bottom-0 bg-paper border-t border-hairline/15 px-8 py-5">
               {status === "error" && (
                 <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.18em] text-signal">
                   Something went wrong — please try again or email us directly.
