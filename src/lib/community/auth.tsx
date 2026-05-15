@@ -28,19 +28,33 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
     let mounted = true;
 
-    supabase.auth.getSession().then(({ data }) => {
-      if (!mounted) return;
-      setSession(data.session);
-    });
+    try {
+      supabase.auth
+        .getSession()
+        .then(({ data }) => {
+          if (!mounted) return;
+          setSession(data?.session ?? null);
+        })
+        .catch((err) => {
+          console.error("[auth] getSession failed:", err);
+          if (mounted) setLoading(false);
+        });
 
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
-      setSession(s);
-    });
+      const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
+        setSession(s);
+      });
 
-    return () => {
-      mounted = false;
-      sub.subscription.unsubscribe();
-    };
+      return () => {
+        mounted = false;
+        sub.subscription.unsubscribe();
+      };
+    } catch (err) {
+      console.error("[auth] bootstrap crashed — degrading to logged-out state:", err);
+      setLoading(false);
+      return () => {
+        mounted = false;
+      };
+    }
   }, []);
 
   // Whenever session changes, fetch the profile row.
@@ -53,21 +67,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
     let cancelled = false;
     setLoading(true);
-    supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", session.user.id)
-      .single()
-      .then(({ data, error }) => {
-        if (cancelled) return;
-        if (error) {
-          console.error("[auth] profile load failed:", error);
-          setProfile(null);
-        } else {
-          setProfile(data as Profile);
-        }
-        setLoading(false);
-      });
+    try {
+      supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", session.user.id)
+        .single()
+        .then(({ data, error }) => {
+          if (cancelled) return;
+          if (error) {
+            console.error("[auth] profile load failed:", error);
+            setProfile(null);
+          } else {
+            setProfile(data as Profile);
+          }
+          setLoading(false);
+        });
+    } catch (err) {
+      console.error("[auth] profile fetch crashed:", err);
+      setLoading(false);
+    }
     return () => {
       cancelled = true;
     };
