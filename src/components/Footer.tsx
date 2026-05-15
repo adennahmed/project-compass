@@ -32,6 +32,7 @@ const Footer = () => {
                 ["Approach", "#approach"],
                 ["Work", "#work"],
                 ["Studio", "#studio"],
+                ["Community", "/community"],
                 ["Contact", "#contact"],
               ].map(([label, href]) => (
                 <li key={href}>

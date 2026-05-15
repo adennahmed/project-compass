@@ -868,3 +868,82 @@ section[data-snap] {
   * { @apply border-border; }
   body { @apply bg-background text-foreground; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   COMMUNITY (/community/*)
+   The community section runs in inverted (ink) palette by default. Tokens
+   here mirror their light-mode counterparts but anchored to paper-on-ink.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Dark variant of the input field — hairlines drawn in paper, not ink. */
+.kz-input--dark { padding-bottom: 0.4rem; }
+.kz-input--dark::before { background: rgb(var(--paper) / 0.18); }
+
+/* Header shell — primary nav bar above the sub-nav. */
+.community-header {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  background: rgb(var(--ink));
+  border-bottom: 1px solid rgb(var(--paper) / 0.08);
+  /* tiny inset to prevent the sticky bar from showing the page seam */
+  backdrop-filter: saturate(140%) blur(6px);
+}
+
+/* Sub-nav row with the sliding signal-orange indicator. The indicator is
+   absolutely-positioned, with `left` and `width` animating via React state
+   the same way the role selector glides. */
+.community-subnav {
+  border-top: 1px solid rgb(var(--paper) / 0.06);
+  background: rgb(var(--ink));
+}
+.community-subnav__indicator {
+  position: absolute;
+  bottom: 0;
+  height: 2px;
+  background: rgb(var(--signal));
+  pointer-events: none;
+  transition:
+    left 0.5s cubic-bezier(0.65, 0, 0.35, 1),
+    width 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* Editorial markdown body — used by both resources and comments. */
+.kz-markdown { color: rgb(var(--paper) / 0.85); font-size: 15px; line-height: 1.7; }
+.kz-markdown p { margin: 0 0 1em; }
+.kz-markdown h2 {
+  font-family: 'Geist', system-ui, sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  font-size: clamp(1.35rem, 2vw, 1.75rem);
+  line-height: 1.15;
+  margin: 2em 0 0.6em;
+  color: rgb(var(--paper));
+}
+.kz-markdown h3 {
+  font-family: 'Geist', system-ui, sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  font-size: clamp(1.1rem, 1.5vw, 1.3rem);
+  line-height: 1.2;
+  margin: 1.6em 0 0.5em;
+  color: rgb(var(--paper));
+}
+.kz-markdown ul, .kz-markdown ol { margin: 0 0 1em 1.25em; padding: 0; }
+.kz-markdown ul { list-style: disc; }
+.kz-markdown ol { list-style: decimal; }
+.kz-markdown li { margin: 0 0 0.4em; }
+.kz-markdown strong { color: rgb(var(--paper)); font-weight: 600; }
+.kz-markdown hr { border: 0; border-top: 1px solid rgb(var(--paper) / 0.12); margin: 2em 0; }
+
+.kz-markdown--compact { font-size: 14px; line-height: 1.65; }
+.kz-markdown--compact p { margin: 0 0 0.6em; }
+
+.kz-markdown--article { font-size: 16px; line-height: 1.75; }
+.kz-markdown--article p { max-width: 64ch; }
+.kz-markdown--article h2 { margin-top: 2.4em; }
+
+/* Mobile cleanups — keep the dense desktop console legible on small screens. */
+@media (max-width: 767px) {
+  .community-header > .container-wide { padding-block: 0.85rem; }
+}

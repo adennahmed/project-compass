@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import Lenis from "lenis";
 import Logo from "./Logo";
 
@@ -7,10 +8,11 @@ interface NavigationProps {
 }
 
 const NAV_ITEMS = [
-  { label: "Services", href: "#services" },
-  { label: "Approach", href: "#approach" },
-  { label: "Work", href: "#work" },
-  { label: "Studio", href: "#studio" },
+  { label: "Services",  href: "#services" },
+  { label: "Approach",  href: "#approach" },
+  { label: "Work",      href: "#work" },
+  { label: "Studio",    href: "#studio" },
+  { label: "Community", href: "/community", external: true },
 ];
 
 type NavMode = "integrated" | "pill" | "hidden";
@@ -107,31 +109,42 @@ const Navigation = ({ onContactClick }: NavigationProps) => {
         <span className="nav-pill__divider" aria-hidden />
 
         <nav className="hidden items-center gap-7 md:flex">
-          {NAV_ITEMS.map((item, i) => (
-            <a
-              key={item.href}
-              href={item.href}
-              onClick={(e) => handleAnchor(e, item.href)}
-              className={`nav-item text-[12px] font-medium tracking-tight ${
+          {NAV_ITEMS.map((item, i) => {
+            const numStyle = {
+              color:
                 mode === "integrated"
-                  ? "text-ink/85 hover:text-ink"
-                  : "text-paper/85 hover:text-paper"
-              }`}
-            >
-              <span
-                className="nav-item__num"
-                style={{
-                  color:
-                    mode === "integrated"
-                      ? "rgb(var(--mute) / 0.7)"
-                      : "rgb(var(--paper) / 0.45)",
-                }}
+                  ? "rgb(var(--mute) / 0.7)"
+                  : "rgb(var(--paper) / 0.45)",
+            };
+            const klass = `nav-item text-[12px] font-medium tracking-tight ${
+              mode === "integrated"
+                ? "text-ink/85 hover:text-ink"
+                : "text-paper/85 hover:text-paper"
+            }`;
+            if ((item as { external?: boolean }).external) {
+              return (
+                <Link key={item.href} to={item.href} className={klass}>
+                  <span className="nav-item__num" style={numStyle}>
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span className="nav-item__label">{item.label}</span>
+                </Link>
+              );
+            }
+            return (
+              <a
+                key={item.href}
+                href={item.href}
+                onClick={(e) => handleAnchor(e, item.href)}
+                className={klass}
               >
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <span className="nav-item__label">{item.label}</span>
-            </a>
-          ))}
+                <span className="nav-item__num" style={numStyle}>
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <span className="nav-item__label">{item.label}</span>
+              </a>
+            );
+          })}
         </nav>
 
         <span className="nav-pill__divider" aria-hidden />
