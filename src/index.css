@@ -943,7 +943,222 @@ section[data-snap] {
 .kz-markdown--article p { max-width: 64ch; }
 .kz-markdown--article h2 { margin-top: 2.4em; }
 
+/* ─── Resource "deck" — hover-to-pull fanned card layout ─────────────────
+   A horizontal hand of cards on desktop. Hovering any card flex-grows it,
+   lifts it, unrotates it, and reveals the summary. Siblings tilt away.
+   Mobile collapses to a vertical stack — the fan doesn't make sense at
+   phone widths. */
+.resource-deck {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.resource-deck__card {
+  position: relative;
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.resource-deck__inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 360px;
+  padding: 1.5rem 1.5rem 1.4rem;
+  background: rgb(var(--ink) / 0.55);
+  border: 1px solid rgb(var(--paper) / 0.12);
+  overflow: hidden;
+  transition:
+    background 0.5s ease,
+    border-color 0.5s ease;
+}
+
+/* Top strip — kind chip + read time */
+.resource-deck__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-family: 'Geist Mono', ui-monospace, monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.28em;
+}
+.resource-deck__kind { color: rgb(var(--signal)); }
+.resource-deck__read { color: rgb(var(--paper) / 0.45); }
+
+/* Title — fluid; shrinks back when card is squeezed */
+.resource-deck__title {
+  margin-top: 1.5rem;
+  font-family: 'Geist', system-ui, sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.028em;
+  line-height: 1.1;
+  font-size: clamp(1.15rem, 1.5vw, 1.4rem);
+  color: rgb(var(--paper));
+  transition: font-size 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Summary — hidden until hover (desktop) */
+.resource-deck__summary {
+  margin-top: 1rem;
+  max-width: 52ch;
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgb(var(--paper) / 0.65);
+  /* default visible on mobile; collapsed on desktop until hover */
+}
+
+/* Bottom meta */
+.resource-deck__bottom {
+  margin-top: auto;
+  padding-top: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-family: 'Geist Mono', ui-monospace, monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: rgb(var(--paper) / 0.55);
+}
+.resource-deck__author { color: rgb(var(--paper) / 0.75); }
+
+/* Card-corner index numeral — like a playing card pip */
+.resource-deck__index {
+  position: absolute;
+  right: 1.1rem;
+  bottom: 1.1rem;
+  font-family: 'Geist Mono', ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  color: rgb(var(--paper) / 0.18);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+/* Signal-orange edge that draws in along the bottom on hover */
+.resource-deck__edge {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: rgb(var(--signal));
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+
+/* Hover on mobile = a normal lift, since the deck collapses to a stack. */
+.resource-deck__card:hover .resource-deck__inner {
+  border-color: rgb(var(--paper) / 0.28);
+}
+.resource-deck__card:hover .resource-deck__edge { transform: scaleX(1); }
+
+/* ─── Desktop fan layout (≥ 768px) ──────────────────────────────────── */
+@media (min-width: 768px) {
+  .resource-deck {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    padding: 28px 0 36px;
+    perspective: 1600px;
+  }
+
+  .resource-deck__card {
+    flex: 1 1 0;
+    min-width: 0;
+    /* Stack-order so cards visually overlap left → right.
+       The CSS variable is set inline per slot.        */
+    z-index: calc(10 + var(--idx, 0));
+    transform-origin: bottom center;
+    transition:
+      flex-grow 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 0.5s ease;
+  }
+
+  /* Alternating tilt at rest. Subtle — we're going for fanned hand, not
+     a casino spread. The slight vertical offset per slot mimics depth. */
+  .resource-deck__card:nth-child(odd)  {
+    transform: rotate(-0.7deg) translateY(0);
+  }
+  .resource-deck__card:nth-child(even) {
+    transform: rotate(0.55deg) translateY(3px);
+  }
+
+  /* Negative inline margin makes cards visually overlap slightly so the
+     border on the right of card N sits behind card N+1. We compensate
+     with z-index above. The first card has no negative offset. */
+  .resource-deck__card + .resource-deck__card {
+    margin-left: -16px;
+  }
+
+  /* Hidden summary at rest — we hold a small fixed height so the title
+     can breathe and the card silhouette stays consistent. The summary
+     uses max-height + opacity so it eases open on hover. */
+  .resource-deck__summary {
+    max-height: 0;
+    margin-top: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition:
+      max-height 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+      margin-top 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 0.4s ease 0.05s;
+  }
+
+  /* HOVER STATE — pull the card from the deck */
+  .resource-deck__card:hover {
+    flex-grow: 2.4;            /* roughly 2.4× the resting share */
+    transform: rotate(0) translateY(-18px);
+    z-index: 90;
+  }
+  .resource-deck__card:hover .resource-deck__inner {
+    background: rgb(var(--ink) / 0.85);
+    border-color: rgb(var(--paper) / 0.3);
+    box-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.65);
+  }
+  .resource-deck__card:hover .resource-deck__summary {
+    max-height: 200px;
+    margin-top: 1rem;
+    opacity: 1;
+  }
+  .resource-deck__card:hover .resource-deck__index { opacity: 1; }
+
+  /* When any card in the deck is hovered, the non-hovered siblings:
+       - shrink their flex share (so the hovered one has room to grow)
+       - tilt a touch further (the "deck spreads apart" feel)
+       - dim slightly so attention concentrates on the active card */
+  .resource-deck:hover .resource-deck__card:not(:hover) {
+    flex-grow: 0.7;
+    opacity: 0.55;
+  }
+  .resource-deck:hover .resource-deck__card:nth-child(odd):not(:hover) {
+    transform: rotate(-1.4deg) translateY(2px);
+  }
+  .resource-deck:hover .resource-deck__card:nth-child(even):not(:hover) {
+    transform: rotate(1.1deg) translateY(5px);
+  }
+
+  /* Cards before & after the hovered one slide aside very slightly so
+     the lifted card has visual clearance. */
+  .resource-deck__card:hover + .resource-deck__card {
+    margin-left: -4px;
+  }
+}
+
 /* Mobile cleanups — keep the dense desktop console legible on small screens. */
 @media (max-width: 767px) {
   .community-header > .container-wide { padding-block: 0.85rem; }
+  /* On mobile the deck is just a vertical list — show the summary always. */
+  .resource-deck__summary { max-height: none; opacity: 1; }
 }

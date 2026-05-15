@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import Reveal from "@/components/Reveal";
 import CharReveal from "@/components/CharReveal";
 import ResourceCard from "@/components/community/ResourceCard";
+import ResourceDeck from "@/components/community/ResourceDeck";
 import Tag from "@/components/community/Tag";
 import EmptyState from "@/components/community/EmptyState";
 import { MOCK_RESOURCES } from "@/lib/community/mock";
@@ -88,30 +89,38 @@ const ResourcesPage = () => {
           </div>
         </Reveal>
 
-        {/* Grid */}
-        <div className="mt-12">
+        {/* Featured + deck */}
+        <div className="mt-12 flex flex-col gap-8">
           {items.length === 0 ? (
             <EmptyState
               title="No resources match"
               body="Try clearing the filter or searching for something else."
             />
           ) : (
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-12">
+            <>
               {featured && (
                 <Reveal delay={140}>
-                  <div className="md:col-span-12">
-                    <ResourceCard resource={featured} variant="featured" />
+                  <ResourceCard resource={featured} variant="featured" />
+                </Reveal>
+              )}
+
+              {rest.length > 0 && (
+                <Reveal delay={220}>
+                  <div className="flex items-baseline justify-between gap-3">
+                    <div className="font-mono text-[10px] uppercase tracking-[0.28em] text-paper/55">
+                      ↘ The deck · hover any card to pull it forward
+                    </div>
+                    <div className="hidden font-mono text-[10px] uppercase tracking-[0.22em] text-paper/35 md:block">
+                      {rest.length} more
+                    </div>
                   </div>
                 </Reveal>
               )}
-              {rest.map((r, i) => (
-                <Reveal key={r.id} delay={180 + i * 70}>
-                  <div className="md:col-span-6">
-                    <ResourceCard resource={r} />
-                  </div>
-                </Reveal>
-              ))}
-            </div>
+
+              <Reveal delay={300}>
+                <ResourceDeck resources={rest} />
+              </Reveal>
+            </>
           )}
         </div>
       </div>
