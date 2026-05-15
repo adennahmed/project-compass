@@ -1,123 +1,45 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { Session } from "@supabase/supabase-js";
-import { supabase, isSupabaseConfigured } from "../supabase";
+import { createContext, useContext, useMemo } from "react";
 import { Profile } from "./types";
 
+/**
+ * Stub auth provider — design-only mode.
+ *
+ * The full Supabase-backed auth implementation has been removed so the
+ * community section can ship purely as a visual surface. When the backend
+ * is reintroduced in the future, this file will be replaced with the real
+ * provider; every consumer already imports `useAuth` from here, so the
+ * swap is a one-file change.
+ *
+ * Today: every visitor is signed-out, mock-mode, and every action is a
+ * no-op. The UI surfaces this state via the "Preview · Mock" pill in
+ * the community header and a friendly notice on the sign-in page.
+ */
 interface AuthState {
-  session: Session | null;
+  session: null;
   profile: Profile | null;
-  loading: boolean;
+  loading: false;
+  isMock: true;
   signInWithEmail: (email: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
-  /** True when we are running with mock data (no Supabase env). */
-  isMock: boolean;
 }
 
 const AuthCtx = createContext<AuthState | null>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [session, setSession] = useState<Session | null>(null);
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [loading, setLoading] = useState<boolean>(isSupabaseConfigured);
-
-  // Bootstrap: read current session and watch for changes.
-  useEffect(() => {
-    if (!supabase) {
-      setLoading(false);
-      return;
-    }
-    let mounted = true;
-
-    try {
-      supabase.auth
-        .getSession()
-        .then(({ data }) => {
-          if (!mounted) return;
-          setSession(data?.session ?? null);
-        })
-        .catch((err) => {
-          console.error("[auth] getSession failed:", err);
-          if (mounted) setLoading(false);
-        });
-
-      const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
-        setSession(s);
-      });
-
-      return () => {
-        mounted = false;
-        sub.subscription.unsubscribe();
-      };
-    } catch (err) {
-      console.error("[auth] bootstrap crashed — degrading to logged-out state:", err);
-      setLoading(false);
-      return () => {
-        mounted = false;
-      };
-    }
-  }, []);
-
-  // Whenever session changes, fetch the profile row.
-  useEffect(() => {
-    if (!supabase) return;
-    if (!session) {
-      setProfile(null);
-      setLoading(false);
-      return;
-    }
-    let cancelled = false;
-    setLoading(true);
-    try {
-      supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", session.user.id)
-        .single()
-        .then(({ data, error }) => {
-          if (cancelled) return;
-          if (error) {
-            console.error("[auth] profile load failed:", error);
-            setProfile(null);
-          } else {
-            setProfile(data as Profile);
-          }
-          setLoading(false);
-        });
-    } catch (err) {
-      console.error("[auth] profile fetch crashed:", err);
-      setLoading(false);
-    }
-    return () => {
-      cancelled = true;
-    };
-  }, [session]);
-
   const value = useMemo<AuthState>(
     () => ({
-      session,
-      profile,
-      loading,
-      isMock: !isSupabaseConfigured,
-      signInWithEmail: async (email) => {
-        if (!supabase) {
-          return { error: "Supabase is not configured yet. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to enable sign-in." };
-        }
-        const { error } = await supabase.auth.signInWithOtp({
-          email,
-          options: {
-            emailRedirectTo: `${window.location.origin}/community`,
-          },
-        });
-        return { error: error?.message ?? null };
-      },
-      signOut: async () => {
-        if (!supabase) return;
-        await supabase.auth.signOut();
-      },
+      session: null,
+      profile: null,
+      loading: false,
+      isMock: true,
+      signInWithEmail: async () => ({
+        error:
+          "Sign-in is paused while we wire up the backend. You can still browse the whole community without an account.",
+      }),
+      signOut: async () => {},
     }),
-    [session, profile, loading],
+    [],
   );
-
   return <AuthCtx.Provider value={value}>{children}</AuthCtx.Provider>;
 };
 

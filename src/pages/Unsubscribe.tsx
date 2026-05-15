@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, isSupabaseConfigured } from "@/integrations/supabase/client";
 
 const Unsubscribe = () => {
   const [searchParams] = useSearchParams();
@@ -10,6 +10,10 @@ const Unsubscribe = () => {
   useEffect(() => {
     if (!token) {
       setStatus("invalid");
+      return;
+    }
+    if (!isSupabaseConfigured) {
+      setStatus("error");
       return;
     }
     const validate = async () => {
@@ -38,6 +42,10 @@ const Unsubscribe = () => {
   }, [token]);
 
   const handleUnsubscribe = async () => {
+    if (!isSupabaseConfigured) {
+      setStatus("error");
+      return;
+    }
     try {
       const { error } = await supabase.functions.invoke("handle-email-unsubscribe", {
         body: { token },

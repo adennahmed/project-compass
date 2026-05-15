@@ -137,9 +137,9 @@ const AuthPage = () => {
 
               {isMock && (
                 <p className="font-mono text-[10px] uppercase leading-[1.6] tracking-[0.18em] text-paper/40">
-                  ↯ Preview mode — Supabase env vars not detected. Sign-in is
-                  disabled until <code className="text-paper/70">VITE_SUPABASE_URL</code>{" "}
-                  and <code className="text-paper/70">VITE_SUPABASE_ANON_KEY</code> are set.
+                  ↯ Preview mode — sign-up is paused while we finalize the
+                  backend. The whole community is still readable; we'll
+                  open up posting + profiles soon.
                 </p>
               )}
 
