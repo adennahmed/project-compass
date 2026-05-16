@@ -108,7 +108,7 @@ const Navigation = ({ onContactClick }: NavigationProps) => {
         </a>
         <span className="nav-pill__divider" aria-hidden />
 
-        <nav className="hidden items-center gap-7 md:flex">
+        <nav className="hidden items-center gap-5 md:flex lg:gap-6">
           {NAV_ITEMS.map((item, i) => {
             const numStyle = {
               color:

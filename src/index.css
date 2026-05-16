@@ -565,9 +565,12 @@ section[data-snap] {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1.4rem;
+  gap: 1.15rem;
   width: 100%;
-  max-width: 640px;
+  /* Sized to fit 5 nav items + logo + dividers + CTA without wrapping.
+     Each nav item needs ~85px (number + label); CTA ~125px; logo ~50px;
+     dividers + gaps ~80px → ~680–720px content, plus breathing room. */
+  max-width: 780px;
   margin: 0 auto;
   padding: 0.55rem 0.55rem 0.55rem 1.1rem;
   background: rgb(var(--ink));
@@ -575,7 +578,10 @@ section[data-snap] {
   border-radius: 999px;
   border: 1px solid rgb(var(--paper) / 0.08);
   backdrop-filter: blur(12px);
+  white-space: nowrap;
 }
+/* Keep the CTA on one line — the rounded pill chops off any wrap. */
+.nav-shell.mode-pill .nav-pill__cta { white-space: nowrap; }
 .nav-shell.mode-pill .nav-pill__cta {
   background: rgb(var(--paper));
   color: rgb(var(--ink));
@@ -595,9 +601,9 @@ section[data-snap] {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1.4rem;
+  gap: 1.15rem;
   width: 100%;
-  max-width: 640px;
+  max-width: 780px;
   margin: 0 auto;
   padding: 0.55rem 0.55rem 0.55rem 1.1rem;
   background: rgb(var(--ink));
@@ -605,6 +611,7 @@ section[data-snap] {
   border-radius: 999px;
   border: 1px solid rgb(var(--paper) / 0.08);
   backdrop-filter: blur(12px);
+  white-space: nowrap;
 }
 
 .nav-pill__divider {
