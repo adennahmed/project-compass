@@ -1,19 +1,47 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Reveal from "@/components/Reveal";
 import CharReveal from "@/components/CharReveal";
 import MemberCard from "@/components/community/MemberCard";
 import Tag from "@/components/community/Tag";
 import EmptyState from "@/components/community/EmptyState";
-import { MOCK_PROFILES } from "@/lib/community/mock";
+import { supabase, isSupabaseConfigured } from "@/integrations/supabase/client";
+import { Profile } from "@/lib/community/types";
 
 type RoleFilter = "all" | "staff" | "member";
 
 const MembersPage = () => {
+  const [members, setMembers] = useState<Profile[]>([]);
+  const [loading, setLoading] = useState<boolean>(isSupabaseConfigured);
+  const [error, setError] = useState<string | null>(null);
   const [role, setRole] = useState<RoleFilter>("all");
   const [query, setQuery] = useState("");
 
+  useEffect(() => {
+    if (!supabase) {
+      setLoading(false);
+      return;
+    }
+    let cancelled = false;
+    setLoading(true);
+    supabase
+      .from("profiles")
+      .select("*")
+      .order("role", { ascending: true })           // admin/staff first
+      .order("created_at", { ascending: false })
+      .then(({ data, error }) => {
+        if (cancelled) return;
+        if (error) {
+          setError(error.message);
+        } else {
+          setMembers((data ?? []) as unknown as Profile[]);
+        }
+        setLoading(false);
+      });
+    return () => { cancelled = true; };
+  }, []);
+
   const list = useMemo(() => {
-    let items = MOCK_PROFILES;
+    let items = members;
     if (role !== "all") {
       items = items.filter((p) =>
         role === "staff" ? p.role !== "member" : p.role === "member",
@@ -29,7 +57,7 @@ const MembersPage = () => {
       );
     }
     return items;
-  }, [role, query]);
+  }, [members, role, query]);
 
   return (
     <section className="px-6 py-14 md:px-10 md:py-20">
@@ -42,12 +70,7 @@ const MembersPage = () => {
 
         <h1
           className="mt-5 text-paper"
-          style={{
-            fontSize: "clamp(2rem, 5vw, 3.6rem)",
-            fontWeight: 600,
-            letterSpacing: "-0.04em",
-            lineHeight: 1.02,
-          }}
+          style={{ fontSize: "clamp(2rem, 5vw, 3.6rem)", fontWeight: 600, letterSpacing: "-0.04em", lineHeight: 1.02 }}
         >
           <CharReveal stagger={26}>{"WHO'S IN"}</CharReveal>{" "}
           <span className="italic-editorial text-signal">
@@ -70,9 +93,7 @@ const MembersPage = () => {
               <Tag active={role === "member"} onClick={() => setRole("member")}>Members</Tag>
             </div>
             <div className="kz-input kz-input--dark flex w-full items-center md:w-72">
-              <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-paper/45">
-                ↘ Find
-              </span>
+              <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-paper/45">↘ Find</span>
               <input
                 type="text"
                 value={query}
@@ -85,8 +106,19 @@ const MembersPage = () => {
         </Reveal>
 
         <div className="mt-10">
-          {list.length === 0 ? (
-            <EmptyState title="No matches" body="Try clearing the filter." />
+          {loading ? (
+            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-paper/55">↘ Loading members…</p>
+          ) : error ? (
+            <EmptyState title="Couldn't load members" body={error} />
+          ) : list.length === 0 ? (
+            <EmptyState
+              title={members.length === 0 ? "No members yet" : "No matches"}
+              body={
+                members.length === 0
+                  ? "Be the first — create an account and your profile will appear here."
+                  : "Try clearing the filter."
+              }
+            />
           ) : (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5">
               {list.map((p, i) => (

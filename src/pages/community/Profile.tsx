@@ -1,16 +1,11 @@
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import Reveal from "@/components/Reveal";
 import Avatar from "@/components/community/Avatar";
 import StaffBadge from "@/components/community/StaffBadge";
-import ThreadItem from "@/components/community/ThreadItem";
-import ResourceCard from "@/components/community/ResourceCard";
 import EmptyState from "@/components/community/EmptyState";
-import {
-  MOCK_POSTS,
-  MOCK_RESOURCES,
-  profileByHandle,
-} from "@/lib/community/mock";
+import { supabase } from "@/integrations/supabase/client";
+import { Profile } from "@/lib/community/types";
 import { dateStamp } from "@/lib/community/format";
 import { useAuth } from "@/lib/community/auth";
 
@@ -19,20 +14,44 @@ type Tab = "posts" | "comments" | "resources";
 const ProfilePage = () => {
   const { handle } = useParams<{ handle: string }>();
   const { profile: me } = useAuth();
-  const profile = handle ? profileByHandle(handle) : null;
-
-  const isStaff = profile && profile.role !== "member";
-  const tabs: Tab[] = ["posts", "comments", ...(isStaff ? (["resources"] as Tab[]) : [])];
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<Tab>("posts");
 
-  const myPosts = useMemo(
-    () => (profile ? MOCK_POSTS.filter((p) => p.author_id === profile.id) : []),
-    [profile],
-  );
-  const myResources = useMemo(
-    () => (profile ? MOCK_RESOURCES.filter((r) => r.author_id === profile.id) : []),
-    [profile],
-  );
+  useEffect(() => {
+    if (!supabase || !handle) {
+      setLoading(false);
+      return;
+    }
+    let cancelled = false;
+    setLoading(true);
+    supabase
+      .from("profiles")
+      .select("*")
+      .eq("handle", handle)
+      .maybeSingle()
+      .then(({ data, error }) => {
+        if (cancelled) return;
+        if (error) {
+          console.error(error);
+          setProfile(null);
+        } else {
+          setProfile(data as unknown as Profile | null);
+        }
+        setLoading(false);
+      });
+    return () => { cancelled = true; };
+  }, [handle]);
+
+  if (loading) {
+    return (
+      <section className="flex min-h-[40vh] items-center px-6 md:px-10">
+        <div className="container-wide font-mono text-[11px] uppercase tracking-[0.32em] text-paper/55">
+          ↘ Loading profile…
+        </div>
+      </section>
+    );
+  }
 
   if (!profile) {
     return (
@@ -55,6 +74,8 @@ const ProfilePage = () => {
     );
   }
 
+  const isStaff = profile.role !== "member";
+  const tabs: Tab[] = ["posts", "comments", ...(isStaff ? (["resources"] as Tab[]) : [])];
   const isMe = me?.id === profile.id;
 
   return (
@@ -73,12 +94,7 @@ const ProfilePage = () => {
               <div className="flex flex-wrap items-center gap-3">
                 <h1
                   className="text-paper"
-                  style={{
-                    fontSize: "clamp(1.8rem, 4vw, 2.6rem)",
-                    fontWeight: 600,
-                    letterSpacing: "-0.035em",
-                    lineHeight: 1.05,
-                  }}
+                  style={{ fontSize: "clamp(1.8rem, 4vw, 2.6rem)", fontWeight: 600, letterSpacing: "-0.035em", lineHeight: 1.05 }}
                 >
                   {profile.display_name}
                 </h1>
@@ -88,18 +104,16 @@ const ProfilePage = () => {
                 @{profile.handle} · joined {dateStamp(profile.created_at)}
               </div>
               {profile.bio && (
-                <p className="mt-4 max-w-[60ch] text-[15px] leading-[1.6] text-paper/75">
-                  {profile.bio}
-                </p>
+                <p className="mt-4 max-w-[60ch] text-[15px] leading-[1.6] text-paper/75">{profile.bio}</p>
               )}
               {isMe && (
                 <div className="mt-5">
-                  <button
-                    type="button"
+                  <Link
+                    to="/community/settings"
                     className="link-wipe font-mono text-[10px] uppercase tracking-[0.22em] text-paper/75 hover:text-paper"
                   >
                     Edit profile ↘
-                  </button>
+                  </Link>
                 </div>
               )}
             </div>
@@ -120,39 +134,27 @@ const ProfilePage = () => {
                 }`}
               >
                 {t}
-                {active && (
-                  <span
-                    aria-hidden
-                    className="pointer-events-none absolute bottom-0 left-0 h-px w-full bg-signal"
-                  />
-                )}
+                {active && <span aria-hidden className="pointer-events-none absolute bottom-0 left-0 h-px w-full bg-signal" />}
               </button>
             );
           })}
         </div>
 
         <div className="mt-8">
-          {tab === "posts" && (
-            myPosts.length === 0 ? (
-              <EmptyState title="No posts yet" body="When this member starts a thread or announcement, it shows up here." />
-            ) : (
-              <div className="border border-paper/12 bg-ink/40">
-                {myPosts.map((p) => <ThreadItem key={p.id} post={p} />)}
-              </div>
-            )
-          )}
-          {tab === "comments" && (
-            <EmptyState title="No comments yet" body="Comment activity will be listed here as it accumulates." />
-          )}
-          {tab === "resources" && (
-            myResources.length === 0 ? (
-              <EmptyState title="No resources published" body="Staff resources will appear here once published." />
-            ) : (
-              <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-                {myResources.map((r) => <ResourceCard key={r.id} resource={r} />)}
-              </div>
-            )
-          )}
+          <EmptyState
+            title={
+              tab === "posts"     ? "No posts yet"
+              : tab === "comments" ? "No comments yet"
+              : "Nothing published yet"
+            }
+            body={
+              tab === "posts"
+                ? "When this member starts a thread or announcement, it shows up here."
+                : tab === "comments"
+                  ? "Comment activity will be listed here as it accumulates."
+                  : "Staff resources will appear here once published."
+            }
+          />
         </div>
       </div>
     </section>

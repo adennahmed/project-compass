@@ -9,6 +9,10 @@ import ResourcesPage from "./Resources";
 import MembersPage from "./Members";
 import ProfilePage from "./Profile";
 import AuthPage from "./Auth";
+import AuthCallback from "./AuthCallback";
+import AuthReset from "./AuthReset";
+import Onboarding from "./Onboarding";
+import Settings from "./Settings";
 import AdminPage from "./Admin";
 
 /**
@@ -34,6 +38,10 @@ const CommunityRoot = () => {
             <Route path="members" element={<MembersPage />} />
             <Route path="u/:handle" element={<ProfilePage />} />
             <Route path="auth" element={<AuthPage />} />
+            <Route path="auth/callback" element={<AuthCallback />} />
+            <Route path="auth/reset" element={<AuthReset />} />
+            <Route path="onboarding" element={<Onboarding />} />
+            <Route path="settings" element={<Settings />} />
             <Route path="admin" element={<AdminPage />} />
           </Route>
         </Routes>

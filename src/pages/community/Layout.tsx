@@ -1,5 +1,5 @@
-import { Link, Outlet } from "react-router-dom";
-import { useEffect } from "react";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import Lenis from "lenis";
 import CommunitySubNav from "@/components/community/CommunitySubNav";
 import StaffBadge from "@/components/community/StaffBadge";
@@ -15,8 +15,26 @@ import { useAuth } from "@/lib/community/auth";
  *   • Outlet for the page body
  */
 const CommunityLayout = () => {
-  const { session, profile, signOut, isMock } = useAuth();
+  const { session, profile, signOut, isMock, needsOnboarding } = useAuth();
   const isStaff = profile?.role === "staff" || profile?.role === "admin";
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  // Redirect first-time visitors to onboarding (unless they're already
+  // on an auth/onboarding/settings page where it doesn't apply).
+  useEffect(() => {
+    if (!needsOnboarding) return;
+    const exempt =
+      location.pathname.startsWith("/community/onboarding") ||
+      location.pathname.startsWith("/community/auth");
+    if (!exempt) {
+      navigate("/community/onboarding", { replace: true });
+    }
+  }, [needsOnboarding, location.pathname, navigate]);
+
+  // Close the user menu on route change
+  useEffect(() => { setMenuOpen(false); }, [location.pathname]);
 
   useEffect(() => {
     const lenis = new Lenis({ lerp: 0.1, smoothWheel: true });
@@ -65,25 +83,64 @@ const CommunityLayout = () => {
 
           <div className="flex items-center gap-3 md:gap-4">
             {session && profile ? (
-              <>
-                <Link
-                  to={`/community/u/${profile.handle}`}
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setMenuOpen((v) => !v)}
                   className="inline-flex items-center gap-2 text-paper/85 hover:text-paper"
+                  aria-expanded={menuOpen}
+                  aria-haspopup="menu"
                 >
                   <Avatar profile={profile} size={26} />
                   <span className="hidden font-mono text-[11px] uppercase tracking-[0.22em] md:inline">
-                    {profile.handle}
+                    @{profile.handle}
                   </span>
                   <StaffBadge role={profile.role} />
-                </Link>
-                <button
-                  type="button"
-                  onClick={signOut}
-                  className="link-wipe font-mono text-[10px] uppercase tracking-[0.22em] text-paper/55 hover:text-paper"
-                >
-                  Sign out ↗
+                  <span aria-hidden className="font-mono text-[10px] text-paper/55">▾</span>
                 </button>
-              </>
+                {menuOpen && (
+                  <>
+                    <div
+                      className="fixed inset-0 z-40"
+                      onClick={() => setMenuOpen(false)}
+                      aria-hidden
+                    />
+                    <div
+                      role="menu"
+                      className="absolute right-0 top-full z-50 mt-2 flex w-56 flex-col border border-paper/15 bg-ink p-1.5 shadow-2xl"
+                    >
+                      <Link
+                        to={`/community/u/${profile.handle}`}
+                        className="px-3 py-2 font-mono text-[11px] uppercase tracking-[0.22em] text-paper/85 hover:bg-paper/5 hover:text-paper"
+                      >
+                        View profile
+                      </Link>
+                      <Link
+                        to="/community/settings"
+                        className="px-3 py-2 font-mono text-[11px] uppercase tracking-[0.22em] text-paper/85 hover:bg-paper/5 hover:text-paper"
+                      >
+                        Settings
+                      </Link>
+                      {isStaff && (
+                        <Link
+                          to="/community/admin"
+                          className="px-3 py-2 font-mono text-[11px] uppercase tracking-[0.22em] text-paper/85 hover:bg-paper/5 hover:text-paper"
+                        >
+                          Admin
+                        </Link>
+                      )}
+                      <span className="my-1 block h-px bg-paper/10" aria-hidden />
+                      <button
+                        type="button"
+                        onClick={async () => { await signOut(); navigate("/community", { replace: true }); }}
+                        className="px-3 py-2 text-left font-mono text-[11px] uppercase tracking-[0.22em] text-paper/55 hover:bg-paper/5 hover:text-signal"
+                      >
+                        Sign out ↗
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
             ) : (
               <Link
                 to="/community/auth"
