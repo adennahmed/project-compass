@@ -876,7 +876,7 @@ section[data-snap] {
     padding 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .kz-service-expand.is-open {
-  max-height: 720px;
+  max-height: 900px;
   opacity: 1;
 }
 
@@ -900,6 +900,65 @@ section[data-snap] {
 @keyframes kz-curtain-fadein {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Service diagrams — shared animations ────────────────────────── */
+@keyframes kz-diag-sparkline {
+  0%   { stroke-dashoffset: 120; }
+  50%  { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -120; }
+}
+@keyframes kz-diag-dot-pulse {
+  0%, 100% { fill: rgb(var(--ink) / 0.55); }
+  50%      { fill: rgb(var(--signal)); }
+}
+@keyframes kz-diag-scan {
+  0%   { transform: translateY(0); opacity: 0; }
+  10%  { opacity: 0.35; }
+  90%  { opacity: 0.35; }
+  100% { transform: translateY(60px); opacity: 0; }
+}
+@keyframes kz-diag-token {
+  0%   { offset-distance: 0%; }
+  100% { offset-distance: 100%; }
+}
+@keyframes kz-diag-node-flash {
+  0%, 100% { stroke: rgb(var(--ink) / 0.7); }
+  50%      { stroke: rgb(var(--signal)); }
+}
+@keyframes kz-diag-flow-up {
+  0%   { transform: translateY(0); opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { transform: translateY(-44px); opacity: 0; }
+}
+@keyframes kz-diag-cursor-click {
+  0%, 70%, 100% { transform: scale(0.4); opacity: 0; }
+  75%           { transform: scale(0.4); opacity: 0.7; }
+  95%           { transform: scale(2.6); opacity: 0; }
+}
+@keyframes kz-diag-marker-slide {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(140px); }
+}
+@keyframes kz-diag-bar-breathe {
+  0%, 100% { transform: scaleX(1); }
+  50%      { transform: scaleX(1.03); }
+}
+@keyframes kz-diag-bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-2px); }
+}
+@keyframes kz-diag-tick-bold {
+  0%, 100% { font-weight: 400; opacity: 0.55; }
+  50%      { font-weight: 600; opacity: 1; }
+}
+
+/* Wrappers honour reduced motion at the container level. */
+.kz-diag[data-playing="true"] .kz-anim { animation-play-state: running; }
+.kz-diag[data-playing="false"] .kz-anim { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) {
+  .kz-diag .kz-anim { animation: none !important; }
 }
 
 /* ─── Ops feed line entry ─────────────────────────────────────────── */

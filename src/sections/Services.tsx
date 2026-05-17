@@ -1,5 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import Reveal from "@/components/Reveal";
+import DashboardDiagram from "@/components/diagrams/DashboardDiagram";
+import WorkflowDiagram from "@/components/diagrams/WorkflowDiagram";
+import PlatformDiagram from "@/components/diagrams/PlatformDiagram";
+import AnalyticsDiagram from "@/components/diagrams/AnalyticsDiagram";
 
 interface Service {
   n: string;
@@ -9,7 +13,7 @@ interface Service {
   meta: string[];
   detail: string;
   steps: [string, string, string, string];
-  diagram: React.ReactNode;
+  Diagram: React.ComponentType<{ playing: boolean }>;
 }
 
 const SERVICES: Service[] = [
@@ -28,19 +32,7 @@ const SERVICES: Service[] = [
       "Ship a working console against real data.",
       "Iterate weekly with the people using it.",
     ],
-    diagram: (
-      <svg viewBox="0 0 160 80" width="140" height="70" fill="none" stroke="currentColor" strokeWidth="1" strokeLinejoin="round">
-        <rect x="2" y="2" width="156" height="76" />
-        <line x1="2" y1="16" x2="158" y2="16" />
-        <line x1="40" y1="16" x2="40" y2="78" />
-        <line x1="40" y1="38" x2="158" y2="38" />
-        <line x1="40" y1="58" x2="158" y2="58" />
-        <rect x="48" y="22" width="40" height="10" fill="currentColor" opacity="0.18" />
-        <rect x="96" y="22" width="54" height="10" fill="currentColor" opacity="0.10" />
-        <rect x="48" y="44" width="80" height="8" fill="currentColor" opacity="0.10" />
-        <rect x="48" y="64" width="60" height="8" fill="currentColor" opacity="0.10" />
-      </svg>
-    ),
+    Diagram: DashboardDiagram,
   },
   {
     n: "02",
@@ -57,17 +49,7 @@ const SERVICES: Service[] = [
       "Build the pipeline, with observability first.",
       "Hand off the on-call doc to the ops lead.",
     ],
-    diagram: (
-      <svg viewBox="0 0 160 80" width="140" height="70" fill="none" stroke="currentColor" strokeWidth="1" strokeLinejoin="round">
-        <rect x="4" y="30" width="28" height="20" />
-        <rect x="66" y="14" width="28" height="20" />
-        <rect x="66" y="46" width="28" height="20" />
-        <rect x="128" y="30" width="28" height="20" />
-        <path d="M32 40 L66 24 M32 40 L66 56 M94 24 L128 40 M94 56 L128 40" />
-        <circle cx="80" cy="24" r="1.5" fill="currentColor" />
-        <circle cx="80" cy="56" r="1.5" fill="currentColor" />
-      </svg>
-    ),
+    Diagram: WorkflowDiagram,
   },
   {
     n: "03",
@@ -84,18 +66,7 @@ const SERVICES: Service[] = [
       "Ship the product behind a real onboarding.",
       "Stay on retainer for the messy quarter after.",
     ],
-    diagram: (
-      <svg viewBox="0 0 160 80" width="140" height="70" fill="none" stroke="currentColor" strokeWidth="1" strokeLinejoin="round">
-        <rect x="2" y="2" width="80" height="76" />
-        <rect x="86" y="2" width="48" height="36" />
-        <rect x="86" y="42" width="48" height="36" />
-        <rect x="138" y="2" width="20" height="76" />
-        <line x1="2" y1="14" x2="82" y2="14" />
-        <circle cx="8" cy="8" r="1.5" fill="currentColor" />
-        <rect x="10" y="22" width="50" height="6" fill="currentColor" opacity="0.18" />
-        <rect x="10" y="34" width="40" height="4" fill="currentColor" opacity="0.10" />
-      </svg>
-    ),
+    Diagram: PlatformDiagram,
   },
   {
     n: "04",
@@ -112,19 +83,7 @@ const SERVICES: Service[] = [
       "Build the warehouse — and the lineage docs.",
       "Wire it into the dashboards people already read.",
     ],
-    diagram: (
-      <svg viewBox="0 0 160 80" width="140" height="70" fill="none" stroke="currentColor" strokeWidth="1" strokeLinejoin="round">
-        <ellipse cx="32" cy="14" rx="22" ry="6" />
-        <path d="M10 14 V46 Q10 52 32 52 Q54 52 54 46 V14" />
-        <path d="M10 30 Q10 36 32 36 Q54 36 54 30" />
-        <path d="M62 40 L120 40" />
-        <polyline points="115,35 120,40 115,45" />
-        <rect x="124" y="22" width="34" height="36" />
-        <line x1="124" y1="32" x2="158" y2="32" />
-        <line x1="124" y1="42" x2="158" y2="42" />
-        <line x1="124" y1="52" x2="158" y2="52" />
-      </svg>
-    ),
+    Diagram: AnalyticsDiagram,
   },
 ];
 
@@ -260,8 +219,8 @@ const ServiceRow = ({ service, index, isOpen, onToggle, onContact }: ServiceRowP
             </button>
           </div>
           <div className="col-span-12 flex items-start justify-end pt-2 text-ink/55 md:col-span-5">
-            <div className="border border-hairline/15 bg-paper-2/40 p-5">
-              {service.diagram}
+            <div className="w-full border border-hairline/15 bg-paper-2/40 p-5">
+              <service.Diagram playing={isOpen} />
               <div className="mt-3 font-mono text-[10px] uppercase tracking-[0.22em] text-mute">
                 fig. {service.n} — typical shape
               </div>
