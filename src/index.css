@@ -859,6 +859,66 @@ section[data-snap] {
 .kz-panel::before { top: -1px; left: -1px; border-right: none; border-bottom: none; }
 .kz-panel::after { bottom: -1px; right: -1px; border-left: none; border-top: none; }
 
+/* ─── Process station pulse ───────────────────────────────────────── */
+@keyframes kz-station-pulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245, 128, 62, 0.0); }
+  50%      { transform: scale(1.15); box-shadow: 0 0 0 4px rgba(245, 128, 62, 0.15); }
+}
+
+/* ─── Service deep-dive — inline expand ───────────────────────────── */
+.kz-service-expand {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition:
+    max-height 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+    padding 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.kz-service-expand.is-open {
+  max-height: 720px;
+  opacity: 1;
+}
+
+/* ─── Community intro curtain ─────────────────────────────────────── */
+@keyframes kz-curtain-drop {
+  from { transform: translateY(-100%); }
+  to   { transform: translateY(0); }
+}
+@keyframes kz-curtain-split-top {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-100%); }
+}
+@keyframes kz-curtain-split-bottom {
+  from { transform: translateY(0); }
+  to   { transform: translateY(100%); }
+}
+@keyframes kz-curtain-line-draw {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+@keyframes kz-curtain-fadein {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Ops feed line entry ─────────────────────────────────────────── */
+@keyframes kz-ops-line-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.ops-feed-line:last-child {
+  animation: kz-ops-line-in 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ─── Footer ambient terminal ─────────────────────────────────────── */
+@keyframes kz-term-fade {
+  0%   { opacity: 0; }
+  15%  { opacity: 1; }
+  85%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
 /* ─── Reduced motion ────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

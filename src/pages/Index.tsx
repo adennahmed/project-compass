@@ -10,9 +10,14 @@ import BackgroundDrift from "@/components/BackgroundDrift";
 import Hero from "@/sections/Hero";
 import Services from "@/sections/Services";
 import Approach from "@/sections/Approach";
+import Process from "@/sections/Process";
 import Work from "@/sections/Work";
 import Studio from "@/sections/Studio";
 import Contact from "@/sections/Contact";
+import BeforeAfter from "@/sections/BeforeAfter";
+import OpsFeed from "@/components/OpsFeed";
+import VitalSigns from "@/components/VitalSigns";
+import SectionDivider from "@/components/SectionDivider";
 
 const MARQUEE_ITEMS = [
   "Internal tools",
@@ -62,12 +67,23 @@ const Index = () => {
       <div className={pageVisible ? "page-settle" : ""} style={{ opacity: pageVisible ? 1 : 0 }}>
         <main className="relative z-10">
           <Hero onContactClick={openDrawer} />
+          <SectionDivider index={1} total={8} />
+          <div className="py-8">
+            <OpsFeed />
+          </div>
           <ServiceMarquee items={MARQUEE_ITEMS} variant="ink" />
-          <Services />
+          <Services onContactClick={openDrawer} />
+          <SectionDivider index={2} total={8} />
           <Approach />
+          <VitalSigns />
+          <Process />
+          <SectionDivider index={3} total={8} />
           <ServiceMarquee items={MARQUEE_ITEMS.slice().reverse()} variant="signal" />
           <Work />
+          <SectionDivider index={4} total={8} />
+          <BeforeAfter />
           <Studio />
+          <SectionDivider index={5} total={8} />
           <Contact onContactClick={openDrawer} />
         </main>
         <Footer />

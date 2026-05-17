@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import { AuthProvider } from "@/lib/community/auth";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import IntroCurtain from "@/components/community/IntroCurtain";
 import CommunityLayout from "./Layout";
 import CommunityHome from "./Home";
 import AnnouncementsPage from "./Announcements";
@@ -32,6 +33,7 @@ const CommunityRoot = () => {
   return (
     <ErrorBoundary>
       <AuthProvider>
+        <IntroCurtain />
         <Routes>
           <Route element={<CommunityLayout />}>
             <Route index element={<CommunityHome />} />

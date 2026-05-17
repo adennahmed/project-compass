@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import CharReveal from "@/components/CharReveal";
+import NowMosaic from "@/components/NowMosaic";
 import Reveal from "@/components/Reveal";
 import adenImg from "@/assets/aden-ahmed.png";
 import muhammadImg from "@/assets/mohammed-khan.jpg";
@@ -115,6 +116,10 @@ const Studio = () => {
           <p className="mt-8 text-center font-mono text-[11px] uppercase tracking-[0.22em] text-paper/45">
             ↘ {active === null ? "Click a portrait for the full bio" : "Click again to close"}
           </p>
+        </Reveal>
+
+        <Reveal delay={200}>
+          <NowMosaic />
         </Reveal>
       </div>
     </section>
