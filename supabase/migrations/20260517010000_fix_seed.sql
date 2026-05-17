@@ -14,15 +14,23 @@
 -- ════════════════════════════════════════════════════════════════════════
 
 -- ─── 1. CLEAN UP PARTIAL SEED ───────────────────────────────────────────
--- Cascades to public.profiles and everything owned (posts, comments, …).
-delete from auth.users where email like '%@placeholder.kozai';
-
--- Also drop any stale resources with our seed slugs (if author was deleted
--- previously by a different path, the resource may still exist).
+-- Resources first: resources.author_id has ON DELETE RESTRICT, so the
+-- auth.users cascade below will fail if any seeded resource still points
+-- at a placeholder author. Drop resources by both slug AND by author
+-- pointing at any placeholder profile, so partial seeds get cleaned too.
 delete from public.resources where slug in (
   'the-shape-of-good-internal-tools',
   'cutting-the-spreadsheet'
 );
+
+delete from public.resources
+  where author_id in (
+    select id from auth.users where email like '%@placeholder.kozai'
+  );
+
+-- Now safe to cascade-delete the placeholder users (and their profiles,
+-- posts, comments, reactions, …).
+delete from auth.users where email like '%@placeholder.kozai';
 
 -- ─── 2. BOOTSTRAP ADMIN PROMOTION (idempotent) ──────────────────────────
 -- Force-promote the bootstrap admin so the role is correct regardless of
