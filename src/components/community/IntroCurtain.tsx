@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 /**
- * IntroCurtain — one-time community entry intro.
+ * IntroCurtain — community entry intro.
  *
  * Phases (total ~2500ms):
  *   • drop     0–400ms   — cream panel slides down from top.
@@ -9,11 +9,14 @@ import { useEffect, useState } from "react";
  *   • word  1100–1900ms  — "A room for operators." fades in.
  *   • split 1900–2500ms  — curtain halves slide apart, page revealed.
  *
- * Skippable on click / Esc. Persisted via sessionStorage. Reduced-motion:
- * skips entirely.
+ * Plays once per CommunityRoot mount. Because CommunityRoot is the lazy
+ * subtree for /community/*, it mounts when entering community from outside
+ * and unmounts on leaving — so internal community navigation does not
+ * replay the curtain, but re-entering from / does.
+ *
+ * Skippable on click / Esc. Reduced-motion: skips entirely.
  */
 
-const KEY = "kozai_community_intro_seen";
 const LABEL = "[ ✦ — Entering community ]";
 
 type Phase = "drop" | "title" | "word" | "split" | "done";
@@ -25,25 +28,9 @@ const IntroCurtain = () => {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    let seen = false;
-    try {
-      seen = window.sessionStorage.getItem(KEY) === "1";
-    } catch {
-      // sessionStorage may be unavailable (private mode) — skip the intro then.
-      return;
-    }
-    if (seen) return;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduced) {
-      try {
-        window.sessionStorage.setItem(KEY, "1");
-      } catch { /* noop */ }
-      return;
-    }
+    if (reduced) return;
     setActive(true);
-    try {
-      window.sessionStorage.setItem(KEY, "1");
-    } catch { /* noop */ }
   }, []);
 
   useEffect(() => {

@@ -72,7 +72,7 @@ const STATIONS: Station[] = [
 
 const Process = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const [progress, setProgress] = useState(0);
+  const [activeStep, setActiveStep] = useState(0); // 0..4
 
   useEffect(() => {
     const el = sectionRef.current;
@@ -83,12 +83,18 @@ const Process = () => {
       raf = requestAnimationFrame(() => {
         const rect = el.getBoundingClientRect();
         const vh = window.innerHeight;
-        // Progress = how far this section has scrolled past the bottom of viewport.
-        // 0 when top of section reaches bottom of viewport, 1 when bottom reaches top.
-        const total = rect.height + vh;
-        const passed = vh - rect.top;
-        const p = Math.max(0, Math.min(1, passed / total));
-        setProgress(p);
+        // Define a comfortable progress window:
+        // start: when section top is ~75% down the viewport (just entered).
+        // end:   when section bottom is ~60% up the viewport (well before exit).
+        const startY = vh * 0.75;   // rect.top equal to this → progress 0
+        const endY = vh * 0.60;     // rect.bottom equal to this → progress 1
+        // Linear interpolation across the full scroll travel between those events.
+        const totalTravel = rect.height + (startY - endY);
+        const travelled = startY - rect.top;
+        const p = Math.max(0, Math.min(1, travelled / totalTravel));
+        // 5 buckets → step 0..4
+        const step = Math.min(4, Math.floor(p * 5));
+        setActiveStep(step);
       });
     };
     update();
@@ -102,9 +108,8 @@ const Process = () => {
   }, []);
 
   const n = STATIONS.length;
-  // Map progress (0–1) into the station axis. We want the fill to roughly span
-  // station 1 → station 5 over a generous middle band of the section.
-  const eased = Math.max(0, Math.min(1, (progress - 0.18) / 0.6));
+  // Fill at step i is i/(n-1) → 0, 0.25, 0.5, 0.75, 1.0
+  const fill = activeStep / (n - 1);
 
   return (
     <section
@@ -137,24 +142,21 @@ const Process = () => {
             <div
               className="absolute left-0 top-0 h-px bg-signal"
               style={{
-                width: `${eased * 100}%`,
-                transition: "width 0.15s linear",
+                width: `${fill * 100}%`,
+                transition: "width 250ms cubic-bezier(0.16,1,0.3,1)",
               }}
             />
           </div>
           <div className="absolute left-0 right-0 top-0 -translate-y-1/2">
             <ul className="grid grid-cols-5">
               {STATIONS.map((s, i) => {
-                const stationProgress = i / (n - 1);
-                const past = eased >= stationProgress - 0.001;
-                const isActive =
-                  eased >= stationProgress - 0.12 &&
-                  eased < stationProgress + 0.12;
+                const past = i < activeStep;
+                const isActive = i === activeStep;
                 return (
                   <li key={s.n} className="flex justify-center">
                     <span
                       className={`relative block h-[10px] w-[10px] rounded-full border transition-colors ${
-                        past
+                        past || isActive
                           ? "border-signal bg-signal"
                           : "border-ink/30 bg-paper"
                       }`}
@@ -201,21 +203,29 @@ const Process = () => {
             <div
               className="absolute left-0 top-0 w-px bg-signal"
               style={{
-                height: `${eased * 100}%`,
-                transition: "height 0.15s linear",
+                height: `${fill * 100}%`,
+                transition: "height 250ms cubic-bezier(0.16,1,0.3,1)",
               }}
             />
           </div>
           <ul className="flex flex-col gap-8 pl-7">
             {STATIONS.map((s, i) => {
-              const stationProgress = i / (n - 1);
-              const past = eased >= stationProgress - 0.001;
+              const past = i < activeStep;
+              const isActive = i === activeStep;
               return (
                 <li key={s.n} className="relative">
                   <span
                     className={`absolute -left-[27px] top-1 block h-[10px] w-[10px] rounded-full border transition-colors ${
-                      past ? "border-signal bg-signal" : "border-ink/30 bg-paper"
+                      past || isActive ? "border-signal bg-signal" : "border-ink/30 bg-paper"
                     }`}
+                    style={
+                      isActive
+                        ? {
+                            animation:
+                              "kz-station-pulse 2.5s cubic-bezier(0.16,1,0.3,1) infinite",
+                          }
+                        : undefined
+                    }
                   />
                   <div className="mb-1 flex items-center gap-2">
                     <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-mute">
