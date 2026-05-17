@@ -15,7 +15,7 @@ interface CommentComposerProps {
 const db = () => (supabase as unknown as any);
 
 const CommentComposer = ({ postId, parentId = null, placeholder, onSubmitted, onCancel, compact }: CommentComposerProps) => {
-  const { session } = useAuth();
+  const { session, profile } = useAuth();
   const [body, setBody] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -24,6 +24,22 @@ const CommentComposer = ({ postId, parentId = null, placeholder, onSubmitted, on
     return (
       <div className="border border-paper/12 bg-ink/40 p-4 font-mono text-[11px] uppercase tracking-[0.22em] text-paper/55">
         ↘ Sign in to reply
+      </div>
+    );
+  }
+
+  if (profile?.banned_at) {
+    return (
+      <div className="border border-signal/40 bg-signal/5 p-4 font-mono text-[11px] uppercase tracking-[0.22em] text-signal">
+        ↘ Your account is suspended.
+      </div>
+    );
+  }
+  const muteTs = profile?.mute_until ? new Date(profile.mute_until).getTime() : 0;
+  if (muteTs > Date.now()) {
+    return (
+      <div className="border border-paper/15 bg-ink/40 p-4 font-mono text-[11px] uppercase tracking-[0.22em] text-paper/75">
+        ↘ You're muted until {new Date(muteTs).toLocaleString()}.
       </div>
     );
   }

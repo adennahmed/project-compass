@@ -7,6 +7,9 @@ import Avatar from "@/components/community/Avatar";
 import StaffBadge from "@/components/community/StaffBadge";
 import EmptyState from "@/components/community/EmptyState";
 import CommentComposer from "@/components/community/CommentComposer";
+import KebabMenu from "@/components/community/KebabMenu";
+import ReportDialog from "@/components/community/ReportDialog";
+import BookmarkButton from "@/components/community/BookmarkButton";
 import { fetchComments, fetchPostById } from "@/lib/community/queries";
 import { Comment, Post } from "@/lib/community/types";
 import { supabase } from "@/integrations/supabase/client";
@@ -51,6 +54,7 @@ const CommentBlock = ({
 }) => {
   const [replying, setReplying] = useState(false);
   const [editing, setEditing] = useState(false);
+  const [reporting, setReporting] = useState(false);
   const [body, setBody] = useState(node.body_md);
   const author = node.author;
   const indent = Math.min(depth, 3) * 16;
@@ -105,13 +109,21 @@ const CommentBlock = ({
         >
           {replying ? "Cancel" : "Reply"}
         </button>
-        {canEdit && !editing && (
-          <button onClick={() => setEditing(true)} className="font-mono text-[10px] uppercase tracking-[0.22em] text-paper/55 hover:text-paper">Edit</button>
-        )}
-        {(isMine || canModerate) && (
-          <button onClick={remove} className="font-mono text-[10px] uppercase tracking-[0.22em] text-paper/55 hover:text-signal">Delete</button>
-        )}
+        <KebabMenu
+          items={[
+            { label: "Edit", onClick: () => setEditing(true), hidden: !canEdit || editing },
+            { label: "Delete", onClick: remove, destructive: true, hidden: !(isMine || canModerate) },
+            { label: "Report", onClick: () => setReporting(true), hidden: isMine || !myId },
+          ]}
+          className="ml-auto"
+        />
       </div>
+      <ReportDialog
+        open={reporting}
+        onClose={() => setReporting(false)}
+        targetType="comment"
+        targetId={node.id}
+      />
       {replying && (
         <div className="mt-3">
           <CommentComposer
@@ -151,6 +163,7 @@ const PostDetail = () => {
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingPost, setEditingPost] = useState(false);
+  const [reportingPost, setReportingPost] = useState(false);
   const [editTitle, setEditTitle] = useState("");
   const [editBody, setEditBody] = useState("");
 
@@ -286,18 +299,16 @@ const PostDetail = () => {
           <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-paper/45">{monoDate(post.created_at)}</span>
           <div className="ml-auto flex items-center gap-3">
             <ReactionStrip targetType="post" targetId={post.id} />
-            {canEdit && !editingPost && (
-              <button onClick={() => setEditingPost(true)} className="font-mono text-[10px] uppercase tracking-[0.22em] text-paper/55 hover:text-paper">Edit</button>
-            )}
-            {canModerate && (
-              <>
-                <button onClick={togglePinned} className="font-mono text-[10px] uppercase tracking-[0.22em] text-paper/55 hover:text-paper">{post.pinned ? "Unpin" : "Pin"}</button>
-                <button onClick={toggleLocked} className="font-mono text-[10px] uppercase tracking-[0.22em] text-paper/55 hover:text-paper">{post.locked ? "Unlock" : "Lock"}</button>
-              </>
-            )}
-            {(isAuthor || isAdmin) && (
-              <button onClick={remove} className="font-mono text-[10px] uppercase tracking-[0.22em] text-paper/55 hover:text-signal">Delete</button>
-            )}
+            <BookmarkButton targetType="post" targetId={post.id} />
+            <KebabMenu
+              items={[
+                { label: "Edit", onClick: () => setEditingPost(true), hidden: !canEdit || editingPost },
+                { label: post.pinned ? "Unpin" : "Pin", onClick: togglePinned, hidden: !canModerate },
+                { label: post.locked ? "Unlock" : "Lock", onClick: toggleLocked, hidden: !canModerate },
+                { label: "Delete", onClick: remove, destructive: true, hidden: !(isAuthor || isAdmin) },
+                { label: "Report", onClick: () => setReportingPost(true), hidden: isAuthor || !session },
+              ]}
+            />
           </div>
         </div>
 
@@ -306,6 +317,13 @@ const PostDetail = () => {
             <MarkdownBody source={post.body_md} size="article" />
           </div>
         )}
+
+        <ReportDialog
+          open={reportingPost}
+          onClose={() => setReportingPost(false)}
+          targetType="post"
+          targetId={post.id}
+        />
 
         <div className="mt-12">
           <div className="mb-5 font-mono text-[11px] uppercase tracking-[0.32em] text-paper/55">

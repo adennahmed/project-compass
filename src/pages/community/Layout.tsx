@@ -4,6 +4,7 @@ import Lenis from "lenis";
 import CommunitySubNav from "@/components/community/CommunitySubNav";
 import StaffBadge from "@/components/community/StaffBadge";
 import Avatar from "@/components/community/Avatar";
+import NotificationsBell from "@/components/community/NotificationsBell";
 import Logo from "@/components/Logo";
 import { useAuth } from "@/lib/community/auth";
 
@@ -83,6 +84,8 @@ const CommunityLayout = () => {
 
           <div className="flex items-center gap-3 md:gap-4">
             {session && profile ? (
+              <>
+              <NotificationsBell />
               <div className="relative">
                 <button
                   type="button"
@@ -141,6 +144,7 @@ const CommunityLayout = () => {
                   </>
                 )}
               </div>
+              </>
             ) : (
               <Link
                 to="/community/auth"

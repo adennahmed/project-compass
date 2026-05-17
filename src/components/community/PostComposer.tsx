@@ -44,6 +44,11 @@ const PostComposer = ({
 
   const isStaff = profile?.role === "staff" || profile?.role === "admin";
 
+  const isBanned = !!profile?.banned_at;
+  const muteUntilTs = profile?.mute_until ? new Date(profile.mute_until).getTime() : 0;
+  const isMuted = muteUntilTs > Date.now();
+  const warnings = profile?.warning_count ?? 0;
+
   if (!session) {
     return (
       <div className="flex items-center justify-between gap-3 border border-paper/12 bg-ink/40 p-4">
@@ -56,6 +61,21 @@ const PostComposer = ({
         >
           Sign in →
         </Link>
+      </div>
+    );
+  }
+
+  if (isBanned) {
+    return (
+      <div className="border border-signal/40 bg-signal/5 p-4 font-mono text-[11px] uppercase tracking-[0.22em] text-signal">
+        ↘ Your account is suspended. Contact the Kozai team if you think this is a mistake.
+      </div>
+    );
+  }
+  if (isMuted) {
+    return (
+      <div className="border border-paper/15 bg-ink/40 p-4 font-mono text-[11px] uppercase tracking-[0.22em] text-paper/75">
+        ↘ You're muted until {new Date(muteUntilTs).toLocaleString()}.
       </div>
     );
   }
@@ -91,8 +111,16 @@ const PostComposer = ({
     void data;
   };
 
+  const WarningBanner = warnings > 0 ? (
+    <div className="mb-2 border border-yellow-500/40 bg-yellow-500/5 p-3 font-mono text-[10px] uppercase tracking-[0.22em] text-yellow-300/90">
+      ↘ Heads up: you have {warnings} warning{warnings === 1 ? "" : "s"} on your account. Review the community rules.
+    </div>
+  ) : null;
+
   if (!open) {
     return (
+      <>
+      {WarningBanner}
       <button
         type="button"
         onClick={() => setOpen(true)}
@@ -100,11 +128,13 @@ const PostComposer = ({
       >
         ↘ {announcement ? "Post an announcement…" : "Start a thread…"}
       </button>
+      </>
     );
   }
 
   return (
     <div className="flex flex-col gap-3 border border-paper/15 bg-ink/40 p-4 md:p-5">
+      {WarningBanner}
       <div className="flex flex-wrap items-center gap-2">
         {!announcement && (
           <>
