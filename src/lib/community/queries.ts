@@ -99,7 +99,10 @@ export async function fetchResourceBySlug(slug: string): Promise<Resource | null
 
 export async function countProfiles(): Promise<number> {
   if (!supabase) return 0;
-  const { count } = await db().from("profiles").select("*", { count: "exact", head: true });
+  const { count } = await db()
+    .from("profiles")
+    .select("*", { count: "exact", head: true })
+    .is("banned_at", null);
   return count ?? 0;
 }
 

@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
-const ITEMS = [
+const BASE_ITEMS = [
   { label: "Home",          to: "/community" },
   { label: "Announcements", to: "/community/announcements" },
   { label: "Social",        to: "/community/social" },
@@ -9,22 +9,32 @@ const ITEMS = [
   { label: "Members",       to: "/community/members" },
 ];
 
+const DASHBOARD_ITEM = { label: "Dashboard", to: "/community/dashboard" };
+
 /**
  * Horizontal community sub-nav with sliding signal-orange indicator.
  * Echoes the role-selector pattern in the inquiry drawer so the language
  * stays consistent across the site.
  */
-const CommunitySubNav = ({ isStaff = false }: { isStaff?: boolean }) => {
+const CommunitySubNav = ({ isStaff = false, signedIn = false }: { isStaff?: boolean; signedIn?: boolean }) => {
   const { pathname } = useLocation();
   const refs = useRef<Record<string, HTMLAnchorElement | null>>({});
   const trackRef = useRef<HTMLDivElement>(null);
   const [indicator, setIndicator] = useState({ left: 0, width: 0 });
 
+  const buildItems = () => {
+    // Insert Dashboard after Home for signed-in members.
+    const base = signedIn
+      ? [BASE_ITEMS[0], DASHBOARD_ITEM, ...BASE_ITEMS.slice(1)]
+      : [...BASE_ITEMS];
+    return isStaff ? [...base, { label: "Admin", to: "/community/admin" }] : base;
+  };
+
   // Pick the deepest-matching item (longest `to` that prefixes pathname).
   const activeIdx = (() => {
     let best = 0;
     let bestLen = -1;
-    const items = isStaff ? [...ITEMS, { label: "Admin", to: "/community/admin" }] : ITEMS;
+    const items = buildItems();
     items.forEach((it, i) => {
       const match = pathname === it.to || pathname.startsWith(it.to + "/");
       if (match && it.to.length > bestLen) {
@@ -35,7 +45,7 @@ const CommunitySubNav = ({ isStaff = false }: { isStaff?: boolean }) => {
     return best;
   })();
 
-  const items = isStaff ? [...ITEMS, { label: "Admin", to: "/community/admin" }] : ITEMS;
+  const items = buildItems();
   const activeKey = items[activeIdx]?.to;
 
   useLayoutEffect(() => {

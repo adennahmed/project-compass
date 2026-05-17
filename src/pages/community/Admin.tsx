@@ -240,6 +240,8 @@ const MembersPane = ({
   actorId,
   refresh,
   meId,
+  isAdmin,
+  onDeleted,
 }: {
   members: Profile[];
   loading: boolean;
@@ -247,8 +249,51 @@ const MembersPane = ({
   actorId: string;
   refresh: () => void;
   meId?: string;
+  isAdmin: boolean;
+  onDeleted: (id: string) => void;
 }) => {
   const ctx: ModerationContext = { actorId, refresh };
+  const [deleteTarget, setDeleteTarget] = useState<Profile | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState("");
+  const [deleteBusy, setDeleteBusy] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  const openDelete = (m: Profile) => {
+    setDeleteTarget(m);
+    setDeleteConfirm("");
+    setDeleteError(null);
+  };
+
+  const closeDelete = () => {
+    if (deleteBusy) return;
+    setDeleteTarget(null);
+    setDeleteConfirm("");
+    setDeleteError(null);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteTarget || !supabase) return;
+    setDeleteBusy(true);
+    setDeleteError(null);
+    const { data, error } = await supabase.functions.invoke("admin-delete-account", {
+      body: { user_id: deleteTarget.id },
+    });
+    setDeleteBusy(false);
+    if (error || (data && (data as { error?: string }).error)) {
+      setDeleteError(error?.message ?? (data as { error?: string })?.error ?? "Failed");
+      return;
+    }
+    const handle = deleteTarget.handle;
+    onDeleted(deleteTarget.id);
+    setDeleteTarget(null);
+    setDeleteConfirm("");
+    // Lightweight toast — matches admin-pane aesthetic: a transient mono line in the corner.
+    const el = document.createElement("div");
+    el.textContent = `Deleted @${handle}`;
+    el.className = "fixed bottom-6 right-6 z-[200] border border-paper/20 bg-ink px-4 py-2 font-mono text-[10px] uppercase tracking-[0.22em] text-paper";
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 2400);
+  };
 
   const warn = async (m: Profile) => {
     const note = window.prompt(`Warn @${m.handle}:`);
@@ -283,6 +328,7 @@ const MembersPane = ({
     return <EmptyState title="No members yet" body="When users sign up they'll show up here." />;
   }
   return (
+    <>
     <div className="overflow-hidden border border-paper/12">
       <div className="grid grid-cols-12 gap-4 border-b border-paper/10 bg-ink/60 px-4 py-3 font-mono text-[10px] uppercase tracking-[0.22em] text-paper/55">
         <div className="col-span-5">Member</div>
@@ -344,6 +390,19 @@ const MembersPane = ({
                     ? <button onClick={() => unban(m)} className="px-3 py-1.5 text-left font-mono text-[10px] uppercase tracking-[0.22em] text-paper/85 hover:bg-paper/5">Unban</button>
                     : <button onClick={() => ban(m)} className="px-3 py-1.5 text-left font-mono text-[10px] uppercase tracking-[0.22em] text-signal hover:bg-paper/5">Ban</button>
                   }
+                  {isAdmin && (
+                    <>
+                      <span className="my-1 block h-px bg-paper/10" />
+                      <button
+                        onClick={() => openDelete(m)}
+                        disabled={m.id === meId}
+                        className="px-3 py-1.5 text-left font-mono text-[10px] uppercase tracking-[0.22em] text-signal hover:bg-paper/5 disabled:cursor-not-allowed disabled:opacity-40"
+                        title={m.id === meId ? "Use Settings → Danger zone for your own account" : "Permanently delete this account"}
+                      >
+                        Delete account
+                      </button>
+                    </>
+                  )}
                 </div>
               </details>
             </div>
@@ -351,6 +410,72 @@ const MembersPane = ({
         );
       })}
     </div>
+    {deleteTarget && (
+      <div
+        role="dialog"
+        aria-modal="true"
+        className="fixed inset-0 z-[90] flex items-center justify-center bg-ink/80 px-6 py-10"
+        onClick={closeDelete}
+      >
+        <div
+          onClick={(e) => e.stopPropagation()}
+          className="w-full max-w-[480px] border border-paper/20 bg-ink p-6 md:p-7"
+        >
+          <div className="font-mono text-[10px] uppercase tracking-[0.32em] text-signal">
+            [ ✦ — Delete account ]
+          </div>
+          <h3
+            className="mt-4 text-paper"
+            style={{ fontSize: 22, fontWeight: 600, letterSpacing: "-0.02em", lineHeight: 1.15 }}
+          >
+            Permanently delete @{deleteTarget.handle}?
+          </h3>
+          <p className="mt-3 text-[13px] leading-[1.6] text-paper/65">
+            This removes the auth user, profile, posts, comments, reactions,
+            bookmarks, RSVPs, and messages associated with this account. It
+            cannot be undone.
+          </p>
+          <div className="mt-4 font-mono text-[10px] uppercase tracking-[0.22em] text-paper/55">
+            Member · {deleteTarget.display_name}
+          </div>
+          <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.22em] text-paper/55">
+            Handle · @{deleteTarget.handle}
+          </div>
+          <label className="mt-5 block font-mono text-[10px] uppercase tracking-[0.22em] text-paper/55">
+            Type <span className="text-paper">DELETE @{deleteTarget.handle}</span> to confirm
+          </label>
+          <input
+            value={deleteConfirm}
+            onChange={(e) => setDeleteConfirm(e.target.value)}
+            className="mt-2 w-full border border-paper/20 bg-ink px-3 py-2 text-[13px] text-paper focus:border-paper/40 focus:outline-none"
+            placeholder={`DELETE @${deleteTarget.handle}`}
+            autoFocus
+          />
+          {deleteError && (
+            <div className="mt-3 font-mono text-[10px] uppercase tracking-[0.22em] text-signal">↘ {deleteError}</div>
+          )}
+          <div className="mt-6 flex items-center justify-end gap-4 border-t border-paper/10 pt-4">
+            <button
+              type="button"
+              onClick={closeDelete}
+              disabled={deleteBusy}
+              className="font-mono text-[10px] uppercase tracking-[0.22em] text-paper/55 hover:text-paper disabled:opacity-40"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={() => void confirmDelete()}
+              disabled={deleteBusy || deleteConfirm !== `DELETE @${deleteTarget.handle}`}
+              className="border border-signal bg-signal px-4 py-2 font-mono text-[10px] uppercase tracking-[0.22em] text-ink transition-colors hover:bg-signal/90 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              {deleteBusy ? "Deleting…" : "Delete forever ↘"}
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   );
 };
 
@@ -673,6 +798,8 @@ const AdminPage = () => {
               actorId={actorId}
               refresh={() => setMemberTick((n) => n + 1)}
               meId={profile?.id}
+              isAdmin={!!isAdmin}
+              onDeleted={(id) => setMembers((prev) => prev.filter((m) => m.id !== id))}
             />
           )}
           {pane === "posts" && <PostsPane actorId={actorId} isAdmin={!!isAdmin} />}

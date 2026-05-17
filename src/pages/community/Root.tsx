@@ -1,7 +1,8 @@
 import { Route, Routes } from "react-router-dom";
-import { AuthProvider } from "@/lib/community/auth";
+import { AuthProvider, useAuth } from "@/lib/community/auth";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import IntroCurtain from "@/components/community/IntroCurtain";
+import BannedGate from "@/components/community/BannedGate";
 import CommunityLayout from "./Layout";
 import CommunityHome from "./Home";
 import AnnouncementsPage from "./Announcements";
@@ -18,6 +19,7 @@ import AdminPage from "./Admin";
 import PostDetail from "./PostDetail";
 import ResourceEditor from "./ResourceEditor";
 import ResourceDetail from "./ResourceDetail";
+import Dashboard from "./Dashboard";
 
 /**
  * CommunityRoot — single entrypoint for the entire /community/* subtree.
@@ -29,32 +31,46 @@ import ResourceDetail from "./ResourceDetail";
  * shows the recovery screen confined to /community, leaving the rest of
  * the app untouched.
  */
+const CommunityShell = () => {
+  const { profile, loading } = useAuth();
+  // If banned, short-circuit and show the full-bleed gate over everything.
+  if (!loading && profile?.banned_at) {
+    return <BannedGate />;
+  }
+  return (
+    <>
+      <IntroCurtain />
+      <Routes>
+        <Route element={<CommunityLayout />}>
+          <Route index element={<CommunityHome />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="announcements" element={<AnnouncementsPage />} />
+          <Route path="announcements/:postId" element={<PostDetail />} />
+          <Route path="social" element={<SocialPage />} />
+          <Route path="social/:postId" element={<PostDetail />} />
+          <Route path="resources" element={<ResourcesPage />} />
+          <Route path="resources/new" element={<ResourceEditor />} />
+          <Route path="resources/:slug/edit" element={<ResourceEditor />} />
+          <Route path="resources/:slug" element={<ResourceDetail />} />
+          <Route path="members" element={<MembersPage />} />
+          <Route path="u/:handle" element={<ProfilePage />} />
+          <Route path="auth" element={<AuthPage />} />
+          <Route path="auth/callback" element={<AuthCallback />} />
+          <Route path="auth/reset" element={<AuthReset />} />
+          <Route path="onboarding" element={<Onboarding />} />
+          <Route path="settings" element={<Settings />} />
+          <Route path="admin" element={<AdminPage />} />
+        </Route>
+      </Routes>
+    </>
+  );
+};
+
 const CommunityRoot = () => {
   return (
     <ErrorBoundary>
       <AuthProvider>
-        <IntroCurtain />
-        <Routes>
-          <Route element={<CommunityLayout />}>
-            <Route index element={<CommunityHome />} />
-            <Route path="announcements" element={<AnnouncementsPage />} />
-            <Route path="announcements/:postId" element={<PostDetail />} />
-            <Route path="social" element={<SocialPage />} />
-            <Route path="social/:postId" element={<PostDetail />} />
-            <Route path="resources" element={<ResourcesPage />} />
-            <Route path="resources/new" element={<ResourceEditor />} />
-            <Route path="resources/:slug/edit" element={<ResourceEditor />} />
-            <Route path="resources/:slug" element={<ResourceDetail />} />
-            <Route path="members" element={<MembersPage />} />
-            <Route path="u/:handle" element={<ProfilePage />} />
-            <Route path="auth" element={<AuthPage />} />
-            <Route path="auth/callback" element={<AuthCallback />} />
-            <Route path="auth/reset" element={<AuthReset />} />
-            <Route path="onboarding" element={<Onboarding />} />
-            <Route path="settings" element={<Settings />} />
-            <Route path="admin" element={<AdminPage />} />
-          </Route>
-        </Routes>
+        <CommunityShell />
       </AuthProvider>
     </ErrorBoundary>
   );

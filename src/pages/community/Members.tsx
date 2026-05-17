@@ -26,6 +26,7 @@ const MembersPage = () => {
     supabase
       .from("profiles")
       .select("*")
+      .is("banned_at", null)
       .order("role", { ascending: true })           // admin/staff first
       .order("created_at", { ascending: false })
       .then(({ data, error }) => {

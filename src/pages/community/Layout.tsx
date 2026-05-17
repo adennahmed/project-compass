@@ -155,7 +155,7 @@ const CommunityLayout = () => {
             )}
           </div>
         </div>
-        <CommunitySubNav isStaff={isStaff} />
+        <CommunitySubNav isStaff={isStaff} signedIn={!!session && !!profile} />
       </header>
 
       <main>
