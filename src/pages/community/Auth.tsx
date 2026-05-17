@@ -64,7 +64,7 @@ const AuthPage = () => {
       <div className="container-wide grid grid-cols-1 gap-12 md:grid-cols-12 md:gap-16">
         {/* Left: copy */}
         <div className="md:col-span-7">
-          <Reveal>
+          <Reveal replay={false}>
             <div className="font-mono text-[11px] uppercase tracking-[0.32em] text-paper/55">
               [ 00 — Join ]
             </div>
@@ -79,20 +79,20 @@ const AuthPage = () => {
               lineHeight: 0.98,
             }}
           >
-            <CharReveal stagger={26}>{"COME"}</CharReveal>{" "}
+            <CharReveal replay={false} stagger={26}>{"COME"}</CharReveal>{" "}
             <span className="italic-editorial text-signal">
-              <CharReveal stagger={26} delay={220}>{"INSIDE."}</CharReveal>
+              <CharReveal replay={false} stagger={26} delay={220}>{"INSIDE."}</CharReveal>
             </span>
           </h1>
 
-          <Reveal delay={500}>
+          <Reveal replay={false} delay={500}>
             <p className="mt-5 max-w-[54ch] text-[15px] leading-[1.65] text-paper/65 md:text-[16px]">
               Sign in or create an account to start posting, commenting, and
               building a profile. Reading is always public — no account needed.
             </p>
           </Reveal>
 
-          <Reveal delay={620}>
+          <Reveal replay={false} delay={620}>
             <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-6">
               {[
                 ["Free", "Always."],
@@ -110,7 +110,7 @@ const AuthPage = () => {
 
         {/* Right: form card */}
         <div className="md:col-span-5">
-          <Reveal delay={300}>
+          <Reveal replay={false} delay={300}>
             <div className="flex flex-col gap-6 border border-paper/15 bg-ink/40 p-7 md:p-9">
               {/* Mode switcher */}
               <div className="flex items-center gap-1.5">

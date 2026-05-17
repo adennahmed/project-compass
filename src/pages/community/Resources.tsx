@@ -47,7 +47,7 @@ const ResourcesPage = () => {
     <section className="px-6 py-14 md:px-10 md:py-20">
       <div className="container-wide">
         <div className="flex items-center justify-between gap-3">
-          <Reveal>
+          <Reveal replay={false}>
             <div className="font-mono text-[11px] uppercase tracking-[0.32em] text-paper/55">
               [ 04 — Resources ]
             </div>
@@ -71,21 +71,21 @@ const ResourcesPage = () => {
             lineHeight: 1.02,
           }}
         >
-          <CharReveal stagger={26}>{"WHAT WE'VE"}</CharReveal>{" "}
+          <CharReveal replay={false} stagger={26}>{"WHAT WE'VE"}</CharReveal>{" "}
           <span className="italic-editorial text-signal">
-            <CharReveal stagger={26} delay={220}>{"LEARNED"}</CharReveal>
+            <CharReveal replay={false} stagger={26} delay={220}>{"LEARNED"}</CharReveal>
           </span>{" "}
-          <CharReveal stagger={26} delay={420}>{"BUILDING."}</CharReveal>
+          <CharReveal replay={false} stagger={26} delay={420}>{"BUILDING."}</CharReveal>
         </h1>
 
-        <Reveal delay={500}>
+        <Reveal replay={false} delay={500}>
           <p className="mt-5 max-w-[60ch] text-[15px] leading-[1.65] text-paper/65 md:text-[16px]">
             Guides, deep-dives, case studies. Written by the Kozai team. Free to read, no email gate.
           </p>
         </Reveal>
 
         {/* Filters */}
-        <Reveal delay={120}>
+        <Reveal replay={false} delay={120}>
           <div className="mt-10 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div className="flex flex-wrap items-center gap-1.5">
               <Tag active={kind === "all"} onClick={() => setKind("all")}>All</Tag>
@@ -120,13 +120,13 @@ const ResourcesPage = () => {
           ) : (
             <>
               {featured && (
-                <Reveal delay={140}>
+                <Reveal replay={false} delay={140}>
                   <ResourceCard resource={featured} variant="featured" />
                 </Reveal>
               )}
 
               {rest.length > 0 && (
-                <Reveal delay={220}>
+                <Reveal replay={false} delay={220}>
                   <div className="flex items-baseline justify-between gap-3">
                     <div className="font-mono text-[10px] uppercase tracking-[0.28em] text-paper/55">
                       ↘ The deck · hover any card to pull it forward
@@ -138,7 +138,7 @@ const ResourcesPage = () => {
                 </Reveal>
               )}
 
-              <Reveal delay={300}>
+              <Reveal replay={false} delay={300}>
                 <ResourceDeck resources={rest} />
               </Reveal>
             </>

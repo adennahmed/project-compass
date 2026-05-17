@@ -59,7 +59,7 @@ const AuthReset = () => {
   return (
     <section className="px-6 py-14 md:px-10 md:py-20">
       <div className="container-wide max-w-xl">
-        <Reveal>
+        <Reveal replay={false}>
           <div className="font-mono text-[11px] uppercase tracking-[0.32em] text-paper/55">
             [ — Reset password ]
           </div>

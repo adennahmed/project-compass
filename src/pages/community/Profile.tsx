@@ -89,13 +89,13 @@ const ProfilePage = () => {
   return (
     <section className="px-6 py-14 md:px-10 md:py-20">
       <div className="container-wide">
-        <Reveal>
+        <Reveal replay={false}>
           <div className="font-mono text-[11px] uppercase tracking-[0.32em] text-paper/55">
             [ 06 — Profile ]
           </div>
         </Reveal>
 
-        <Reveal delay={120}>
+        <Reveal replay={false} delay={120}>
           <div className="mt-6 flex flex-col gap-6 border border-paper/12 bg-ink/40 p-6 md:flex-row md:items-center md:gap-10 md:p-10">
             <Avatar profile={profile} size={108} />
             <div className="min-w-0 flex-1">

@@ -168,7 +168,7 @@ const Onboarding = () => {
     <section className="px-6 py-14 md:px-10 md:py-20">
       <div className="container-wide grid grid-cols-1 gap-12 md:grid-cols-12 md:gap-16">
         <div className="md:col-span-7">
-          <Reveal>
+          <Reveal replay={false}>
             <div className="font-mono text-[11px] uppercase tracking-[0.32em] text-paper/55">
               [ — Setup your profile ]
             </div>
@@ -177,12 +177,12 @@ const Onboarding = () => {
             className="mt-5 text-paper"
             style={{ fontSize: "clamp(2rem, 5vw, 3.6rem)", fontWeight: 600, letterSpacing: "-0.045em", lineHeight: 0.98 }}
           >
-            <CharReveal stagger={26}>{"PICK A"}</CharReveal>{" "}
+            <CharReveal replay={false} stagger={26}>{"PICK A"}</CharReveal>{" "}
             <span className="italic-editorial text-signal">
-              <CharReveal stagger={26} delay={200}>{"HANDLE."}</CharReveal>
+              <CharReveal replay={false} stagger={26} delay={200}>{"HANDLE."}</CharReveal>
             </span>
           </h1>
-          <Reveal delay={500}>
+          <Reveal replay={false} delay={500}>
             <p className="mt-5 max-w-[58ch] text-[15px] leading-[1.65] text-paper/65 md:text-[16px]">
               This is how others will know you in the community. You can change
               everything except your handle later from Settings.
@@ -290,7 +290,7 @@ const Onboarding = () => {
 
         {/* Live preview */}
         <div className="md:col-span-5">
-          <Reveal delay={300}>
+          <Reveal replay={false} delay={300}>
             <div className="sticky top-24 flex flex-col gap-3">
               <div className="font-mono text-[10px] uppercase tracking-[0.32em] text-paper/45">↘ Live preview</div>
               <div className="flex items-start gap-4 border border-paper/15 bg-ink/40 p-5">

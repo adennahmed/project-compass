@@ -263,7 +263,7 @@ const PostDetail = () => {
           {post.locked && <span className="ml-2 text-paper/55">⌁ Locked</span>}
         </div>
 
-        <Reveal>
+        <Reveal replay={false}>
           {editingPost ? (
             <div className="mt-5 flex flex-col gap-3">
               <input

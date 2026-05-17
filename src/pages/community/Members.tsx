@@ -62,7 +62,7 @@ const MembersPage = () => {
   return (
     <section className="px-6 py-14 md:px-10 md:py-20">
       <div className="container-wide">
-        <Reveal>
+        <Reveal replay={false}>
           <div className="font-mono text-[11px] uppercase tracking-[0.32em] text-paper/55">
             [ 05 — Members ]
           </div>
@@ -72,20 +72,20 @@ const MembersPage = () => {
           className="mt-5 text-paper"
           style={{ fontSize: "clamp(2rem, 5vw, 3.6rem)", fontWeight: 600, letterSpacing: "-0.04em", lineHeight: 1.02 }}
         >
-          <CharReveal stagger={26}>{"WHO'S IN"}</CharReveal>{" "}
+          <CharReveal replay={false} stagger={26}>{"WHO'S IN"}</CharReveal>{" "}
           <span className="italic-editorial text-signal">
-            <CharReveal stagger={26} delay={200}>{"THE ROOM."}</CharReveal>
+            <CharReveal replay={false} stagger={26} delay={200}>{"THE ROOM."}</CharReveal>
           </span>
         </h1>
 
-        <Reveal delay={500}>
+        <Reveal replay={false} delay={500}>
           <p className="mt-5 max-w-[58ch] text-[15px] leading-[1.65] text-paper/65 md:text-[16px]">
             Operators, engineers, founders. The Kozai team and the people building alongside us.
           </p>
         </Reveal>
 
         {/* Filters */}
-        <Reveal delay={120}>
+        <Reveal replay={false} delay={120}>
           <div className="mt-10 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div className="flex flex-wrap items-center gap-1.5">
               <Tag active={role === "all"} onClick={() => setRole("all")}>All</Tag>
@@ -122,7 +122,7 @@ const MembersPage = () => {
           ) : (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5">
               {list.map((p, i) => (
-                <Reveal key={p.id} delay={i * 50}>
+                <Reveal replay={false} key={p.id} delay={i * 50}>
                   <MemberCard profile={p} />
                 </Reveal>
               ))}

@@ -630,7 +630,7 @@ const AdminPage = () => {
   return (
     <section className="px-6 py-14 md:px-10 md:py-20">
       <div className="container-wide">
-        <Reveal>
+        <Reveal replay={false}>
           <div className="flex items-center justify-between gap-3">
             <div className="font-mono text-[11px] uppercase tracking-[0.32em] text-paper/55">
               [ ✦ — Admin console ]
@@ -653,7 +653,7 @@ const AdminPage = () => {
           Moderation console.
         </h1>
 
-        <Reveal delay={120}>
+        <Reveal replay={false} delay={120}>
           <div className="mt-8 flex flex-wrap items-center gap-1.5">
             {(["reports", "members", "posts", "resources", "audit"] as Pane[]).map((p) => (
               <Tag key={p} active={pane === p} onClick={() => setPane(p)}>

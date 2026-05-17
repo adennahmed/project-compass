@@ -67,7 +67,7 @@ const CommunityHome = () => {
       {/* ─── Hero ──────────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden border-b border-paper/10 bg-ink px-6 pb-16 pt-14 md:px-10 md:pb-24 md:pt-20">
         <div className="container-wide">
-          <Reveal>
+          <Reveal replay={false}>
             <div className="font-mono text-[11px] uppercase tracking-[0.32em] text-paper/55">
               [ 01 — Hub ]
             </div>
@@ -84,15 +84,15 @@ const CommunityHome = () => {
                   lineHeight: "0.98",
                 }}
               >
-                <CharReveal stagger={26} delay={0}>{"JOIN THE"}</CharReveal>
+                <CharReveal replay={false} stagger={26} delay={0}>{"JOIN THE"}</CharReveal>
                 <br />
                 <span className="italic-editorial text-signal mr-3">
-                  <CharReveal stagger={26} delay={260}>{"KOZAI"}</CharReveal>
+                  <CharReveal replay={false} stagger={26} delay={260}>{"KOZAI"}</CharReveal>
                 </span>
-                <CharReveal stagger={26} delay={520}>{"COMMUNITY."}</CharReveal>
+                <CharReveal replay={false} stagger={26} delay={520}>{"COMMUNITY."}</CharReveal>
               </h1>
 
-              <Reveal delay={700}>
+              <Reveal replay={false} delay={700}>
                 <p className="mt-7 max-w-[58ch] text-[16px] leading-[1.65] text-paper/70 md:text-[17px]">
                   A working room for operators, founders, and engineers who care about
                   the tools their teams depend on. Announcements, deep-dives, and the
@@ -100,7 +100,7 @@ const CommunityHome = () => {
                 </p>
               </Reveal>
 
-              <Reveal delay={840}>
+              <Reveal replay={false} delay={840}>
                 <div className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-3">
                   <Link
                     to="/community/auth"
@@ -120,7 +120,7 @@ const CommunityHome = () => {
 
             {/* Live stats column — counter-driven, mirrors loader aesthetic */}
             <div className="md:col-span-4">
-              <Reveal delay={400}>
+              <Reveal replay={false} delay={400}>
                 <div className="flex flex-col gap-6 border border-paper/12 bg-ink/40 p-6 md:p-7">
                   <div className="font-mono text-[10px] uppercase tracking-[0.32em] text-paper/55">
                     ↘ Live signal
@@ -164,7 +164,7 @@ const CommunityHome = () => {
       {pinned && (
         <section className="border-b border-paper/10 px-6 py-16 md:px-10 md:py-20">
           <div className="container-wide">
-            <Reveal>
+            <Reveal replay={false}>
               <div className="mb-8 flex items-end justify-between gap-4">
                 <div>
                   <div className="font-mono text-[11px] uppercase tracking-[0.32em] text-paper/55">
@@ -181,14 +181,14 @@ const CommunityHome = () => {
               </div>
             </Reveal>
 
-            <Reveal delay={120}>
+            <Reveal replay={false} delay={120}>
               <AnnouncementCard post={pinned} featured />
             </Reveal>
 
             {otherAnn.length > 0 && (
               <div className="mt-6 grid gap-6 md:grid-cols-2">
                 {otherAnn.map((p, i) => (
-                  <Reveal key={p.id} delay={200 + i * 80}>
+                  <Reveal replay={false} key={p.id} delay={200 + i * 80}>
                     <AnnouncementCard post={p} />
                   </Reveal>
                 ))}
@@ -203,19 +203,19 @@ const CommunityHome = () => {
         <div className="container-wide grid grid-cols-1 gap-10 md:grid-cols-12 md:gap-12">
           {/* Featured resource */}
           <div className="md:col-span-5">
-            <Reveal>
+            <Reveal replay={false}>
               <div className="mb-6 font-mono text-[11px] uppercase tracking-[0.32em] text-paper/55">
                 [ 03 — Featured resource ]
               </div>
             </Reveal>
-            <Reveal delay={120}>
+            <Reveal replay={false} delay={120}>
               {featuredResource && <ResourceCard resource={featuredResource} variant="featured" />}
             </Reveal>
           </div>
 
           {/* Recent activity */}
           <div className="md:col-span-7">
-            <Reveal>
+            <Reveal replay={false}>
               <div className="mb-6 flex items-end justify-between gap-4">
                 <div className="font-mono text-[11px] uppercase tracking-[0.32em] text-paper/55">
                   [ 04 — Recent activity ]
@@ -228,7 +228,7 @@ const CommunityHome = () => {
                 </Link>
               </div>
             </Reveal>
-            <Reveal delay={120}>
+            <Reveal replay={false} delay={120}>
               <div className="border border-paper/12 bg-ink/40">
                 {threads.map((t) => (
                   <ThreadItem key={t.id} post={t} />
