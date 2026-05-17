@@ -3,29 +3,30 @@ import { useEffect, useState } from "react";
 /**
  * IntroCurtain — community entry intro.
  *
- * Phases (total ~2700ms):
- *   • drop     0–400ms   — cream panel slides down from top.
- *   • title  400–1100ms  — mono label types in + thin line draws.
- *   • word  1100–2000ms  — split text lines fade up.
- *   • split 2000–2700ms  — top half (with top text) translates UP,
- *                         bottom half (with bottom text) translates DOWN.
- *                         Text never fades — it leaves the viewport
- *                         because its parent half moves.
+ * Quiet, kozai-voice: a cream panel drops in, a small composition fades
+ * in centered (mono label · thin orange rule · short phrase with one
+ * orange-italic accent word), holds briefly, then the entire panel
+ * translates up off-screen as a single piece. Text rides with the panel
+ * so nothing fades awkwardly.
+ *
+ * Phases (total ~2400ms):
+ *   • drop      0–350ms   — cream panel slides down from top.
+ *   • label   350–700ms   — mono label fades in + thin orange rule draws.
+ *   • phrase  700–1200ms  — phrase fades in below.
+ *   • hold   1200–1800ms  — hold composition.
+ *   • lift   1800–2400ms  — whole panel (and its text) slides up.
  *
  * Plays once per CommunityRoot mount. Skippable on click / Esc.
- * Reduced-motion: skips entirely.
+ * Reduced-motion: skipped entirely.
  */
 
-const LABEL = "[ ✦ — Entering community ]";
-const TOP_LINE = "A small room for —";
-const BOTTOM_LINE = "the people who build the boring software that runs the world.";
+const LABEL = "[ ✦ — ENTERING COMMUNITY ]";
 
-type Phase = "drop" | "title" | "word" | "split" | "done";
+type Phase = "drop" | "label" | "phrase" | "hold" | "lift" | "done";
 
 const IntroCurtain = () => {
   const [active, setActive] = useState(false);
   const [phase, setPhase] = useState<Phase>("drop");
-  const [typed, setTyped] = useState(0);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -36,28 +37,15 @@ const IntroCurtain = () => {
 
   useEffect(() => {
     if (!active) return;
-    const t1 = window.setTimeout(() => setPhase("title"), 400);
-    const t2 = window.setTimeout(() => setPhase("word"), 1100);
-    const t3 = window.setTimeout(() => setPhase("split"), 2000);
-    const t4 = window.setTimeout(() => setPhase("done"), 2700);
+    const t1 = window.setTimeout(() => setPhase("label"), 350);
+    const t2 = window.setTimeout(() => setPhase("phrase"), 700);
+    const t3 = window.setTimeout(() => setPhase("hold"), 1200);
+    const t4 = window.setTimeout(() => setPhase("lift"), 1800);
+    const t5 = window.setTimeout(() => setPhase("done"), 2400);
     return () => {
-      [t1, t2, t3, t4].forEach((id) => window.clearTimeout(id));
+      [t1, t2, t3, t4, t5].forEach((id) => window.clearTimeout(id));
     };
   }, [active]);
-
-  // typewriter for the label
-  useEffect(() => {
-    if (!active || phase !== "title") return;
-    let i = 0;
-    const tick = () => {
-      i += 1;
-      setTyped(i);
-      if (i < LABEL.length) {
-        window.setTimeout(tick, 22);
-      }
-    };
-    tick();
-  }, [active, phase]);
 
   const skip = () => setPhase("done");
 
@@ -72,11 +60,10 @@ const IntroCurtain = () => {
 
   if (!active || phase === "done") return null;
 
-  const splitting = phase === "split";
-  const showText = phase === "word" || phase === "split";
-
-  // Shared transition for both halves so they leave together.
-  const halfTransition = "transform 0.7s cubic-bezier(0.16,1,0.3,1)";
+  const dropped = phase !== "drop";
+  const labelIn = phase === "label" || phase === "phrase" || phase === "hold" || phase === "lift";
+  const phraseIn = phase === "phrase" || phase === "hold" || phase === "lift";
+  const lifting = phase === "lift";
 
   return (
     <div
@@ -85,84 +72,76 @@ const IntroCurtain = () => {
       onClick={skip}
       aria-hidden
     >
-      {/* TOP HALF — cream panel that holds the mono label, divider, and the
-          top text line. On split, this whole half (and its children) slides up. */}
+      {/* Single panel — drops in, holds, then lifts off as one piece.
+          Text lives inside, so it travels with the panel on lift. */}
       <div
-        className="absolute left-0 right-0 top-0 h-1/2 overflow-hidden bg-paper"
+        className="absolute inset-0 bg-paper"
         style={{
-          transform: splitting ? "translateY(-100%)" : "translateY(0)",
-          transition: halfTransition,
-          animation:
-            phase === "drop"
-              ? "kz-curtain-drop 0.4s cubic-bezier(0.16,1,0.3,1)"
-              : undefined,
+          transform: lifting
+            ? "translateY(-100%)"
+            : dropped
+              ? "translateY(0)"
+              : "translateY(-100%)",
+          transition: lifting
+            ? "transform 0.6s cubic-bezier(0.65,0,0.35,1)"
+            : "transform 0.35s cubic-bezier(0.16,1,0.3,1)",
         }}
       >
-        {/* Anchored to bottom edge so content sits near the viewport centerline. */}
-        <div className="absolute inset-x-0 bottom-0 flex flex-col items-center pb-6 text-ink">
-          <div className="font-mono text-[11px] uppercase tracking-[0.32em] text-mute">
-            {LABEL.slice(0, typed)}
-            {phase === "title" && typed < LABEL.length && (
-              <span
-                className="ml-0.5 inline-block w-[6px] animate-pulse bg-ink/60"
-                style={{ height: "0.9em" }}
-              />
-            )}
-          </div>
+        <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-ink">
+          {/* Mono label */}
           <div
-            className="mt-5 h-px w-[180px] origin-left bg-ink/30"
+            className="font-mono text-[11px] uppercase tracking-[0.32em] text-ink/55"
             style={{
-              transform: phase === "drop" ? "scaleX(0)" : "scaleX(1)",
+              opacity: labelIn ? 1 : 0,
+              transform: labelIn ? "translateY(0)" : "translateY(6px)",
               transition:
-                "transform 0.35s cubic-bezier(0.16,1,0.3,1) 0.05s",
+                "opacity 0.35s cubic-bezier(0.16,1,0.3,1), transform 0.45s cubic-bezier(0.16,1,0.3,1)",
+            }}
+          >
+            {LABEL}
+          </div>
+
+          {/* Thin orange rule — draws left-to-right */}
+          <div
+            className="mt-5 h-px w-[160px] origin-center"
+            style={{
+              backgroundColor: "#F5803E",
+              transform: labelIn ? "scaleX(1)" : "scaleX(0)",
+              transition:
+                "transform 0.45s cubic-bezier(0.16,1,0.3,1) 0.08s",
             }}
           />
-          <h2
-            className="display mt-7 text-ink"
-            style={{
-              fontSize: "clamp(1.6rem, 3.5vw, 2.4rem)",
-              opacity: showText ? 1 : 0,
-              transform: showText ? "translateY(0)" : "translateY(10px)",
-              transition:
-                "opacity 0.55s cubic-bezier(0.16,1,0.3,1), transform 0.65s cubic-bezier(0.16,1,0.3,1)",
-            }}
-          >
-            {TOP_LINE}
-          </h2>
-        </div>
-      </div>
 
-      {/* BOTTOM HALF — holds the italic bottom line. Slides down on split. */}
-      <div
-        className="absolute left-0 right-0 bottom-0 h-1/2 overflow-hidden bg-paper"
-        style={{
-          transform: splitting ? "translateY(100%)" : "translateY(0)",
-          transition: halfTransition,
-          animation:
-            phase === "drop"
-              ? "kz-curtain-drop 0.4s cubic-bezier(0.16,1,0.3,1)"
-              : undefined,
-        }}
-      >
-        {/* Anchored to top edge so content sits near the viewport centerline. */}
-        <div className="absolute inset-x-0 top-0 flex flex-col items-center pt-7 text-ink">
+          {/* Phrase — single line, orange-italic accent word */}
           <h2
-            className="display italic-editorial max-w-[26ch] text-center text-ink"
+            className="display mt-10 text-center text-ink"
             style={{
-              fontSize: "clamp(1.6rem, 3.5vw, 2.4rem)",
-              opacity: showText ? 1 : 0,
-              transform: showText ? "translateY(0)" : "translateY(10px)",
+              fontSize: "clamp(1.9rem, 4.2vw, 3.1rem)",
+              fontWeight: 500,
+              letterSpacing: "-0.02em",
+              lineHeight: 1.1,
+              opacity: phraseIn ? 1 : 0,
+              transform: phraseIn ? "translateY(0)" : "translateY(10px)",
               transition:
-                "opacity 0.55s cubic-bezier(0.16,1,0.3,1) 0.08s, transform 0.65s cubic-bezier(0.16,1,0.3,1) 0.08s",
+                "opacity 0.5s cubic-bezier(0.16,1,0.3,1), transform 0.6s cubic-bezier(0.16,1,0.3,1)",
             }}
           >
-            {BOTTOM_LINE}
+            Where the{" "}
+            <span
+              className="italic-editorial"
+              style={{ color: "#F5803E" }}
+            >
+              quiet
+            </span>{" "}
+            work happens.
           </h2>
+
+          {/* Skip hint — only while not lifting */}
           <div
-            className="mt-12 font-mono text-[10px] uppercase tracking-[0.28em] text-mute/60"
+            className="mt-16 font-mono text-[10px] uppercase tracking-[0.28em] text-ink/35"
             style={{
-              opacity: showText && !splitting ? 1 : 0,
-              transition: "opacity 0.3s ease",
+              opacity: phraseIn && !lifting ? 1 : 0,
+              transition: "opacity 0.25s ease",
             }}
           >
             tap or press esc to skip
