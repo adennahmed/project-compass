@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
-import { Post } from "@/lib/community/types";
-import { profileById, MOCK_CHANNELS } from "@/lib/community/mock";
+import { Post, Profile } from "@/lib/community/types";
 import { relativeTime } from "@/lib/community/format";
 import Avatar from "./Avatar";
 import StaffBadge from "./StaffBadge";
@@ -9,13 +8,25 @@ interface ThreadItemProps {
   post: Post;
 }
 
+const FALLBACK_AUTHOR: Profile = {
+  id: "",
+  handle: "unknown",
+  display_name: "Unknown",
+  avatar_url: null,
+  bio: null,
+  role: "member",
+  created_at: "",
+};
+
 const ThreadItem = ({ post }: ThreadItemProps) => {
-  const author = post.author ?? profileById(post.author_id);
-  const channel = MOCK_CHANNELS.find((c) => c.id === post.channel_id);
+  const author = post.author ?? FALLBACK_AUTHOR;
+  const channel = post.channel;
+  const isAnn = channel?.slug === "announcements";
+  const to = isAnn ? `/community/announcements/${post.id}` : `/community/social/${post.id}`;
 
   return (
     <Link
-      to={`/community/p/${post.id}`}
+      to={to}
       className="group flex items-start gap-4 border-b border-paper/8 px-4 py-5 transition-colors hover:bg-paper/[0.02] md:px-6"
     >
       <Avatar profile={author} size={36} />

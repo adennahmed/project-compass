@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
-import { Post } from "@/lib/community/types";
-import { profileById } from "@/lib/community/mock";
+import { Post, Profile } from "@/lib/community/types";
 import { monoDate, relativeTime } from "@/lib/community/format";
 import Avatar from "./Avatar";
 import StaffBadge from "./StaffBadge";
@@ -12,8 +11,18 @@ interface AnnouncementCardProps {
   featured?: boolean;
 }
 
+const FALLBACK_AUTHOR: Profile = {
+  id: "",
+  handle: "unknown",
+  display_name: "Unknown",
+  avatar_url: null,
+  bio: null,
+  role: "staff",
+  created_at: "",
+};
+
 const AnnouncementCard = ({ post, featured }: AnnouncementCardProps) => {
-  const author = post.author ?? profileById(post.author_id);
+  const author = post.author ?? FALLBACK_AUTHOR;
 
   return (
     <article
@@ -33,7 +42,7 @@ const AnnouncementCard = ({ post, featured }: AnnouncementCardProps) => {
       </div>
 
       <Link
-        to={`/community/p/${post.id}`}
+        to={`/community/announcements/${post.id}`}
         className="mt-4 block text-paper transition-colors group-hover:text-paper"
         style={{
           fontFamily: "Geist, system-ui, sans-serif",

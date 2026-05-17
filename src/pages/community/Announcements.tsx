@@ -1,11 +1,30 @@
+import { useCallback, useEffect, useState } from "react";
 import Reveal from "@/components/Reveal";
 import CharReveal from "@/components/CharReveal";
 import AnnouncementCard from "@/components/community/AnnouncementCard";
 import EmptyState from "@/components/community/EmptyState";
-import { announcements } from "@/lib/community/mock";
+import PostComposer from "@/components/community/PostComposer";
+import { fetchChannels, fetchPosts } from "@/lib/community/queries";
+import { Channel, Post } from "@/lib/community/types";
 
 const AnnouncementsPage = () => {
-  const items = announcements();
+  const [items, setItems] = useState<Post[]>([]);
+  const [channels, setChannels] = useState<Channel[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    const [chs, ps] = await Promise.all([
+      fetchChannels(),
+      fetchPosts({ onlyAnnouncements: true }),
+    ]);
+    setChannels(chs);
+    setItems(ps);
+    setLoading(false);
+  }, []);
+
+  useEffect(() => { void load(); }, [load]);
+
   return (
     <section className="px-6 py-14 md:px-10 md:py-20">
       <div className="container-wide">
@@ -38,8 +57,20 @@ const AnnouncementsPage = () => {
           </p>
         </Reveal>
 
+        <div className="mt-10">
+          <PostComposer
+            announcement
+            channels={channels}
+            lockedChannelSlug="announcements"
+            defaultType="announcement"
+            onPosted={load}
+          />
+        </div>
+
         <div className="mt-12 flex flex-col gap-6">
-          {items.length === 0 ? (
+          {loading ? (
+            <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-paper/55">↘ Loading…</div>
+          ) : items.length === 0 ? (
             <EmptyState
               title="No announcements yet"
               body="The team hasn't posted anything yet. Check back soon."

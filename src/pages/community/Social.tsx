@@ -1,43 +1,65 @@
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Reveal from "@/components/Reveal";
 import CharReveal from "@/components/CharReveal";
 import ThreadItem from "@/components/community/ThreadItem";
 import EmptyState from "@/components/community/EmptyState";
 import Tag from "@/components/community/Tag";
-import { MOCK_CHANNELS, MOCK_POSTS } from "@/lib/community/mock";
+import PostComposer from "@/components/community/PostComposer";
+import RulesGate from "@/components/community/RulesGate";
 import { useAuth } from "@/lib/community/auth";
-import { Link } from "react-router-dom";
+import { fetchChannels, fetchPosts } from "@/lib/community/queries";
+import { Channel, Post } from "@/lib/community/types";
+import { supabase } from "@/integrations/supabase/client";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const db = () => (supabase as unknown as any);
 
 type Filter = "new" | "top" | "unanswered";
 
 const SocialPage = () => {
-  const { session } = useAuth();
-  const channels = MOCK_CHANNELS.filter((c) => c.kind === "discussion");
+  const { session, profile, loading: authLoading } = useAuth();
+  const [channels, setChannels] = useState<Channel[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
   const [channelSlug, setChannelSlug] = useState<string | "all">("all");
   const [filter, setFilter] = useState<Filter>("new");
 
-  const posts = useMemo(() => {
-    let base = MOCK_POSTS.filter((p) => p.type !== "announcement");
-    if (channelSlug !== "all") {
-      const ch = channels.find((c) => c.slug === channelSlug);
-      if (ch) base = base.filter((p) => p.channel_id === ch.id);
-    }
-    if (filter === "top") {
-      base = [...base].sort(
-        (a, b) =>
-          (Object.values(b.reactions ?? {}).reduce((s, n) => s + (n ?? 0), 0)) -
-          (Object.values(a.reactions ?? {}).reduce((s, n) => s + (n ?? 0), 0)),
-      );
-    } else if (filter === "unanswered") {
-      base = base.filter((p) => (p.comment_count ?? 0) === 0);
-    } else {
-      base = [...base].sort((a, b) => b.created_at.localeCompare(a.created_at));
-    }
+  const load = useCallback(async () => {
+    setLoading(true);
+    const [chs, ps] = await Promise.all([
+      fetchChannels(),
+      fetchPosts({ excludeAnnouncements: true }),
+    ]);
+    setChannels(chs.filter((c) => c.kind === "discussion"));
+    setPosts(ps);
+    setLoading(false);
+  }, []);
+
+  useEffect(() => { void load(); }, [load]);
+
+  // Realtime: any post change triggers reload
+  useEffect(() => {
+    if (!supabase) return;
+    const channel = db()
+      .channel("social-posts")
+      .on("postgres_changes", { event: "*", schema: "public", table: "posts" }, () => { void load(); })
+      .subscribe();
+    return () => { db().removeChannel(channel); };
+  }, [load]);
+
+  const filtered = useMemo(() => {
+    let base = posts;
+    if (channelSlug !== "all") base = base.filter((p) => p.channel?.slug === channelSlug);
+    if (filter === "unanswered") base = base.filter((p) => (p.comment_count ?? 0) === 0);
+    // 'top' and 'new' both fall back to created_at since we don't precompute reaction totals
     return base;
-  }, [channelSlug, filter, channels]);
+  }, [posts, channelSlug, filter]);
+
+  const showRules = !!session && !authLoading && profile && !profile.community_rules_accepted_at;
 
   return (
     <section className="px-6 py-14 md:px-10 md:py-20">
+      {showRules && <RulesGate />}
       <div className="container-wide">
         <Reveal>
           <div className="font-mono text-[11px] uppercase tracking-[0.32em] text-paper/55">
@@ -67,7 +89,6 @@ const SocialPage = () => {
           </p>
         </Reveal>
 
-        {/* Channel chips */}
         <Reveal delay={140}>
           <div className="mt-10 flex flex-wrap items-center gap-1.5">
             <Tag active={channelSlug === "all"} onClick={() => setChannelSlug("all")}>
@@ -81,7 +102,6 @@ const SocialPage = () => {
           </div>
         </Reveal>
 
-        {/* Filter chips + Composer button */}
         <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-1.5">
             {(["new", "top", "unanswered"] as Filter[]).map((f) => (
@@ -90,27 +110,21 @@ const SocialPage = () => {
               </Tag>
             ))}
           </div>
-          {session ? (
-            <button
-              type="button"
-              className="border border-paper bg-paper px-4 py-2 font-mono text-[10px] uppercase tracking-[0.22em] text-ink transition-colors hover:bg-signal hover:border-signal hover:text-paper"
-            >
-              Start a thread ↘
-            </button>
-          ) : (
-            <Link
-              to="/community/auth"
-              className="link-wipe font-mono text-[10px] uppercase tracking-[0.22em] text-paper/65 hover:text-paper"
-            >
-              Sign in to post →
-            </Link>
-          )}
         </div>
 
-        {/* Thread feed */}
+        <div className="mt-6">
+          <PostComposer
+            channels={channels}
+            defaultChannelSlug={channelSlug !== "all" ? channelSlug : undefined}
+            onPosted={load}
+          />
+        </div>
+
         <Reveal delay={200}>
           <div className="mt-8 border border-paper/12 bg-ink/40">
-            {posts.length === 0 ? (
+            {loading ? (
+              <div className="p-8 font-mono text-[11px] uppercase tracking-[0.22em] text-paper/55">↘ Loading threads…</div>
+            ) : filtered.length === 0 ? (
               <div className="p-8">
                 <EmptyState
                   title="Quiet in here"
@@ -118,7 +132,7 @@ const SocialPage = () => {
                 />
               </div>
             ) : (
-              posts.map((p) => <ThreadItem key={p.id} post={p} />)
+              filtered.map((p) => <ThreadItem key={p.id} post={p} />)
             )}
           </div>
         </Reveal>

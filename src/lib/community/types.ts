@@ -12,6 +12,8 @@ export interface Profile {
   bio: string | null;
   role: UserRole;
   created_at: string;
+  onboarded_at?: string | null;
+  community_rules_accepted_at?: string | null;
 }
 
 export interface Channel {

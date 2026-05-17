@@ -1,21 +1,32 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import Reveal from "@/components/Reveal";
 import CharReveal from "@/components/CharReveal";
 import ResourceCard from "@/components/community/ResourceCard";
 import ResourceDeck from "@/components/community/ResourceDeck";
 import Tag from "@/components/community/Tag";
 import EmptyState from "@/components/community/EmptyState";
-import { MOCK_RESOURCES } from "@/lib/community/mock";
-import { RESOURCE_KIND_LABEL, ResourceKind } from "@/lib/community/types";
+import { fetchResources } from "@/lib/community/queries";
+import { Resource, RESOURCE_KIND_LABEL, ResourceKind } from "@/lib/community/types";
+import { useAuth } from "@/lib/community/auth";
 
 type KindFilter = "all" | ResourceKind;
 
 const ResourcesPage = () => {
+  const { profile } = useAuth();
+  const isStaff = profile?.role === "staff" || profile?.role === "admin";
   const [kind, setKind] = useState<KindFilter>("all");
   const [query, setQuery] = useState("");
+  const [resources, setResources] = useState<Resource[]>([]);
+
+  useEffect(() => {
+    void (async () => {
+      setResources(await fetchResources({ publishedOnly: true }));
+    })();
+  }, []);
 
   const items = useMemo(() => {
-    let list = MOCK_RESOURCES.filter((r) => r.published_at);
+    let list = resources;
     if (kind !== "all") list = list.filter((r) => r.kind === kind);
     if (query.trim()) {
       const q = query.toLowerCase();
@@ -27,7 +38,7 @@ const ResourcesPage = () => {
       );
     }
     return list;
-  }, [kind, query]);
+  }, [kind, query, resources]);
 
   const featured = items[0];
   const rest = items.slice(1);
@@ -35,11 +46,21 @@ const ResourcesPage = () => {
   return (
     <section className="px-6 py-14 md:px-10 md:py-20">
       <div className="container-wide">
-        <Reveal>
-          <div className="font-mono text-[11px] uppercase tracking-[0.32em] text-paper/55">
-            [ 04 — Resources ]
-          </div>
-        </Reveal>
+        <div className="flex items-center justify-between gap-3">
+          <Reveal>
+            <div className="font-mono text-[11px] uppercase tracking-[0.32em] text-paper/55">
+              [ 04 — Resources ]
+            </div>
+          </Reveal>
+          {isStaff && (
+            <Link
+              to="/community/resources/new"
+              className="border border-paper bg-paper px-4 py-2 font-mono text-[10px] uppercase tracking-[0.22em] text-ink transition-colors hover:bg-signal hover:border-signal hover:text-paper"
+            >
+              + New resource
+            </Link>
+          )}
+        </div>
 
         <h1
           className="mt-5 text-paper"

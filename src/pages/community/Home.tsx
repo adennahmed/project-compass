@@ -5,12 +5,8 @@ import Reveal from "@/components/Reveal";
 import AnnouncementCard from "@/components/community/AnnouncementCard";
 import ResourceCard from "@/components/community/ResourceCard";
 import ThreadItem from "@/components/community/ThreadItem";
-import {
-  MOCK_PROFILES,
-  MOCK_RESOURCES,
-  announcements,
-  recentThreads,
-} from "@/lib/community/mock";
+import { countPosts, countProfiles, countResources, fetchPosts, fetchResources } from "@/lib/community/queries";
+import { Post, Resource } from "@/lib/community/types";
 
 /**
  * Counter that ticks from 0 → target on mount. Mirrors the loader's
@@ -36,10 +32,35 @@ const CountTicker = ({ to, duration = 1600 }: { to: number; duration?: number })
 };
 
 const CommunityHome = () => {
-  const pinned = announcements()[0];
-  const otherAnn = announcements().slice(1, 3);
-  const threads = recentThreads(5);
-  const featuredResource = MOCK_RESOURCES[0];
+  const [anns, setAnns] = useState<Post[]>([]);
+  const [threads, setThreads] = useState<Post[]>([]);
+  const [resources, setResources] = useState<Resource[]>([]);
+  const [memberCount, setMemberCount] = useState<number>(0);
+  const [postCount, setPostCount] = useState<number>(0);
+  const [resourceCount, setResourceCount] = useState<number>(0);
+
+  useEffect(() => {
+    void (async () => {
+      const [a, t, r, m, p, rc] = await Promise.all([
+        fetchPosts({ onlyAnnouncements: true, limit: 5 }),
+        fetchPosts({ excludeAnnouncements: true, limit: 5 }),
+        fetchResources({ publishedOnly: true, limit: 3 }),
+        countProfiles(),
+        countPosts(),
+        countResources(),
+      ]);
+      setAnns(a);
+      setThreads(t);
+      setResources(r);
+      setMemberCount(m);
+      setPostCount(p);
+      setResourceCount(rc);
+    })();
+  }, []);
+
+  const pinned = anns[0];
+  const otherAnn = anns.slice(1, 3);
+  const featuredResource = resources[0];
 
   return (
     <>
@@ -112,20 +133,20 @@ const CommunityHome = () => {
                       className="mt-1 font-mono font-medium text-paper"
                       style={{ fontSize: "clamp(2rem, 4.5vw, 3rem)", letterSpacing: "-0.04em", lineHeight: 0.95 }}
                     >
-                      <CountTicker to={MOCK_PROFILES.length + 489} />
+                      <CountTicker to={memberCount} />
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4 border-t border-paper/10 pt-4">
                     <div>
                       <div className="font-mono text-[9px] uppercase tracking-[0.28em] text-paper/45">Posts</div>
                       <div className="mt-1 font-mono text-[18px] text-paper">
-                        <CountTicker to={132} duration={1300} />
+                        <CountTicker to={postCount} duration={1300} />
                       </div>
                     </div>
                     <div>
                       <div className="font-mono text-[9px] uppercase tracking-[0.28em] text-paper/45">Resources</div>
                       <div className="mt-1 font-mono text-[18px] text-paper">
-                        <CountTicker to={MOCK_RESOURCES.length} duration={1100} />
+                        <CountTicker to={resourceCount} duration={1100} />
                       </div>
                     </div>
                   </div>

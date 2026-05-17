@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { RESOURCE_KIND_LABEL, Resource } from "@/lib/community/types";
-import { profileById } from "@/lib/community/mock";
 import { dateStamp } from "@/lib/community/format";
 
 interface ResourceCardProps {
@@ -9,7 +8,7 @@ interface ResourceCardProps {
 }
 
 const ResourceCard = ({ resource, variant = "default" }: ResourceCardProps) => {
-  const author = resource.author ?? profileById(resource.author_id);
+  const author = resource.author ?? { display_name: "Kozai" };
   const isFeatured = variant === "featured";
 
   return (

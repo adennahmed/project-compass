@@ -14,6 +14,9 @@ import AuthReset from "./AuthReset";
 import Onboarding from "./Onboarding";
 import Settings from "./Settings";
 import AdminPage from "./Admin";
+import PostDetail from "./PostDetail";
+import ResourceEditor from "./ResourceEditor";
+import ResourceDetail from "./ResourceDetail";
 
 /**
  * CommunityRoot — single entrypoint for the entire /community/* subtree.
@@ -33,8 +36,13 @@ const CommunityRoot = () => {
           <Route element={<CommunityLayout />}>
             <Route index element={<CommunityHome />} />
             <Route path="announcements" element={<AnnouncementsPage />} />
+            <Route path="announcements/:postId" element={<PostDetail />} />
             <Route path="social" element={<SocialPage />} />
+            <Route path="social/:postId" element={<PostDetail />} />
             <Route path="resources" element={<ResourcesPage />} />
+            <Route path="resources/new" element={<ResourceEditor />} />
+            <Route path="resources/:slug/edit" element={<ResourceEditor />} />
+            <Route path="resources/:slug" element={<ResourceDetail />} />
             <Route path="members" element={<MembersPage />} />
             <Route path="u/:handle" element={<ProfilePage />} />
             <Route path="auth" element={<AuthPage />} />
