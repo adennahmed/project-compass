@@ -1,49 +1,53 @@
 import { useEffect, useState } from "react";
+import Logo from "@/components/Logo";
 
 /**
  * IntroCurtain — community entry intro.
  *
- * Quiet, kozai-voice: a cream panel drops in, a small composition fades
- * in centered (mono label · thin orange rule · short phrase with one
- * orange-italic accent word), holds briefly, then the entire panel
- * translates up off-screen as a single piece. Text rides with the panel
- * so nothing fades awkwardly.
+ * Cream panel is full-bleed from the very first paint (no drop-in,
+ * so the community page never shows underneath while the curtain
+ * arrives). Inside: Kozai logo · mono label "KOZAI COMMUNITY" ·
+ * thin orange rule that draws · short phrase with one orange-italic
+ * accent. After a hold, the whole panel translates upward off-screen
+ * as one piece, text riding with it.
  *
- * Phases (total ~2400ms):
- *   • drop      0–350ms   — cream panel slides down from top.
- *   • label   350–700ms   — mono label fades in + thin orange rule draws.
- *   • phrase  700–1200ms  — phrase fades in below.
- *   • hold   1200–1800ms  — hold composition.
- *   • lift   1800–2400ms  — whole panel (and its text) slides up.
+ * Phases (~2700ms total):
+ *   • 0–200ms       — instant render; nothing has appeared yet inside.
+ *   • 200–700ms     — logo fades in + drifts up 6px.
+ *   • 700–1100ms    — mono label "KOZAI COMMUNITY" fades in.
+ *   • 1100–1500ms   — thin orange rule draws left→right.
+ *   • 1500–2100ms   — phrase fades up.
+ *   • 2100–2700ms   — whole panel lifts up off-screen.
  *
- * Plays once per CommunityRoot mount. Skippable on click / Esc.
- * Reduced-motion: skipped entirely.
+ * Skippable on click / Esc. Reduced-motion: skipped entirely.
  */
 
-const LABEL = "[ ✦ — ENTERING COMMUNITY ]";
-
-type Phase = "drop" | "label" | "phrase" | "hold" | "lift" | "done";
+type Phase = "init" | "logo" | "label" | "rule" | "phrase" | "hold" | "lift" | "done";
 
 const IntroCurtain = () => {
-  const [active, setActive] = useState(false);
-  const [phase, setPhase] = useState<Phase>("drop");
+  const [active, setActive] = useState(true);
+  const [phase, setPhase] = useState<Phase>("init");
 
   useEffect(() => {
     if (typeof window === "undefined") return;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduced) return;
-    setActive(true);
+    if (reduced) {
+      setActive(false);
+      return;
+    }
   }, []);
 
   useEffect(() => {
     if (!active) return;
-    const t1 = window.setTimeout(() => setPhase("label"), 350);
-    const t2 = window.setTimeout(() => setPhase("phrase"), 700);
-    const t3 = window.setTimeout(() => setPhase("hold"), 1200);
-    const t4 = window.setTimeout(() => setPhase("lift"), 1800);
-    const t5 = window.setTimeout(() => setPhase("done"), 2400);
+    const t1 = window.setTimeout(() => setPhase("logo"), 200);
+    const t2 = window.setTimeout(() => setPhase("label"), 700);
+    const t3 = window.setTimeout(() => setPhase("rule"), 1100);
+    const t4 = window.setTimeout(() => setPhase("phrase"), 1500);
+    const t5 = window.setTimeout(() => setPhase("hold"), 2100);
+    const t6 = window.setTimeout(() => setPhase("lift"), 2400);
+    const t7 = window.setTimeout(() => setPhase("done"), 3000);
     return () => {
-      [t1, t2, t3, t4, t5].forEach((id) => window.clearTimeout(id));
+      [t1, t2, t3, t4, t5, t6, t7].forEach((id) => window.clearTimeout(id));
     };
   }, [active]);
 
@@ -60,8 +64,9 @@ const IntroCurtain = () => {
 
   if (!active || phase === "done") return null;
 
-  const dropped = phase !== "drop";
-  const labelIn = phase === "label" || phase === "phrase" || phase === "hold" || phase === "lift";
+  const logoIn = phase !== "init";
+  const labelIn = phase === "label" || phase === "rule" || phase === "phrase" || phase === "hold" || phase === "lift";
+  const ruleIn = phase === "rule" || phase === "phrase" || phase === "hold" || phase === "lift";
   const phraseIn = phase === "phrase" || phase === "hold" || phase === "lift";
   const lifting = phase === "lift";
 
@@ -72,33 +77,39 @@ const IntroCurtain = () => {
       onClick={skip}
       aria-hidden
     >
-      {/* Single panel — drops in, holds, then lifts off as one piece.
-          Text lives inside, so it travels with the panel on lift. */}
       <div
         className="absolute inset-0 bg-paper"
         style={{
-          transform: lifting
-            ? "translateY(-100%)"
-            : dropped
-              ? "translateY(0)"
-              : "translateY(-100%)",
+          transform: lifting ? "translateY(-100%)" : "translateY(0)",
           transition: lifting
             ? "transform 0.6s cubic-bezier(0.65,0,0.35,1)"
-            : "transform 0.35s cubic-bezier(0.16,1,0.3,1)",
+            : undefined,
         }}
       >
         <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-ink">
+          {/* Kozai logo */}
+          <div
+            style={{
+              opacity: logoIn ? 1 : 0,
+              transform: logoIn ? "translateY(0)" : "translateY(6px)",
+              transition:
+                "opacity 0.5s cubic-bezier(0.16,1,0.3,1), transform 0.6s cubic-bezier(0.16,1,0.3,1)",
+            }}
+          >
+            <Logo size={42} variant="black" />
+          </div>
+
           {/* Mono label */}
           <div
-            className="font-mono text-[11px] uppercase tracking-[0.32em] text-ink/55"
+            className="mt-7 font-mono text-[11px] uppercase tracking-[0.32em] text-ink/55"
             style={{
               opacity: labelIn ? 1 : 0,
               transform: labelIn ? "translateY(0)" : "translateY(6px)",
               transition:
-                "opacity 0.35s cubic-bezier(0.16,1,0.3,1), transform 0.45s cubic-bezier(0.16,1,0.3,1)",
+                "opacity 0.4s cubic-bezier(0.16,1,0.3,1), transform 0.5s cubic-bezier(0.16,1,0.3,1)",
             }}
           >
-            {LABEL}
+            [ ✦ — KOZAI COMMUNITY ]
           </div>
 
           {/* Thin orange rule — draws left-to-right */}
@@ -106,9 +117,8 @@ const IntroCurtain = () => {
             className="mt-5 h-px w-[160px] origin-center"
             style={{
               backgroundColor: "#F5803E",
-              transform: labelIn ? "scaleX(1)" : "scaleX(0)",
-              transition:
-                "transform 0.45s cubic-bezier(0.16,1,0.3,1) 0.08s",
+              transform: ruleIn ? "scaleX(1)" : "scaleX(0)",
+              transition: "transform 0.4s cubic-bezier(0.16,1,0.3,1)",
             }}
           />
 
@@ -116,7 +126,7 @@ const IntroCurtain = () => {
           <h2
             className="display mt-10 text-center text-ink"
             style={{
-              fontSize: "clamp(1.9rem, 4.2vw, 3.1rem)",
+              fontSize: "clamp(1.7rem, 3.6vw, 2.6rem)",
               fontWeight: 500,
               letterSpacing: "-0.02em",
               lineHeight: 1.1,
@@ -136,7 +146,7 @@ const IntroCurtain = () => {
             work happens.
           </h2>
 
-          {/* Skip hint — only while not lifting */}
+          {/* Skip hint */}
           <div
             className="mt-16 font-mono text-[10px] uppercase tracking-[0.28em] text-ink/35"
             style={{
