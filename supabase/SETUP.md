@@ -5,6 +5,61 @@ Walk through it in order — each step depends on the one before it.
 
 ---
 
+## ⚠️ If your Supabase project was originally scaffolded by Lovable
+
+You may have `process-email-queue` / `send-transactional-email` /
+`handle-email-suppression` Edge Functions deployed in Supabase. These
+route auth emails through `@lovable.dev/email-js`, which is why
+verification emails were arriving with `auth.lovable-app.email` as the
+sender — they bypass your SMTP entirely. **Clean these up first or
+auth emails will keep going through Lovable.**
+
+### One-time cleanup steps (do this before anything else):
+
+1. **Supabase dashboard → Edge Functions**. Delete every function
+   except `delete-account`. Specifically: `process-email-queue`,
+   `send-transactional-email`, `preview-transactional-email`,
+   `handle-email-suppression`, `handle-email-unsubscribe`,
+   `send-contact-email`. They're all stale Lovable scaffolding.
+2. **Supabase → Database → Webhooks**. Delete any webhook firing on
+   `auth.users` or pointing to one of the functions above.
+3. **Supabase → Database → Cron Jobs** (under Integrations or the
+   `cron.job` table in SQL Editor: `select * from cron.job;`). Unschedule
+   anything named like `process-auth-emails` / `process-transactional-emails`.
+4. **Supabase → SQL Editor**. Run the contents of
+   `supabase/migrations/20260515120000_drop_lovable_email_infra.sql`
+   to drop the orphaned tables (`email_send_log`, `email_send_state`,
+   `email_unsubscribe_tokens`, `suppressed_emails`, etc.) and pgmq queues
+   (`auth_emails`, `transactional_emails`, etc.).
+5. **Supabase → Authentication → Hooks**. Confirm no "Send Email Hook" is
+   active. If one is, disable it.
+6. After steps 1–5, retest: delete your unverified user from
+   Authentication → Users, sign up again, and the verification email
+   should now come from `hello@kozai.ca` via Resend.
+
+If problems persist, the project itself may still be linked to Lovable's
+org. In that case skip to **Step 0 below**.
+
+---
+
+## Step 0 — (Optional) Create a fresh Supabase project under your own org
+
+Only do this if the cleanup above didn't work — meaning Lovable's
+automation is overriding your changes. Lovable can provision Supabase
+projects under their own org, which gives them write access to settings
+you can't override from the dashboard.
+
+1. supabase.com → top-left org dropdown → **New organization** if you
+   don't already have one outside any Lovable-managed org.
+2. New project under that org → name `kozai-community`.
+3. Run the schema migration + the drop-lovable migration in order.
+4. Update Vercel env vars (`VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`)
+   to point at the new project (Settings → API).
+5. Redeploy without cache.
+6. Delete the old Lovable-tied Supabase project.
+
+---
+
 ## 1. Create the Supabase project
 
 1. Go to [supabase.com](https://supabase.com) → **New Project**.

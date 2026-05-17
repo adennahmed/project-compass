@@ -1,16 +1,6 @@
+# NOTE: project_id should be replaced when linking to a fresh Supabase
+# project. Use `supabase link --project-ref <new-ref>` to update.
 project_id = "mmuicazqthylbhcnolax"
 
-[functions.process-email-queue]
+[functions.delete-account]
 verify_jwt = true
-
-[functions.send-transactional-email]
-verify_jwt = true
-
-[functions.preview-transactional-email]
-verify_jwt = false
-
-[functions.handle-email-unsubscribe]
-verify_jwt = false
-
-[functions.handle-email-suppression]
-verify_jwt = false

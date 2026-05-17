@@ -1,64 +1,19 @@
-import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import { supabase, isSupabaseConfigured } from "@/integrations/supabase/client";
-
+/**
+ * Email unsubscribe landing.
+ *
+ * The original Lovable-managed email queue + backing tables have been
+ * removed; this page is now a static "you're already unsubscribed"
+ * surface so any legacy URLs that get clicked still render gracefully.
+ *
+ * Future: when we wire up our own transactional email pipeline via
+ * Resend, re-add the unsubscribe-token validation here.
+ */
 const Unsubscribe = () => {
-  const [searchParams] = useSearchParams();
-  const token = searchParams.get("token");
-  const [status, setStatus] = useState<"loading" | "valid" | "already" | "invalid" | "success" | "error">("loading");
-
-  useEffect(() => {
-    if (!token) {
-      setStatus("invalid");
-      return;
-    }
-    if (!isSupabaseConfigured) {
-      setStatus("error");
-      return;
-    }
-    const validate = async () => {
-      try {
-        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-        const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-        const res = await fetch(
-          `${supabaseUrl}/functions/v1/handle-email-unsubscribe?token=${token}`,
-          { headers: { apikey: anonKey } }
-        );
-        const data = await res.json();
-        if (!res.ok) {
-          setStatus("invalid");
-        } else if (data.valid === false && data.reason === "already_unsubscribed") {
-          setStatus("already");
-        } else if (data.valid) {
-          setStatus("valid");
-        } else {
-          setStatus("invalid");
-        }
-      } catch {
-        setStatus("error");
-      }
-    };
-    validate();
-  }, [token]);
-
-  const handleUnsubscribe = async () => {
-    if (!isSupabaseConfigured) {
-      setStatus("error");
-      return;
-    }
-    try {
-      const { error } = await supabase.functions.invoke("handle-email-unsubscribe", {
-        body: { token },
-      });
-      if (error) throw error;
-      setStatus("success");
-    } catch {
-      setStatus("error");
-    }
-  };
-
   return (
-    <div className="min-h-screen flex items-center justify-center" style={{ background: "#F1EEE5" }}>
+    <div
+      className="min-h-screen flex items-center justify-center"
+      style={{ background: "#F1EEE5" }}
+    >
       <div className="max-w-md w-full px-8 py-12 text-center">
         <h1
           className="text-[16px] font-bold tracking-[0.12em] uppercase mb-12"
@@ -66,78 +21,31 @@ const Unsubscribe = () => {
         >
           KOZAI
         </h1>
-
-        {status === "loading" && (
-          <p className="text-[14px]" style={{ color: "rgba(15,15,18,0.5)" }}>
-            Validating your request...
-          </p>
-        )}
-
-        {status === "valid" && (
-          <>
-            <h2 className="text-[22px] font-bold uppercase mb-4" style={{ color: "#0F0F12" }}>
-              Unsubscribe
-            </h2>
-            <p className="text-[14px] mb-8" style={{ color: "rgba(15,15,18,0.55)", lineHeight: "1.8" }}>
-              Are you sure you want to unsubscribe from Kozai emails?
-            </p>
-            <button
-              onClick={handleUnsubscribe}
-              className="inline-block px-8 py-3 text-[11px] uppercase tracking-[0.14em] transition-colors"
-              style={{
-                border: "1px solid rgba(200,169,110,0.3)",
-                color: "#1B3FE0",
-                background: "transparent",
-              }}
-            >
-              Confirm Unsubscribe
-            </button>
-          </>
-        )}
-
-        {status === "already" && (
-          <>
-            <h2 className="text-[22px] font-bold uppercase mb-4" style={{ color: "#0F0F12" }}>
-              Already Unsubscribed
-            </h2>
-            <p className="text-[14px]" style={{ color: "rgba(15,15,18,0.55)", lineHeight: "1.8" }}>
-              You've already been unsubscribed from Kozai emails.
-            </p>
-          </>
-        )}
-
-        {status === "success" && (
-          <>
-            <h2 className="text-[22px] font-bold uppercase mb-4" style={{ color: "#0F0F12" }}>
-              Unsubscribed
-            </h2>
-            <p className="text-[14px]" style={{ color: "rgba(15,15,18,0.55)", lineHeight: "1.8" }}>
-              You've been successfully unsubscribed. You will no longer receive emails from Kozai.
-            </p>
-          </>
-        )}
-
-        {status === "invalid" && (
-          <>
-            <h2 className="text-[22px] font-bold uppercase mb-4" style={{ color: "#0F0F12" }}>
-              Invalid Link
-            </h2>
-            <p className="text-[14px]" style={{ color: "rgba(15,15,18,0.55)", lineHeight: "1.8" }}>
-              This unsubscribe link is invalid or has expired.
-            </p>
-          </>
-        )}
-
-        {status === "error" && (
-          <>
-            <h2 className="text-[22px] font-bold uppercase mb-4" style={{ color: "#0F0F12" }}>
-              Something Went Wrong
-            </h2>
-            <p className="text-[14px]" style={{ color: "rgba(15,15,18,0.55)", lineHeight: "1.8" }}>
-              We couldn't process your request. Please try again later.
-            </p>
-          </>
-        )}
+        <h2
+          className="text-[22px] font-bold uppercase mb-4"
+          style={{ color: "#0F0F12" }}
+        >
+          Unsubscribed
+        </h2>
+        <p
+          className="text-[14px]"
+          style={{ color: "rgba(15,15,18,0.55)", lineHeight: "1.8" }}
+        >
+          You're not on any of our marketing lists. We only email people
+          who've reached out through our contact form, and only as a
+          direct reply.
+        </p>
+        <a
+          href="/"
+          className="mt-8 inline-block px-6 py-2.5 text-[11px] uppercase tracking-[0.18em]"
+          style={{
+            border: "1px solid rgba(15,15,18,0.2)",
+            color: "#0F0F12",
+            textDecoration: "none",
+          }}
+        >
+          Back to kozai.ca ↘
+        </a>
       </div>
     </div>
   );
