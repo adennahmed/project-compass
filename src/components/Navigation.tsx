@@ -132,7 +132,7 @@ const Navigation = ({ onContactClick }: NavigationProps) => {
             }`}
             aria-label="Kozai — home"
           >
-            <Logo size={mode === "integrated" ? 22 : 16} variant={mode === "integrated" ? "black" : "white"} />
+            <Logo size={mode === "integrated" ? 22 : 16} variant={mode === "integrated" ? "white" : "black"} />
           </a>
           <span className="nav-pill__divider hidden md:inline-block" aria-hidden />
 
@@ -201,11 +201,11 @@ const Navigation = ({ onContactClick }: NavigationProps) => {
             >
               <span
                 className="block h-px w-[18px]"
-                style={{ background: mode === "integrated" ? "#0F0F12" : "#F1EEE5" }}
+                style={{ background: mode === "integrated" ? "rgb(var(--ink))" : "rgb(var(--paper))" }}
               />
               <span
                 className="block h-px w-[18px]"
-                style={{ background: mode === "integrated" ? "#0F0F12" : "#F1EEE5" }}
+                style={{ background: mode === "integrated" ? "rgb(var(--ink))" : "rgb(var(--paper))" }}
               />
             </span>
             Menu
@@ -213,7 +213,7 @@ const Navigation = ({ onContactClick }: NavigationProps) => {
         </div>
       </header>
 
-      {/* Mobile menu overlay — only mounted when open, full-bleed cream panel */}
+      {/* Mobile menu overlay — only mounted when open, full-bleed dark panel */}
       {menuOpen && (
         <div
           className="fixed inset-0 z-[1500] md:hidden"
@@ -229,7 +229,7 @@ const Navigation = ({ onContactClick }: NavigationProps) => {
           >
             {/* Top bar inside the overlay */}
             <div className="flex items-center justify-between px-6 pt-6">
-              <Logo size={22} variant="black" />
+              <Logo size={22} variant="white" />
               <button
                 type="button"
                 onClick={() => setMenuOpen(false)}

@@ -47,14 +47,14 @@ const Spreadsheet = ({ playing }: { playing: boolean }) => {
   const rows = [...SHEET_ROWS, ...SHEET_ROWS];
 
   return (
-    <div className="relative flex h-full w-full flex-col overflow-hidden bg-[#FBFAF6] font-mono text-[10px] text-ink/85 md:text-[11px]">
+    <div className="relative flex h-full w-full flex-col overflow-hidden bg-[#F4F4F5] font-mono text-[10px] text-ink/85 md:text-[11px]">
       {/* Faux Excel title bar */}
-      <div className="flex shrink-0 items-center gap-3 border-b border-ink/15 bg-[#E8E4D8] px-2.5 py-1 text-[9px] uppercase tracking-[0.16em] text-ink/55 md:px-3 md:py-1.5 md:text-[10px]">
+      <div className="flex shrink-0 items-center gap-3 border-b border-ink/15 bg-[#E2E2E6] px-2.5 py-1 text-[9px] uppercase tracking-[0.16em] text-ink/55 md:px-3 md:py-1.5 md:text-[10px]">
         <span className="truncate">inventory_2026_05_v17_FINAL_v2 (copy)(jen-edits).xlsx</span>
         <span className="ml-auto shrink-0 text-ink/40">— Excel</span>
       </div>
       {/* Formula bar */}
-      <div className="flex shrink-0 items-center gap-2 border-b border-ink/10 bg-[#F3EFE3] px-2.5 py-1 text-[9px] text-ink/60 md:px-3 md:text-[10px]">
+      <div className="flex shrink-0 items-center gap-2 border-b border-ink/10 bg-[#EEEEF0] px-2.5 py-1 text-[9px] text-ink/60 md:px-3 md:text-[10px]">
         <span>F12</span>
         <span className="text-ink/30">|</span>
         <span className="text-ink/55">fx</span>
@@ -63,7 +63,7 @@ const Spreadsheet = ({ playing }: { playing: boolean }) => {
 
       {/* Column header row (static, never scrolls) */}
       <div
-        className="grid shrink-0 border-b border-ink/15 bg-[#EDE8D9] text-[9px] uppercase tracking-[0.14em] text-ink/55 md:text-[10px]"
+        className="grid shrink-0 border-b border-ink/15 bg-[#E7E7EB] text-[9px] uppercase tracking-[0.14em] text-ink/55 md:text-[10px]"
         style={{ gridTemplateColumns: COL_GRID }}
       >
         {["A · SKU", "B · Item", "C · Client", "D", "E · Qty", "F · Value"].map((h, i) => (
@@ -106,7 +106,7 @@ const Spreadsheet = ({ playing }: { playing: boolean }) => {
                 <div
                   key={i}
                   className={`grid border-b border-ink/10 ${
-                    real % 2 ? "bg-[#FBFAF6]" : "bg-[#F6F2E6]"
+                    real % 2 ? "bg-[#F4F4F5]" : "bg-[#ECECEE]"
                   }`}
                   style={{ gridTemplateColumns: COL_GRID }}
                 >
@@ -118,7 +118,7 @@ const Spreadsheet = ({ playing }: { playing: boolean }) => {
                         key={ci}
                         className={`truncate px-2 py-[3px] tabular-nums ${ci < 5 ? "border-r border-ink/10" : ""}`}
                         style={{
-                          color: isErr ? "#B5321A" : isTbd ? "#A85B12" : undefined,
+                          color: isErr ? "#F4313A" : isTbd ? "#B08A3C" : undefined,
                           background: isErr
                             ? "rgba(181,50,26,0.10)"
                             : ci === 0
@@ -140,13 +140,13 @@ const Spreadsheet = ({ playing }: { playing: boolean }) => {
       </div>
 
       {/* Bottom tabs strip — sits flush at the bottom of the flex column. */}
-      <div className="flex shrink-0 items-center gap-2.5 overflow-hidden border-t border-ink/15 bg-[#E8E4D8] px-2.5 py-1 text-[8px] uppercase tracking-[0.12em] text-ink/55 md:gap-3 md:px-3 md:text-[9px] md:tracking-[0.14em]">
+      <div className="flex shrink-0 items-center gap-2.5 overflow-hidden border-t border-ink/15 bg-[#E2E2E6] px-2.5 py-1 text-[8px] uppercase tracking-[0.12em] text-ink/55 md:gap-3 md:px-3 md:text-[9px] md:tracking-[0.14em]">
         <span>Sheet1</span>
         <span>Sheet2</span>
         <span className="hidden sm:inline">backup_2025-12-03 (3)</span>
         <span className="hidden md:inline">do_not_delete</span>
         <span className="hidden sm:inline">prices_OLD</span>
-        <span className="ml-auto shrink-0 whitespace-nowrap text-[#B5321A]">3 errors · unsaved 14m</span>
+        <span className="ml-auto shrink-0 whitespace-nowrap text-[#F4313A]">3 errors · unsaved 14m</span>
       </div>
     </div>
   );
@@ -179,8 +179,8 @@ const DISPATCHES: Dispatch[] = [
 ];
 
 const statusColor = (s: string) => {
-  if (s === "in transit") return { color: "#F5803E", bg: "rgba(245,128,62,0.10)" };
-  if (s === "delivered") return { color: "#3E8F5A", bg: "rgba(62,143,90,0.10)" };
+  if (s === "in transit") return { color: "#F4313A", bg: "rgba(244, 49, 58,0.10)" };
+  if (s === "delivered") return { color: "#3FA46B", bg: "rgba(63, 164, 107,0.10)" };
   return { color: "rgba(15,15,18,0.55)", bg: "rgba(15,15,18,0.05)" };
 };
 
@@ -389,7 +389,7 @@ const KozaiConsole = ({ playing }: { playing: boolean }) => {
                 className="ml-0.5 inline-block w-[1px] self-center"
                 style={{
                   height: "0.85em",
-                  background: "#0F0F12",
+                  background: "#0B0B0D",
                   opacity: 0.55,
                   animation: "kz-caret-blink 1s steps(2,end) infinite",
                 }}
@@ -420,7 +420,7 @@ const KozaiConsole = ({ playing }: { playing: boolean }) => {
           className={`ml-auto px-2.5 py-1.5 text-[11px] font-medium transition-transform md:text-[12px] ${
             ctaPulse ? "scale-[0.96]" : "scale-100"
           }`}
-          style={{ background: "#F5803E", color: "#F1EEE5" }}
+          style={{ background: "#F4313A", color: "#ECECEE" }}
         >
           + New dispatch
         </button>
@@ -447,8 +447,8 @@ const KozaiConsole = ({ playing }: { playing: boolean }) => {
                   className="relative flex items-center gap-2 px-3 py-2 md:gap-3 md:px-4 md:py-2.5"
                   style={{
                     borderBottom: "1px solid rgba(15,15,18,0.08)",
-                    borderLeft: isActive ? "2px solid #F5803E" : "2px solid transparent",
-                    background: isActive ? "rgba(245,128,62,0.05)" : undefined,
+                    borderLeft: isActive ? "2px solid #F4313A" : "2px solid transparent",
+                    background: isActive ? "rgba(244, 49, 58,0.05)" : undefined,
                     transition: "background 220ms cubic-bezier(0.16,1,0.3,1), border-color 220ms",
                   }}
                 >
@@ -470,7 +470,7 @@ const KozaiConsole = ({ playing }: { playing: boolean }) => {
                       <span
                         aria-hidden
                         className="inline-block h-1 w-1 rounded-full"
-                        style={{ background: "#F5803E", animation: "kz-dot-pulse 1.4s ease-in-out infinite" }}
+                        style={{ background: "#F4313A", animation: "kz-dot-pulse 1.4s ease-in-out infinite" }}
                       />
                     )}
                     {status}
@@ -525,7 +525,7 @@ const KozaiConsole = ({ playing }: { playing: boolean }) => {
                 id="kz-route-path"
                 d="M 8 35 Q 40 10, 70 30 T 130 22 T 192 14"
                 fill="none"
-                stroke="#0F0F12"
+                stroke="#0B0B0D"
                 strokeOpacity="0.65"
                 strokeWidth="1.2"
                 strokeLinecap="round"
@@ -533,10 +533,10 @@ const KozaiConsole = ({ playing }: { playing: boolean }) => {
                 strokeDashoffset={playing ? 0 : 220}
                 style={{ transition: "stroke-dashoffset 1.4s cubic-bezier(0.16,1,0.3,1)" }}
               />
-              <circle cx="8" cy="35" r="2.5" fill="#0F0F12" />
-              <circle cx="70" cy="30" r="2.5" fill="#0F0F12" />
-              <circle cx="130" cy="22" r="2.5" fill="#0F0F12" />
-              <circle cx="192" cy="14" r="3" fill="#F5803E">
+              <circle cx="8" cy="35" r="2.5" fill="#0B0B0D" />
+              <circle cx="70" cy="30" r="2.5" fill="#0B0B0D" />
+              <circle cx="130" cy="22" r="2.5" fill="#0B0B0D" />
+              <circle cx="192" cy="14" r="3" fill="#F4313A">
                 {playing && (
                   <animate
                     attributeName="r"
@@ -548,7 +548,7 @@ const KozaiConsole = ({ playing }: { playing: boolean }) => {
               </circle>
               {/* Traveling truck dot — moves along the path */}
               {playing && (
-                <circle r="2.6" fill="#F5803E" stroke="#0F0F12" strokeWidth="0.8">
+                <circle r="2.6" fill="#F4313A" stroke="#0B0B0D" strokeWidth="0.8">
                   <animateMotion dur="4.5s" repeatCount="indefinite" rotate="auto">
                     <mpath href="#kz-route-path" />
                   </animateMotion>
@@ -564,8 +564,8 @@ const KozaiConsole = ({ playing }: { playing: boolean }) => {
               ctaPulse ? "scale-[0.97]" : "scale-100"
             }`}
             style={{
-              background: "#0F0F12",
-              color: "#F1EEE5",
+              background: "#0B0B0D",
+              color: "#ECECEE",
               transition: "transform 220ms cubic-bezier(0.16,1,0.3,1)",
             }}
           >
@@ -576,7 +576,7 @@ const KozaiConsole = ({ playing }: { playing: boolean }) => {
                 aria-hidden
                 className="pointer-events-none absolute inset-0"
                 style={{
-                  border: "1.5px solid #F5803E",
+                  border: "1.5px solid #F4313A",
                   animation: "kz-cta-ripple 0.6s cubic-bezier(0.16,1,0.3,1)",
                 }}
               />
@@ -598,7 +598,7 @@ const KozaiConsole = ({ playing }: { playing: boolean }) => {
         >
           <span
             className="font-mono text-[9px] uppercase tracking-[0.22em]"
-            style={{ color: "#F5803E" }}
+            style={{ color: "#F4313A" }}
           >
             {activeToast.kind}
           </span>
@@ -613,7 +613,7 @@ const KozaiConsole = ({ playing }: { playing: boolean }) => {
             <span
               aria-hidden
               className="inline-block h-1.5 w-1.5 rounded-full"
-              style={{ background: "#F5803E", animation: "kz-dot-pulse 1.6s ease-in-out infinite" }}
+              style={{ background: "#F4313A", animation: "kz-dot-pulse 1.6s ease-in-out infinite" }}
             />
           )}
           <span>[ ✦ — synced 12s ago ]</span>
@@ -641,8 +641,8 @@ const KozaiConsole = ({ playing }: { playing: boolean }) => {
             <svg width="18" height="22" viewBox="0 0 18 22" fill="none">
               <path
                 d="M2 1 L2 17 L6 13 L9 20 L11.5 19 L8.5 12 L14 12 Z"
-                fill="#0F0F12"
-                stroke="#F1EEE5"
+                fill="#0B0B0D"
+                stroke="#ECECEE"
                 strokeWidth="1.1"
                 strokeLinejoin="round"
               />
@@ -659,7 +659,7 @@ const KozaiConsole = ({ playing }: { playing: boolean }) => {
                 width: 22,
                 height: 22,
                 borderRadius: "50%",
-                border: "1.5px solid #F5803E",
+                border: "1.5px solid #F4313A",
                 animation: "kz-cursor-ripple-fixed 0.42s cubic-bezier(0.16,1,0.3,1)",
               }}
             />

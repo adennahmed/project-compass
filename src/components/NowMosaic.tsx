@@ -59,7 +59,7 @@ const NowMosaic = () => {
               <li
                 key={label}
                 className="flex items-baseline justify-between gap-4 py-2.5"
-                style={{ borderTop: i === 0 ? undefined : "1px solid rgba(241,238,229,0.10)" }}
+                style={{ borderTop: i === 0 ? undefined : "1px solid rgba(236, 236, 238,0.10)" }}
               >
                 <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-paper/55">
                   {label}
@@ -80,7 +80,7 @@ const NowMosaic = () => {
               <div
                 key={label}
                 className="flex items-baseline gap-4 py-3"
-                style={{ borderTop: i === 0 ? undefined : "1px solid rgba(241,238,229,0.10)" }}
+                style={{ borderTop: i === 0 ? undefined : "1px solid rgba(236, 236, 238,0.10)" }}
               >
                 <span
                   className="display tabular-nums text-paper"

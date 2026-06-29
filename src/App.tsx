@@ -55,8 +55,8 @@ const CommunityFallback = () => (
   <div
     style={{
       minHeight: "100vh",
-      background: "#0E0E10",
-      color: "rgba(245,242,236,0.55)",
+      background: "#0B0B0D",
+      color: "rgba(236, 236, 238,0.55)",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",

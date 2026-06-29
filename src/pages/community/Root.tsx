@@ -70,7 +70,12 @@ const CommunityRoot = () => {
   return (
     <ErrorBoundary>
       <AuthProvider>
-        <CommunityShell />
+        {/* The community subtree was authored in an inverted (dark) palette.
+            `.theme-invert` restores the dark-surface token values under the
+            new dark site theme so /community stays cohesively dark. */}
+        <div className="theme-invert">
+          <CommunityShell />
+        </div>
       </AuthProvider>
     </ErrorBoundary>
   );

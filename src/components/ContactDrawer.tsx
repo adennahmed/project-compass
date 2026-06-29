@@ -305,7 +305,7 @@ const SuccessState = ({
           <svg className="h-3 w-3" viewBox="0 0 12 12" fill="none" aria-hidden>
             <path
               d="M2.5 6L5 8.5L9.5 3.5"
-              stroke="rgb(232, 79, 27)"
+              stroke="rgb(244, 49, 58)"
               strokeWidth="1.5"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -564,7 +564,7 @@ const ContactDrawer = ({ open, onClose }: ContactDrawerProps) => {
                 >
                   {form.agreed && (
                     <svg width="8" height="6" viewBox="0 0 8 6" fill="none">
-                      <path d="M1 3L3 5L7 1" stroke="rgb(245,242,236)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      <path d="M1 3L3 5L7 1" stroke="rgb(var(--paper))" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   )}
                 </span>

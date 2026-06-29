@@ -170,7 +170,7 @@ const OpsFeed = () => {
               <span style={{ color: "rgba(15,15,18,0.30)" }}> · </span>
               <span style={{ color: "rgba(15,15,18,0.85)" }}>{l.verb}</span>
               <span style={{ color: "rgba(15,15,18,0.30)" }}> · client=</span>
-              <span style={{ color: "rgb(245,128,62)" }}>{l.client}</span>
+              <span style={{ color: "rgb(244, 49, 58)" }}>{l.client}</span>
             </li>
           ))}
         </ul>

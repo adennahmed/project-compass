@@ -57,8 +57,8 @@ const BannedGate = () => {
       aria-labelledby="kz-banned-title"
       className="fixed inset-0 z-[100] flex items-center justify-center px-6 py-10 md:px-10"
       style={{
-        background: "#F1EEE5",
-        color: "#0F0F12",
+        background: "#0B0B0D",
+        color: "#ECECEE",
         animation: "kz-banned-fade 320ms cubic-bezier(0.16,1,0.3,1) both",
       }}
     >
@@ -75,7 +75,7 @@ const BannedGate = () => {
         <div
           className="font-mono uppercase"
           style={{
-            color: "#F5803E",
+            color: "#F4313A",
             fontSize: 11,
             letterSpacing: "0.32em",
           }}
@@ -86,7 +86,7 @@ const BannedGate = () => {
           id="kz-banned-title"
           className="mt-6"
           style={{
-            fontFamily: "Geist, system-ui, sans-serif",
+            fontFamily: "Archivo, system-ui, sans-serif",
             fontSize: "clamp(1.9rem, 4.6vw, 3rem)",
             fontWeight: 600,
             letterSpacing: "-0.04em",
@@ -100,7 +100,7 @@ const BannedGate = () => {
           style={{
             fontSize: 15,
             lineHeight: 1.65,
-            color: "rgba(15,15,18,0.65)",
+            color: "rgba(236, 236, 238,0.65)",
           }}
         >
           Posting, commenting, and member features are disabled while the
@@ -111,13 +111,13 @@ const BannedGate = () => {
           <p
             className="mt-4 max-w-[58ch] border-l px-4 py-2"
             style={{
-              borderColor: "rgba(15,15,18,0.18)",
+              borderColor: "rgba(236, 236, 238,0.18)",
               fontSize: 14,
               lineHeight: 1.6,
-              color: "rgba(15,15,18,0.75)",
+              color: "rgba(236, 236, 238,0.75)",
             }}
           >
-            <span className="font-mono uppercase" style={{ fontSize: 10, letterSpacing: "0.22em", color: "rgba(15,15,18,0.55)" }}>
+            <span className="font-mono uppercase" style={{ fontSize: 10, letterSpacing: "0.22em", color: "rgba(236, 236, 238,0.55)" }}>
               Reason provided ·
             </span>{" "}
             {reason}
@@ -129,9 +129,9 @@ const BannedGate = () => {
             href={mailto}
             className="inline-flex items-center border px-5 py-3 font-mono uppercase transition-colors"
             style={{
-              background: "#0F0F12",
-              color: "#F1EEE5",
-              borderColor: "#0F0F12",
+              background: "#ECECEE",
+              color: "#0B0B0D",
+              borderColor: "#ECECEE",
               fontSize: 11,
               letterSpacing: "0.22em",
             }}
@@ -145,7 +145,7 @@ const BannedGate = () => {
             style={{
               fontSize: 10,
               letterSpacing: "0.22em",
-              color: "rgba(15,15,18,0.55)",
+              color: "rgba(236, 236, 238,0.55)",
               background: "transparent",
               border: "none",
               cursor: "pointer",
@@ -161,7 +161,7 @@ const BannedGate = () => {
           style={{
             fontSize: 10,
             letterSpacing: "0.28em",
-            color: "rgba(15,15,18,0.45)",
+            color: "rgba(236, 236, 238,0.45)",
           }}
         >
           Kozai Community · Suspension active

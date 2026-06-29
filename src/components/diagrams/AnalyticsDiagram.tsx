@@ -86,7 +86,7 @@ const AnalyticsDiagram = ({ playing }: Props) => {
             key={m}
             x={20 + i * 30}
             y="154"
-            fontFamily="Geist Mono, monospace"
+            fontFamily="JetBrains Mono, monospace"
             fontSize="6"
             letterSpacing="1.4"
             textAnchor="middle"
@@ -117,7 +117,7 @@ const AnalyticsDiagram = ({ playing }: Props) => {
       {/* === RIGHT HALF === */}
       {/* Current value callout */}
       <g transform="translate(210 18)">
-        <text x="0" y="18" fontFamily="Geist, sans-serif" fontSize="22" fontWeight="600" fill="currentColor" stroke="none" letterSpacing="-0.5">
+        <text x="0" y="18" fontFamily="Archivo, sans-serif" fontSize="22" fontWeight="600" fill="currentColor" stroke="none" letterSpacing="-0.5">
           427
         </text>
         <g
@@ -128,11 +128,11 @@ const AnalyticsDiagram = ({ playing }: Props) => {
           }}
         >
           <path d="M0 8 L4 0 L8 8 Z" fill="rgb(var(--signal))" stroke="none" />
-          <text x="12" y="8" fontFamily="Geist Mono, monospace" fontSize="8" letterSpacing="0.5" fill="rgb(var(--signal))" stroke="none">
+          <text x="12" y="8" fontFamily="JetBrains Mono, monospace" fontSize="8" letterSpacing="0.5" fill="rgb(var(--signal))" stroke="none">
             +12%
           </text>
         </g>
-        <text x="0" y="30" fontFamily="Geist Mono, monospace" fontSize="6" letterSpacing="1.4" fill="currentColor" fillOpacity="0.55" stroke="none">
+        <text x="0" y="30" fontFamily="JetBrains Mono, monospace" fontSize="6" letterSpacing="1.4" fill="currentColor" fillOpacity="0.55" stroke="none">
           ACTIVE CUSTOMERS · 7D
         </text>
         <line x1="0" y1="38" x2="170" y2="38" strokeOpacity="0.18" />
@@ -140,14 +140,14 @@ const AnalyticsDiagram = ({ playing }: Props) => {
 
       {/* Bar chart */}
       <g transform="translate(210 64)">
-        <text x="0" y="0" fontFamily="Geist Mono, monospace" fontSize="6" letterSpacing="1.4" fill="currentColor" fillOpacity="0.55" stroke="none">
+        <text x="0" y="0" fontFamily="JetBrains Mono, monospace" fontSize="6" letterSpacing="1.4" fill="currentColor" fillOpacity="0.55" stroke="none">
           BY REGION
         </text>
         {BARS.map((b, i) => {
           const y = 10 + i * 16;
           return (
             <g key={b.label}>
-              <text x="0" y={y + 6} fontFamily="Geist Mono, monospace" fontSize="6" letterSpacing="0.8" fill="currentColor" fillOpacity="0.6" stroke="none">
+              <text x="0" y={y + 6} fontFamily="JetBrains Mono, monospace" fontSize="6" letterSpacing="0.8" fill="currentColor" fillOpacity="0.6" stroke="none">
                 {b.label.toUpperCase()}
               </text>
               <rect
@@ -165,7 +165,7 @@ const AnalyticsDiagram = ({ playing }: Props) => {
                   animationDelay: `${i * 0.4}s`,
                 }}
               />
-              <text x={42 + b.w + 4} y={y + 6} fontFamily="Geist Mono, monospace" fontSize="6" letterSpacing="0.5" fill="currentColor" fillOpacity="0.5" stroke="none">
+              <text x={42 + b.w + 4} y={y + 6} fontFamily="JetBrains Mono, monospace" fontSize="6" letterSpacing="0.5" fill="currentColor" fillOpacity="0.5" stroke="none">
                 {Math.round(b.w * 1.4)}
               </text>
             </g>
@@ -175,13 +175,13 @@ const AnalyticsDiagram = ({ playing }: Props) => {
 
       {/* Data quality */}
       <g transform="translate(210 188)">
-        <text x="0" y="0" fontFamily="Geist Mono, monospace" fontSize="6" letterSpacing="1.4" fill="currentColor" fillOpacity="0.55" stroke="none">
+        <text x="0" y="0" fontFamily="JetBrains Mono, monospace" fontSize="6" letterSpacing="1.4" fill="currentColor" fillOpacity="0.55" stroke="none">
           DATA QUALITY
         </text>
         {QUALITY.map((q, i) => (
           <g key={q} transform={`translate(${i * 60} 10)`}>
             <circle cx="3" cy="3" r="3" fill="currentColor" fillOpacity="0.75" stroke="none" />
-            <text x="10" y="6" fontFamily="Geist Mono, monospace" fontSize="5" letterSpacing="1.2" fill="currentColor" fillOpacity="0.6" stroke="none">
+            <text x="10" y="6" fontFamily="JetBrains Mono, monospace" fontSize="5" letterSpacing="1.2" fill="currentColor" fillOpacity="0.6" stroke="none">
               {q}
             </text>
           </g>

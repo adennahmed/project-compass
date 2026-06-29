@@ -33,7 +33,7 @@ const Approach = () => {
     <section
       id="approach"
       data-snap
-      className="section-fit relative bg-ink px-6 py-20 text-paper md:px-10 md:py-24"
+      className="theme-invert section-fit relative bg-ink px-6 py-20 text-paper md:px-10 md:py-24"
     >
       <div className="container-wide w-full">
         <Reveal>

@@ -248,7 +248,7 @@ const CommunityHome = () => {
             </div>
             <h2
               className="mt-4 text-paper"
-              style={{ fontFamily: "Geist", fontSize: "clamp(1.6rem, 3.4vw, 2.4rem)", fontWeight: 600, letterSpacing: "-0.035em", lineHeight: 1.05 }}
+              style={{ fontFamily: "Archivo", fontSize: "clamp(1.6rem, 3.4vw, 2.4rem)", fontWeight: 600, letterSpacing: "-0.035em", lineHeight: 1.05 }}
             >
               Operators first.{" "}
               <span className="italic-editorial text-signal">No grift.</span>{" "}

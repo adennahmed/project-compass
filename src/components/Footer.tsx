@@ -35,7 +35,7 @@ const AmbientTerminal = () => {
 const Footer = () => {
   const year = new Date().getFullYear();
   return (
-    <footer className="relative bg-ink text-paper">
+    <footer className="theme-invert relative bg-ink text-paper">
       {/* Supersize KOZAI wordmark — fills viewport width */}
       <div className="container-wide pb-0 pt-24 md:pt-32">
         <div className="grid grid-cols-1 gap-10 border-b border-paper/10 pb-12 md:grid-cols-12 md:gap-12">

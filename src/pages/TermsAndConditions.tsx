@@ -65,7 +65,7 @@ const TermsAndConditions = () => {
       {/* Nav */}
       <header className="flex items-center justify-between border-b border-hairline/15 px-6 py-5 md:px-10">
         <Link to="/" aria-label="Kozai — home">
-          <Logo size={22} variant="black" />
+          <Logo size={22} variant="white" />
         </Link>
         <Link
           to="/"

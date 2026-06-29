@@ -45,7 +45,7 @@ const AnnouncementCard = ({ post, featured }: AnnouncementCardProps) => {
         to={`/community/announcements/${post.id}`}
         className="mt-4 block text-paper transition-colors group-hover:text-paper"
         style={{
-          fontFamily: "Geist, system-ui, sans-serif",
+          fontFamily: "Archivo, system-ui, sans-serif",
           fontWeight: 600,
           fontSize: featured ? "clamp(1.5rem, 2.6vw, 2.4rem)" : "clamp(1.2rem, 1.8vw, 1.6rem)",
           letterSpacing: "-0.025em",

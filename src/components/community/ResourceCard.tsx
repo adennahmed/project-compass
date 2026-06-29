@@ -27,7 +27,7 @@ const ResourceCard = ({ resource, variant = "default" }: ResourceCardProps) => {
       <h3
         className="mt-5 text-paper transition-colors group-hover:text-paper"
         style={{
-          fontFamily: "Geist, system-ui, sans-serif",
+          fontFamily: "Archivo, system-ui, sans-serif",
           fontWeight: 600,
           fontSize: isFeatured
             ? "clamp(1.65rem, 2.4vw, 2.1rem)"

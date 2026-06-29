@@ -32,8 +32,8 @@ class ErrorBoundary extends Component<Props, State> {
       <div
         style={{
           minHeight: "100vh",
-          background: "#0E0E10",
-          color: "#F5F2EC",
+          background: "#0B0B0D",
+          color: "#ECECEE",
           fontFamily:
             "ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
           padding: "10vh 6vw",
@@ -50,7 +50,7 @@ class ErrorBoundary extends Component<Props, State> {
             fontSize: 10,
             letterSpacing: "0.32em",
             textTransform: "uppercase",
-            color: "rgba(245,242,236,0.55)",
+            color: "rgba(236, 236, 238,0.55)",
           }}
         >
           ↘ Something went wrong
@@ -72,7 +72,7 @@ class ErrorBoundary extends Component<Props, State> {
             maxWidth: "62ch",
             fontSize: 15,
             lineHeight: 1.6,
-            color: "rgba(245,242,236,0.7)",
+            color: "rgba(236, 236, 238,0.7)",
           }}
         >
           The page failed to render. Refresh to try again — and if it keeps
@@ -82,12 +82,12 @@ class ErrorBoundary extends Component<Props, State> {
           style={{
             margin: "0.75rem 0 0",
             padding: "0.75rem 1rem",
-            border: "1px solid rgba(245,242,236,0.12)",
+            border: "1px solid rgba(236, 236, 238,0.12)",
             background: "rgba(0,0,0,0.35)",
             fontFamily:
               "ui-monospace, 'SF Mono', Menlo, Monaco, Consolas, monospace",
             fontSize: 12,
-            color: "#E84F1B",
+            color: "#F4313A",
             overflowX: "auto",
             maxWidth: "100%",
           }}
@@ -99,9 +99,9 @@ class ErrorBoundary extends Component<Props, State> {
             type="button"
             onClick={() => window.location.reload()}
             style={{
-              background: "#F5F2EC",
-              color: "#0E0E10",
-              border: "1px solid #F5F2EC",
+              background: "#ECECEE",
+              color: "#0B0B0D",
+              border: "1px solid #ECECEE",
               padding: "10px 18px",
               fontFamily:
                 "ui-monospace, 'SF Mono', Menlo, Monaco, Consolas, monospace",
@@ -117,8 +117,8 @@ class ErrorBoundary extends Component<Props, State> {
             href="/"
             style={{
               padding: "10px 18px",
-              border: "1px solid rgba(245,242,236,0.25)",
-              color: "rgba(245,242,236,0.85)",
+              border: "1px solid rgba(236, 236, 238,0.25)",
+              color: "rgba(236, 236, 238,0.85)",
               fontFamily:
                 "ui-monospace, 'SF Mono', Menlo, Monaco, Consolas, monospace",
               fontSize: 11,

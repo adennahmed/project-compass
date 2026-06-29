@@ -116,7 +116,7 @@ const IntroCurtain = () => {
           <div
             className="mt-5 h-px w-[160px] origin-center"
             style={{
-              backgroundColor: "#F5803E",
+              backgroundColor: "#F4313A",
               transform: ruleIn ? "scaleX(1)" : "scaleX(0)",
               transition: "transform 0.4s cubic-bezier(0.16,1,0.3,1)",
             }}
@@ -139,7 +139,7 @@ const IntroCurtain = () => {
             Where the{" "}
             <span
               className="italic-editorial"
-              style={{ color: "#F5803E" }}
+              style={{ color: "#F4313A" }}
             >
               quiet
             </span>{" "}

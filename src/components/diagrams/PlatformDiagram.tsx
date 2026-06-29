@@ -38,7 +38,7 @@ const PlatformDiagram = ({ playing }: Props) => {
       {/* === BOTTOM CARD: INFRASTRUCTURE === */}
       <g transform="translate(0 170)">
         <rect x="6" y="0" width="320" height="64" />
-        <text x="14" y="14" fontFamily="Geist Mono, monospace" fontSize="7" letterSpacing="1.6" fill="currentColor" stroke="none">
+        <text x="14" y="14" fontFamily="JetBrains Mono, monospace" fontSize="7" letterSpacing="1.6" fill="currentColor" stroke="none">
           INFRASTRUCTURE
         </text>
         {/* postgres cylinder */}
@@ -58,7 +58,7 @@ const PlatformDiagram = ({ playing }: Props) => {
         <g transform="translate(118 28)">
           <path d="M4 18 Q-2 18 0 12 Q0 6 8 6 Q10 0 18 2 Q26 0 28 8 Q34 8 32 16 Q32 20 26 20 H4 Z" />
         </g>
-        <text x="160" y="34" fontFamily="Geist Mono, monospace" fontSize="6" letterSpacing="1" fill="currentColor" fillOpacity="0.55" stroke="none">
+        <text x="160" y="34" fontFamily="JetBrains Mono, monospace" fontSize="6" letterSpacing="1" fill="currentColor" fillOpacity="0.55" stroke="none">
           postgres · fly.io · cloudflare
         </text>
       </g>
@@ -66,7 +66,7 @@ const PlatformDiagram = ({ playing }: Props) => {
       {/* === MIDDLE CARD: API LAYER === */}
       <g transform="translate(20 90)">
         <rect x="6" y="0" width="320" height="70" />
-        <text x="14" y="14" fontFamily="Geist Mono, monospace" fontSize="7" letterSpacing="1.6" fill="currentColor" stroke="none">
+        <text x="14" y="14" fontFamily="JetBrains Mono, monospace" fontSize="7" letterSpacing="1.6" fill="currentColor" stroke="none">
           API LAYER
         </text>
         {METHODS.map((ep, i) => {
@@ -75,7 +75,7 @@ const PlatformDiagram = ({ playing }: Props) => {
           return (
             <g key={i}>
               <rect x="14" y={y - 5} width={tagWidth} height="7" stroke="currentColor" strokeOpacity="0.6" />
-              <text x={14 + tagWidth / 2} y={y + 0.5} fontFamily="Geist Mono, monospace" fontSize="5" textAnchor="middle" fill="currentColor" stroke="none">
+              <text x={14 + tagWidth / 2} y={y + 0.5} fontFamily="JetBrains Mono, monospace" fontSize="5" textAnchor="middle" fill="currentColor" stroke="none">
                 {ep.m}
               </text>
               <line
@@ -91,7 +91,7 @@ const PlatformDiagram = ({ playing }: Props) => {
                   animationDelay: `${i * 0.4}s`,
                 }}
               />
-              <text x={20 + tagWidth + 6} y={y + 0.5} fontFamily="Geist Mono, monospace" fontSize="5" fill="currentColor" fillOpacity="0.5" stroke="none">
+              <text x={20 + tagWidth + 6} y={y + 0.5} fontFamily="JetBrains Mono, monospace" fontSize="5" fill="currentColor" fillOpacity="0.5" stroke="none">
                 {ep.label}
               </text>
             </g>
@@ -102,7 +102,7 @@ const PlatformDiagram = ({ playing }: Props) => {
       {/* === TOP CARD: CUSTOMER UI === */}
       <g transform="translate(40 10)">
         <rect x="6" y="0" width="320" height="70" />
-        <text x="14" y="14" fontFamily="Geist Mono, monospace" fontSize="7" letterSpacing="1.6" fill="currentColor" stroke="none">
+        <text x="14" y="14" fontFamily="JetBrains Mono, monospace" fontSize="7" letterSpacing="1.6" fill="currentColor" stroke="none">
           CUSTOMER UI
         </text>
         {/* Browser frame */}

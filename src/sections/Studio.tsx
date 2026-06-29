@@ -70,7 +70,7 @@ const Studio = () => {
     <section
       id="studio"
       data-snap
-      className="section-fit relative overflow-hidden bg-ink px-6 py-20 text-paper md:px-10 md:py-24"
+      className="theme-invert section-fit relative overflow-hidden bg-ink px-6 py-20 text-paper md:px-10 md:py-24"
     >
       <div className="container-wide flex w-full flex-col">
         {/* Header */}

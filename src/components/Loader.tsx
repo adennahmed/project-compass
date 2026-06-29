@@ -161,7 +161,7 @@ const Loader = ({ onExitStart, onComplete }: LoaderProps) => {
               pointerEvents: phase === "running" ? "none" : "auto",
             }}
           >
-            <Logo size={64} />
+            <Logo size={64} variant="white" />
           </div>
         </div>
       </div>
