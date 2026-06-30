@@ -1,4 +1,5 @@
 import CharReveal from "@/components/CharReveal";
+import ScrambleText from "@/components/ScrambleText";
 import Reveal from "@/components/Reveal";
 
 interface Triad {
@@ -40,7 +41,7 @@ const Approach = () => {
           <div className="mb-10 grid grid-cols-1 gap-6 md:mb-14 md:grid-cols-12 md:items-end md:gap-12">
             <div className="md:col-span-3">
               <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-paper/50">
-                [ 02 — Approach ]
+                <ScrambleText text="[ 02 — Approach ]" />
               </div>
             </div>
             <div className="md:col-span-9">

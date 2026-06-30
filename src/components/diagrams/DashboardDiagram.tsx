@@ -44,7 +44,7 @@ const DashboardDiagram = ({ playing }: Props) => {
       <rect x="6" y="6" width="348" height="228" />
       {/* Top bar */}
       <line x1="6" y1="24" x2="354" y2="24" />
-      <text x="14" y="18" fontFamily="JetBrains Mono, monospace" fontSize="7" letterSpacing="1" fill="currentColor" stroke="none">
+      <text x="14" y="18" fontFamily="Martian Mono, monospace" fontSize="7" letterSpacing="1" fill="currentColor" stroke="none">
         DASH · v3
       </text>
       <circle cx="320" cy="15" r="1.5" fill="currentColor" stroke="none" />
@@ -84,10 +84,10 @@ const DashboardDiagram = ({ playing }: Props) => {
         return (
           <g key={i}>
             <rect x={x} y="34" width="58" height="42" />
-            <text x={x + 4} y="50" fontFamily="Archivo, sans-serif" fontSize="14" fontWeight="600" fill="currentColor" stroke="none">
+            <text x={x + 4} y="50" fontFamily="Bricolage Grotesque, sans-serif" fontSize="14" fontWeight="600" fill="currentColor" stroke="none">
               {kpi.n}
             </text>
-            <text x={x + 4} y="60" fontFamily="JetBrains Mono, monospace" fontSize="6" letterSpacing="1" fill="currentColor" fillOpacity="0.55" stroke="none">
+            <text x={x + 4} y="60" fontFamily="Martian Mono, monospace" fontSize="6" letterSpacing="1" fill="currentColor" fillOpacity="0.55" stroke="none">
               {kpi.label}
             </text>
             <path
@@ -113,7 +113,7 @@ const DashboardDiagram = ({ playing }: Props) => {
       <g clipPath="url(#dashTableClip)">
         {/* Header row */}
         <line x1="54" y1="86" x2="240" y2="86" />
-        <text x="58" y="96" fontFamily="JetBrains Mono, monospace" fontSize="6" letterSpacing="1" fill="currentColor" fillOpacity="0.5" stroke="none">
+        <text x="58" y="96" fontFamily="Martian Mono, monospace" fontSize="6" letterSpacing="1" fill="currentColor" fillOpacity="0.5" stroke="none">
           STATUS  ID  CUSTOMER  AMOUNT
         </text>
         <line x1="54" y1="100" x2="240" y2="100" />
@@ -160,7 +160,7 @@ const DashboardDiagram = ({ playing }: Props) => {
       </g>
 
       {/* Activity panel (right) */}
-      <text x="256" y="40" fontFamily="JetBrains Mono, monospace" fontSize="6" letterSpacing="1" fill="currentColor" fillOpacity="0.55" stroke="none">
+      <text x="256" y="40" fontFamily="Martian Mono, monospace" fontSize="6" letterSpacing="1" fill="currentColor" fillOpacity="0.55" stroke="none">
         ACTIVITY
       </text>
       <line x1="256" y1="46" x2="346" y2="46" strokeOpacity="0.3" />

@@ -8,6 +8,9 @@ import ContactDrawer from "@/components/ContactDrawer";
 import ServiceMarquee from "@/components/ServiceMarquee";
 import BackgroundDrift from "@/components/BackgroundDrift";
 import Hero from "@/sections/Hero";
+import Dashboards from "@/sections/Dashboards";
+import BuildShowcase from "@/sections/BuildShowcase";
+import Principles from "@/sections/Principles";
 import Services from "@/sections/Services";
 import Approach from "@/sections/Approach";
 import Process from "@/sections/Process";
@@ -17,7 +20,8 @@ import Contact from "@/sections/Contact";
 import BeforeAfter from "@/sections/BeforeAfter";
 import OpsFeed from "@/components/OpsFeed";
 import VitalSigns from "@/components/VitalSigns";
-import SectionDivider from "@/components/SectionDivider";
+import SectionTransition from "@/components/SectionTransition";
+import CursorGlow from "@/components/CursorGlow";
 
 const MARQUEE_ITEMS = [
   "Internal tools",
@@ -28,6 +32,11 @@ const MARQUEE_ITEMS = [
   "TypeScript · Go · Rust · SQL",
   "Operational software, only",
   "Reply within 48 hours",
+  "47 systems in production",
+  "Operators first, always",
+  "Senior engineers, no handoffs",
+  "Weekly demos, every build",
+  "99.98% measured uptime",
 ];
 
 const Index = () => {
@@ -58,6 +67,7 @@ const Index = () => {
         <Loader onExitStart={onLoaderExitStart} onComplete={onLoaderComplete} />
       )}
       <SmoothScroll />
+      <CursorGlow />
       <BackgroundDrift />
       <div aria-hidden className="grain" />
       {/* Navigation lives OUTSIDE page-settle so position:fixed is always
@@ -67,23 +77,28 @@ const Index = () => {
       <div className={pageVisible ? "page-settle" : ""} style={{ opacity: pageVisible ? 1 : 0 }}>
         <main className="relative z-10">
           <Hero onContactClick={openDrawer} />
-          <SectionDivider index={1} total={8} />
+          <Dashboards />
+          <SectionTransition word="Build" index={1} total={9} />
           <div className="py-8">
             <OpsFeed />
           </div>
           <ServiceMarquee items={MARQUEE_ITEMS} variant="ink" />
           <Services onContactClick={openDrawer} />
-          <SectionDivider index={2} total={8} />
+          <SectionTransition word="Approach" index={2} total={9} flip />
           <Approach />
           <VitalSigns />
           <Process />
-          <SectionDivider index={3} total={8} />
+          <SectionTransition word="Proof" index={3} total={9} />
           <ServiceMarquee items={MARQUEE_ITEMS.slice().reverse()} variant="signal" />
           <Work />
-          <SectionDivider index={4} total={8} />
+          <SectionTransition word="Transform" index={4} total={9} flip />
           <BeforeAfter />
+          <SectionTransition word="Builds" index={5} total={9} />
+          <BuildShowcase />
           <Studio />
-          <SectionDivider index={5} total={8} />
+          <SectionTransition word="Standard" index={6} total={9} flip />
+          <Principles onContactClick={openDrawer} />
+          <SectionTransition word="Contact" index={7} total={9} />
           <Contact onContactClick={openDrawer} />
         </main>
         <Footer />

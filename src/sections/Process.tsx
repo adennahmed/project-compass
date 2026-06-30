@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import ScrambleText from "@/components/ScrambleText";
 import Reveal from "@/components/Reveal";
 
 interface Station {
@@ -122,7 +123,7 @@ const Process = () => {
         <Reveal>
           <div className="mb-16 grid grid-cols-1 gap-8 md:mb-20 md:grid-cols-12 md:items-end md:gap-12">
             <div className="md:col-span-3">
-              <div className="label">[ ✦ — How we work ]</div>
+              <div className="label"><ScrambleText text="[ ✦ — How we work ]" /></div>
             </div>
             <div className="md:col-span-9">
               <h2

@@ -140,7 +140,7 @@ const WorkflowDiagram = ({ playing }: Props) => {
             <text
               x={n.x + 30}
               y={n.y + 16}
-              fontFamily="JetBrains Mono, monospace"
+              fontFamily="Martian Mono, monospace"
               fontSize="7"
               letterSpacing="1.4"
               textAnchor="middle"

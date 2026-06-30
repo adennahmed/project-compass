@@ -288,7 +288,7 @@ const ResourceEditor = () => {
                 contentEditable
                 suppressContentEditableWarning
                 className="kz-editor min-h-[320px] p-5 text-[15px] leading-[1.7] text-ink focus:outline-none"
-                style={{ fontFamily: "Archivo, system-ui, sans-serif" }}
+                style={{ fontFamily: "Bricolage Grotesque, system-ui, sans-serif" }}
               />
             </div>
             {/* hide unused */}

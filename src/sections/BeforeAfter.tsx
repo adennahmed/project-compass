@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import ScrambleText from "@/components/ScrambleText";
 import Reveal from "@/components/Reveal";
 
 /**
@@ -47,14 +48,14 @@ const Spreadsheet = ({ playing }: { playing: boolean }) => {
   const rows = [...SHEET_ROWS, ...SHEET_ROWS];
 
   return (
-    <div className="relative flex h-full w-full flex-col overflow-hidden bg-[#F4F4F5] font-mono text-[10px] text-ink/85 md:text-[11px]">
+    <div className="relative flex h-full w-full flex-col overflow-hidden bg-[#141416] font-mono text-[10px] text-ink/85 md:text-[11px]">
       {/* Faux Excel title bar */}
-      <div className="flex shrink-0 items-center gap-3 border-b border-ink/15 bg-[#E2E2E6] px-2.5 py-1 text-[9px] uppercase tracking-[0.16em] text-ink/55 md:px-3 md:py-1.5 md:text-[10px]">
+      <div className="flex shrink-0 items-center gap-3 border-b border-ink/15 bg-[#1C1C20] px-2.5 py-1 text-[9px] uppercase tracking-[0.16em] text-ink/55 md:px-3 md:py-1.5 md:text-[10px]">
         <span className="truncate">inventory_2026_05_v17_FINAL_v2 (copy)(jen-edits).xlsx</span>
         <span className="ml-auto shrink-0 text-ink/40">— Excel</span>
       </div>
       {/* Formula bar */}
-      <div className="flex shrink-0 items-center gap-2 border-b border-ink/10 bg-[#EEEEF0] px-2.5 py-1 text-[9px] text-ink/60 md:px-3 md:text-[10px]">
+      <div className="flex shrink-0 items-center gap-2 border-b border-ink/10 bg-[#18181B] px-2.5 py-1 text-[9px] text-ink/60 md:px-3 md:text-[10px]">
         <span>F12</span>
         <span className="text-ink/30">|</span>
         <span className="text-ink/55">fx</span>
@@ -63,7 +64,7 @@ const Spreadsheet = ({ playing }: { playing: boolean }) => {
 
       {/* Column header row (static, never scrolls) */}
       <div
-        className="grid shrink-0 border-b border-ink/15 bg-[#E7E7EB] text-[9px] uppercase tracking-[0.14em] text-ink/55 md:text-[10px]"
+        className="grid shrink-0 border-b border-ink/15 bg-[#1C1C20] text-[9px] uppercase tracking-[0.14em] text-ink/55 md:text-[10px]"
         style={{ gridTemplateColumns: COL_GRID }}
       >
         {["A · SKU", "B · Item", "C · Client", "D", "E · Qty", "F · Value"].map((h, i) => (
@@ -96,17 +97,17 @@ const Spreadsheet = ({ playing }: { playing: boolean }) => {
               const real = i % SHEET_ROWS.length;
               const highlight =
                 real === 4
-                  ? "rgba(252,211,77,0.35)"
+                  ? "rgba(244, 49, 58, 0.20)"
                   : real === 8
-                    ? "rgba(134,239,172,0.30)"
+                    ? "rgba(63, 164, 107, 0.24)"
                     : real === 16
-                      ? "rgba(186,210,250,0.30)"
+                      ? "rgba(90, 139, 176, 0.26)"
                       : undefined;
               return (
                 <div
                   key={i}
                   className={`grid border-b border-ink/10 ${
-                    real % 2 ? "bg-[#F4F4F5]" : "bg-[#ECECEE]"
+                    real % 2 ? "bg-[#141416]" : "bg-[#0F0F12]"
                   }`}
                   style={{ gridTemplateColumns: COL_GRID }}
                 >
@@ -118,9 +119,9 @@ const Spreadsheet = ({ playing }: { playing: boolean }) => {
                         key={ci}
                         className={`truncate px-2 py-[3px] tabular-nums ${ci < 5 ? "border-r border-ink/10" : ""}`}
                         style={{
-                          color: isErr ? "#F4313A" : isTbd ? "#B08A3C" : undefined,
+                          color: isErr ? "#F4313A" : isTbd ? "#A6A6B0" : undefined,
                           background: isErr
-                            ? "rgba(181,50,26,0.10)"
+                            ? "rgba(244, 49, 58, 0.14)"
                             : ci === 0
                               ? undefined
                               : highlight,
@@ -140,7 +141,7 @@ const Spreadsheet = ({ playing }: { playing: boolean }) => {
       </div>
 
       {/* Bottom tabs strip — sits flush at the bottom of the flex column. */}
-      <div className="flex shrink-0 items-center gap-2.5 overflow-hidden border-t border-ink/15 bg-[#E2E2E6] px-2.5 py-1 text-[8px] uppercase tracking-[0.12em] text-ink/55 md:gap-3 md:px-3 md:text-[9px] md:tracking-[0.14em]">
+      <div className="flex shrink-0 items-center gap-2.5 overflow-hidden border-t border-ink/15 bg-[#1C1C20] px-2.5 py-1 text-[8px] uppercase tracking-[0.12em] text-ink/55 md:gap-3 md:px-3 md:text-[9px] md:tracking-[0.14em]">
         <span>Sheet1</span>
         <span>Sheet2</span>
         <span className="hidden sm:inline">backup_2025-12-03 (3)</span>
@@ -181,7 +182,7 @@ const DISPATCHES: Dispatch[] = [
 const statusColor = (s: string) => {
   if (s === "in transit") return { color: "#F4313A", bg: "rgba(244, 49, 58,0.10)" };
   if (s === "delivered") return { color: "#3FA46B", bg: "rgba(63, 164, 107,0.10)" };
-  return { color: "rgba(15,15,18,0.55)", bg: "rgba(15,15,18,0.05)" };
+  return { color: "rgba(236, 236, 239, 0.6)", bg: "rgba(236, 236, 239, 0.06)" };
 };
 
 /**
@@ -520,39 +521,91 @@ const KozaiConsole = ({ playing }: { playing: boolean }) => {
               <span>Route</span>
               <span className="text-ink/40">3 stops · 18.4 km</span>
             </div>
-            <svg viewBox="0 0 200 50" width="100%" height="36" aria-hidden>
+            <svg viewBox="0 0 200 60" width="100%" height="52" aria-hidden>
+              {/* Faint map grid */}
+              <g stroke="#ECECEE" strokeOpacity="0.06" strokeWidth="0.5">
+                {[12, 24, 36, 48].map((y) => (
+                  <line key={`h${y}`} x1="0" y1={y} x2="200" y2={y} />
+                ))}
+                {[40, 80, 120, 160].map((x) => (
+                  <line key={`v${x}`} x1={x} y1="0" x2={x} y2="60" />
+                ))}
+              </g>
+
+              {/* Directional route — the road, dashed and red, leading to the destination */}
               <path
                 id="kz-route-path"
-                d="M 8 35 Q 40 10, 70 30 T 130 22 T 192 14"
+                d="M 12 50 Q 50 16, 82 38 T 142 26 T 188 12"
                 fill="none"
-                stroke="#0B0B0D"
-                strokeOpacity="0.65"
-                strokeWidth="1.2"
+                stroke="#F4313A"
+                strokeOpacity="0.45"
+                strokeWidth="1.4"
                 strokeLinecap="round"
-                strokeDasharray="220"
-                strokeDashoffset={playing ? 0 : 220}
-                style={{ transition: "stroke-dashoffset 1.4s cubic-bezier(0.16,1,0.3,1)" }}
+                strokeDasharray="4 3"
               />
-              <circle cx="8" cy="35" r="2.5" fill="#0B0B0D" />
-              <circle cx="70" cy="30" r="2.5" fill="#0B0B0D" />
-              <circle cx="130" cy="22" r="2.5" fill="#0B0B0D" />
-              <circle cx="192" cy="14" r="3" fill="#F4313A">
+              {/* Solid red "progress" overlay that draws toward the destination on play */}
+              <path
+                d="M 12 50 Q 50 16, 82 38 T 142 26 T 188 12"
+                fill="none"
+                stroke="#F4313A"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeDasharray="260"
+                strokeDashoffset={playing ? 0 : 260}
+                style={{ transition: "stroke-dashoffset 4s cubic-bezier(0.16,1,0.3,1)" }}
+              />
+
+              {/* Origin + intermediate stops (light markers so they read on the dark map) */}
+              {[
+                [12, 50],
+                [82, 38],
+                [142, 26],
+              ].map(([x, y], i) => (
+                <rect
+                  key={i}
+                  x={x - 2.2}
+                  y={y - 2.2}
+                  width="4.4"
+                  height="4.4"
+                  fill="#0B0B0D"
+                  stroke="#ECECEE"
+                  strokeOpacity="0.55"
+                  strokeWidth="0.8"
+                />
+              ))}
+
+              {/* Destination — larger red dot with a pulsing ring */}
+              <circle cx="188" cy="12" r="6" fill="none" stroke="#F4313A">
                 {playing && (
-                  <animate
-                    attributeName="r"
-                    values="3;4.2;3"
-                    dur="1.6s"
-                    repeatCount="indefinite"
-                  />
+                  <>
+                    <animate attributeName="r" values="4;10;4" dur="1.8s" repeatCount="indefinite" />
+                    <animate
+                      attributeName="stroke-opacity"
+                      values="0.5;0;0.5"
+                      dur="1.8s"
+                      repeatCount="indefinite"
+                    />
+                  </>
                 )}
               </circle>
-              {/* Traveling truck dot — moves along the path */}
+              <circle cx="188" cy="12" r="3.4" fill="#F4313A">
+                {playing && (
+                  <animate attributeName="r" values="3.4;4.6;3.4" dur="1.8s" repeatCount="indefinite" />
+                )}
+              </circle>
+
+              {/* Traveling unit — a directional arrow that follows the road to the destination */}
               {playing && (
-                <circle r="2.6" fill="#F4313A" stroke="#0B0B0D" strokeWidth="0.8">
-                  <animateMotion dur="4.5s" repeatCount="indefinite" rotate="auto">
+                <polygon
+                  points="-3.2,-2.6 4.2,0 -3.2,2.6 -1,0"
+                  fill="#F4313A"
+                  stroke="#0B0B0D"
+                  strokeWidth="0.6"
+                >
+                  <animateMotion dur="4s" repeatCount="indefinite" rotate="auto" keyPoints="0;1" keyTimes="0;1" calcMode="linear">
                     <mpath href="#kz-route-path" />
                   </animateMotion>
-                </circle>
+                </polygon>
               )}
             </svg>
           </div>
@@ -740,7 +793,7 @@ const BeforeAfter = () => {
         <Reveal>
           <div className="mb-10 grid grid-cols-1 gap-6 md:mb-12 md:grid-cols-12 md:items-end md:gap-12">
             <div className="md:col-span-3">
-              <div className="label">[ ✦ — Before / After ]</div>
+              <div className="label"><ScrambleText text="[ ✦ — Before / After ]" /></div>
             </div>
             <div className="md:col-span-9">
               <h2

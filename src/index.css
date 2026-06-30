@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Archivo + JetBrains Mono loaded via index.html */
+/* Bricolage Grotesque + Martian Mono loaded via index.html */
 
 /* ─── Design tokens — "Brutalist Operator" dark theme ───────────────────
    The marketing site runs on a cool near-black base with a single brutalist
@@ -16,13 +16,13 @@
    flipping to light. */
 @layer base {
   :root {
-    --paper:      11  11  13;  /* #0B0B0D cool near-black — page background */
-    --paper-2:    22  22  26;  /* #16161A elevated surface */
-    --paper-3:    30  30  35;  /* #1E1E23 pulled-forward sections / panels */
-    --ink:       237 237 240;  /* #EDEDF0 cool off-white — primary type */
-    --ink-soft:  208 208 214;  /* #D0D0D6 secondary type on elevated surfaces */
-    --mute:      138 138 148;  /* #8A8A94 muted secondary copy */
-    --hairline:  237 237 240;  /* light — used at 8–18% as borders on dark */
+    --paper:       9  11  15;  /* #090B0F cool near-black — page background */
+    --paper-2:    18  20  26;  /* #12141A elevated surface */
+    --paper-3:    26  29  37;  /* #1A1D25 pulled-forward sections / panels */
+    --ink:       235 237 243;  /* #EBEDF3 cool off-white — primary type */
+    --ink-soft:  205 208 216;  /* #CDD0D8 secondary type on elevated surfaces */
+    --mute:      134 139 150;  /* #868B96 cool muted secondary copy */
+    --hairline:  235 237 243;  /* light — used at 8–18% as borders on dark */
     --signal:    244  49  58;  /* #F4313A brutalist signal red */
     --signal-2:   90 139 176;  /* #5A8BB0 cool steel — used sparingly */
 
@@ -54,16 +54,29 @@
      slabs that were authored dark (Approach, Studio, Footer, ink marquee)
      and to the entire community subtree, keeping them cohesively dark. */
   .theme-invert {
-    --paper:     236 236 239;  /* light — used as type colour here */
-    --paper-2:    24  24  28;  /* dark elevated panel */
-    --paper-3:    32  32  37;  /* deeper panel */
-    --ink:        11  11  13;  /* dark — used as surface here */
-    --ink-soft:   32  32  36;
-    --mute:      150 150 158;  /* readable mid-grey on dark */
-    --hairline:  236 236 239;  /* light hairlines on dark */
+    --paper:     235 237 243;  /* light — used as type colour here */
+    --paper-2:    20  23  29;  /* cool dark elevated panel */
+    --paper-3:    28  31  39;  /* deeper cool panel */
+    --ink:         9  11  15;  /* dark — used as surface here */
+    --ink-soft:   28  31  38;
+    --mute:      148 152 162;  /* readable cool mid-grey on dark */
+    --hairline:  235 237 243;  /* light hairlines on dark */
     --signal:    244  49  58;
     --signal-2:   90 139 176;
   }
+}
+
+/* ─── Whole-page cool tint — a whisper of blue laid over everything (incl.
+   the inner UI panels) so the entire surface reads a touch cooler. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 44;
+  background: rgb(82 116 170);
+  opacity: 0.05;
+  mix-blend-mode: screen;
 }
 
 * {
@@ -75,7 +88,7 @@
 html, body {
   background: rgb(var(--paper));
   color: rgb(var(--ink));
-  font-family: 'Archivo', system-ui, sans-serif;
+  font-family: 'Bricolage Grotesque', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -93,10 +106,10 @@ html, body {
 }
 
 /* ─── Typography utilities ──────────────────────────────────────────── */
-.font-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+.font-mono { font-family: 'Martian Mono', ui-monospace, monospace; }
 
 .label {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: 'Martian Mono', ui-monospace, monospace;
   font-size: 11px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -105,18 +118,96 @@ html, body {
 }
 
 .display {
-  font-family: 'Archivo', system-ui, sans-serif;
+  font-family: 'Bricolage Grotesque', system-ui, sans-serif;
   font-weight: 700;
   letter-spacing: -0.03em;
   line-height: 0.96;
 }
 
+/* ─── Custom brutalist cursor (desktop only) ───────────────────────────── */
+.kz-cursor-ring,
+.kz-cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 9998;
+  opacity: 0;
+  will-change: transform;
+}
+.kz-cursor-ring {
+  width: 30px;
+  height: 30px;
+  border: 1px solid rgb(var(--ink) / 0.35);
+  transition: border-color 0.3s ease, background-color 0.3s ease, opacity 0.3s ease;
+}
+.kz-cursor-ring.is-hot {
+  border-color: rgb(var(--signal));
+  background: rgb(var(--signal) / 0.08);
+}
+.kz-cursor-dot {
+  width: 5px;
+  height: 5px;
+  background: rgb(var(--signal));
+  transition: opacity 0.3s ease;
+}
+@media (hover: none), (pointer: coarse) {
+  .kz-cursor-ring,
+  .kz-cursor-dot { display: none; }
+}
+
+/* Build showcase — radar scan sweep + gentle float for mockups. */
+@keyframes kz-radar-scan {
+  0% { left: -10%; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { left: 100%; opacity: 0; }
+}
+@keyframes kz-build-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+/* Dashboard slider arrows — square brutalist buttons straddling the panel. */
+.kz-dash-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  font-family: 'Martian Mono', ui-monospace, monospace;
+  font-size: 18px;
+  line-height: 1;
+  color: rgb(var(--ink));
+  background: rgb(var(--paper-2));
+  border: 1px solid rgb(var(--hairline) / 0.22);
+  backdrop-filter: blur(6px);
+  transition: background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease, transform 0.35s ease;
+}
+.kz-dash-arrow:hover {
+  background: rgb(var(--signal));
+  color: rgb(var(--paper));
+  border-color: rgb(var(--signal));
+}
+
+/* Giant kinetic keyword used by the scroll-scrubbed SectionTransition. */
+.kz-tx-word {
+  font-family: 'Bricolage Grotesque', system-ui, sans-serif;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.03em;
+  line-height: 0.9;
+  font-size: clamp(3.5rem, 15vw, 13rem);
+  white-space: nowrap;
+}
+
 .italic-editorial {
-  /* Brutalist editorial emphasis — Archivo's own italic, no serif. Archivo
-     ships true italics, so glyphs paint on the first frame (no synthesis
-     flash during the reveal animations). */
-  font-family: 'Archivo', system-ui, sans-serif;
+  /* Brutalist editorial emphasis — a synthesised oblique of the display
+     grotesque (no serif). Bricolage ships no italic face, so we let the
+     browser slant it; the slight obliqueness reads as intentional. */
+  font-family: 'Bricolage Grotesque', system-ui, sans-serif;
   font-style: italic;
+  font-synthesis: style;
   font-weight: 500;
   letter-spacing: -0.02em;
 }
@@ -221,7 +312,7 @@ html.lenis, html.lenis body { height: auto; }
   gap: 0.55rem;
 }
 .nav-item__num {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: 'Martian Mono', ui-monospace, monospace;
   font-size: 10px;
   color: rgb(var(--mute) / 0.55);
   transition: color 0.4s cubic-bezier(0.65, 0, 0.35, 1),
@@ -648,24 +739,46 @@ section[data-snap] {
   gap: 0.45rem;
   padding: 0.45rem 0.95rem;
   border-radius: 999px;
-  font-family: 'Archivo', system-ui, sans-serif;
+  font-family: 'Bricolage Grotesque', system-ui, sans-serif;
   font-size: 12px;
   font-weight: 500;
   transition: background-color 0.4s ease, color 0.4s ease, transform 0.3s ease;
 }
 .nav-pill__cta:hover { transform: translateY(-1px); }
 
-/* ─── Subtle film grain — adds tactile depth across the whole site ──── */
+/* ─── Film grain — deliberately heavy, brutalist texture across everything.
+   The noise is rendered as BRIGHT speckles (RGB forced to 1, alpha thresholded
+   off the turbulence) so a `screen` blend lifts the near-black base into a
+   gritty, coarse grain. Sits above the content (below the nav/overlays) and
+   "boils" frame-to-frame like real film. Light type is unaffected — screen
+   only lightens, and the type is already near-white. */
 .grain {
   position: fixed;
-  inset: 0;
+  inset: -50%;
+  width: 200%;
+  height: 200%;
   pointer-events: none;
-  z-index: 5;
-  opacity: 0.045;
-  /* On the dark base, a screen blend lets the noise lift the surface
-     (multiply would be invisible on near-black). */
+  z-index: 45;
+  opacity: 0.2;
   mix-blend-mode: screen;
-  background-image: url("data:image/svg+xml;utf8,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='1' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 190px 190px;
+  background-image: url("data:image/svg+xml;utf8,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1.3 -0.32'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  animation: kz-grain 0.5s steps(1) infinite;
+}
+
+/* Film "boil" — jump the grain field between offsets each frame. inset:-50%
+   + 200% size keeps the viewport covered at every offset. */
+@keyframes kz-grain {
+  0%   { transform: translate(0%, 0%); }
+  12%  { transform: translate(-6%, -4%); }
+  24%  { transform: translate(5%, -8%); }
+  36%  { transform: translate(-8%, 6%); }
+  48%  { transform: translate(7%, 9%); }
+  60%  { transform: translate(-5%, 5%); }
+  72%  { transform: translate(9%, -3%); }
+  84%  { transform: translate(-4%, -7%); }
+  100% { transform: translate(3%, 6%); }
 }
 
 /* ─── Studio: eye-strip → in-place open. No separate detail panel. ── */
@@ -758,7 +871,7 @@ section[data-snap] {
   pointer-events: none;
   background: rgb(var(--paper));
   color: rgb(var(--ink));
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: 'Martian Mono', ui-monospace, monospace;
   font-size: 11px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -1062,7 +1175,7 @@ section[data-snap] {
 .kz-markdown { color: rgb(var(--paper) / 0.85); font-size: 15px; line-height: 1.7; }
 .kz-markdown p { margin: 0 0 1em; }
 .kz-markdown h2 {
-  font-family: 'Archivo', system-ui, sans-serif;
+  font-family: 'Bricolage Grotesque', system-ui, sans-serif;
   font-weight: 600;
   letter-spacing: -0.025em;
   font-size: clamp(1.35rem, 2vw, 1.75rem);
@@ -1071,7 +1184,7 @@ section[data-snap] {
   color: rgb(var(--paper));
 }
 .kz-markdown h3 {
-  font-family: 'Archivo', system-ui, sans-serif;
+  font-family: 'Bricolage Grotesque', system-ui, sans-serif;
   font-weight: 600;
   letter-spacing: -0.02em;
   font-size: clamp(1.1rem, 1.5vw, 1.3rem);
@@ -1133,7 +1246,7 @@ section[data-snap] {
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: 'Martian Mono', ui-monospace, monospace;
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.28em;
@@ -1144,7 +1257,7 @@ section[data-snap] {
 /* Title — fluid; shrinks back when card is squeezed */
 .resource-deck__title {
   margin-top: 1.5rem;
-  font-family: 'Archivo', system-ui, sans-serif;
+  font-family: 'Bricolage Grotesque', system-ui, sans-serif;
   font-weight: 600;
   letter-spacing: -0.028em;
   line-height: 1.1;
@@ -1171,7 +1284,7 @@ section[data-snap] {
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: 'Martian Mono', ui-monospace, monospace;
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.22em;
@@ -1184,7 +1297,7 @@ section[data-snap] {
   position: absolute;
   right: 1.1rem;
   bottom: 1.1rem;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: 'Martian Mono', ui-monospace, monospace;
   font-size: 10px;
   letter-spacing: 0.28em;
   color: rgb(var(--paper) / 0.18);

@@ -86,7 +86,7 @@ const BannedGate = () => {
           id="kz-banned-title"
           className="mt-6"
           style={{
-            fontFamily: "Archivo, system-ui, sans-serif",
+            fontFamily: "Bricolage Grotesque, system-ui, sans-serif",
             fontSize: "clamp(1.9rem, 4.6vw, 3rem)",
             fontWeight: 600,
             letterSpacing: "-0.04em",

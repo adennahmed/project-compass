@@ -12,8 +12,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["'Archivo'", "system-ui", "sans-serif"],
-        mono: ["'JetBrains Mono'", "ui-monospace", "monospace"],
+        sans: ["'Bricolage Grotesque'", "system-ui", "sans-serif"],
+        mono: ["'Martian Mono'", "ui-monospace", "monospace"],
       },
       colors: {
         // shadcn bridge

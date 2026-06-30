@@ -1,7 +1,8 @@
 import { useEffect, useRef } from "react";
-import CharReveal from "@/components/CharReveal";
-import OperatorPanel from "@/components/OperatorPanel";
+import DecodeHeading from "@/components/DecodeHeading";
 import Reveal from "@/components/Reveal";
+import ScrambleText from "@/components/ScrambleText";
+import { useMagnetic } from "@/hooks/useMagnetic";
 
 interface HeroProps {
   onContactClick: () => void;
@@ -9,6 +10,8 @@ interface HeroProps {
 
 const Hero = ({ onContactClick }: HeroProps) => {
   const linesRef = useRef<HTMLDivElement>(null);
+  const ctaRef = useMagnetic<HTMLButtonElement>(0.4, 100);
+  const workRef = useMagnetic<HTMLAnchorElement>(0.25, 70);
 
   // Subtle counter-parallax — hero text drifts upward as the user scrolls past.
   useEffect(() => {
@@ -44,7 +47,7 @@ const Hero = ({ onContactClick }: HeroProps) => {
           <div className="flex items-center justify-between gap-6">
             <div className="label flex items-center gap-3">
               <span className="inline-block h-1.5 w-1.5 rounded-full bg-signal" aria-hidden />
-              Software studio · Toronto · est. 2025
+              <ScrambleText text="Software studio · Toronto · est. 2025" trigger="mount" duration={1100} />
             </div>
             <div className="hidden font-mono text-[11px] uppercase tracking-[0.22em] text-mute md:block">
               [ index — 01 / 06 ]
@@ -64,24 +67,16 @@ const Hero = ({ onContactClick }: HeroProps) => {
             }}
           >
             <span className="block kinetic-line">
-              <CharReveal stagger={20} delay={300} immediate splitBy="word">
-                We build
-              </CharReveal>
+              <DecodeHeading text="We build" stagger={26} delay={300} immediate hover />
             </span>
             <span className="block kinetic-line">
-              <CharReveal stagger={22} delay={520} immediate splitBy="word">
-                the operational
-              </CharReveal>
+              <DecodeHeading text="the operational" stagger={24} delay={520} immediate hover />
             </span>
             <span className="block kinetic-line">
               <span className="italic-editorial mr-3 text-signal">
-                <CharReveal stagger={26} delay={760} immediate splitBy="word">
-                  software
-                </CharReveal>
+                <DecodeHeading text="software" stagger={30} delay={760} immediate hover />
               </span>
-              <CharReveal stagger={22} delay={1080} immediate splitBy="word">
-                serious teams depend on.
-              </CharReveal>
+              <DecodeHeading text="serious teams depend on." stagger={22} delay={1080} immediate hover />
             </span>
           </h1>
         </div>
@@ -89,7 +84,7 @@ const Hero = ({ onContactClick }: HeroProps) => {
         {/* Hairline + sub + CTA + operator panel */}
         <div className="mt-12 grid grid-cols-1 gap-12 md:grid-cols-12 md:gap-10">
           {/* Left: copy + actions */}
-          <div className="md:col-span-5">
+          <div className="md:col-span-6">
             <Reveal immediate delay={1300}>
               <div className="hairline-draw mb-7 h-px w-full bg-ink/25" />
               <p className="max-w-[40ch] text-[16px] leading-[1.55] text-ink/75 md:text-[17px]">
@@ -99,6 +94,7 @@ const Hero = ({ onContactClick }: HeroProps) => {
               </p>
               <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
                 <button
+                  ref={ctaRef}
                   type="button"
                   onClick={onContactClick}
                   className="btn-slot bg-ink px-6 py-4 text-[14px] font-medium text-paper"
@@ -111,12 +107,13 @@ const Hero = ({ onContactClick }: HeroProps) => {
                   </span>
                 </button>
                 <a
+                  ref={workRef}
                   href="#work"
                   onClick={(e) => {
                     e.preventDefault();
                     document.getElementById("work")?.scrollIntoView({ behavior: "smooth" });
                   }}
-                  className="link-wipe text-[14px] font-medium text-mute hover:text-ink"
+                  className="link-wipe inline-block text-[14px] font-medium text-mute hover:text-ink"
                 >
                   See selected work →
                 </a>
@@ -124,13 +121,27 @@ const Hero = ({ onContactClick }: HeroProps) => {
             </Reveal>
           </div>
 
-          {/* Right: Operator Panel — the signature visual */}
-          <Reveal immediate delay={1500} className="md:col-span-7">
-            <OperatorPanel />
-            <div className="mt-3 flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.22em] text-mute">
-              <span>fig.01 — what we make</span>
-              <span>↘ live data</span>
-            </div>
+          {/* Right: studio facts — the dashboards moved to their own section below */}
+          <Reveal immediate delay={1500} className="md:col-span-6 md:flex md:items-end md:justify-end">
+            <dl className="w-full border-t border-hairline/15 md:max-w-[340px]">
+              {[
+                ["Studio", "Toronto, CA"],
+                ["Founded", "2025"],
+                ["Discipline", "Operational software"],
+                ["Response", "Under 48 hours"],
+                ["Engagements", "Senior-only, no handoffs"],
+              ].map(([k, v]) => (
+                <div
+                  key={k}
+                  className="group flex items-center justify-between gap-4 border-b border-hairline/15 py-3 transition-colors hover:bg-paper-2/40"
+                >
+                  <dt className="font-mono text-[10px] uppercase tracking-[0.22em] text-mute transition-colors group-hover:text-signal">
+                    {k}
+                  </dt>
+                  <dd className="text-right font-mono text-[12px] text-ink">{v}</dd>
+                </div>
+              ))}
+            </dl>
           </Reveal>
         </div>
       </div>

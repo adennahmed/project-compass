@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useEffect, useRef } from "react";
 
 interface ServiceMarqueeProps {
   items: string[];
@@ -7,6 +7,39 @@ interface ServiceMarqueeProps {
 }
 
 const ServiceMarquee = ({ items, variant = "paper" }: ServiceMarqueeProps) => {
+  const ref = useRef<HTMLDivElement>(null);
+
+  // Scroll-velocity skew — the band leans into the scroll direction and eases
+  // back upright when motion settles. Skews the (non-animated) outer container
+  // so it never fights the track's translate animation.
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let last = window.scrollY;
+    let vel = 0;
+    let cur = 0;
+    let raf = 0;
+    const onScroll = () => {
+      const y = window.scrollY;
+      vel = y - last;
+      last = y;
+    };
+    const tick = () => {
+      raf = requestAnimationFrame(tick);
+      const target = Math.max(-7, Math.min(7, vel * 0.25));
+      cur += (target - cur) * 0.1;
+      vel *= 0.86;
+      el.style.transform = `skewX(${cur.toFixed(2)}deg)`;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    raf = requestAnimationFrame(tick);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+
   const tone =
     variant === "ink"
       ? "bg-ink text-paper border-ink/0"
@@ -21,7 +54,8 @@ const ServiceMarquee = ({ items, variant = "paper" }: ServiceMarqueeProps) => {
 
   return (
     <div
-      className={`kz-marquee relative w-full overflow-hidden border-y py-5 ${invert ? "theme-invert " : ""}${tone}`}
+      ref={ref}
+      className={`kz-marquee relative w-full overflow-hidden border-y py-5 will-change-transform ${invert ? "theme-invert " : ""}${tone}`}
       aria-hidden
     >
       <div className="kz-marquee-track">

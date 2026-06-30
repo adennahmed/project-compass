@@ -54,6 +54,8 @@ const CommunityLayout = () => {
 
   return (
     <div className="min-h-screen bg-ink text-paper">
+      {/* Brutalist film grain — matches the marketing site */}
+      <div aria-hidden className="grain" />
       {/* Primary header bar — dark, full-width, hairline border at bottom */}
       <header className="community-header">
         <div className="container-wide flex items-center justify-between gap-4 py-5">

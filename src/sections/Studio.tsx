@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import CharReveal from "@/components/CharReveal";
-import NowMosaic from "@/components/NowMosaic";
+import ScrambleText from "@/components/ScrambleText";
+import DecodeHeading from "@/components/DecodeHeading";
 import Reveal from "@/components/Reveal";
 import adenImg from "@/assets/aden-ahmed.png";
 import muhammadImg from "@/assets/mohammed-khan.jpg";
@@ -77,7 +77,7 @@ const Studio = () => {
         <Reveal>
           <div className="flex items-center justify-between text-paper/55">
             <div className="font-mono text-[11px] uppercase tracking-[0.32em]">
-              [ 04 — Studio ]
+              <ScrambleText text="[ 04 — Studio ]" />
             </div>
             <div className="hidden font-mono text-[11px] uppercase tracking-[0.32em] md:block">
               Toronto · 2025
@@ -116,10 +116,6 @@ const Studio = () => {
           <p className="mt-8 text-center font-mono text-[11px] uppercase tracking-[0.22em] text-paper/45">
             ↘ {active === null ? "Click a portrait for the full bio" : "Click again to close"}
           </p>
-        </Reveal>
-
-        <Reveal delay={200}>
-          <NowMosaic />
         </Reveal>
       </div>
     </section>
@@ -227,9 +223,20 @@ const MemberCard = ({
 
             <div className="studio-bio">
               <div>
-                <p className="max-w-[58ch] text-[14px] leading-[1.6] text-paper/80 md:text-[15px]">
-                  {member.bio}
-                </p>
+                {isActive ? (
+                  <ScrambleText
+                    as="p"
+                    key="bio-open"
+                    text={member.bio}
+                    trigger="mount"
+                    duration={1100}
+                    className="max-w-[58ch] text-[14px] leading-[1.6] text-paper/80 md:text-[15px]"
+                  />
+                ) : (
+                  <p className="max-w-[58ch] text-[14px] leading-[1.6] text-paper/80 md:text-[15px]">
+                    {member.bio}
+                  </p>
+                )}
                 <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2">
                   <a
                     href={member.linkedin}
@@ -280,13 +287,12 @@ const MemberCard = ({
               const isAccent = wi === member.italicAt;
               return (
                 <span key={wi} className="mr-[0.28em] inline-block">
-                  <CharReveal
+                  <DecodeHeading
+                    text={w}
                     stagger={22}
-                    splitBy="word"
+                    hover
                     className={isAccent ? "italic-editorial text-signal" : ""}
-                  >
-                    {w}
-                  </CharReveal>
+                  />
                 </span>
               );
             })}

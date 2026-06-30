@@ -1,20 +1,19 @@
 import { useEffect, useState } from "react";
 
 /**
- * BackgroundDrift — scroll-driven background with directional color temperature.
+ * BackgroundDrift — scroll-driven background with directional depth.
  *
- * No blobs. No dots. Instead, two angular color temperature washes at
- * precise, non-obvious angles create depth without calling attention to
- * themselves:
+ * No blobs. No dots. Two angular washes on the near-black base create depth
+ * without calling attention to themselves:
  *
- *  1. Warm paper base that darkens subtly as you scroll.
- *  2. A narrow amber/ochre wedge from the top-left corner — like morning
- *     light raking across the page at 22°. Fades as you scroll deeper.
- *  3. A cool blue-slate wedge from the bottom-right — architectural,
- *     like shadow falling the opposite direction. Grows slightly with scroll.
+ *  1. Near-black base that lifts a touch toward charcoal as you scroll.
+ *  2. A narrow cool-grey wedge raking from the top-left at 22° — a faint,
+ *     colourless architectural sheen. Fades as you scroll deeper.
+ *  3. A cool blue-slate wedge from the bottom-right — counter-direction
+ *     shadow. Grows slightly with scroll.
  *
- * Both washes are linear (not radial) to read as directional light, not
- * as glows. Together they give the warm paper a sense of time and place.
+ * Both washes are linear (not radial) and kept extremely subtle so the
+ * film grain stays the hero.
  */
 const BackgroundDrift = () => {
   const [tint, setTint] = useState(0);
@@ -35,9 +34,9 @@ const BackgroundDrift = () => {
   }, []);
 
   const stops = [
-    { r: 245, g: 242, b: 236 }, // paper
-    { r: 240, g: 235, b: 226 }, // paper-2
-    { r: 234, g: 228, b: 218 }, // paper-3
+    { r: 9, g: 11, b: 15 },   // paper (cool near-black base)
+    { r: 13, g: 15, b: 21 },  // a touch toward cool charcoal
+    { r: 18, g: 21, b: 28 },  // deeper cool charcoal
   ];
   const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
   const stopT = tint * (stops.length - 1);
@@ -49,8 +48,8 @@ const BackgroundDrift = () => {
   const g = Math.round(lerp(a.g, b.g, f));
   const bl = Math.round(lerp(a.b, b.b, f));
 
-  // Warm amber wash — top-left, 22° angle, fades as you scroll down
-  const warmOpacity = lerp(0.10, 0.04, tint);
+  // Cool-grey rake — top-left, 22° angle, fades as you scroll down
+  const warmOpacity = lerp(0.06, 0.02, tint);
   // Cool slate wash — bottom-right, 202° angle, grows slightly with scroll
   const coolOpacity = lerp(0.05, 0.09, tint);
 
@@ -63,12 +62,12 @@ const BackgroundDrift = () => {
         style={{ backgroundColor: `rgb(${r}, ${g}, ${bl})` }}
       />
 
-      {/* Warm amber wedge — top-left, rakes across at 22° like morning light */}
+      {/* Cool-grey rake — top-left, rakes across at 22°, colourless sheen */}
       <div
         aria-hidden
         className="pointer-events-none fixed inset-0 -z-19"
         style={{
-          background: `linear-gradient(22deg, rgba(210, 130, 40, ${warmOpacity}) 0%, transparent 52%)`,
+          background: `linear-gradient(22deg, rgba(150, 156, 170, ${warmOpacity}) 0%, transparent 52%)`,
           transition: "opacity 0.8s ease",
         }}
       />

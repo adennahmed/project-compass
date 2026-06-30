@@ -1,18 +1,21 @@
 import CharReveal from "@/components/CharReveal";
+import ScrambleText from "@/components/ScrambleText";
 import Reveal from "@/components/Reveal";
+import { useMagnetic } from "@/hooks/useMagnetic";
 
 interface ContactProps {
   onContactClick: () => void;
 }
 
 const Contact = ({ onContactClick }: ContactProps) => {
+  const ctaRef = useMagnetic<HTMLButtonElement>(0.35, 90);
   return (
     <section id="contact" data-snap className="section-fit relative px-6 py-24 md:px-10 md:py-28">
       <div className="container-wide">
         <Reveal>
           <div className="grid grid-cols-1 gap-12 md:grid-cols-12 md:gap-16">
             <div className="md:col-span-7">
-              <div className="label mb-10">[ 05 — Contact ]</div>
+              <div className="label mb-10"><ScrambleText text="[ 05 — Contact ]" /></div>
               <h2
                 className="display max-w-[14ch] text-ink"
                 style={{ fontSize: "clamp(2.6rem, 7vw, 6rem)", letterSpacing: "-0.045em" }}
@@ -28,7 +31,7 @@ const Contact = ({ onContactClick }: ContactProps) => {
 
               <div className="mt-12 flex flex-col items-start gap-5">
                 <button
-
+                  ref={ctaRef}
                   type="button"
                   onClick={onContactClick}
                   className="group inline-flex items-center gap-3 bg-ink px-7 py-5 text-[15px] font-medium text-paper transition-colors hover:bg-signal"

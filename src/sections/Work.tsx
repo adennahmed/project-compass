@@ -1,4 +1,5 @@
 import CountUp from "@/components/CountUp";
+import ScrambleText from "@/components/ScrambleText";
 import CharReveal from "@/components/CharReveal";
 import Reveal from "@/components/Reveal";
 
@@ -67,7 +68,7 @@ const Work = () => {
         <Reveal>
           <div className="mb-20 grid grid-cols-1 gap-8 md:grid-cols-12 md:items-end md:gap-12">
             <div className="md:col-span-3">
-              <div className="label">[ 03 — Selected work ]</div>
+              <div className="label"><ScrambleText text="[ 03 — Selected work ]" /></div>
             </div>
             <div className="md:col-span-9">
               <h2
