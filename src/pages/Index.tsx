@@ -11,6 +11,7 @@ import Hero from "@/sections/Hero";
 import Dashboards from "@/sections/Dashboards";
 import BuildShowcase from "@/sections/BuildShowcase";
 import Principles from "@/sections/Principles";
+import Console from "@/sections/Console";
 import Services from "@/sections/Services";
 import Approach from "@/sections/Approach";
 import Process from "@/sections/Process";
@@ -19,7 +20,6 @@ import Studio from "@/sections/Studio";
 import Contact from "@/sections/Contact";
 import BeforeAfter from "@/sections/BeforeAfter";
 import OpsFeed from "@/components/OpsFeed";
-import VitalSigns from "@/components/VitalSigns";
 import SectionTransition from "@/components/SectionTransition";
 import CursorGlow from "@/components/CursorGlow";
 
@@ -86,7 +86,6 @@ const Index = () => {
           <Services onContactClick={openDrawer} />
           <SectionTransition word="Approach" index={2} total={9} flip />
           <Approach />
-          <VitalSigns />
           <Process />
           <SectionTransition word="Proof" index={3} total={9} />
           <ServiceMarquee items={MARQUEE_ITEMS.slice().reverse()} variant="signal" />
@@ -98,7 +97,9 @@ const Index = () => {
           <Studio />
           <SectionTransition word="Standard" index={6} total={9} flip />
           <Principles onContactClick={openDrawer} />
-          <SectionTransition word="Contact" index={7} total={9} />
+          <SectionTransition word="Console" index={7} total={9} />
+          <Console onContactClick={openDrawer} />
+          <SectionTransition word="Contact" index={8} total={9} flip />
           <Contact onContactClick={openDrawer} />
         </main>
         <Footer />

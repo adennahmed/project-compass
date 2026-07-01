@@ -18,6 +18,10 @@ const CursorGlow = () => {
     const dot = dotRef.current;
     if (!ring || !dot) return;
 
+    // Hide the native cursor while the custom one is active (marketing page
+    // only; the class is removed on unmount, e.g. navigating to /community).
+    document.documentElement.classList.add("kz-cursor-active");
+
     let mx = window.innerWidth / 2;
     let my = window.innerHeight / 2;
     let rx = mx;
@@ -69,6 +73,7 @@ const CursorGlow = () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("mousemove", onMove);
       document.removeEventListener("mouseleave", onLeave);
+      document.documentElement.classList.remove("kz-cursor-active");
     };
   }, []);
 

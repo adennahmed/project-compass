@@ -125,6 +125,10 @@ html, body {
 }
 
 /* ─── Custom brutalist cursor (desktop only) ───────────────────────────── */
+/* When the custom cursor is mounted, suppress the native one everywhere. */
+html.kz-cursor-active,
+html.kz-cursor-active * { cursor: none !important; }
+
 .kz-cursor-ring,
 .kz-cursor-dot {
   position: fixed;
@@ -154,6 +158,13 @@ html, body {
 @media (hover: none), (pointer: coarse) {
   .kz-cursor-ring,
   .kz-cursor-dot { display: none; }
+}
+
+/* ─── Interactive console ──────────────────────────────────────────────── */
+.kz-term-input { caret-color: rgb(var(--signal)); }
+.kz-term-caret {
+  color: rgb(var(--signal));
+  animation: kz-caret-blink 1s steps(1) infinite;
 }
 
 /* Build showcase — radar scan sweep + gentle float for mockups. */
