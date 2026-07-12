@@ -237,7 +237,7 @@ const BuildShowcase = () => {
               </h2>
             </div>
             <p className="max-w-[42ch] text-[15px] leading-[1.6] text-mute md:text-right md:text-[16px]">
-              Not a portfolio of logos — a sense of the surfaces we'd ship for an operation like yours. Hover a build to bring it forward.
+              Not a portfolio of logos — a sense of the surfaces we'd ship for an operation like yours. Select a build to bring it forward.
             </p>
           </div>
         </Reveal>

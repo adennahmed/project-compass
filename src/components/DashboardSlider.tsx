@@ -32,6 +32,8 @@ const DashboardSlider = () => {
   const go = useCallback((dir: number) => setActive((a) => (a + dir + n) % n), [n]);
 
   // Track viewport width so card width / offsets scale responsively.
+  // Window resize listener as well as the ResizeObserver — covers phone
+  // rotation and environments where the RO misses emulated viewport changes.
   useLayoutEffect(() => {
     const vp = viewportRef.current;
     if (!vp) return;
@@ -39,7 +41,11 @@ const DashboardSlider = () => {
     mw();
     const ro = new ResizeObserver(mw);
     ro.observe(vp);
-    return () => ro.disconnect();
+    window.addEventListener("resize", mw);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", mw);
+    };
   }, []);
 
   // Lock every card to the tallest height so nothing jumps on page.
@@ -65,8 +71,12 @@ const DashboardSlider = () => {
     };
   }, [measureH]);
 
-  const cardW = vw ? Math.min(Math.round(vw * 0.6), 760) : 0;
-  const offset = cardW * 0.52;
+  // Mobile: the coverflow math collapses at phone widths — give the active
+  // card nearly the whole viewport and push neighbours almost fully offscreen
+  // (a thin peek strip remains on each edge).
+  const isNarrow = vw > 0 && vw < 640;
+  const cardW = vw ? (isNarrow ? Math.round(vw * 0.94) : Math.min(Math.round(vw * 0.6), 760)) : 0;
+  const offset = cardW * (isNarrow ? 0.97 : 0.52);
 
   // shortest signed distance from active for n=3 (wraps to -1 / 0 / +1)
   const relOf = (i: number) => {

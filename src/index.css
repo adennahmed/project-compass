@@ -16,9 +16,9 @@
    flipping to light. */
 @layer base {
   :root {
-    --paper:       9  11  15;  /* #090B0F cool near-black — page background */
-    --paper-2:    18  20  26;  /* #12141A elevated surface */
-    --paper-3:    26  29  37;  /* #1A1D25 pulled-forward sections / panels */
+    --paper:       6   8  11;  /* #06080B cool near-black — page background */
+    --paper-2:    15  17  22;  /* #0F1116 elevated surface */
+    --paper-3:    23  26  33;  /* #171A21 pulled-forward sections / panels */
     --ink:       235 237 243;  /* #EBEDF3 cool off-white — primary type */
     --ink-soft:  205 208 216;  /* #CDD0D8 secondary type on elevated surfaces */
     --mute:      134 139 150;  /* #868B96 cool muted secondary copy */
@@ -55,9 +55,9 @@
      and to the entire community subtree, keeping them cohesively dark. */
   .theme-invert {
     --paper:     235 237 243;  /* light — used as type colour here */
-    --paper-2:    20  23  29;  /* cool dark elevated panel */
-    --paper-3:    28  31  39;  /* deeper cool panel */
-    --ink:         9  11  15;  /* dark — used as surface here */
+    --paper-2:    17  20  26;  /* cool dark elevated panel */
+    --paper-3:    25  28  35;  /* deeper cool panel */
+    --ink:         6   8  11;  /* dark — used as surface here */
     --ink-soft:   28  31  38;
     --mute:      148 152 162;  /* readable cool mid-grey on dark */
     --hairline:  235 237 243;  /* light hairlines on dark */
@@ -770,7 +770,7 @@ section[data-snap] {
   height: 200%;
   pointer-events: none;
   z-index: 45;
-  opacity: 0.2;
+  opacity: 0.16;
   mix-blend-mode: screen;
   background-repeat: repeat;
   background-size: 190px 190px;
@@ -819,6 +819,18 @@ section[data-snap] {
   grid-template-columns: minmax(180px, 0.7fr) minmax(0, 1fr);
   column-gap: 1.35rem;
   height: 320px;
+}
+
+/* Mobile: the side-by-side open state has no room — stack portrait above the
+   copy at full width and let the panel grow to its natural height. */
+@media (max-width: 767px) {
+  .studio-card.is-active .studio-profile-panel {
+    grid-template-columns: 1fr;
+    row-gap: 1rem;
+    height: auto;
+  }
+  .studio-card.is-active .studio-portrait { height: 230px; }
+  .studio-card.is-active .studio-profile-copy { padding-bottom: 0.4rem; }
 }
 
 .studio-profile-copy {

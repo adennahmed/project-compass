@@ -34,9 +34,9 @@ const BackgroundDrift = () => {
   }, []);
 
   const stops = [
-    { r: 9, g: 11, b: 15 },   // paper (cool near-black base)
-    { r: 13, g: 15, b: 21 },  // a touch toward cool charcoal
-    { r: 18, g: 21, b: 28 },  // deeper cool charcoal
+    { r: 6, g: 8, b: 11 },    // paper (cool near-black base)
+    { r: 10, g: 12, b: 17 },  // a touch toward cool charcoal
+    { r: 15, g: 18, b: 24 },  // deeper cool charcoal
   ];
   const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
   const stopT = tint * (stops.length - 1);
