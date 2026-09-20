@@ -1,18 +1,12 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import Lenis from "lenis";
-import Logo from "./Logo";
-
-interface NavigationProps {
-  onContactClick: () => void;
-}
 
 const NAV_ITEMS = [
-  { label: "Services",  href: "#services" },
-  { label: "Approach",  href: "#approach" },
-  { label: "Work",      href: "#work" },
-  { label: "Studio",    href: "#studio" },
-  { label: "Community", href: "/community", external: true },
+  { label: "Projects", href: "#projects" },
+  { label: "Method", href: "#method" },
+  { label: "Kozai", href: "#kozai" },
+  { label: "About", href: "#about" },
+  { label: "Console", href: "#console" },
 ];
 
 type NavMode = "integrated" | "pill" | "hidden";
@@ -30,7 +24,7 @@ type NavMode = "integrated" | "pill" | "hidden";
  * small "Menu" trigger that opens a full-bleed overlay. Desktop layout
  * is untouched.
  */
-const Navigation = ({ onContactClick }: NavigationProps) => {
+const Navigation = () => {
   const [mode, setMode] = useState<NavMode>("integrated");
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -130,9 +124,9 @@ const Navigation = ({ onContactClick }: NavigationProps) => {
             className={`flex items-center pr-2 transition-colors ${
               mode === "integrated" ? "text-ink hover:text-signal" : "text-paper hover:text-signal"
             }`}
-            aria-label="Kozai — home"
+            aria-label="Aden Ahmed — home"
           >
-            <Logo size={mode === "integrated" ? 22 : 16} variant={mode === "integrated" ? "white" : "black"} />
+            <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em]">A/A</span>
           </a>
           <span className="nav-pill__divider hidden md:inline-block" aria-hidden />
 
@@ -149,16 +143,6 @@ const Navigation = ({ onContactClick }: NavigationProps) => {
                   ? "text-ink/85 hover:text-ink"
                   : "text-paper/85 hover:text-paper"
               }`;
-              if ((item as { external?: boolean }).external) {
-                return (
-                  <Link key={item.href} to={item.href} className={klass}>
-                    <span className="nav-item__num" style={numStyle}>
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <span className="nav-item__label">{item.label}</span>
-                  </Link>
-                );
-              }
               return (
                 <a
                   key={item.href}
@@ -180,10 +164,10 @@ const Navigation = ({ onContactClick }: NavigationProps) => {
           {/* Desktop CTA */}
           <button
             type="button"
-            onClick={onContactClick}
+            onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
             className="nav-pill__cta hidden md:inline-flex"
           >
-            Start a project ↘
+            Say hello ↘
           </button>
 
           {/* Mobile menu trigger — only visible < md */}
@@ -229,7 +213,7 @@ const Navigation = ({ onContactClick }: NavigationProps) => {
           >
             {/* Top bar inside the overlay */}
             <div className="flex items-center justify-between px-6 pt-6">
-              <Logo size={22} variant="white" />
+              <a href="#top" onClick={goTop} className="font-mono text-[12px] font-semibold uppercase tracking-[0.18em]">A/A</a>
               <button
                 type="button"
                 onClick={() => setMenuOpen(false)}
@@ -252,7 +236,6 @@ const Navigation = ({ onContactClick }: NavigationProps) => {
             {/* Nav items */}
             <nav className="mt-4 flex flex-col px-6">
               {NAV_ITEMS.map((item, i) => {
-                const external = (item as { external?: boolean }).external;
                 const numLabel = String(i + 1).padStart(2, "0");
                 const baseClass =
                   "flex items-baseline justify-between border-b border-ink/10 py-5 transition-colors hover:text-signal";
@@ -273,18 +256,6 @@ const Navigation = ({ onContactClick }: NavigationProps) => {
                     </span>
                   </>
                 );
-                if (external) {
-                  return (
-                    <Link
-                      key={item.href}
-                      to={item.href}
-                      onClick={() => setMenuOpen(false)}
-                      className={baseClass}
-                    >
-                      {labelInner}
-                    </Link>
-                  );
-                }
                 return (
                   <a
                     key={item.href}
@@ -304,13 +275,12 @@ const Navigation = ({ onContactClick }: NavigationProps) => {
                 type="button"
                 onClick={() => {
                   setMenuOpen(false);
-                  // Small delay so the overlay starts dismissing before the drawer mounts.
-                  window.setTimeout(() => onContactClick(), 150);
+                  window.setTimeout(() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" }), 150);
                 }}
                 className="inline-flex w-full items-center justify-between border border-ink bg-ink px-5 py-4 text-paper transition-colors hover:bg-signal hover:border-signal"
               >
                 <span className="font-mono text-[11px] uppercase tracking-[0.22em]">
-                  Start a project
+                  Say hello
                 </span>
                 <span aria-hidden>↘</span>
               </button>
@@ -318,7 +288,7 @@ const Navigation = ({ onContactClick }: NavigationProps) => {
 
             {/* Footer marker */}
             <div className="absolute inset-x-0 bottom-6 px-6 font-mono text-[10px] uppercase tracking-[0.28em] text-ink/35">
-              Kozai · Toronto, CA
+              Aden Ahmed · Toronto, CA
             </div>
           </div>
         </div>

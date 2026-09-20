@@ -5,7 +5,7 @@
  * removed; this page is now a static "you're already unsubscribed"
  * surface so any legacy URLs that get clicked still render gracefully.
  *
- * Future: when we wire up our own transactional email pipeline via
+ * Future: if a transactional email pipeline is added via
  * Resend, re-add the unsubscribe-token validation here.
  */
 const Unsubscribe = () => {
@@ -19,7 +19,7 @@ const Unsubscribe = () => {
           className="text-[16px] font-bold tracking-[0.12em] uppercase mb-12"
           style={{ color: "#ECECEE" }}
         >
-          KOZAI
+          ADEN / AHMED
         </h1>
         <h2
           className="text-[22px] font-bold uppercase mb-4"
@@ -31,9 +31,8 @@ const Unsubscribe = () => {
           className="text-[14px]"
           style={{ color: "rgba(236,236,238,0.55)", lineHeight: "1.8" }}
         >
-          You're not on any of our marketing lists. We only email people
-          who've reached out through our contact form, and only as a
-          direct reply.
+          You are not on a marketing list. Messages are only sent as
+          direct replies to conversations you initiated.
         </p>
         <a
           href="/"
@@ -44,7 +43,7 @@ const Unsubscribe = () => {
             textDecoration: "none",
           }}
         >
-          Back to kozai.ca ↘
+          Back to portfolio ↘
         </a>
       </div>
     </div>

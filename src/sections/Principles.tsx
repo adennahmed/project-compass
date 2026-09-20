@@ -5,37 +5,33 @@ import DecodeHeading from "@/components/DecodeHeading";
 import ScrambleText from "@/components/ScrambleText";
 import { useMagnetic } from "@/hooks/useMagnetic";
 
-interface PrinciplesProps {
-  onContactClick?: () => void;
-}
-
 const PRINCIPLES: { title: string; body: string }[] = [
   {
-    title: "Operators before features",
-    body: "We design for the person who opens the tool at 7am, not the buyer who signs the cheque. If a shift doesn't get shorter, nothing shipped.",
+    title: "Model the work first",
+    body: "Before choosing a framework, I map the states, ownership, constraints, and failure paths. Good architecture starts with a faithful model of reality.",
   },
   {
-    title: "Senior hands, start to finish",
-    body: "The people who scope the work write the work. No junior bench learning on your budget, no handoff to a team you've never met.",
+    title: "Interfaces are part of the system",
+    body: "A technically correct backend can still create bad decisions. The surface has to expose state, uncertainty, and the consequence of every action.",
   },
   {
-    title: "Boring on purpose",
-    body: "We pick the stack that's still debuggable at 2am in year three. Novelty is a cost, and we don't quietly pass it to you.",
+    title: "Novelty must earn its place",
+    body: "I like ambitious engineering, but I prefer systems that remain understandable. New technology is useful only when it meaningfully changes the result.",
   },
   {
-    title: "Shipped beats perfect",
-    body: "Weekly demos against real data, every engagement. Momentum compounds; roadmaps rot in a drawer nobody opens.",
+    title: "Prototype at full fidelity",
+    body: "A believable prototype reveals data, motion, edge cases, and operating assumptions that a static mockup cannot. The details are part of the thinking.",
   },
   {
-    title: "We leave the lights on",
-    body: "Observability, runbooks, and an on-call doc handed to your team. You should be able to own what we built without us in the room.",
+    title: "Make failure legible",
+    body: "Retries, degraded modes, conflicts, and unknowns should be designed—not hidden. Trust grows when software can explain what happened and what comes next.",
   },
 ];
 
-const Principles = ({ onContactClick }: PrinciplesProps) => {
+const Principles = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const railRef = useRef<HTMLSpanElement>(null);
-  const ctaRef = useMagnetic<HTMLButtonElement>(0.35, 90);
+  const ctaRef = useMagnetic<HTMLAnchorElement>(0.35, 90);
 
   // Scroll-linked vertical rail — fills as the section moves through view.
   useEffect(() => {
@@ -65,7 +61,7 @@ const Principles = ({ onContactClick }: PrinciplesProps) => {
   return (
     <section
       ref={sectionRef}
-      id="standard"
+      id="method"
       data-snap
       className="relative px-6 py-24 md:px-10 md:py-32"
     >
@@ -75,7 +71,7 @@ const Principles = ({ onContactClick }: PrinciplesProps) => {
           <div className="mb-14 grid grid-cols-1 gap-8 md:mb-20 md:grid-cols-12 md:items-end md:gap-12">
             <div className="md:col-span-4">
               <div className="label">
-                <ScrambleText text="[ ✦ — The Kozai standard ]" />
+                <ScrambleText text="[ 02 — How I build ]" />
               </div>
             </div>
             <div className="md:col-span-8">
@@ -83,10 +79,10 @@ const Principles = ({ onContactClick }: PrinciplesProps) => {
                 className="display text-ink"
                 style={{ fontSize: "clamp(2rem, 5.4vw, 4.2rem)", letterSpacing: "-0.04em" }}
               >
-                <DecodeHeading text="We don't sell software." stagger={18} hover />
+                <DecodeHeading text="The best systems" stagger={18} hover />
                 <span className="text-mute">
                   {" "}
-                  <DecodeHeading text="We remove the reason you needed it." stagger={14} delay={120} hover />
+                  <DecodeHeading text="explain themselves." stagger={14} delay={120} hover />
                 </span>
               </h2>
             </div>
@@ -96,10 +92,9 @@ const Principles = ({ onContactClick }: PrinciplesProps) => {
         {/* Intro */}
         <Reveal delay={120}>
           <p className="mb-16 max-w-[68ch] text-[16px] leading-[1.7] text-ink/75 md:mb-24 md:text-[18px]">
-            Kozai is a Toronto operational-software studio. We embed with the teams who actually run
-            the business, find the work software should be doing, and build the smallest system that
-            makes a shift shorter — then hand it back, documented, so your people can run it without
-            us. No bench. No offshore relay. No roadmap theater.
+            My approach sits between product design and systems engineering. I use high-fidelity
+            prototypes to pressure-test an idea, explicit state models to keep complexity honest,
+            and observability as part of the product—not an afterthought added before launch.
           </p>
         </Reveal>
 
@@ -153,22 +148,21 @@ const Principles = ({ onContactClick }: PrinciplesProps) => {
               style={{ fontSize: "clamp(1.6rem, 3.4vw, 2.6rem)" }}
             >
               <CharReveal stagger={16} splitBy="word">
-                Have a process that should be software?
+                Building something difficult to explain?
               </CharReveal>
             </h3>
-            <button
+            <a
               ref={ctaRef}
-              type="button"
-              onClick={() => onContactClick?.()}
+              href="#contact"
               className="btn-slot shrink-0 bg-ink px-7 py-5 text-[14px] font-medium text-paper"
             >
               <span className="btn-slot__label">
-                Start a project <span aria-hidden>↘</span>
+                Compare notes <span aria-hidden>↘</span>
               </span>
               <span className="btn-slot__label--hover bg-signal">
-                Let's build <span aria-hidden>↘</span>
+                Say hello <span aria-hidden>↘</span>
               </span>
-            </button>
+            </a>
           </div>
         </Reveal>
       </div>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#080a0f"/>
+  <g stroke="#ececf0" stroke-opacity=".08"><path d="M0 105h1200M0 210h1200M0 315h1200M0 420h1200M0 525h1200"/><path d="M200 0v630M400 0v630M600 0v630M800 0v630M1000 0v630"/></g>
+  <text x="72" y="86" fill="#f4313a" font-family="monospace" font-size="20" letter-spacing="5">PORTFOLIO / 2026</text>
+  <text x="66" y="320" fill="#ececf0" font-family="Arial, sans-serif" font-weight="700" font-size="128" letter-spacing="-8">ADEN AHMED</text>
+  <text x="72" y="390" fill="#a2a7b3" font-family="monospace" font-size="26" letter-spacing="3">SOFTWARE ENGINEER + PRODUCT BUILDER</text>
+  <rect x="72" y="496" width="1056" height="2" fill="#f4313a"/>
+  <text x="72" y="548" fill="#a2a7b3" font-family="monospace" font-size="18" letter-spacing="2">SYSTEMS · PRODUCTS · INTERFACES · TORONTO</text>
+</svg>

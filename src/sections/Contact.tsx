@@ -3,100 +3,41 @@ import ScrambleText from "@/components/ScrambleText";
 import Reveal from "@/components/Reveal";
 import { useMagnetic } from "@/hooks/useMagnetic";
 
-interface ContactProps {
-  onContactClick: () => void;
-}
-
-const Contact = ({ onContactClick }: ContactProps) => {
-  const ctaRef = useMagnetic<HTMLButtonElement>(0.35, 90);
+const Contact = () => {
+  const mailRef = useMagnetic<HTMLAnchorElement>(0.35, 90);
   return (
-    <section id="contact" data-snap className="section-fit relative px-6 py-24 md:px-10 md:py-28">
+    <section id="contact" data-snap className="relative px-6 py-24 md:px-10 md:py-32">
       <div className="container-wide">
         <Reveal>
           <div className="grid grid-cols-1 gap-12 md:grid-cols-12 md:gap-16">
-            <div className="md:col-span-7">
-              <div className="label mb-10"><ScrambleText text="[ 05 — Contact ]" /></div>
-              <h2
-                className="display max-w-[14ch] text-ink"
-                style={{ fontSize: "clamp(2.6rem, 7vw, 6rem)", letterSpacing: "-0.045em" }}
-              >
-                <CharReveal stagger={20} splitBy="word">
-                  Tell us what you're trying to build.
-                </CharReveal>
+            <div className="md:col-span-8">
+              <div className="label mb-10"><ScrambleText text="[ 06 — Contact ]" /></div>
+              <h2 className="display max-w-[13ch] text-ink" style={{ fontSize: "clamp(2.8rem, 7vw, 6.5rem)", letterSpacing: "-0.05em" }}>
+                <CharReveal stagger={19} splitBy="word">Let’s build the hard part clearly.</CharReveal>
               </h2>
-              <p className="mt-9 max-w-[48ch] text-[17px] leading-[1.55] text-ink/75 md:text-[18px]">
-                A short note is enough — what the team does, what's getting in the way, what
-                "shipped" would look like. We reply within 48 hours, every time.
+              <p className="mt-9 max-w-[52ch] text-[17px] leading-[1.7] text-ink/72 md:text-[19px]">
+                I am interested in thoughtful engineering problems, product-minded teams, and systems where the interface has to earn trust. If that sounds adjacent to what you are working on, I would be glad to hear about it.
               </p>
-
-              <div className="mt-12 flex flex-col items-start gap-5">
-                <button
-                  ref={ctaRef}
-                  type="button"
-                  onClick={onContactClick}
-                  className="group inline-flex items-center gap-3 bg-ink px-7 py-5 text-[15px] font-medium text-paper transition-colors hover:bg-signal"
-                >
-                  <span>Open project intake</span>
-                  <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-1">↘</span>
-                </button>
-                <a
-
-                  href="mailto:hello@kozai.ca"
-                  className="text-[14px] font-medium text-mute underline-offset-4 transition-colors hover:text-ink hover:underline"
-                >
-                  or — direct mail · hello@kozai.ca
-                </a>
+              <div className="mt-12 flex flex-wrap items-center gap-6">
+                <a ref={mailRef} href="mailto:hello@kozai.ca?subject=Hello%20Aden" className="btn-slot bg-ink px-7 py-5 text-[14px] font-medium text-paper"><span className="btn-slot__label">Email Aden <span aria-hidden>↘</span></span><span className="btn-slot__label--hover bg-signal">Open a conversation <span aria-hidden>↘</span></span></a>
+                <a href="https://www.linkedin.com/in/adenahmed/" target="_blank" rel="noreferrer" className="link-wipe text-[14px] text-mute hover:text-ink">LinkedIn ↗</a>
               </div>
             </div>
 
-            <div className="md:col-span-5">
-              <dl className="grid grid-cols-2 gap-x-8 gap-y-10 border-l border-hairline/20 pl-8 md:pl-12">
+            <div className="md:col-span-4 md:self-end">
+              <dl className="border-t border-hairline/15">
                 {[
-                  ["Reply", "within 48 h"],
-                  ["Hours", "mon–fri · 09–18 ET"],
-                  ["Studio", "toronto, ca"],
-                  ["Year", "est. 2025"],
-                  ["Cycle", "weekly demos"],
-                  ["Approach", "right tool, every time"],
-                ].map(([label, value]) => (
-                  <div key={label}>
-                    <dt className="font-mono text-[11px] uppercase tracking-[0.22em] text-mute">
-                      {label}
-                    </dt>
-                    <dd className="mt-2 text-[15px] text-ink">{value}</dd>
+                  ["Based", "Toronto, Canada"],
+                  ["Focus", "Systems + product"],
+                  ["Working in", "TypeScript · Go · Rust · Python"],
+                  ["Best way in", "A specific, interesting problem"],
+                ].map(([label, value], i) => (
+                  <div key={label} className="group border-b border-hairline/15 py-4">
+                    <dt className="font-mono text-[9px] uppercase tracking-[0.19em] text-mute group-hover:text-signal">0{i + 1} · {label}</dt>
+                    <dd className="mt-2 text-[13px] leading-[1.5] text-ink">{value}</dd>
                   </div>
                 ))}
               </dl>
-
-              {/* Capabilities — broader breadth than a 4-language list.
-                  Successful studios sell capability surface, not language picks. */}
-              <div className="mt-10 border-l border-hairline/20 pl-8 md:pl-12">
-                <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-mute">
-                  Capabilities
-                </div>
-                <div className="mt-3 flex flex-wrap gap-1.5">
-                  {[
-                    "Web platforms",
-                    "Mobile",
-                    "Backend services",
-                    "Data infra",
-                    "Cloud + DevOps",
-                    "Realtime",
-                    "ML integration",
-                    "Embedded",
-                  ].map((c) => (
-                    <span
-                      key={c}
-                      className="border border-hairline/20 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-ink/85 transition-colors hover:border-ink hover:text-ink"
-                    >
-                      {c}
-                    </span>
-                  ))}
-                </div>
-                <p className="mt-4 max-w-[36ch] text-[13px] leading-[1.55] text-mute">
-                  We're not married to a stack — every project lands on the right tools, chosen against the problem.
-                </p>
-              </div>
             </div>
           </div>
         </Reveal>

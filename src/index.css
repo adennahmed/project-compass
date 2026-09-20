@@ -1503,3 +1503,16 @@ section[data-snap] {
   from { opacity: 0; transform: translateX(8px); }
   to   { opacity: 1; transform: translateX(0); }
 }
+
+/* Portfolio project atlas — each inspection mode enters as one composed panel. */
+@keyframes kz-project-enter {
+  from { opacity: 0; transform: translateY(12px) scale(0.992); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* About portrait scanner. */
+@keyframes kz-scan-x {
+  0%, 100% { transform: translateX(-100%); opacity: 0; }
+  15%, 80% { opacity: 1; }
+  70% { transform: translateX(100%); }
+}

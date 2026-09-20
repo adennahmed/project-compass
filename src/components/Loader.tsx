@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import Logo from "./Logo";
 
 interface LoaderProps {
   /** Called the moment the loader begins its exit animation —
@@ -10,11 +9,11 @@ interface LoaderProps {
 }
 
 const SERVICE_STRINGS = [
-  "internal_tools",
-  "workflow_automation",
-  "data_pipelines",
-  "client_platforms",
-  "mvp_engineering",
+  "meridian_control_plane",
+  "aegis_evidence_graph",
+  "relay_offline_sync",
+  "kozai_archive",
+  "aden_ahmed_portfolio",
 ];
 
 const TICK_DURATION = 2200;
@@ -92,11 +91,11 @@ const Loader = ({ onExitStart, onComplete }: LoaderProps) => {
     >
       {/* Top corners — system identifiers */}
       <div className="absolute left-6 top-6 font-mono text-[11px] uppercase tracking-[0.22em] text-mute md:left-10 md:top-8">
-        kozai · studio · est. 2025
+        aden ahmed · portfolio · 2026
       </div>
       {/* Hidden on mobile — not enough room alongside left label */}
       <div className="absolute right-6 top-6 hidden font-mono text-[11px] uppercase tracking-[0.22em] text-mute md:block md:right-10 md:top-8">
-        © 2025 — toronto, ca
+        software engineer — toronto, ca
       </div>
 
       {/* Vertical hairlines drawing across the screen — adds depth */}
@@ -161,7 +160,12 @@ const Loader = ({ onExitStart, onComplete }: LoaderProps) => {
               pointerEvents: phase === "running" ? "none" : "auto",
             }}
           >
-            <Logo size={64} variant="white" />
+            <span
+              className="display block whitespace-nowrap text-ink"
+              style={{ fontSize: "clamp(2.4rem, 7vw, 6rem)", lineHeight: 0.9, letterSpacing: "-0.055em" }}
+            >
+              ADEN AHMED
+            </span>
           </div>
         </div>
       </div>
@@ -170,7 +174,7 @@ const Loader = ({ onExitStart, onComplete }: LoaderProps) => {
           overlapping with the wide wordmark in the bottom-left */}
       <div className="absolute bottom-12 right-6 hidden text-right font-mono text-[11px] uppercase tracking-[0.22em] text-mute md:block md:bottom-14 md:right-10">
         43.6532° N · 79.3832° W
-        <div className="mt-1 text-ink/40">building tools serious teams depend on</div>
+        <div className="mt-1 text-ink/40">systems · products · interfaces</div>
       </div>
     </div>
   );

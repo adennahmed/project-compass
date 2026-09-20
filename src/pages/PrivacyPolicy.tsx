@@ -1,43 +1,42 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import SEOHead from "@/components/SEOHead";
-import Logo from "@/components/Logo";
 
 const SECTIONS = [
   {
     n: "01",
-    title: "Information We Collect",
-    body: "When you submit an inquiry through our contact form, we collect your name, email address, phone number (optional), business name and type (optional), your role, and message content (optional). We only collect what you voluntarily provide.",
+    title: "Information I Receive",
+    body: "When you contact me by email or through a linked platform, I receive the information you voluntarily provide, such as your name, email address, and message content.",
   },
   {
     n: "02",
-    title: "How We Use Your Information",
-    body: "We use the information you provide solely to respond to your inquiry, communicate with you about potential engagements, and improve our service. We do not use your data for marketing purposes without your explicit consent.",
+    title: "How I Use Your Information",
+    body: "I use the information you provide solely to respond to your message and continue the conversation you initiated. I do not use it for marketing without your explicit consent.",
   },
   {
     n: "03",
     title: "Data Storage & Security",
-    body: "Your data is stored securely using industry-standard encryption and access controls. We retain your information only as long as necessary to fulfil the purpose for which it was collected, or as required by applicable law.",
+    body: "Information is handled using standard security and access controls. I retain it only as long as necessary to fulfil the purpose for which it was provided, or as required by applicable law.",
   },
   {
     n: "04",
     title: "Data Sharing",
-    body: "We do not sell, trade, or rent your personal information to third parties. We may share your information with trusted service providers who assist us in operating our website and conducting our business, provided they agree to keep this information confidential.",
+    body: "I do not sell, trade, or rent personal information. Information may be processed by trusted service providers that help operate the website or email service, subject to their privacy obligations.",
   },
   {
     n: "05",
     title: "Your Rights",
-    body: "You have the right to access, correct, or delete the personal information we hold about you. To exercise these rights, please contact us at hello@kozai.ca.",
+    body: "You may request access to, correction of, or deletion of personal information associated with your correspondence by emailing hello@kozai.ca.",
   },
   {
     n: "06",
     title: "Cookies",
-    body: "Our website does not use cookies for tracking or advertising purposes. Essential cookies may be used to ensure the basic functionality of the site.",
+    body: "This website does not use cookies for tracking or advertising purposes. Essential cookies may be used to ensure its basic functionality.",
   },
   {
     n: "07",
     title: "Changes to This Policy",
-    body: "We may update this Privacy Policy from time to time. Any changes will be posted on this page with a revised last-updated date.",
+    body: "This Privacy Policy may be updated from time to time. Changes will be posted on this page with a revised last-updated date.",
   },
   {
     n: "08",
@@ -52,15 +51,15 @@ const PrivacyPolicy = () => {
   return (
     <div className="min-h-screen bg-paper text-ink">
       <SEOHead
-        title="Privacy Policy — Kozai"
-        description="Kozai's privacy policy outlines how we collect, use, and protect your personal information."
+        title="Privacy Policy — Aden Ahmed"
+        description="Privacy information for the Aden Ahmed portfolio website."
         path="/privacy-policy"
       />
 
       {/* Nav */}
       <header className="flex items-center justify-between border-b border-hairline/15 px-6 py-5 md:px-10">
-        <Link to="/" aria-label="Kozai — home">
-          <Logo size={22} variant="white" />
+        <Link to="/" aria-label="Aden Ahmed — home" className="font-mono text-[11px] font-semibold tracking-[0.18em] text-ink">
+          A/A
         </Link>
         <Link
           to="/"
@@ -85,14 +84,14 @@ const PrivacyPolicy = () => {
         <div className="mt-4 flex items-center gap-4">
           <div className="h-px flex-1 bg-hairline/15" />
           <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-mute">
-            Last updated — May 2026
+            Last updated — September 2026
           </span>
         </div>
 
         {/* Intro */}
         <p className="mt-10 max-w-[52ch] text-[15px] leading-[1.65] text-ink/70">
-          Kozai is a software studio based in Toronto, Canada. This policy explains what
-          personal information we collect when you contact us, how we use it, and the
+          This is the personal portfolio of Aden Ahmed, based in Toronto, Canada. This policy explains what
+          personal information may be received when you make contact, how it is used, and the
           choices you have.
         </p>
 
@@ -121,14 +120,14 @@ const PrivacyPolicy = () => {
         <div className="mt-16 border border-hairline/15 px-6 py-6">
           <div className="label mb-2">Questions?</div>
           <p className="text-[14px] text-ink/70">
-            Reach us any time at{" "}
+            Reach me any time at{" "}
             <a
               href="mailto:hello@kozai.ca"
               className="text-ink underline-offset-4 hover:underline"
             >
               hello@kozai.ca
             </a>
-            . We reply within 48 hours.
+            .
           </p>
         </div>
       </main>
@@ -136,7 +135,7 @@ const PrivacyPolicy = () => {
       <footer className="border-t border-hairline/12 px-6 py-8 md:px-10">
         <div className="flex items-center justify-between">
           <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-mute">
-            © {new Date().getFullYear()} Kozai Software Studio
+            © {new Date().getFullYear()} Aden Ahmed
           </span>
           <Link
             to="/terms-and-conditions"
