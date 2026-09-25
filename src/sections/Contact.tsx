@@ -3,8 +3,8 @@ import ScrambleText from "@/components/ScrambleText";
 import Reveal from "@/components/Reveal";
 import { useMagnetic } from "@/hooks/useMagnetic";
 
-const Contact = () => {
-  const mailRef = useMagnetic<HTMLAnchorElement>(0.35, 90);
+const Contact = ({ onOpenInquiry }: { onOpenInquiry: () => void }) => {
+  const mailRef = useMagnetic<HTMLButtonElement>(0.35, 90);
   return (
     <section id="contact" data-snap className="relative px-6 py-24 md:px-10 md:py-32">
       <div className="container-wide">
@@ -19,7 +19,7 @@ const Contact = () => {
                 I am interested in thoughtful engineering problems, product-minded teams, and systems where the interface has to earn trust. If that sounds adjacent to what you are working on, I would be glad to hear about it.
               </p>
               <div className="mt-12 flex flex-wrap items-center gap-6">
-                <a ref={mailRef} href="mailto:hello@kozai.ca?subject=Hello%20Aden" className="btn-slot bg-ink px-7 py-5 text-[14px] font-medium text-paper"><span className="btn-slot__label">Email Aden <span aria-hidden>↘</span></span><span className="btn-slot__label--hover bg-signal">Open a conversation <span aria-hidden>↘</span></span></a>
+                <button ref={mailRef} type="button" onClick={onOpenInquiry} className="btn-slot bg-ink px-7 py-5 text-[14px] font-medium text-paper"><span className="btn-slot__label">Send an inquiry <span aria-hidden>↘</span></span><span className="btn-slot__label--hover bg-signal">Open direct channel <span aria-hidden>↘</span></span></button>
                 <a href="https://www.linkedin.com/in/adenahmed/" target="_blank" rel="noreferrer" className="link-wipe text-[14px] text-mute hover:text-ink">LinkedIn ↗</a>
               </div>
             </div>

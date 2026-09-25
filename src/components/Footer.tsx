@@ -28,14 +28,14 @@ const links = [
   ["Contact", "#contact"],
 ];
 
-const Footer = () => (
+const Footer = ({ onOpenInquiry }: { onOpenInquiry: () => void }) => (
   <footer className="theme-invert relative bg-ink text-paper">
     <div className="container-wide pb-0 pt-24 md:pt-32">
       <div className="grid grid-cols-1 gap-10 border-b border-paper/10 pb-12 md:grid-cols-12 md:gap-12">
         <div className="md:col-span-6">
           <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-paper/50">Aden Ahmed · Software engineer</div>
           <p className="mt-5 max-w-[42ch] text-[15px] leading-[1.65] text-paper/70">Independent builds, technical prototypes, and systems thinking from Toronto. Interested in difficult software that becomes calm in the hands of the person using it.</p>
-          <a href="mailto:hello@kozai.ca?subject=Hello%20Aden" className="mt-7 inline-block text-[16px] text-paper underline-offset-4 transition-colors hover:text-signal hover:underline">hello@kozai.ca</a>
+          <button type="button" onClick={onOpenInquiry} className="mt-7 inline-block text-[16px] text-paper underline-offset-4 transition-colors hover:text-signal hover:underline">hello@kozai.ca ↗</button>
         </div>
         <div className="md:col-span-3">
           <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-paper/50">Index</div>

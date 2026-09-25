@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import Reveal from "@/components/Reveal";
 import ScrambleText from "@/components/ScrambleText";
 import { PORTFOLIO_PROJECTS, type PortfolioProject } from "@/data/portfolio";
+import { usePointerTilt } from "@/hooks/usePointerTilt";
 
 type View = "interface" | "system" | "decisions";
 
@@ -222,6 +223,7 @@ const DecisionsView = ({ project }: { project: PortfolioProject }) => (
 const ProjectAtlas = () => {
   const [active, setActive] = useState(0);
   const [view, setView] = useState<View>("interface");
+  const panelRef = usePointerTilt<HTMLDivElement>(2.2);
   const project = PORTFOLIO_PROJECTS[active];
   const Surface = useMemo(() => interfaces[project.id], [project.id]);
 
@@ -264,7 +266,9 @@ const ProjectAtlas = () => {
           </Reveal>
 
           <Reveal delay={120} className="lg:col-span-8">
-            <div className="overflow-hidden border border-hairline/15 bg-paper-2/25">
+            <div ref={panelRef} className="kz-holo-panel relative overflow-hidden border border-hairline/15 bg-paper-2/25">
+              <span className="kz-holo-panel__scan" aria-hidden />
+              <span className="kz-holo-panel__reticle" aria-hidden><i /><i /><i /><i /></span>
               <div className="border-b border-hairline/15 p-4 md:p-5">
                 <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
                   <div><div className="flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.18em] text-signal"><span className="h-1.5 w-1.5 bg-signal" />{project.status}</div><h3 className="display mt-3 text-[32px] text-ink md:text-[44px]">{project.name}</h3><p className="mt-2 max-w-[58ch] text-[12px] leading-[1.55] text-mute md:text-[13px]">{project.summary}</p></div>

@@ -8,6 +8,8 @@ import ServiceMarquee from "@/components/ServiceMarquee";
 import BackgroundDrift from "@/components/BackgroundDrift";
 import SectionTransition from "@/components/SectionTransition";
 import CursorGlow from "@/components/CursorGlow";
+import ScrollProgress from "@/components/ScrollProgress";
+import ContactDrawer from "@/components/ContactDrawer";
 import Hero from "@/sections/Hero";
 import ProjectAtlas from "@/sections/ProjectAtlas";
 import Playground from "@/sections/Playground";
@@ -29,11 +31,16 @@ const SIGNALS = [
   "Prototype at full fidelity",
 ];
 
+const PAGE_SECTIONS = ["top", "projects", "playground", "method", "kozai", "about", "console", "contact"];
+
 const Index = () => {
   const [showLoader, setShowLoader] = useState(true);
   const [pageVisible, setPageVisible] = useState(false);
+  const [inquiryOpen, setInquiryOpen] = useState(false);
   const onLoaderExitStart = useCallback(() => setPageVisible(true), []);
   const onLoaderComplete = useCallback(() => setShowLoader(false), []);
+  const openInquiry = useCallback(() => setInquiryOpen(true), []);
+  const closeInquiry = useCallback(() => setInquiryOpen(false), []);
 
   useEffect(() => {
     if (pageVisible) window.scrollTo({ top: 0, behavior: "auto" });
@@ -51,10 +58,11 @@ const Index = () => {
       <CursorGlow />
       <BackgroundDrift />
       <div aria-hidden className="grain" />
-      {pageVisible && <Navigation />}
+      {pageVisible && <Navigation onOpenInquiry={openInquiry} />}
+      {pageVisible && <ScrollProgress sections={PAGE_SECTIONS} />}
       <div className={pageVisible ? "page-settle" : ""} style={{ opacity: pageVisible ? 1 : 0 }}>
         <main className="relative z-10">
-          <Hero />
+          <Hero onOpenInquiry={openInquiry} />
           <ServiceMarquee items={SIGNALS} variant="ink" />
           <ProjectAtlas />
           <SectionTransition word="Play" index={1} total={6} />
@@ -66,12 +74,13 @@ const Index = () => {
           <SectionTransition word="About" index={4} total={6} />
           <AboutAden />
           <SectionTransition word="Console" index={5} total={6} flip />
-          <Console />
+          <Console onOpenInquiry={openInquiry} />
           <SectionTransition word="Contact" index={6} total={6} />
-          <Contact />
+          <Contact onOpenInquiry={openInquiry} />
         </main>
-        <Footer />
+        <Footer onOpenInquiry={openInquiry} />
       </div>
+      <ContactDrawer open={inquiryOpen} onClose={closeInquiry} />
     </>
   );
 };

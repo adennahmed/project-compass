@@ -1,616 +1,297 @@
-import { Fragment, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
-/* ─── Country list for phone picker ────────────────────────────────────── */
-const COUNTRIES = [
-  { code: "US", dial: "+1",   flag: "🇺🇸", name: "United States" },
-  { code: "CA", dial: "+1",   flag: "🇨🇦", name: "Canada" },
-  { code: "GB", dial: "+44",  flag: "🇬🇧", name: "United Kingdom" },
-  { code: "AU", dial: "+61",  flag: "🇦🇺", name: "Australia" },
-  { code: "DE", dial: "+49",  flag: "🇩🇪", name: "Germany" },
-  { code: "FR", dial: "+33",  flag: "🇫🇷", name: "France" },
-  { code: "IN", dial: "+91",  flag: "🇮🇳", name: "India" },
-  { code: "BR", dial: "+55",  flag: "🇧🇷", name: "Brazil" },
-  { code: "MX", dial: "+52",  flag: "🇲🇽", name: "Mexico" },
-  { code: "JP", dial: "+81",  flag: "🇯🇵", name: "Japan" },
-  { code: "SG", dial: "+65",  flag: "🇸🇬", name: "Singapore" },
-  { code: "AE", dial: "+971", flag: "🇦🇪", name: "UAE" },
-  { code: "NL", dial: "+31",  flag: "🇳🇱", name: "Netherlands" },
-  { code: "SE", dial: "+46",  flag: "🇸🇪", name: "Sweden" },
-  { code: "CH", dial: "+41",  flag: "🇨🇭", name: "Switzerland" },
-  { code: "NZ", dial: "+64",  flag: "🇳🇿", name: "New Zealand" },
-  { code: "IE", dial: "+353", flag: "🇮🇪", name: "Ireland" },
-  { code: "ZA", dial: "+27",  flag: "🇿🇦", name: "South Africa" },
-  { code: "ES", dial: "+34",  flag: "🇪🇸", name: "Spain" },
-  { code: "IT", dial: "+39",  flag: "🇮🇹", name: "Italy" },
-] as const;
+const INQUIRY_TYPES = ["BUILD", "ROLE", "COLLAB", "SPEAKING", "OTHER"] as const;
+type InquiryType = (typeof INQUIRY_TYPES)[number];
 
-type Country = typeof COUNTRIES[number];
-
-function formatPhone(digits: string, code: string): string {
-  if (code === "US" || code === "CA") {
-    const d = digits.slice(0, 10);
-    if (d.length <= 3) return d;
-    if (d.length <= 6) return `(${d.slice(0, 3)}) ${d.slice(3)}`;
-    return `(${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}`;
-  }
-  if (code === "GB") {
-    const d = digits.slice(0, 11);
-    if (d.length <= 5) return d;
-    return `${d.slice(0, 5)} ${d.slice(5)}`;
-  }
-  if (code === "AU") {
-    const d = digits.slice(0, 10);
-    if (d.length <= 4) return d;
-    if (d.length <= 7) return `${d.slice(0, 4)} ${d.slice(4)}`;
-    return `${d.slice(0, 4)} ${d.slice(4, 7)} ${d.slice(7)}`;
-  }
-  const d = digits.slice(0, 15);
-  return d.replace(/(\d{3})(?=\d)/g, "$1 ").trim();
-}
-
-/* ─── Types ─────────────────────────────────────────────────────────────── */
-type Role = "FOUNDER" | "INVESTOR" | "PARTNER" | "JOURNALIST" | "OTHER";
-const ROLES: Role[] = ["FOUNDER", "INVESTOR", "PARTNER", "JOURNALIST", "OTHER"];
-
-interface Form {
-  role: Role;
+interface InquiryForm {
+  inquiryType: InquiryType;
   firstName: string;
   lastName: string;
   email: string;
-  phone: string;
-  businessName: string;
-  businessType: string;
+  organization: string;
   message: string;
+  website: string;
   agreed: boolean;
 }
 
-const EMPTY: Form = {
-  role: "FOUNDER",
-  firstName: "", lastName: "", email: "", phone: "",
-  businessName: "", businessType: "", message: "", agreed: false,
+const EMPTY_FORM: InquiryForm = {
+  inquiryType: "BUILD",
+  firstName: "",
+  lastName: "",
+  email: "",
+  organization: "",
+  message: "",
+  website: "",
+  agreed: false,
 };
 
-/* ─── Reusable bits ─────────────────────────────────────────────────────── */
-const SectionLabel = ({ children }: { children: React.ReactNode }) => (
-  <div className="mb-5 font-mono text-[10px] uppercase tracking-[0.28em] text-mute">
-    {children}
-  </div>
-);
+type SendStatus = "idle" | "sending" | "sent" | "error";
 
-const LineInput = ({
-  label, name, type = "text", required, value, onChange, placeholder,
+const Field = ({
+  id,
+  label,
+  value,
+  onChange,
+  type = "text",
+  required = false,
+  placeholder,
+  inputRef,
 }: {
-  label?: string; name: string; type?: string; required?: boolean;
-  value: string; onChange: (v: string) => void; placeholder?: string;
+  id: string;
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  type?: string;
+  required?: boolean;
+  placeholder?: string;
+  inputRef?: React.RefObject<HTMLInputElement>;
 }) => (
-  <label className="flex flex-col gap-1.5">
-    {label && (
-      <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-mute/60">
-        {label}{required && <span className="ml-0.5 text-signal">*</span>}
-      </span>
-    )}
-    <span className="kz-input">
-      <input
-        name={name}
-        type={type}
-        required={required}
-        value={value}
-        onChange={e => onChange(e.target.value)}
-        placeholder={placeholder ?? label}
-        className="block w-full bg-transparent py-2.5 text-[14px] text-ink outline-none placeholder:text-mute/40"
-      />
+  <label htmlFor={id} className="kz-inquiry-field">
+    <span>
+      {label}
+      {required && <b aria-hidden>*</b>}
     </span>
+    <input
+      ref={inputRef}
+      id={id}
+      name={id}
+      type={type}
+      required={required}
+      value={value}
+      onChange={(event) => onChange(event.target.value)}
+      placeholder={placeholder}
+      autoComplete={id === "email" ? "email" : id === "firstName" ? "given-name" : id === "lastName" ? "family-name" : "organization"}
+    />
   </label>
 );
 
-/* ─── Phone field with country picker ──────────────────────────────────── */
-const PhoneField = ({
-  value, onChange,
-}: { value: string; onChange: (v: string) => void }) => {
-  const [country, setCountry] = useState<Country>(COUNTRIES[0]);
-  const [open, setOpen] = useState(false);
-  const [search, setSearch] = useState("");
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, []);
-
-  const filtered = COUNTRIES.filter(
-    c =>
-      c.name.toLowerCase().includes(search.toLowerCase()) ||
-      c.dial.includes(search),
-  );
-
-  const handleDigits = (raw: string) => {
-    onChange(formatPhone(raw.replace(/\D/g, ""), country.code));
-  };
-
-  return (
-    <label className="flex flex-col gap-1.5">
-      <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-mute/60">
-        Phone
-      </span>
-      {/* The kz-input wrapper paints the underline; inside, picker + input share
-          one row with matching py-2.5 so the underline aligns with the email
-          field next to it. */}
-      <div className="kz-input">
-        <div className="flex items-center">
-          <div ref={ref} className="relative shrink-0">
-            <button
-              type="button"
-              onClick={() => { setOpen(o => !o); setSearch(""); }}
-              className="flex items-center gap-1.5 py-2.5 pr-3 font-mono text-[13px] text-mute transition-colors hover:text-ink"
-            >
-              <span className="text-base leading-none">{country.flag}</span>
-              <span>{country.dial}</span>
-              <span className="text-[9px] opacity-50">▼</span>
-            </button>
-
-            {open && (
-              <div className="absolute bottom-full left-0 z-50 mb-1 w-56 border border-hairline/20 bg-paper shadow-xl">
-                <div className="border-b border-hairline/15 px-3 py-2">
-                  <input
-                    autoFocus
-                    placeholder="Search…"
-                    value={search}
-                    onChange={e => setSearch(e.target.value)}
-                    className="w-full bg-transparent font-mono text-[11px] text-ink outline-none placeholder:text-mute/40"
-                  />
-                </div>
-                <ul className="max-h-48 overflow-y-auto">
-                  {filtered.map(c => (
-                    <li key={c.code}>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setCountry(c);
-                          setOpen(false);
-                          onChange("");
-                        }}
-                        className={`flex w-full items-center gap-2.5 px-3 py-2 text-left font-mono text-[11px] transition-colors hover:bg-paper-2 ${
-                          c.code === country.code ? "text-signal" : "text-ink"
-                        }`}
-                      >
-                        <span>{c.flag}</span>
-                        <span className="flex-1 truncate">{c.name}</span>
-                        <span className="text-mute">{c.dial}</span>
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-          {/* Thin separator between picker and input */}
-          <span aria-hidden className="mx-2 h-3.5 w-px self-center bg-hairline/30" />
-          <input
-            type="tel"
-            value={value}
-            onChange={e => handleDigits(e.target.value)}
-            placeholder="Phone number"
-            className="block w-full flex-1 bg-transparent py-2.5 text-[14px] text-ink outline-none placeholder:text-mute/40"
-          />
-        </div>
-      </div>
-    </label>
-  );
-};
-
-/* ─── Role selector with sliding active indicator ──────────────────────── */
-const RoleSelector = ({
-  value, onChange,
-}: { value: Role; onChange: (r: Role) => void }) => {
-  const wrapRef = useRef<HTMLDivElement>(null);
-  const btnRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const [pos, setPos] = useState({ left: 0, width: 0, ready: false });
-
-  // Recompute the indicator position whenever the active role changes
-  // or the layout settles in (drawer mounting/animation).
-  useLayoutEffect(() => {
-    const idx = ROLES.indexOf(value);
-    const btn = btnRefs.current[idx];
-    const wrap = wrapRef.current;
-    if (!btn || !wrap) return;
-    const update = () =>
-      setPos({ left: btn.offsetLeft, width: btn.offsetWidth, ready: true });
-    update();
-    // also recalc on resize
-    window.addEventListener("resize", update);
-    return () => window.removeEventListener("resize", update);
-  }, [value]);
-
-  return (
-    <div>
-      <div className="mb-4 font-mono text-[11px] text-mute">
-        <span className="font-semibold text-ink">I'M A</span>
-        {"  "}
-        <span className="uppercase tracking-[0.18em] opacity-50">[Select one]</span>
-      </div>
-      <div ref={wrapRef} className="relative inline-flex items-stretch">
-        {/* Sliding indicator */}
-        <div
-          aria-hidden
-          className="role-indicator"
-          style={{
-            left: pos.left,
-            width: pos.width,
-            opacity: pos.ready ? 1 : 0,
-          }}
-        />
-        {ROLES.map((role, i) => (
-          <Fragment key={role}>
-            {i > 0 && <div className="w-px self-stretch bg-hairline/25" />}
-            <button
-              ref={el => (btnRefs.current[i] = el)}
-              type="button"
-              onClick={() => onChange(role)}
-              className={`relative flex items-center gap-2 px-4 py-2.5 font-mono text-[10px] uppercase tracking-[0.2em] transition-colors duration-300 ${
-                value === role ? "text-signal" : "text-mute hover:text-ink"
-              }`}
-            >
-              {/* Fixed-width dot slot — text never shifts */}
-              <span className="flex h-1.5 w-1.5 items-center justify-center">
-                <span
-                  className="block h-1.5 w-1.5 rounded-full bg-signal transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)]"
-                  style={{ transform: value === role ? "scale(1)" : "scale(0)" }}
-                />
-              </span>
-              {role}
-            </button>
-          </Fragment>
-        ))}
-      </div>
+const SuccessState = ({ firstName, email, onClose }: { firstName: string; email: string; onClose: () => void }) => (
+  <div className="kz-inquiry-success" aria-live="polite">
+    <div className="kz-inquiry-success__orbit" aria-hidden>
+      <span /><span /><span />
+      <i>✓</i>
     </div>
-  );
-};
+    <div className="kz-inquiry-kicker"><span /> MESSAGE DELIVERED · 200 OK</div>
+    <h2 id="inquiry-title">
+      <span className="success-word"><span style={{ animationDelay: "180ms" }}>Received,</span></span>{" "}
+      <span className="success-word"><span style={{ animationDelay: "280ms" }}>{firstName || "friend"}.</span></span>
+    </h2>
+    <span className="success-rule" style={{ animationDelay: "720ms" }} />
+    <p className="success-stagger" style={{ animationDelay: "820ms" }}>
+      Your message is now in my inbox at <strong>hello@kozai.ca</strong>. A receipt is headed to <strong>{email}</strong>, and I’ll reply directly after I’ve read the details.
+    </p>
+    <button type="button" onClick={onClose} className="kz-inquiry-close-action success-stagger" style={{ animationDelay: "980ms" }}>
+      <span aria-hidden /> Close transmission
+    </button>
+  </div>
+);
 
-/* ─── Success state ──────────────────────────────────────────────────────── */
-/**
- * Word-by-word slide-up on the heading (each word starts below a clip mask
- * and rises into view), staggered fade-ups on the rest, and a signal-orange
- * rule that draws across after the heading settles.
- */
-const Words = ({
-  text, baseDelay = 0, perWord = 70,
-}: { text: string; baseDelay?: number; perWord?: number }) => {
-  const words = text.split(" ");
-  return (
-    <>
-      {words.map((w, i) => (
-        <span key={i} className="success-word">
-          <span style={{ animationDelay: `${baseDelay + i * perWord}ms` }}>
-            {w}
-            {i < words.length - 1 ? " " : ""}
-          </span>
-        </span>
-      ))}
-    </>
-  );
-};
-
-const SuccessState = ({
-  firstName, email, onClose,
-}: { firstName: string; email: string; onClose: () => void }) => {
-  return (
-    <div className="flex flex-1 flex-col justify-center gap-7 px-9 py-12">
-      {/* Status badge */}
-      <div className="success-stagger" style={{ animationDelay: "120ms" }}>
-        <span className="inline-flex items-center gap-2 border border-signal/30 bg-signal/[0.06] px-3 py-1.5">
-          <svg className="h-3 w-3" viewBox="0 0 12 12" fill="none" aria-hidden>
-            <path
-              d="M2.5 6L5 8.5L9.5 3.5"
-              stroke="rgb(244, 49, 58)"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-          <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-signal">
-            Inquiry received
-          </span>
-        </span>
-      </div>
-
-      {/* Display heading — two lines, word-revealed */}
-      <h3
-        className="display text-ink"
-        style={{
-          fontSize: "clamp(2.1rem, 5.5vw, 3.1rem)",
-          letterSpacing: "-0.04em",
-          lineHeight: "1.02",
-        }}
-      >
-        <span className="block">
-          <Words text="Thanks," baseDelay={280} />
-        </span>
-        <span className="block">
-          <Words text={`${firstName || "friend"}.`} baseDelay={280 + 200} />
-        </span>
-      </h3>
-
-      {/* Signal rule — draws after the heading settles */}
-      <span
-        aria-hidden
-        className="success-rule w-16"
-        style={{ animationDelay: "1100ms" }}
-      />
-
-      {/* Subtext */}
-      <p
-        className="success-stagger max-w-[44ch] text-[15px] leading-[1.6] text-mute"
-        style={{ animationDelay: "1200ms" }}
-      >
-        A confirmation has been sent to{" "}
-        <span className="text-ink">{email}</span>. We'll be in touch within
-        48 hours, typically sooner. If it's urgent, reach us directly at{" "}
-        <a
-          href="mailto:hello@kozai.ca"
-          className="text-ink underline underline-offset-4 transition-colors hover:text-signal"
-        >
-          hello@kozai.ca
-        </a>
-        .
-      </p>
-
-      {/* Close — minimal line button */}
-      <div
-        className="success-stagger mt-3 flex items-center gap-5"
-        style={{ animationDelay: "1380ms" }}
-      >
-        <button
-          type="button"
-          onClick={onClose}
-          className="group inline-flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.22em] text-ink transition-colors hover:text-signal"
-        >
-          <span aria-hidden className="block h-px w-8 bg-ink transition-colors group-hover:bg-signal" />
-          <span>Close</span>
-        </button>
-        <a
-          href="https://kozai.ca"
-          className="font-mono text-[10px] uppercase tracking-[0.22em] text-mute transition-colors hover:text-ink"
-        >
-          kozai.ca ↗
-        </a>
-      </div>
-    </div>
-  );
-};
-
-/* ─── Main drawer ────────────────────────────────────────────────────────── */
 interface ContactDrawerProps {
   open: boolean;
   onClose: () => void;
 }
 
 const ContactDrawer = ({ open, onClose }: ContactDrawerProps) => {
-  const [form, setForm] = useState<Form>(EMPTY);
-  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
-  const [contentReady, setContentReady] = useState(false);
+  const [form, setForm] = useState<InquiryForm>(EMPTY_FORM);
+  const [status, setStatus] = useState<SendStatus>("idle");
+  const [ready, setReady] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const panelRef = useRef<HTMLElement>(null);
+  const firstNameRef = useRef<HTMLInputElement>(null);
 
-  const set = <K extends keyof Form>(k: K, v: Form[K]) =>
-    setForm(f => ({ ...f, [k]: v }));
+  const set = <K extends keyof InquiryForm>(key: K, value: InquiryForm[K]) => {
+    setForm((current) => ({ ...current, [key]: value }));
+    if (status === "error") setStatus("idle");
+  };
 
-  // Body scroll lock & content reveal sequencing
   useEffect(() => {
-    if (open) {
-      document.body.style.overflow = "hidden";
-      // wait for the panel's slide-in to be in motion before staggering content
-      const t = window.setTimeout(() => setContentReady(true), 220);
-      return () => {
-        window.clearTimeout(t);
-      };
+    if (!open) {
+      setReady(false);
+      const reset = window.setTimeout(() => {
+        setForm(EMPTY_FORM);
+        setStatus("idle");
+        setCopied(false);
+      }, 520);
+      return () => window.clearTimeout(reset);
     }
-    // closing: hide body scroll lock immediately, content fades with the slide
-    document.body.style.overflow = "";
-    setContentReady(false);
-    const t = window.setTimeout(() => {
-      setForm(EMPTY);
-      setStatus("idle");
-    }, 500);
-    return () => window.clearTimeout(t);
-  }, [open]);
 
-  // Esc to close
-  useEffect(() => {
-    if (!open) return;
-    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
+    const previousFocus = document.activeElement as HTMLElement | null;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const reveal = window.setTimeout(() => setReady(true), 170);
+    const focus = window.setTimeout(() => firstNameRef.current?.focus(), 520);
+
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        onClose();
+        return;
+      }
+      if (event.key !== "Tab" || !panelRef.current) return;
+      const focusable = Array.from(
+        panelRef.current.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), input:not([disabled]):not([tabindex="-1"]), textarea:not([disabled]), a[href]',
+        ),
+      );
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    window.addEventListener("keydown", handleKey);
+    return () => {
+      window.clearTimeout(reveal);
+      window.clearTimeout(focus);
+      window.removeEventListener("keydown", handleKey);
+      document.body.style.overflow = previousOverflow;
+      previousFocus?.focus();
+    };
   }, [open, onClose]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!form.agreed) return;
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!form.agreed || status === "sending") return;
     setStatus("sending");
+
     try {
-      const res = await fetch("/api/contact", {
+      const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
-      if (!res.ok) throw new Error("Failed");
+      const result = (await response.json().catch(() => null)) as { ok?: boolean } | null;
+      if (!response.ok || !result?.ok) throw new Error("Message was not accepted");
       setStatus("sent");
     } catch {
       setStatus("error");
     }
   };
 
-  // Helper for staggered section entry
-  const stagger = (i: number): React.HTMLAttributes<HTMLDivElement> => ({
-    className: `drawer-stagger ${contentReady ? "is-in" : ""}`,
-    style: { transitionDelay: `${i * 90}ms` },
-  });
+  const copyAddress = async () => {
+    try {
+      await navigator.clipboard.writeText("hello@kozai.ca");
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1800);
+    } catch {
+      setCopied(false);
+    }
+  };
+
+  const complete = Boolean(
+    form.firstName.trim() &&
+    form.lastName.trim() &&
+    form.email.trim() &&
+    form.message.trim().length >= 12 &&
+    form.agreed,
+  );
 
   return (
-    <>
-      {/* Overlay */}
-      <div
-        aria-hidden
-        onClick={onClose}
-        className="fixed inset-0 z-[1000] bg-ink/40 transition-opacity duration-500"
-        style={{ opacity: open ? 1 : 0, pointerEvents: open ? "auto" : "none" }}
-      />
+    <div className={`kz-inquiry ${open ? "is-open" : ""}`} aria-hidden={!open}>
+      <button type="button" className="kz-inquiry__scrim" onClick={onClose} tabIndex={open ? 0 : -1} aria-label="Close inquiry" />
 
-      {/* Panel */}
       <aside
+        ref={panelRef}
         role="dialog"
-        aria-modal
-        aria-label="Project intake"
-        className="fixed inset-y-0 right-0 z-[1001] flex w-full max-w-[600px] flex-col bg-paper shadow-2xl transition-transform duration-500 ease-out"
-        style={{ transform: open ? "translateX(0)" : "translateX(100%)" }}
+        aria-modal="true"
+        aria-labelledby="inquiry-title"
+        className="kz-inquiry__panel"
       >
-        {/* Header */}
-        <div className="flex shrink-0 items-center justify-between border-b border-hairline/15 px-7 py-4">
-          <div className="font-mono text-[10px] uppercase tracking-[0.28em] text-mute">
-            Project intake · Kozai
+        <header className="kz-inquiry__header">
+          <div>
+            <span className="kz-inquiry__pulse" aria-hidden />
+            <span>INQUIRY UPLINK · AA/07</span>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close"
-            className="font-mono text-[16px] leading-none text-mute transition-colors hover:text-ink"
-          >
-            ✕
-          </button>
-        </div>
+          <div className="kz-inquiry__route"><span>WEB</span><i>→</i><strong>hello@kozai.ca</strong></div>
+          <button type="button" onClick={onClose} aria-label="Close inquiry panel">×</button>
+        </header>
 
         {status === "sent" ? (
-          /* ── Success state ── word-by-word reveal + staggered fade-ups */
           <SuccessState firstName={form.firstName} email={form.email} onClose={onClose} />
         ) : (
-          /* ── Form ── data-lenis-prevent stops Lenis from hijacking wheel events
-                       so the drawer scrolls instead of the page underneath. */
-          <form
-            onSubmit={handleSubmit}
-            data-lenis-prevent
-            className="flex-1 overflow-y-auto overscroll-contain"
-          >
-            <div className="flex flex-col gap-8 px-8 py-7">
-
-              {/* Hero headline */}
-              <div {...stagger(0)} className={`${stagger(0).className} border-b border-hairline/15 pb-7`}>
-                <h2
-                  className="display text-ink"
-                  style={{
-                    fontSize: "clamp(2rem, 5vw, 2.75rem)",
-                    letterSpacing: "-0.04em",
-                    lineHeight: "1.05",
-                  }}
-                >
-                  Tell us what<br />you're building.
-                </h2>
-                <p className="mt-3 text-[13px] leading-[1.6] text-mute">
-                  A short note is enough. We reply within 48 hours.
-                </p>
-              </div>
-
-              {/* Role selector */}
-              <div {...stagger(1)}>
-                <RoleSelector value={form.role} onChange={r => set("role", r)} />
-              </div>
-
-              {/* About you */}
-              <div {...stagger(2)}>
-                <SectionLabel>About you</SectionLabel>
-                <div className="grid grid-cols-2 gap-x-6 gap-y-5">
-                  <LineInput name="firstName" label="First name" required
-                    value={form.firstName} onChange={v => set("firstName", v)} />
-                  <LineInput name="lastName" label="Last name" required
-                    value={form.lastName} onChange={v => set("lastName", v)} />
-                  <LineInput name="email" type="email" label="Email" required
-                    value={form.email} onChange={v => set("email", v)} />
-                  <PhoneField value={form.phone} onChange={v => set("phone", v)} />
-                </div>
-              </div>
-
-              {/* Your business */}
-              <div {...stagger(3)}>
-                <SectionLabel>Your business</SectionLabel>
-                <div className="flex flex-col gap-5">
-                  <LineInput name="businessName" label="Business name" required
-                    value={form.businessName} onChange={v => set("businessName", v)} />
-                  <LineInput name="businessType" label="Type of business" required
-                    value={form.businessType} onChange={v => set("businessType", v)} />
-                  <label className="flex flex-col gap-1.5">
-                    <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-mute/60">
-                      Message <span className="opacity-50">(Optional)</span>
-                    </span>
-                    <span className="kz-input">
-                      <textarea
-                        name="message"
-                        rows={3}
-                        value={form.message}
-                        onChange={e => set("message", e.target.value)}
-                        placeholder="What are you trying to build?"
-                        className="block w-full resize-none bg-transparent py-2.5 text-[14px] text-ink outline-none placeholder:text-mute/40"
-                      />
-                    </span>
-                  </label>
-                </div>
-              </div>
-
-              {/* Privacy checkbox */}
-              <label {...stagger(4)} className={`${stagger(4).className} flex cursor-pointer items-start gap-3`}>
-                <span
-                  className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center border transition-colors ${
-                    form.agreed ? "border-ink bg-ink" : "border-hairline/40 bg-transparent"
-                  }`}
-                >
-                  {form.agreed && (
-                    <svg width="8" height="6" viewBox="0 0 8 6" fill="none">
-                      <path d="M1 3L3 5L7 1" stroke="rgb(var(--paper))" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  )}
-                </span>
-                <input
-                  type="checkbox"
-                  className="sr-only"
-                  checked={form.agreed}
-                  onChange={e => set("agreed", e.target.checked)}
-                  required
-                />
-                <span className="font-mono text-[10px] uppercase leading-[1.6] tracking-[0.18em] text-mute">
-                  By checking this box I agree to the{" "}
-                  <Link
-                    to="/privacy-policy"
-                    target="_blank"
-                    className="text-ink underline underline-offset-4 hover:text-signal"
-                  >
-                    Privacy Policy
-                  </Link>
-                </span>
-              </label>
+          <form onSubmit={handleSubmit} data-lenis-prevent className="kz-inquiry__form">
+            <div className={`kz-inquiry-intro drawer-stagger ${ready ? "is-in" : ""}`}>
+              <div className="kz-inquiry-kicker"><span /> DIRECT CHANNEL · ENCRYPTED IN TRANSIT</div>
+              <h2 id="inquiry-title">Put the interesting problem on the table.</h2>
+              <p>A short brief is enough. This form delivers directly to my inbox—no email app, no handoff.</p>
             </div>
 
-            {/* Submit — sticky to the bottom of the scroll container */}
-            <div {...stagger(5)} className={`${stagger(5).className} sticky bottom-0 border-t border-hairline/15 bg-paper px-8 py-5`}>
+            <fieldset className={`kz-inquiry-types drawer-stagger ${ready ? "is-in" : ""}`} style={{ transitionDelay: "70ms" }}>
+              <legend>WHAT ARE WE TALKING ABOUT?</legend>
+              <div>
+                {INQUIRY_TYPES.map((type, index) => (
+                  <button
+                    key={type}
+                    type="button"
+                    onClick={() => set("inquiryType", type)}
+                    className={form.inquiryType === type ? "is-active" : ""}
+                    aria-pressed={form.inquiryType === type}
+                  >
+                    <span>0{index + 1}</span>{type}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
+
+            <div className={`kz-inquiry-grid drawer-stagger ${ready ? "is-in" : ""}`} style={{ transitionDelay: "140ms" }}>
+              <Field id="firstName" label="First name" required value={form.firstName} onChange={(value) => set("firstName", value)} placeholder="Aden" inputRef={firstNameRef} />
+              <Field id="lastName" label="Last name" required value={form.lastName} onChange={(value) => set("lastName", value)} placeholder="Ahmed" />
+              <Field id="email" label="Email" type="email" required value={form.email} onChange={(value) => set("email", value)} placeholder="you@company.com" />
+              <Field id="organization" label="Organization" value={form.organization} onChange={(value) => set("organization", value)} placeholder="Optional" />
+            </div>
+
+            <label htmlFor="inquiry-message" className={`kz-inquiry-message drawer-stagger ${ready ? "is-in" : ""}`} style={{ transitionDelay: "210ms" }}>
+              <span>THE BRIEF <b aria-hidden>*</b><i>{String(form.message.length).padStart(4, "0")} / 2000</i></span>
+              <textarea
+                id="inquiry-message"
+                name="message"
+                required
+                minLength={12}
+                maxLength={2000}
+                rows={6}
+                value={form.message}
+                onChange={(event) => set("message", event.target.value)}
+                placeholder="What are you building, fixing, or trying to understand?"
+              />
+            </label>
+
+            <div className="sr-only" aria-hidden>
+              <label htmlFor="website">Website</label>
+              <input id="website" name="website" tabIndex={-1} autoComplete="off" value={form.website} onChange={(event) => set("website", event.target.value)} />
+            </div>
+
+            <label className={`kz-inquiry-consent drawer-stagger ${ready ? "is-in" : ""}`} style={{ transitionDelay: "280ms" }}>
+              <input type="checkbox" checked={form.agreed} onChange={(event) => set("agreed", event.target.checked)} required />
+              <span aria-hidden>{form.agreed ? "✓" : ""}</span>
+              <p>I agree to the <Link to="/privacy-policy" target="_blank">privacy policy</Link> and consent to Aden replying to this inquiry.</p>
+            </label>
+
+            <div className={`kz-inquiry-submit drawer-stagger ${ready ? "is-in" : ""}`} style={{ transitionDelay: "350ms" }}>
               {status === "error" && (
-                <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.18em] text-signal">
-                  Something went wrong — please try again or email us directly.
-                </p>
+                <div className="kz-inquiry-error" role="alert">
+                  <span>TRANSMISSION INTERRUPTED</span>
+                  <p>Please try again, or copy the address and send the note manually.</p>
+                  <button type="button" onClick={copyAddress}>{copied ? "COPIED ✓" : "COPY HELLO@KOZAI.CA"}</button>
+                </div>
               )}
-              <button
-                type="submit"
-                disabled={!form.agreed || status === "sending"}
-                className="group flex w-full items-center justify-between bg-ink px-6 py-4 text-[13px] font-medium text-paper transition-colors hover:bg-signal disabled:pointer-events-none disabled:opacity-40"
-              >
-                <span>{status === "sending" ? "Sending…" : "Send inquiry"}</span>
-                <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-1">↘</span>
+              <button type="submit" disabled={!complete || status === "sending"} className="kz-inquiry-transmit">
+                <span>{status === "sending" ? "TRANSMITTING" : "SEND INQUIRY"}</span>
+                <span className="kz-inquiry-transmit__track" aria-hidden><i /></span>
+                <b aria-hidden>{status === "sending" ? "•••" : "↗"}</b>
               </button>
-              <p className="mt-3 text-center font-mono text-[10px] uppercase tracking-[0.14em] text-mute">
-                We reply within 48 hours, every time.
-              </p>
+              <div className="kz-inquiry-submit__meta"><span>DELIVERY / RESEND API</span><span>REPLY / DIRECT</span><span>STATUS / {status.toUpperCase()}</span></div>
             </div>
           </form>
         )}
       </aside>
-    </>
+    </div>
   );
 };
 

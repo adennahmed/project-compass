@@ -1,199 +1,137 @@
 import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const STUDIO_EMAIL = "hello@kozai.ca";
+const OWNER_EMAIL = "hello@kozai.ca";
+const INQUIRY_TYPES = new Set(["BUILD", "ROLE", "COLLAB", "SPEAKING", "OTHER"]);
 
-// ─── Email HTML builders ──────────────────────────────────────────────────
+const FONT = "ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif";
+const MONO = "ui-monospace,'SF Mono',Menlo,Monaco,Consolas,monospace";
+const PAPER = "#F4F5F8";
+const INK = "#080A0E";
+const MUTE = "#6F7480";
+const HAIR = "rgba(8,10,14,0.13)";
+const SIGNAL = "#F4313A";
 
-/* ─── Shared style tokens ────────────────────────────────────────────── */
-const FONT  = "ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif";
-const MONO  = "ui-monospace,'SF Mono',Menlo,Monaco,Consolas,monospace";
-const PAPER = "#F5F2EC";
-const INK   = "#0E0E10";
-const MUTE  = "#6B6B70";
-const HAIR  = "rgba(26,26,28,0.12)";
-const SIG   = "#E84F1B";
+interface Inquiry {
+  inquiryType: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  organization: string;
+  message: string;
+}
 
-const wordmark = (color: string) => `
-  <span style="font-family:${FONT};font-weight:700;font-size:20px;letter-spacing:-0.04em;color:${color}">
-    KOZAI
-  </span>`;
+const escapeHtml = (value: string) =>
+  value.replace(/[&<>'"]/g, (char) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    "'": "&#39;",
+    '"': "&quot;",
+  })[char] ?? char);
 
-const labelTag = (text: string, color = MUTE) => `
-  <span style="font-family:${MONO};font-size:10px;letter-spacing:0.28em;text-transform:uppercase;color:${color}">
-    ${text}
-  </span>`;
+const asText = (value: unknown, max: number) =>
+  typeof value === "string" ? value.trim().slice(0, max) : "";
 
-function adminEmail(f: Record<string, string>): string {
-  const row = (label: string, value: string) =>
-    value
-      ? `<tr>
-          <td style="padding:14px 0;border-bottom:1px solid ${HAIR};font-family:${MONO};font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:${MUTE};width:130px;vertical-align:top">${label}</td>
-          <td style="padding:14px 0;border-bottom:1px solid ${HAIR};font-family:${FONT};font-size:14px;line-height:1.55;color:${INK};vertical-align:top">${value}</td>
-        </tr>`
-      : "";
+const label = (value: string, color = MUTE) =>
+  `<span style="font-family:${MONO};font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:${color}">${value}</span>`;
 
-  return `<!DOCTYPE html>
+const wordmark = () => `
+  <span style="display:inline-block;font-family:${MONO};font-size:15px;font-weight:700;letter-spacing:.16em;color:${INK}">A/A</span>`;
+
+const shell = (content: string, footer: string) => `<!doctype html>
 <html lang="en">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;padding:0;background:${PAPER};font-family:${FONT};color:${INK}">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:${PAPER};padding:56px 24px">
+<body style="margin:0;background:${PAPER};color:${INK};font-family:${FONT}">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${PAPER};padding:48px 20px">
     <tr><td align="center">
-      <table cellpadding="0" cellspacing="0" style="width:100%;max-width:560px">
-
-        <!-- Top bar: wordmark + label -->
-        <tr><td style="padding-bottom:20px;border-bottom:1px solid ${HAIR}">
-          <table width="100%"><tr>
-            <td>${wordmark(INK)}</td>
-            <td align="right">${labelTag("New inquiry")}</td>
-          </tr></table>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px">
+        <tr><td style="padding-bottom:18px;border-bottom:1px solid ${HAIR}">
+          <table role="presentation" width="100%"><tr><td>${wordmark()}</td><td align="right">${label("Portfolio channel")}</td></tr></table>
         </td></tr>
-
-        <!-- Hero -->
-        <tr><td style="padding:48px 0 8px">
-          <div style="margin-bottom:14px">${labelTag(f.role, SIG)}</div>
-          <h1 style="margin:0;font-family:${FONT};font-size:34px;font-weight:600;letter-spacing:-0.04em;line-height:1.05;color:${INK}">
-            ${f.firstName} ${f.lastName}
-          </h1>
-          <p style="margin:14px 0 0;font-family:${FONT};font-size:15px;line-height:1.6;color:${MUTE}">
-            ${f.businessName || "—"}${f.businessType ? ` · ${f.businessType}` : ""}
-          </p>
+        ${content}
+        <tr><td style="padding-top:60px">
+          <div style="border-top:1px solid ${HAIR};padding-top:18px">${label(footer)}</div>
         </td></tr>
-
-        <!-- Divider -->
-        <tr><td style="padding:36px 0 0"><div style="height:1px;background:${HAIR}"></div></td></tr>
-
-        <!-- Details -->
-        <tr><td style="padding:24px 0 12px">
-          <table width="100%" cellpadding="0" cellspacing="0">
-            ${row("Email",         f.email)}
-            ${row("Phone",         f.phone)}
-            ${row("Business",      f.businessName)}
-            ${row("Business type", f.businessType)}
-            ${row("Message",       (f.message || "—").replace(/\n/g, "<br>"))}
-          </table>
-        </td></tr>
-
-        <!-- Reply CTA -->
-        <tr><td style="padding:32px 0 0">
-          <a href="mailto:${f.email}"
-             style="display:inline-block;background:${INK};color:${PAPER};text-decoration:none;padding:15px 28px;font-family:${FONT};font-size:13px;font-weight:500;letter-spacing:0.01em">
-            Reply to ${f.firstName} &nbsp;↘
-          </a>
-        </td></tr>
-
-        <!-- Footer -->
-        <tr><td style="padding:64px 0 0">
-          <div style="border-top:1px solid ${HAIR};padding-top:20px">
-            ${labelTag(`© ${new Date().getFullYear()} Kozai Software Studio · Toronto, CA`)}
-          </div>
-        </td></tr>
-
       </table>
     </td></tr>
   </table>
 </body>
 </html>`;
-}
 
-function confirmationEmail(f: Record<string, string>): string {
-  const row = (label: string, value: string) =>
-    value
-      ? `<tr>
-          <td style="padding:14px 0;border-bottom:1px solid ${HAIR};font-family:${MONO};font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:${MUTE};width:120px;vertical-align:top">${label}</td>
-          <td style="padding:14px 0;border-bottom:1px solid ${HAIR};font-family:${FONT};font-size:14px;line-height:1.55;color:${INK};vertical-align:top">${value}</td>
-        </tr>`
-      : "";
+const detailRow = (name: string, value: string) => value ? `
+  <tr>
+    <td style="width:130px;padding:15px 0;border-bottom:1px solid ${HAIR};vertical-align:top;font-family:${MONO};font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:${MUTE}">${name}</td>
+    <td style="padding:15px 0;border-bottom:1px solid ${HAIR};vertical-align:top;font-family:${FONT};font-size:14px;line-height:1.65;color:${INK}">${value}</td>
+  </tr>` : "";
 
-  return `<!DOCTYPE html>
-<html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;padding:0;background:${PAPER};font-family:${FONT};color:${INK}">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:${PAPER};padding:56px 24px">
-    <tr><td align="center">
-      <table cellpadding="0" cellspacing="0" style="width:100%;max-width:560px">
+function ownerEmail(inquiry: Inquiry) {
+  const firstName = escapeHtml(inquiry.firstName);
+  const lastName = escapeHtml(inquiry.lastName);
+  const email = escapeHtml(inquiry.email);
+  const organization = escapeHtml(inquiry.organization);
+  const message = escapeHtml(inquiry.message).replace(/\n/g, "<br>");
 
-        <!-- Top bar -->
-        <tr><td style="padding-bottom:20px;border-bottom:1px solid ${HAIR}">
-          <table width="100%"><tr>
-            <td>${wordmark(INK)}</td>
-            <td align="right">${labelTag("Inquiry received")}</td>
-          </tr></table>
-        </td></tr>
-
-        <!-- Hero -->
-        <tr><td style="padding:56px 0 0">
-          <h1 style="margin:0;font-family:${FONT};font-size:38px;font-weight:600;letter-spacing:-0.04em;line-height:1.02;color:${INK}">
-            Hello,<br>${f.firstName}.
-          </h1>
-        </td></tr>
-
-        <!-- Body copy -->
-        <tr><td style="padding:24px 0 0">
-          <p style="margin:0;font-family:${FONT};font-size:16px;line-height:1.6;color:${INK};opacity:0.7;max-width:46ch">
-            We received your inquiry. Our team reviews every submission personally — you'll hear back from us within <span style="color:${INK};opacity:1">48 hours</span>, typically sooner.
-          </p>
-        </td></tr>
-
-        <!-- Divider -->
-        <tr><td style="padding:48px 0 0"><div style="height:1px;background:${HAIR}"></div></td></tr>
-
-        <!-- Submission summary -->
-        <tr><td style="padding:32px 0 8px">
-          <div style="margin-bottom:8px">${labelTag("Your submission")}</div>
-        </td></tr>
-        <tr><td>
-          <table width="100%" cellpadding="0" cellspacing="0">
-            ${row("Role",     f.role)}
-            ${row("Name",     `${f.firstName} ${f.lastName}`)}
-            ${row("Business", f.businessName)}
-            ${row("Type",     f.businessType)}
-            ${f.message ? row("Message", f.message.replace(/\n/g, "<br>")) : ""}
-          </table>
-        </td></tr>
-
-        <!-- What's next -->
-        <tr><td style="padding:48px 0 0">
-          <div style="margin-bottom:14px">${labelTag("What happens next")}</div>
-          <p style="margin:0;font-family:${FONT};font-size:14px;line-height:1.7;color:${INK};opacity:0.7">
-            A member of our team will review your submission and reach out directly to <span style="color:${INK};opacity:1">${f.email}</span>. If anything is urgent, you can always reach us at <a href="mailto:hello@kozai.ca" style="color:${INK};text-decoration:underline;text-underline-offset:3px;opacity:1">hello@kozai.ca</a>.
-          </p>
-        </td></tr>
-
-        <!-- Footer -->
-        <tr><td style="padding:64px 0 0">
-          <div style="border-top:1px solid ${HAIR};padding-top:20px">
-            <table width="100%"><tr>
-              <td>${labelTag(`© ${new Date().getFullYear()} Kozai Software Studio · Toronto, CA`)}</td>
-              <td align="right"><a href="https://kozai.ca" style="font-family:${MONO};font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:${MUTE};text-decoration:none">kozai.ca&nbsp;↗</a></td>
-            </tr></table>
-          </div>
-        </td></tr>
-
+  return shell(`
+    <tr><td style="padding:46px 0 12px">
+      <div style="margin-bottom:14px">${label(`${escapeHtml(inquiry.inquiryType)} inquiry`, SIGNAL)}</div>
+      <h1 style="margin:0;font-size:38px;line-height:1.02;letter-spacing:-.045em;font-weight:650">${firstName} ${lastName}</h1>
+      <p style="margin:14px 0 0;font-size:15px;color:${MUTE}">${organization || "Independent inquiry"}</p>
+    </td></tr>
+    <tr><td style="padding-top:28px">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+        ${detailRow("Channel", escapeHtml(inquiry.inquiryType))}
+        ${detailRow("Email", email)}
+        ${detailRow("Organization", organization)}
+        ${detailRow("Brief", message)}
       </table>
     </td></tr>
-  </table>
-</body>
-</html>`;
+    <tr><td style="padding-top:32px">
+      <a href="mailto:${email}" style="display:inline-block;background:${INK};color:${PAPER};padding:15px 26px;text-decoration:none;font-size:13px;font-weight:600">Reply to ${firstName} &nbsp;↗</a>
+    </td></tr>`, `© ${new Date().getFullYear()} Aden Ahmed · Toronto, Canada`);
 }
 
-// ─── Handler ──────────────────────────────────────────────────────────────
-// Vercel Node.js runtime: req.body is auto-parsed when Content-Type is JSON.
-// Using a loose type signature so we don't need @vercel/node as a dep.
+function receiptEmail(inquiry: Inquiry) {
+  const firstName = escapeHtml(inquiry.firstName);
+  const email = escapeHtml(inquiry.email);
+  const organization = escapeHtml(inquiry.organization);
+  const message = escapeHtml(inquiry.message).replace(/\n/g, "<br>");
+
+  return shell(`
+    <tr><td style="padding:52px 0 0">
+      <div style="margin-bottom:16px">${label("Message delivered · 200 OK", SIGNAL)}</div>
+      <h1 style="margin:0;font-size:40px;line-height:1.02;letter-spacing:-.045em;font-weight:650">Received,<br>${firstName}.</h1>
+      <p style="max-width:48ch;margin:22px 0 0;font-size:16px;line-height:1.7;color:${MUTE}">
+        Your note reached my portfolio inbox successfully. I read every inquiry and will reply directly to <span style="color:${INK}">${email}</span> after reviewing the details.
+      </p>
+    </td></tr>
+    <tr><td style="padding-top:42px">
+      <div style="margin-bottom:8px">${label("Transmission receipt")}</div>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+        ${detailRow("Channel", escapeHtml(inquiry.inquiryType))}
+        ${detailRow("Organization", organization)}
+        ${detailRow("Brief", message)}
+      </table>
+    </td></tr>
+    <tr><td style="padding-top:34px">
+      <p style="margin:0;font-family:${MONO};font-size:10px;line-height:1.7;letter-spacing:.12em;text-transform:uppercase;color:${MUTE}">Destination / hello@kozai.ca<br>Status / delivered</p>
+    </td></tr>`, `© ${new Date().getFullYear()} Aden Ahmed · Portfolio inquiry receipt`);
+}
 
 interface VercelReq {
   method?: string;
-  body?: Record<string, string> | string;
-  headers?: Record<string, string | string[] | undefined>;
+  body?: unknown;
 }
+
 interface VercelRes {
   status: (code: number) => VercelRes;
   json: (body: unknown) => VercelRes;
-  send: (body: unknown) => VercelRes;
   setHeader: (key: string, value: string) => VercelRes;
 }
 
 export default async function handler(req: VercelReq, res: VercelRes) {
+  res.setHeader("Cache-Control", "no-store");
+
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
@@ -203,55 +141,58 @@ export default async function handler(req: VercelReq, res: VercelRes) {
     return res.status(500).json({ error: "Email service not configured" });
   }
 
-  // Body comes in pre-parsed on Node runtime; fall back to JSON.parse if it's a string.
-  let body: Record<string, string> = {};
+  let raw: Record<string, unknown>;
   try {
-    if (typeof req.body === "string") body = JSON.parse(req.body);
-    else if (req.body && typeof req.body === "object") body = req.body as Record<string, string>;
-  } catch (err) {
-    console.error("[contact] body parse failed:", err);
+    raw = typeof req.body === "string" ? JSON.parse(req.body) : (req.body as Record<string, unknown>);
+    if (!raw || typeof raw !== "object") throw new Error("Invalid body");
+  } catch {
     return res.status(400).json({ error: "Invalid request body" });
   }
 
-  const { firstName, lastName, email } = body;
+  // Quietly accept honeypot submissions so bots receive no useful signal.
+  if (asText(raw.website, 200)) return res.status(200).json({ ok: true });
 
-  if (!firstName || !lastName || !email) {
-    console.error("[contact] missing required fields", { firstName, lastName, email });
-    return res.status(400).json({ error: "Missing required fields" });
+  const inquiry: Inquiry = {
+    inquiryType: asText(raw.inquiryType, 20).toUpperCase(),
+    firstName: asText(raw.firstName, 80),
+    lastName: asText(raw.lastName, 80),
+    email: asText(raw.email, 180).toLowerCase(),
+    organization: asText(raw.organization, 160),
+    message: asText(raw.message, 2000),
+  };
+
+  if (!INQUIRY_TYPES.has(inquiry.inquiryType)) inquiry.inquiryType = "OTHER";
+
+  const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inquiry.email);
+  if (!inquiry.firstName || !inquiry.lastName || !emailValid || inquiry.message.length < 12 || raw.agreed !== true) {
+    return res.status(400).json({ error: "Missing or invalid fields" });
   }
 
   try {
-    // Send notification to Kozai. Sending FROM hello@ TO hello@ on the same
-    // domain often gets dropped as a self-send loop by the receiving server,
-    // so we use the inquiries@ alias as the sender. (Resend allows any address
-    // on a verified domain.)
-    const adminRes = await resend.emails.send({
-      from: `Kozai Inquiries <inquiries@kozai.ca>`,
-      to: STUDIO_EMAIL,
-      replyTo: email,
-      subject: `New inquiry · ${firstName} ${lastName} (${body.role ?? "—"}) · ${body.businessName ?? ""}`,
-      html: adminEmail(body),
+    const ownerResult = await resend.emails.send({
+      from: "Aden Portfolio <inquiries@kozai.ca>",
+      to: OWNER_EMAIL,
+      replyTo: inquiry.email,
+      subject: `Portfolio inquiry · ${inquiry.inquiryType} · ${inquiry.firstName} ${inquiry.lastName}`,
+      html: ownerEmail(inquiry),
     });
-    if (adminRes.error) {
-      console.error("[contact] admin send error:", adminRes.error);
-      return res.status(500).json({ error: "Failed to send admin email", detail: adminRes.error });
+
+    if (ownerResult.error) {
+      console.error("[contact] owner send failed", ownerResult.error);
+      return res.status(500).json({ error: "Failed to deliver message" });
     }
 
-    // Send confirmation to the submitter
-    const confirmRes = await resend.emails.send({
-      from: `Kozai <hello@kozai.ca>`,
-      to: email,
-      subject: `We received your inquiry — Kozai`,
-      html: confirmationEmail(body),
+    const receiptResult = await resend.emails.send({
+      from: "Aden Ahmed <hello@kozai.ca>",
+      to: inquiry.email,
+      subject: "Message received — Aden Ahmed",
+      html: receiptEmail(inquiry),
     });
-    if (confirmRes.error) {
-      console.error("[contact] confirmation send error:", confirmRes.error);
-      // Admin email already sent; still treat overall as success but log it.
-    }
 
+    if (receiptResult.error) console.error("[contact] receipt send failed", receiptResult.error);
     return res.status(200).json({ ok: true });
-  } catch (err) {
-    console.error("[contact] Resend exception:", err);
-    return res.status(500).json({ error: "Failed to send email", detail: String(err) });
+  } catch (error) {
+    console.error("[contact] resend exception", error);
+    return res.status(500).json({ error: "Failed to deliver message" });
   }
 }

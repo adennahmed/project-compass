@@ -29,6 +29,7 @@ const SectionTransition = ({ word, index, total, flip = false }: SectionTransiti
   const scanRef = useRef<HTMLDivElement>(null);
   const barRef = useRef<HTMLSpanElement>(null);
   const pctRef = useRef<HTMLSpanElement>(null);
+  const portalRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const pRef = useRef(0.5);
 
   // DOM scrub — cheap transform/clip updates on scroll.
@@ -48,6 +49,15 @@ const SectionTransition = ({ word, index, total, flip = false }: SectionTransiti
       if (scanRef.current) scanRef.current.style.top = `${p * 100}%`;
       if (barRef.current) barRef.current.style.transform = `scaleX(${p.toFixed(3)})`;
       if (pctRef.current) pctRef.current.textContent = String(Math.round(p * 100)).padStart(3, "0");
+      portalRefs.current.forEach((frame, frameIndex) => {
+        if (!frame) return;
+        const phase = (p * 1.18 + frameIndex * 0.17) % 1;
+        const scale = 0.26 + phase * 1.58;
+        const opacity = Math.sin(phase * Math.PI) * 0.52;
+        const turn = (p - 0.5) * 16 * dir + (frameIndex - 2) * 0.9;
+        frame.style.opacity = opacity.toFixed(3);
+        frame.style.transform = `translate3d(-50%,-50%,0) rotate(${turn.toFixed(2)}deg) scale(${scale.toFixed(3)})`;
+      });
     };
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -186,6 +196,20 @@ const SectionTransition = ({ word, index, total, flip = false }: SectionTransiti
     >
       {/* ASCII data-stream backdrop */}
       <canvas ref={canvasRef} className="pointer-events-none absolute inset-0 opacity-90" />
+
+      {/* Perspective wireframe tunnel — each frame advances at a different phase. */}
+      <div className="kz-tx-portal" aria-hidden>
+        {[0, 1, 2, 3, 4, 5].map((frame) => (
+          <span key={frame} ref={(element) => { portalRefs.current[frame] = element; }}>
+            <i>{String(frame + 1).padStart(2, "0")}</i>
+          </span>
+        ))}
+      </div>
+
+      <div className="kz-tx-vector" aria-hidden>
+        <span>VECTOR / {flip ? "REV" : "FWD"}</span>
+        <i /><i /><i />
+      </div>
 
       {/* Kinetic keyword — outlined base + red wipe-fill overlay */}
       <div ref={slideRef} className="kz-tx-word relative will-change-transform" style={{ paddingInline: "6vw" }}>

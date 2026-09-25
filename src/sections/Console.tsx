@@ -65,7 +65,7 @@ const responses: Record<string, Line[]> = {
 
 const toneClass: Record<Tone, string> = { ink: "text-ink/85", mute: "text-mute", signal: "text-signal" };
 
-const Console = () => {
+const Console = ({ onOpenInquiry }: { onOpenInquiry: () => void }) => {
   const [blocks, setBlocks] = useState<Block[]>([]);
   const [input, setInput] = useState("");
   const [history, setHistory] = useState<string[]>([]);
@@ -121,8 +121,8 @@ const Console = () => {
     if (command === "clear") { setBlocks([]); setInput(""); return; }
     if (command === "contact") {
       setBlocks((prev) => [...prev, { id: idRef.current++, command, lines: [] }]);
-      typeLines([{ text: "routing to contact…", tone: "signal" }, { text: "or email hello@kozai.ca" }]);
-      window.setTimeout(() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" }), 650);
+      typeLines([{ text: "opening direct inquiry channel…", tone: "signal" }, { text: "destination: hello@kozai.ca" }]);
+      window.setTimeout(onOpenInquiry, 650);
     } else if (command === "whoami") {
       setBlocks((prev) => [...prev, { id: idRef.current++, command, lines: [] }]);
       typeLines([{ text: "guest@aden — curious enough to open the terminal." }]);
@@ -136,7 +136,7 @@ const Console = () => {
     setHistory((prev) => [...prev, command]);
     setHistoryIndex(-1);
     setInput("");
-  }, [typeLines, typing]);
+  }, [onOpenInquiry, typeLines, typing]);
 
   const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") { event.preventDefault(); submit(input); }

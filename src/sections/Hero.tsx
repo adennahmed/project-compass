@@ -12,10 +12,11 @@ const focusRows = [
   ["Base", "Toronto, Canada"],
 ];
 
-const Hero = () => {
+const Hero = ({ onOpenInquiry }: { onOpenInquiry: () => void }) => {
   const linesRef = useRef<HTMLDivElement>(null);
+  const portraitRef = useRef<HTMLDivElement>(null);
   const projectsRef = useMagnetic<HTMLAnchorElement>(0.35, 90);
-  const contactRef = useMagnetic<HTMLAnchorElement>(0.25, 70);
+  const contactRef = useMagnetic<HTMLButtonElement>(0.25, 70);
 
   useEffect(() => {
     const el = linesRef.current;
@@ -31,6 +32,18 @@ const Hero = () => {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => { window.removeEventListener("scroll", onScroll); cancelAnimationFrame(raf); };
   }, []);
+
+  const scanPortrait = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType !== "mouse") return;
+    const target = portraitRef.current;
+    if (!target) return;
+    const bounds = target.getBoundingClientRect();
+    const x = ((event.clientX - bounds.left) / bounds.width) * 100;
+    const y = ((event.clientY - bounds.top) / bounds.height) * 100;
+    target.style.setProperty("--portrait-x", `${x.toFixed(2)}%`);
+    target.style.setProperty("--portrait-y", `${y.toFixed(2)}%`);
+    target.classList.add("is-scanning");
+  };
 
   return (
     <section id="top" data-snap className="relative flex min-h-[100svh] items-end overflow-hidden px-6 pb-12 pt-28 md:px-10 md:pb-16 md:pt-32">
@@ -52,15 +65,23 @@ const Hero = () => {
           </div>
 
           <Reveal immediate delay={420} className="order-1 md:order-2 md:col-span-4">
-            <div className="group relative ml-auto w-full max-w-[460px] overflow-hidden border border-hairline/20 bg-paper-2">
+            <div
+              ref={portraitRef}
+              onPointerMove={scanPortrait}
+              onPointerLeave={() => portraitRef.current?.classList.remove("is-scanning")}
+              className="kz-portrait-scanner group relative ml-auto w-full max-w-[460px] overflow-hidden border border-hairline/20 bg-paper-2"
+            >
               <img
                 src={adenImg}
                 alt="Portrait of Aden Ahmed"
-                className="aspect-[16/11] w-full object-cover object-[50%_28%] grayscale transition duration-1000 ease-out group-hover:scale-[1.025] md:aspect-[4/5] md:object-[50%_26%]"
+                className="kz-portrait-base aspect-[16/11] w-full object-cover object-[50%_28%] grayscale transition duration-1000 ease-out group-hover:scale-[1.025] md:aspect-[4/5] md:object-[50%_26%]"
               />
+              <img src={adenImg} alt="" aria-hidden className="kz-portrait-color absolute inset-0 h-full w-full object-cover object-[50%_28%] md:object-[50%_26%]" />
               <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-paper/65 via-transparent to-transparent" />
               <div aria-hidden className="absolute inset-0 bg-signal/0 mix-blend-screen transition-colors duration-700 group-hover:bg-signal/10" />
               <span aria-hidden className="absolute left-0 top-0 h-px w-full origin-left bg-signal" style={{ animation: "kz-scan-x 5.5s ease-in-out infinite" }} />
+              <div aria-hidden className="kz-portrait-reticle"><span /><span /><i /></div>
+              <div aria-hidden className="kz-portrait-readout">OPTICAL PASS / RGB</div>
               <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-4 font-mono text-[8px] uppercase tracking-[0.18em] text-ink md:p-5">
                 <span>Aden Ahmed<br /><span className="text-mute">Portrait / 01</span></span>
                 <span className="text-right text-signal">43.6532° N<br />79.3832° W</span>
@@ -78,7 +99,7 @@ const Hero = () => {
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-5">
               <a ref={projectsRef} href="#projects" className="btn-slot bg-ink px-6 py-4 text-[14px] font-medium text-paper"><span className="btn-slot__label">Explore the systems <span aria-hidden>↘</span></span><span className="btn-slot__label--hover bg-signal">Open project atlas <span aria-hidden>↘</span></span></a>
-              <a ref={contactRef} href="#contact" className="link-wipe text-[14px] font-medium text-mute hover:text-ink">Start a conversation →</a>
+              <button ref={contactRef} type="button" onClick={onOpenInquiry} className="link-wipe text-[14px] font-medium text-mute hover:text-ink">Start a conversation →</button>
             </div>
           </Reveal>
 

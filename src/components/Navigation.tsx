@@ -25,7 +25,7 @@ type NavMode = "integrated" | "pill" | "hidden";
  * small "Menu" trigger that opens a full-bleed overlay. Desktop layout
  * is untouched.
  */
-const Navigation = () => {
+const Navigation = ({ onOpenInquiry }: { onOpenInquiry: () => void }) => {
   const [mode, setMode] = useState<NavMode>("integrated");
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -165,7 +165,7 @@ const Navigation = () => {
           {/* Desktop CTA */}
           <button
             type="button"
-            onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
+            onClick={onOpenInquiry}
             className="nav-pill__cta hidden md:inline-flex"
           >
             Say hello ↘
@@ -276,7 +276,7 @@ const Navigation = () => {
                 type="button"
                 onClick={() => {
                   setMenuOpen(false);
-                  window.setTimeout(() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" }), 150);
+                  window.setTimeout(onOpenInquiry, 180);
                 }}
                 className="inline-flex w-full items-center justify-between border border-ink bg-ink px-5 py-4 text-paper transition-colors hover:bg-signal hover:border-signal"
               >
