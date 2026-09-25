@@ -11,7 +11,7 @@ const Contact = () => {
         <Reveal>
           <div className="grid grid-cols-1 gap-12 md:grid-cols-12 md:gap-16">
             <div className="md:col-span-8">
-              <div className="label mb-10"><ScrambleText text="[ 06 — Contact ]" /></div>
+              <div className="label mb-10"><ScrambleText text="[ 07 — Contact ]" /></div>
               <h2 className="display max-w-[13ch] text-ink" style={{ fontSize: "clamp(2.8rem, 7vw, 6.5rem)", letterSpacing: "-0.05em" }}>
                 <CharReveal stagger={19} splitBy="word">Let’s build the hard part clearly.</CharReveal>
               </h2>

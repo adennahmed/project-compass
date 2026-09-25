@@ -15,7 +15,7 @@ const AboutAden = () => (
     <div className="container-wide">
       <Reveal>
         <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.24em] text-paper/45">
-          <ScrambleText text="[ 04 — About Aden ]" />
+          <ScrambleText text="[ 05 — About Aden ]" />
           <span className="hidden md:block">Toronto · Canada</span>
         </div>
       </Reveal>

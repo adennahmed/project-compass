@@ -3,6 +3,7 @@ import DecodeHeading from "@/components/DecodeHeading";
 import Reveal from "@/components/Reveal";
 import ScrambleText from "@/components/ScrambleText";
 import { useMagnetic } from "@/hooks/useMagnetic";
+import adenImg from "@/assets/aden-ahmed.png";
 
 const focusRows = [
   ["Mode", "Independent builds"],
@@ -41,15 +42,35 @@ const Hero = () => {
           </div>
         </Reveal>
 
-        <div ref={linesRef} className="mt-8 will-change-transform">
-          <h1 className="display max-w-[17ch] text-ink" style={{ fontSize: "clamp(3rem, 8vw, 7.5rem)", fontWeight: 600, letterSpacing: "-0.055em", lineHeight: 0.92 }}>
-            <span className="block kinetic-line"><DecodeHeading text="I turn complex" stagger={23} delay={260} immediate hover /></span>
-            <span className="block kinetic-line"><DecodeHeading text="systems into" stagger={25} delay={500} immediate hover /></span>
-            <span className="block kinetic-line"><span className="italic-editorial mr-3 text-signal"><DecodeHeading text="usable" stagger={31} delay={720} immediate hover /></span><DecodeHeading text="software." stagger={27} delay={900} immediate hover /></span>
-          </h1>
+        <div className="mt-8 grid grid-cols-1 gap-8 md:grid-cols-12 md:items-end md:gap-8">
+          <div ref={linesRef} className="order-2 will-change-transform md:order-1 md:col-span-8">
+            <h1 className="display max-w-[13ch] text-ink" style={{ fontSize: "clamp(3rem, 7.2vw, 7.15rem)", fontWeight: 600, letterSpacing: "-0.055em", lineHeight: 0.92 }}>
+              <span className="block kinetic-line"><DecodeHeading text="I turn complex" stagger={23} delay={260} immediate hover /></span>
+              <span className="block kinetic-line"><DecodeHeading text="systems into" stagger={25} delay={500} immediate hover /></span>
+              <span className="block kinetic-line"><span className="italic-editorial mr-3 text-signal"><DecodeHeading text="usable" stagger={31} delay={720} immediate hover /></span><DecodeHeading text="software." stagger={27} delay={900} immediate hover /></span>
+            </h1>
+          </div>
+
+          <Reveal immediate delay={420} className="order-1 md:order-2 md:col-span-4">
+            <div className="group relative ml-auto w-full max-w-[460px] overflow-hidden border border-hairline/20 bg-paper-2">
+              <img
+                src={adenImg}
+                alt="Portrait of Aden Ahmed"
+                className="aspect-[16/11] w-full object-cover object-[50%_28%] grayscale transition duration-1000 ease-out group-hover:scale-[1.025] md:aspect-[4/5] md:object-[50%_26%]"
+              />
+              <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-paper/65 via-transparent to-transparent" />
+              <div aria-hidden className="absolute inset-0 bg-signal/0 mix-blend-screen transition-colors duration-700 group-hover:bg-signal/10" />
+              <span aria-hidden className="absolute left-0 top-0 h-px w-full origin-left bg-signal" style={{ animation: "kz-scan-x 5.5s ease-in-out infinite" }} />
+              <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-4 font-mono text-[8px] uppercase tracking-[0.18em] text-ink md:p-5">
+                <span>Aden Ahmed<br /><span className="text-mute">Portrait / 01</span></span>
+                <span className="text-right text-signal">43.6532° N<br />79.3832° W</span>
+              </div>
+              <span aria-hidden className="absolute right-3 top-3 h-3 w-3 border border-signal transition-transform duration-700 group-hover:rotate-45 group-hover:bg-signal" />
+            </div>
+          </Reveal>
         </div>
 
-        <div className="mt-12 grid grid-cols-1 gap-12 md:grid-cols-12 md:gap-12">
+        <div className="mt-10 grid grid-cols-1 gap-12 md:mt-12 md:grid-cols-12 md:gap-12">
           <Reveal immediate delay={1200} className="md:col-span-7">
             <div className="hairline-draw mb-7 h-px w-full bg-ink/25" />
             <p className="max-w-[52ch] text-[16px] leading-[1.65] text-ink/72 md:text-[18px]">

@@ -15,7 +15,7 @@ const KozaiArchive = () => (
       <Reveal>
         <div className="grid grid-cols-1 gap-8 border-b border-hairline/15 pb-12 md:grid-cols-12 md:items-end">
           <div className="md:col-span-4">
-            <div className="label"><ScrambleText text="[ 03 — Archive · Kozai ]" /></div>
+            <div className="label"><ScrambleText text="[ 04 — Archive · Kozai ]" /></div>
             <div className="mt-5 font-mono text-[10px] uppercase tracking-[0.22em] text-signal">2025—2026 · concluded</div>
           </div>
           <div className="md:col-span-8">

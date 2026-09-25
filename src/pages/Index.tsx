@@ -10,6 +10,7 @@ import SectionTransition from "@/components/SectionTransition";
 import CursorGlow from "@/components/CursorGlow";
 import Hero from "@/sections/Hero";
 import ProjectAtlas from "@/sections/ProjectAtlas";
+import Playground from "@/sections/Playground";
 import Principles from "@/sections/Principles";
 import KozaiArchive from "@/sections/KozaiArchive";
 import AboutAden from "@/sections/AboutAden";
@@ -56,15 +57,17 @@ const Index = () => {
           <Hero />
           <ServiceMarquee items={SIGNALS} variant="ink" />
           <ProjectAtlas />
-          <SectionTransition word="Method" index={1} total={5} />
+          <SectionTransition word="Play" index={1} total={6} />
+          <Playground />
+          <SectionTransition word="Method" index={2} total={6} />
           <Principles />
-          <SectionTransition word="Archive" index={2} total={5} flip />
+          <SectionTransition word="Archive" index={3} total={6} flip />
           <KozaiArchive />
-          <SectionTransition word="About" index={3} total={5} />
+          <SectionTransition word="About" index={4} total={6} />
           <AboutAden />
-          <SectionTransition word="Console" index={4} total={5} flip />
+          <SectionTransition word="Console" index={5} total={6} flip />
           <Console />
-          <SectionTransition word="Contact" index={5} total={5} />
+          <SectionTransition word="Contact" index={6} total={6} />
           <Contact />
         </main>
         <Footer />

@@ -71,7 +71,7 @@ const Principles = () => {
           <div className="mb-14 grid grid-cols-1 gap-8 md:mb-20 md:grid-cols-12 md:items-end md:gap-12">
             <div className="md:col-span-4">
               <div className="label">
-                <ScrambleText text="[ 02 — How I build ]" />
+                <ScrambleText text="[ 03 — How I build ]" />
               </div>
             </div>
             <div className="md:col-span-8">

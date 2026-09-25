@@ -20,6 +20,7 @@ const AmbientTerminal = () => {
 
 const links = [
   ["Projects", "#projects"],
+  ["Playground", "#playground"],
   ["Method", "#method"],
   ["Kozai archive", "#kozai"],
   ["About", "#about"],

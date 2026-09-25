@@ -3,6 +3,7 @@ import Lenis from "lenis";
 
 const NAV_ITEMS = [
   { label: "Projects", href: "#projects" },
+  { label: "Playground", href: "#playground" },
   { label: "Method", href: "#method" },
   { label: "Kozai", href: "#kozai" },
   { label: "About", href: "#about" },
